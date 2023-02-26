@@ -9,4 +9,13 @@ services:
             php artisan serve --host=0.0.0.0
         volumes:
             - ./haruhi:/var/www/html
-
+    misuzu:
+        build:
+            context: ./misuzu
+            dockerfile: Dockerfile
+        ports:
+            - "3333:8000"
+        command:
+            php artisan serve --host=0.0.0.0
+        volumes:
+            - ./misuzu:/var/www/html
