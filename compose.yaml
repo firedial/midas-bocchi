@@ -1,6 +1,7 @@
 services:
     haruhi:
         build:
+            context: ./haruhi
             dockerfile: Dockerfile
         ports:
             - "3123:8000"
