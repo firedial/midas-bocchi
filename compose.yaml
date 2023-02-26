@@ -1,0 +1,11 @@
+services:
+    haruhi:
+        build:
+            dockerfile: Dockerfile
+        ports:
+            - "3123:8000"
+        command:
+            php artisan serve --host=0.0.0.0
+        volumes:
+            - ./haruhi:/var/www/html
+
