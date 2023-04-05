@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+    misuzu:
+        build:
+            context: ./misuzu
+            dockerfile: Dockerfile
+        restart: always
+        ports:
+            - "3333:3000"
+        tty: true
+        hostname: misuzu
+        working_dir: /home/app
+        # command: stack exec stet warp -- --host 0.0.0.0
+        # command: stack build --file-watch --exec "stack exec stet warp -- --host 0.0.0.0"
+        volumes:
+            - ./misuzu:/home
