@@ -1,13 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import Network.Wai (responseLBS, Application, getRequestBodyChunk)
-import Network.HTTP.Types (status200)
+import Network.Wai (Application)
 import Network.Wai.Handler.Warp (run, Port)
 import System.Environment (getEnvironment)
-import Data.List (lookup)
 import Data.Maybe
-import Data.ByteString.Lazy (fromStrict)
+import Routing (routing)
 
 main :: IO ()
 main = do
@@ -17,11 +15,7 @@ main = do
   run port helloApp
 
 helloApp :: Application
-helloApp req respond = ioResponse >>= respond
-  where
-    json = getRequestBodyChunk req
-    trans = responseLBS status200 []
-    ioResponse = fmap (trans . fromStrict) json
+helloApp req respond = routing req respond
 
 getPort :: IO Port
 getPort = getEnvironment >>= return . port
