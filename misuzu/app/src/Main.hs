@@ -10,17 +10,7 @@ import Routing (routing)
 main :: IO ()
 main = do
   port <- getPort
-  putStr "start Server: http://localhost:"
-  print port
-  run port helloApp
-
-helloApp :: Application
-helloApp req respond = routing req respond
-
-getPort :: IO Port
-getPort = getEnvironment >>= return . port
+  run port routing
   where
-    port = fromMaybe defaultPort . fmap read . lookup "PORT"
-
-defaultPort :: Port
-defaultPort = 3000
+    getPort = getEnvironment >>= return . port
+    port = fromMaybe 3000 . fmap read . lookup "PORT"
