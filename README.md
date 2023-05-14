@@ -11,7 +11,6 @@ cd midas-bocchi
 cp haruhi/.env.example haruhi/.env
 cp yui/.env.example yui/.env
 cp rikka/.env.example rikka/.env
-cp rikka/.encryption_key.example rikka/.encryption_key
 
 docker compose up -d
 
