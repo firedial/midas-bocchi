@@ -35,6 +35,10 @@ Route::post('/attribute_elements/{attribute_name}', 'App\Http\Controllers\Attrib
 Route::get('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@show');
 Route::put('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@update');
 
+Route::get('/attribute_categories/{attribute_name}', 'App\Http\Controllers\AttributeCategoryController@index');
+Route::post('/attribute_categories/{attribute_name}', 'App\Http\Controllers\AttributeCategoryController@store');
+Route::put('/attribute_categories/{attribute_name}/{category_id}', 'App\Http\Controllers\AttributeCategoryController@update');
+
 Route::post('/salary', 'App\Http\Controllers\SalaryController@store');
 Route::post('/bonus', 'App\Http\Controllers\BonusController@store');
 
