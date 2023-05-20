@@ -1,5 +1,6 @@
 import VueRouter from 'vue-router';
 import HeaderComponent from "./components/HeaderComponent";
+import IndexComponent from "./components/IndexComponent";
 import BalanceListComponent from "./components/BalanceListComponent";
 import BalanceCreateComponent from "./components/BalanceCreateComponent";
 import BalanceEditComponent from "./components/BalanceEditComponent";
@@ -102,6 +103,11 @@ const router = new VueRouter({
             path: '/monthly/create',
             name: 'monthly.create',
             component: MonthlyCreateComponent
+        },
+        {
+            path: '/',
+            name: 'index',
+            component: IndexComponent
         },
     ]
 });
