@@ -4,6 +4,7 @@ import BalanceListComponent from "./components/BalanceListComponent";
 import BalanceCreateComponent from "./components/BalanceCreateComponent";
 import BalanceEditComponent from "./components/BalanceEditComponent";
 import BalanceShowComponent from "./components/BalanceShowComponent";
+import AttributeElementShowComponent from "./components/AttributeElementTableComponent";
 import MoveListComponent from "./components/MoveListComponent";
 import MoveCreateComponent from "./components/MoveCreateComponent";
 import MoveEditComponent from "./components/MoveEditComponent";
@@ -48,6 +49,12 @@ const router = new VueRouter({
             path: '/balances/:balanceId',
             name: 'balance.show',
             component: BalanceShowComponent,
+            props: true
+        },
+        {
+            path: '/elements/:attributeName',
+            name: 'element.list',
+            component: AttributeElementShowComponent,
             props: true
         },
         {
