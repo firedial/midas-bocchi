@@ -116,7 +116,6 @@ export default {
             axios.post('/api/attribute_elements/' + this.attributeName + '_element', this.newAttributeElement)
                 .then((res) => {
                     if (res.status === 200) {
-                        this.newAttributeElement = {};
                         this.attributeElements.push(res.data);
                         this.clearNewAttributeElement()
                     }
