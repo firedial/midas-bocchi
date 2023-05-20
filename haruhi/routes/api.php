@@ -30,7 +30,9 @@ Route::get('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveContro
 Route::put('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@update');
 Route::delete('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@destroy');
 
-Route::get('/attribute_elements/{element_name}', 'App\Http\Controllers\AttributeElementController@index');
+Route::get('/attribute_elements/{attribute_name}', 'App\Http\Controllers\AttributeElementController@index');
+Route::post('/attribute_elements/{attribute_name}', 'App\Http\Controllers\AttributeElementController@store');
+Route::put('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@update');
 
 Route::post('/salary', 'App\Http\Controllers\SalaryController@store');
 Route::post('/bonus', 'App\Http\Controllers\BonusController@store');
