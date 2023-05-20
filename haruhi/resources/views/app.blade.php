@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Vue Laravel SPA') }}</title>
+    <title>Midas Bocchi</title>
 
     <!-- Styles -->
     <link href="{{ mix('/css/app.css') }}" rel="stylesheet">
@@ -20,5 +20,5 @@
 <!-- Scripts -->
 <script src="{{ mix('/js/app.js') }}" defer></script>
 </body>
-</html> 
+</html>
 
