@@ -115,9 +115,10 @@ export default {
         addNewAttributeElement() {
             axios.post('/api/attribute_elements/' + this.attributeName + '_element', this.newAttributeElement)
                 .then((res) => {
-                    if (res.status === 201) {
+                    if (res.status === 200) {
                         this.newAttributeElement = {};
                         this.attributeElements.push(res.data);
+                        this.clearNewAttributeElement()
                     }
                 });
         },
