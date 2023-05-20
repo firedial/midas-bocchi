@@ -2,7 +2,11 @@
     <div class="container-fluid bg-dark mb-3">
         <div class="container">
             <nav class="navbar navbar-dark">
-                <span class="navbar-brand mb-0 h1">Midas Bocchi</span>
+                <span class="navbar-brand mb-0 h1">
+                    <router-link v-bind:to="{ name: 'index' }">
+                        Midas Bocchi
+                    </router-link>
+                </span>
                 <div>
                     <router-link v-bind:to="{ name: 'balance.list' }">
                         <button class="btn btn-secondary">Balance List</button>
