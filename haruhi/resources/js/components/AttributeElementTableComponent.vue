@@ -74,7 +74,7 @@ export default {
     data: function () {
         return {
             attributeElements: [],
-            attributeCategories: [{ 'id': 1 }],
+            attributeCategories: [],
             newAttributeElement: {},
             editable: null
         }
@@ -84,6 +84,12 @@ export default {
             axios.get('/api/attribute_elements/' + this.attributeName + '_element')
                 .then((res) => {
                     this.attributeElements = res.data;
+                });
+        },
+        getAttributeCategories() {
+            axios.get('/api/attribute_categories/' + this.attributeName + '_category')
+                .then((res) => {
+                    this.attributeCategories = res.data;
                 });
         },
         editAttributeElement(id) {
@@ -118,6 +124,7 @@ export default {
     },
     mounted() {
         this.getAttributeElements();
+        this.getAttributeCategories();
     }
 }
 </script>
