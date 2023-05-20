@@ -32,6 +32,22 @@ class AttributeElementService
         );
     }
 
+    public static function getAttributeElementByElementId(array $input): array
+    {
+        $records = AttributeElementDao::getAttributeElementByElementId($input['attributeName'], $input['elementId']);
+        return array_map(
+            function ($record) {
+                return [
+                    'id' => $record->id,
+                    'name' => $record->name,
+                    'description' => $record->description,
+                    'category_id' => $record->category_id,
+                ];
+            },
+            $records
+        );
+    }
+
     public static function createAttributeElement(array $input): Bool
     {
         return AttributeElementDao::insertAttributeElement($input['attributeName'], $input['attributeElement']);

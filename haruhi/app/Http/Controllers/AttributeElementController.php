@@ -14,6 +14,11 @@ class AttributeElementController extends Controller
         return AttributeElementService::getAttributeElements(['attributeName' => $attributeName]);
     }
 
+    public function show(String $attributeName, string $elementId)
+    {
+        return AttributeElementService::getAttributeElementByElementId(['attributeName' => $attributeName, 'elementId' => $elementId]);
+    }
+
     public function store(Request $request, String $attributeName)
     {
         return AttributeElementService::createAttributeElement([

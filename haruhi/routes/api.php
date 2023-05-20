@@ -32,6 +32,7 @@ Route::delete('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveCon
 
 Route::get('/attribute_elements/{attribute_name}', 'App\Http\Controllers\AttributeElementController@index');
 Route::post('/attribute_elements/{attribute_name}', 'App\Http\Controllers\AttributeElementController@store');
+Route::get('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@show');
 Route::put('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@update');
 
 Route::post('/salary', 'App\Http\Controllers\SalaryController@store');

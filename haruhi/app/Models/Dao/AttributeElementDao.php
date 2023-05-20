@@ -15,6 +15,11 @@ class AttributeElementDao
         return DB::table(self::getAttributeTableName($attributeName))->get()->toArray();
     }
 
+    public static function getAttributeElementByElementId(string $attributeName, string $elementId)
+    {
+        return DB::table(self::getAttributeTableName($attributeName))->where('id', $elementId)->get()->toArray();
+    }
+
     public static function insertAttributeElement(string $attributeName, array $attributeElement)
     {
         $data = [
