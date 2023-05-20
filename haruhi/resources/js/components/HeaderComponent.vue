@@ -14,12 +14,6 @@
                     <router-link v-bind:to="{ name: 'balance.create' }">
                         <button class="btn btn-secondary">Balance Add</button>
                     </router-link>
-                    <router-link v-bind:to="{ name: 'move.list', params: { attributeName: 'purposes' } }">
-                        <button class="btn btn-success">Purpose Move List</button>
-                    </router-link>
-                    <router-link v-bind:to="{ name: 'move.create', params: { attributeName: 'purposes' } }">
-                        <button class="btn btn-success">Purpose Move Add</button>
-                    </router-link>
                     <router-link v-bind:to="{ name: 'move.list', params: { attributeName: 'places' } }">
                         <button class="btn btn-success">Place Move List</button>
                     </router-link>
