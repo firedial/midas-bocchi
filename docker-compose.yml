@@ -4,7 +4,7 @@ services:
         build:
             context: ./haruhi
             dockerfile: Dockerfile
-        restart: always 
+        restart: always
         ports:
             - "3124:80"
         hostname: haruhi
@@ -15,7 +15,7 @@ services:
         build:
             context: ./eru
             dockerfile: Dockerfile
-        restart: always 
+        restart: always
         environment:
             - MB_DB_FILE=/metabase-data/metabase.db
         ports:
@@ -26,14 +26,14 @@ services:
         build:
             context: ./yui
             dockerfile: Dockerfile
-        restart: always 
+        restart: always
         env_file: ./yui/.env
         hostname: yui
         volumes:
          - db:/var/lib/mysql
     rikka:
         build: ./rikka
-        restart: always 
+        restart: always
         env_file: ./rikka/.env
         volumes:
          - ./rikka:/home/root
