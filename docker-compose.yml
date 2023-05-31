@@ -1,5 +1,15 @@
 version: '3.3'
 services:
+    konata:
+        build: ./konata
+        ports:
+         - "443:443"
+        volumes:
+         - ./konata/conf.d/:/etc/nginx/conf.d
+         - ./konata/ssl/:/etc/nginx/ssl
+        depends_on:
+         - haruhi
+         - eru
     haruhi:
         build:
             context: ./haruhi
