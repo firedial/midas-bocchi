@@ -45,9 +45,16 @@ services:
             - MYSQL_COLLATION=$DB_DATABASE_COLLATION
             - MYSQL_USER=$DB_MIDAS_ROOT_USER
             - MYSQL_PASSWORD=$DB_MIDAS_ROOT_PASSWORD
+            - DB_MIDAS_BACKUP_USER=$DB_MIDAS_BACKUP_USER
+            - DB_MIDAS_BACKUP_PASSWORD=$DB_MIDAS_BACKUP_PASSWORD
+            - DB_MIDAS_API_USER=$DB_MIDAS_API_USER
+            - DB_MIDAS_API_PASSWORD=$DB_MIDAS_API_PASSWORD
+            - DB_MIDAS_ANALYZE_USER=$DB_MIDAS_ANALYZE_USER
+            - DB_MIDAS_ANALYZE_PASSWORD=$DB_MIDAS_ANALYZE_PASSWORD
         hostname: yui
         volumes:
-         - db:/var/lib/mysql
+            - ./yui/initdb.d:/docker-entrypoint-initdb.d
+            - db:/var/lib/mysql
     rikka:
         build: ./rikka
         restart: always
