@@ -17,6 +17,11 @@ services:
         restart: always
         hostname: haruhi
         # command: npm run watch
+        environment:
+            - DB_HOST=$DB_HOST
+            - DB_DATABASE=$DB_DATABASE
+            - DB_USERNAME=$DB_MIDAS_API_USER
+            - DB_PASSWORD=$DB_MIDAS_API_PASSWORD
         volumes:
             - ./haruhi:/var/www/html
     eru:
