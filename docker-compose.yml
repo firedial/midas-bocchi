@@ -47,7 +47,19 @@ services:
     rikka:
         build: ./rikka
         restart: always
-        env_file: ./rikka/.env
+        environment:
+            - NAS_PATH=$NAS_PATH
+            - NAS_USER=$NAS_USER
+            - NAS_PASS=$NAS_PASS
+            - DB_MIDAS_ROOT_USER=$DB_MIDAS_ROOT_USER
+            - DB_MIDAS_ROOT_PASS=$DB_MIDAS_ROOT_PASSWORD
+            - DB_MIDAS_BACKUP_USER=$DB_MIDAS_BACKUP_USER
+            - DB_MIDAS_BACKUP_PASS=$DB_MIDAS_BACKUP_PASSWORD
+            - DB_HOST=$DB_HOST
+            - DB_DATABASE_NAME=$DB_DATABASE
+            - ENCRYPTION_KEY=$ENCRYPTION_KEY
+            - SLACK_URL=$SLACK_URL
+            - SLACK_USER=$SLACK_USER
         volumes:
          - ./rikka:/home/root
         privileged: true
