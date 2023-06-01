@@ -15,8 +15,6 @@ services:
             context: ./haruhi
             dockerfile: Dockerfile
         restart: always
-        ports:
-            - "3124:80"
         hostname: haruhi
         # command: npm run watch
         volumes:
@@ -28,8 +26,7 @@ services:
         restart: always
         environment:
             - MB_DB_FILE=/metabase-data/metabase.db
-        ports:
-            - "3000:3000"
+            - MB_SITE_URL="http://midas.home.arpa:3000/eru"
         volumes:
             - ./eru/metabase:/metabase-data
     yui:
