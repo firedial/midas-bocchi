@@ -34,7 +34,13 @@ services:
             context: ./yui
             dockerfile: Dockerfile
         restart: always
-        env_file: ./yui/.env
+        environment:
+            - MYSQL_ROOT_PASSWORD=$DB_ROOT_PASSWORD
+            - MYSQL_DATABASE=$DB_DATABASE
+            - MYSQL_CHARSET=$DB_DATABASE_CHARSET
+            - MYSQL_COLLATION=$DB_DATABASE_COLLATION
+            - MYSQL_USER=$DB_MIDAS_ROOT_USER
+            - MYSQL_PASSWORD=$DB_MIDAS_ROOT_PASSWORD
         hostname: yui
         volumes:
          - db:/var/lib/mysql
