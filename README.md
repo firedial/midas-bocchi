@@ -8,9 +8,8 @@
 git clone https://github.com/firedial/midas-bocchi.git
 cd midas-bocchi
 
+cp .env.example .env
 cp haruhi/.env.example haruhi/.env
-cp yui/.env.example yui/.env
-cp rikka/.env.example rikka/.env
 
 docker compose up -d
 
