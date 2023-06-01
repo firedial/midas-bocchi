@@ -31,7 +31,6 @@ services:
         restart: always
         environment:
             - MB_DB_FILE=/metabase-data/metabase.db
-            - MB_SITE_URL="http://midas.home.arpa:3000/eru"
         volumes:
             - ./eru/metabase:/metabase-data
     yui:
