@@ -36,8 +36,6 @@ services:
             - MB_DB_USER=$DB_METABASE_ROOT_USER
             - MB_DB_PASS=$DB_METABASE_ROOT_PASSWORD
             - MB_DB_HOST=$DB_HOST
-        volumes:
-            - ./eru/metabase:/metabase-data
     yui:
         build:
             context: ./yui
