@@ -30,7 +30,12 @@ services:
             dockerfile: Dockerfile
         restart: always
         environment:
-            - MB_DB_FILE=/metabase-data/metabase.db
+            - MB_DB_TYPE=mysql
+            - MB_DB_DBNAME=$DB_METABASE_DATABASE
+            - MB_DB_PORT=3306
+            - MB_DB_USER=$DB_METABASE_ROOT_USER
+            - MB_DB_PASS=$DB_METABASE_ROOT_PASSWORD
+            - MB_DB_HOST=$DB_HOST
         volumes:
             - ./eru/metabase:/metabase-data
     yui:
@@ -51,6 +56,9 @@ services:
             - DB_MIDAS_API_PASSWORD=$DB_MIDAS_API_PASSWORD
             - DB_MIDAS_ANALYZE_USER=$DB_MIDAS_ANALYZE_USER
             - DB_MIDAS_ANALYZE_PASSWORD=$DB_MIDAS_ANALYZE_PASSWORD
+            - DB_METABASE_DATABASE=$DB_METABASE_DATABASE
+            - DB_METABASE_ROOT_USER=$DB_METABASE_ROOT_USER
+            - DB_METABASE_ROOT_PASSWORD=$DB_METABASE_ROOT_PASSWORD
         hostname: yui
         volumes:
             - ./yui/initdb.d:/docker-entrypoint-initdb.d
