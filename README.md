@@ -96,6 +96,11 @@ DB は haruhi に入ってマイグレーションする。
 ```
 $ docker compose exec haruhi bash
 $ php artisan migrate
+```
+
+必要ならシーディングもする。
+
+```
 $ php artisan db:seed
 ```
 
