@@ -85,3 +85,38 @@ $ npm i --save-dev webpack@latest
 
 $ npm run dev
 ```
+
+
+## 永続化データ
+
+### 新規
+
+DB は haruhi に入ってマイグレーションする。
+
+```
+$ docker compose exec haruhi bash
+$ php artisan migrate
+$ php artisan db:seed
+```
+
+Metabase の設定はブラウザから行う。
+https://[ドメイン名]/eru にアクセスることで設定画面が表示される。
+
+Metabase のアカウントを設定と、DB の設定を行う。
+
+DB の設定は .env で設定した値を入れる。
+* ホスト: DB_HOST
+* ポート: 3306
+* ユーザ: DB_MIDAS_ANALYZE_USER
+* パスワード: DB_MIDAS_ANALYZE_PASSWORD
+* データベース名: DB_DATABASE
+
+### バックアップからリストア
+
+rikka コンテナからリストアする。それぞれ DB と Metabase のリストアコマンドになる。
+
+```
+$ docker compose exec rikka sh
+$ sh /home/root/backup/crypt_restore.sh
+$ sh /home/root/backup/crypt_metabase_restore.sh
+```
