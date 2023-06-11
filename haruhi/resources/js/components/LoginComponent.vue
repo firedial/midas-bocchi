@@ -1,25 +1,16 @@
 <template>
     <div class="container">
-        <table class="table table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">項目</th>
-                    <th scope="col">リンク</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(link, index) in links" :key="index">
-                    <td>
-                        {{ link.name }}
-                    </td>
-                    <td>
-                        <router-link v-bind:to="{ name: link.url, params: { attributeName: link.attributeName } }">
-                            <button class="btn btn-primary">{{ link.value }}</button>
-                        </router-link>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <form v-on:submit.prevent="submit">
+            <div class="form-group row">
+                <label for="email" class="col-sm-3 col-form-label">Email</label>
+                <input type="text" class="col-sm-3 col-form-label" id="email" v-model=email>
+            </div>
+            <div class="form-group row">
+                <label for="password" class="col-sm-3 col-form-label">Password</label>
+                <input type="password" class="col-sm-3 col-form-label" id="passoword" v-model=password>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
     </div>
 </template>
 
@@ -27,18 +18,17 @@
 export default {
     data: function () {
         return {
+            email: '',
+            password: '',
         }
     },
     methods: {
-        getKindElements() {
+        submit() {
             axios.get('/sanctum/csrf-cookie')
                 .then(() => {
-                    axios.post('/api/login', { email: "hoge@example.com", password: "fa" })
+                    axios.post('/api/login', { email: this.email, password: this.password })
                 });
         },
     },
-    mounted() {
-        this.getKindElements();
-    }
 }
 </script>
