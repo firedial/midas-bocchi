@@ -15,6 +15,7 @@ import SalaryCreateComponent from "./components/SalaryCreateComponent";
 import BonusCreateComponent from "./components/BonusCreateComponent";
 import MonthlyCreateComponent from "./components/MonthlyCreateComponent";
 import LoginComponent from "./components/LoginComponent";
+import LogoutComponent from "./components/LogoutComponent";
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -114,7 +115,13 @@ const router = new VueRouter({
             path: '/login',
             name: 'login',
             component: LoginComponent
-        },]
+        },
+        {
+            path: '/logout',
+            name: 'logout',
+            component: LogoutComponent
+        },
+    ]
 });
 
 /**
