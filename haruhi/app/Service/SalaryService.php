@@ -6,6 +6,7 @@ use App\Models\Balance;
 use App\Exceptions\InvalidParameterException;
 use App\Models\Dao\MoveDao;
 use App\Models\Dao\BalanceDao;
+use App\Models\Dao\Impl\BalanceDaoImpl;
 
 /**
  * 給与操作のサービスクラス
@@ -25,7 +26,14 @@ class SalaryService
     const SKY_PLACE_ELEMENT_ID = 4;
     const SALARY_PLACE_ELEMENT_ID = 8;
 
-    public static function registerSalary(array $salary): Bool
+    private $balanceDao;
+
+    public function __construct($balanceDao = null)
+    {
+        $this->balanceDao = $balanceDao ?: new BalanceDaoImpl();
+    }
+
+    public function registerSalary(array $salary): Bool
     {
         \DB::beginTransaction();
         try {
@@ -37,7 +45,7 @@ class SalaryService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            BalanceDao::insertBalance($baseSalary);
+            $this->balanceDao->insertBalance($baseSalary);
 
             $adjustmentSalary = [
                 'amount' => (int)$salary['adjustmentSalary'],
@@ -47,7 +55,7 @@ class SalaryService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            BalanceDao::insertBalance($adjustmentSalary);
+            $this->balanceDao->insertBalance($adjustmentSalary);
 
             $transportation = [
                 'amount' => (int)$salary['transportation'],
@@ -57,7 +65,7 @@ class SalaryService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            BalanceDao::insertBalance($transportation);
+            $this->balanceDao->insertBalance($transportation);
 
             $holdingIncentives = [
                 'amount' => (int)$salary['holdingIncentives'],
@@ -67,7 +75,7 @@ class SalaryService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            BalanceDao::insertBalance($holdingIncentives);
+            $this->balanceDao->insertBalance($holdingIncentives);
 
             $transportationMove = [
                 'amount' => (int)$salary['transportation'],
@@ -103,7 +111,7 @@ class SalaryService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            BalanceDao::insertBalance($healthInsurance);
+            $this->balanceDao->insertBalance($healthInsurance);
 
             $welfarePension = [
                 'amount' => (-1) * (int)$salary['welfarePension'],
@@ -113,7 +121,7 @@ class SalaryService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            BalanceDao::insertBalance($welfarePension);
+            $this->balanceDao->insertBalance($welfarePension);
 
             $residentTax = [
                 'amount' => (-1) * (int)$salary['residentTax'],
@@ -123,7 +131,7 @@ class SalaryService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            BalanceDao::insertBalance($residentTax);
+            $this->balanceDao->insertBalance($residentTax);
 
             $employmentInsurance = [
                 'amount' => (-1) * (int)$salary['employmentInsurance'],
@@ -133,7 +141,7 @@ class SalaryService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            BalanceDao::insertBalance($employmentInsurance);
+            $this->balanceDao->insertBalance($employmentInsurance);
 
             $incomeTax = [
                 'amount' => (-1) * (int)$salary['incomeTax'],
@@ -143,7 +151,7 @@ class SalaryService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            BalanceDao::insertBalance($incomeTax);
+            $this->balanceDao->insertBalance($incomeTax);
 
             $holding = [
                 'amount' => (-1) * (int)$salary['holding'],
@@ -153,7 +161,7 @@ class SalaryService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            BalanceDao::insertBalance($holding);
+            $this->balanceDao->insertBalance($holding);
 
             $takeSalary =
                 (int)$salary['baseSalary'] +

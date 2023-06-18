@@ -40,7 +40,8 @@ class SalaryController extends Controller
             throw new InvalidParameterException('Date is invalid.');
         }
 
-        SalaryService::registerSalary($salary);
+        $salaryService = new SalaryService();
+        $salaryService->registerSalary($salary);
     }
 
 }
