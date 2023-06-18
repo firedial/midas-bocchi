@@ -4,9 +4,10 @@ namespace App\Service;
 
 use App\Models\Balance;
 use App\Exceptions\InvalidParameterException;
-use App\Models\Dao\MoveDao;
 use App\Models\Dao\BalanceDao;
 use App\Models\Dao\Impl\BalanceDaoImpl;
+use App\Models\Dao\MoveDao;
+use App\Models\Dao\Impl\MoveDaoImpl;
 
 /**
  * 給与操作のサービスクラス
@@ -27,10 +28,12 @@ class SalaryService
     const SALARY_PLACE_ELEMENT_ID = 8;
 
     private $balanceDao;
+    private $moveDao;
 
-    public function __construct($balanceDao = null)
+    public function __construct(BalanceDao $balanceDao = null, MoveDao $moveDao = null)
     {
         $this->balanceDao = $balanceDao ?: new BalanceDaoImpl();
+        $this->moveDao = $moveDao ?: new MoveDaoImpl();
     }
 
     public function registerSalary(array $salary): Bool
@@ -84,7 +87,7 @@ class SalaryService
                 'after_id' => self::TRANSPORTATION_PURPOSE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            MoveDao::insertMoveByArray('purpose', $transportationMove);
+            $this->moveDao->insertMoveByArray('purpose', $transportationMove);
 
             $deductionValue =
                 (int)$salary['healthInsurance'] +
@@ -101,7 +104,7 @@ class SalaryService
                 'after_id' => self::DEDUCTION_PURPOSE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            MoveDao::insertMoveByArray('purpose', $deductionMove);
+            $this->moveDao->insertMoveByArray('purpose', $deductionMove);
 
             $healthInsurance = [
                 'amount' => (-1) * (int)$salary['healthInsurance'],
@@ -177,7 +180,7 @@ class SalaryService
                 'after_id' => self::SALARY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            MoveDao::insertMoveByArray('place', $mainMove);
+            $this->moveDao->insertMoveByArray('place', $mainMove);
 
             \DB::commit();
         } catch (Exception $e) {

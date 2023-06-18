@@ -4,9 +4,10 @@ namespace App\Service;
 
 use App\Models\Balance;
 use App\Exceptions\InvalidParameterException;
-use App\Models\Dao\MoveDao;
 use App\Models\Dao\BalanceDao;
 use App\Models\Dao\Impl\BalanceDaoImpl;
+use App\Models\Dao\MoveDao;
+use App\Models\Dao\Impl\MoveDaoImpl;
 
 /**
  * 賞与操作のサービスクラス
@@ -27,10 +28,12 @@ class BonusService
     const SALARY_PLACE_ELEMENT_ID = 8;
 
     private $balanceDao;
+    private $moveDao;
 
-    public function __construct($balanceDao = null)
+    public function __construct(BalanceDao $balanceDao = null, MoveDao $moveDao = null)
     {
         $this->balanceDao = $balanceDao ?: new BalanceDaoImpl();
+        $this->moveDao = $moveDao ?: new MoveDaoImpl();
     }
 
     public function registerBonus(array $bonus): Bool
@@ -60,7 +63,7 @@ class BonusService
                 'after_id' => self::DEDUCTION_PURPOSE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            MoveDao::insertMoveByArray('purpose', $deductionMove);
+            $this->moveDao->insertMoveByArray('purpose', $deductionMove);
 
             $healthInsurance = [
                 'amount' => (-1) * (int)$bonus['healthInsurance'],
@@ -111,7 +114,7 @@ class BonusService
                 'after_id' => self::SALARY_PLACE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            MoveDao::insertMoveByArray('place', $mainMove);
+            $this->moveDao->insertMoveByArray('place', $mainMove);
 
             \DB::commit();
         } catch (Exception $e) {
