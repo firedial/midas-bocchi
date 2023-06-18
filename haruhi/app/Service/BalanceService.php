@@ -6,7 +6,7 @@ use App\Models\KindElement;
 use App\Models\PurposeElement;
 use App\Models\PlaceElement;
 use App\Models\Balance;
-use App\Util\Date;
+use App\Util\DateUtil;
 use App\Exceptions\InvalidParameterException;
 
 /**
@@ -57,9 +57,8 @@ class BalanceService
         }
 
         // 日付が正しい形式か
-        if (!Date::isValidDateString($balance->date)) {
-            // @todo 現状スラッシュ区切りで渡されているので、フロント側を修正する必要あり
-            // throw new InvalidParameterException('Date is invalid.');
+        if (!DateUtil::isValidDateString($balance->date)) {
+            throw new InvalidParameterException('Date is invalid.');
         }
     }
 }
