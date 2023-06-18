@@ -6,7 +6,6 @@ use App\Models\KindElement;
 use App\Models\PurposeElement;
 use App\Models\PlaceElement;
 use App\Models\Balance;
-use App\Util\Date;
 use App\Exceptions\InvalidParameterException;
 use App\Models\Dao\AttributeCategoryDao;
 use Illuminate\Support\Facades\DB;
