@@ -11,7 +11,7 @@ use App\Models\Dao\BalanceDao;
 class BalanceDaoImpl implements BalanceDao
 {
 
-    public static function insertBalance(Array $balance)
+    public function insertBalance(Array $balance)
     {
         return DB::table('m_balance')->insert($balance);
     }
