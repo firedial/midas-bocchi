@@ -12,19 +12,16 @@ class AttributeCategoryController extends Controller
 {
     public function index(String $attributeName)
     {
-        $attributeCategoryService = new AttributeCategoryService();
-
         if (!in_array($attributeName, ['kind_category', 'purpose_category', 'place_category'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
         }
 
+        $attributeCategoryService = new AttributeCategoryService();
         return $attributeCategoryService->getAttributeCategories(['attributeName' => $attributeName]);
     }
 
     public function store(Request $request, String $attributeName)
     {
-        $attributeCategoryService = new AttributeCategoryService();
-
         if (!in_array($attributeName, ['kind_category', 'purpose_category', 'place_category'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
         }
@@ -39,19 +36,18 @@ class AttributeCategoryController extends Controller
             throw new InvalidParameterException("Wrong description {$description}.");
         }
 
+        $attributeCategoryService = new AttributeCategoryService();
         return $attributeCategoryService->createAttributeCategory([
             'attributeName' => $attributeName,
             'attributeCategory' => [
                 'name' => $name,
-                'description' => $request->input('description'),
+                'description' => $description,
             ],
         ]);
     }
 
     public function update(Request $request, String $attributeName, int $categoryId)
     {
-        $attributeCategoryService = new AttributeCategoryService();
-
         if (!in_array($attributeName, ['kind_category', 'purpose_category', 'place_category'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
         }
@@ -70,12 +66,13 @@ class AttributeCategoryController extends Controller
             throw new InvalidParameterException("Wrong description {$description}.");
         }
 
+        $attributeCategoryService = new AttributeCategoryService();
         return $attributeCategoryService->updateAttributeCategory([
             'attributeName' => $attributeName,
             'attributeCategory' => [
                 'id' => $categoryId,
-                'name' => $request->input('name'),
-                'description' => $request->input('description'),
+                'name' => $name,
+                'description' => $description,
             ],
         ]);
     }
