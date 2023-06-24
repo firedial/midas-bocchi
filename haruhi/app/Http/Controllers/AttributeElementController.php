@@ -11,17 +11,20 @@ class AttributeElementController extends Controller
 {
     public function index(String $attributeName)
     {
-        return AttributeElementService::getAttributeElements(['attributeName' => $attributeName]);
+        $attributeElementService = new AttributeElementService();
+        return $attributeElementService->getAttributeElements(['attributeName' => $attributeName]);
     }
 
     public function show(String $attributeName, string $elementId)
     {
-        return AttributeElementService::getAttributeElementByElementId(['attributeName' => $attributeName, 'elementId' => $elementId]);
+        $attributeElementService = new AttributeElementService();
+        return $attributeElementService->getAttributeElementByElementId(['attributeName' => $attributeName, 'elementId' => $elementId]);
     }
 
     public function store(Request $request, String $attributeName)
     {
-        return AttributeElementService::createAttributeElement([
+        $attributeElementService = new AttributeElementService();
+        return $attributeElementService->createAttributeElement([
             'attributeName' => $attributeName,
             'attributeElement' => [
                 'name' => $request->input('name'),
@@ -33,7 +36,8 @@ class AttributeElementController extends Controller
 
     public function update(Request $request, String $attributeName, int $elementId)
     {
-        return AttributeElementService::updateAttributeElement([
+        $attributeElementService = new AttributeElementService();
+        return $attributeElementService->updateAttributeElement([
             'attributeName' => $attributeName,
             'attributeElement' => [
                 'id' => $elementId,
