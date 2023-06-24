@@ -11,12 +11,14 @@ class AttributeCategoryController extends Controller
 {
     public function index(String $attributeName)
     {
-        return AttributeCategoryService::getAttributeCategories(['attributeName' => $attributeName]);
+        $attributeCategoryService = new AttributeCategoryService();
+        return $attributeCategoryService->getAttributeCategories(['attributeName' => $attributeName]);
     }
 
     public function store(Request $request, String $attributeName)
     {
-        return AttributeCategoryService::createAttributeCategory([
+        $attributeCategoryService = new AttributeCategoryService();
+        return $attributeCategoryService->createAttributeCategory([
             'attributeName' => $attributeName,
             'attributeCategory' => [
                 'name' => $request->input('name'),
@@ -27,7 +29,8 @@ class AttributeCategoryController extends Controller
 
     public function update(Request $request, String $attributeName, int $categoryId)
     {
-        return AttributeCategoryService::updateAttributeCategory([
+        $attributeCategoryService = new AttributeCategoryService();
+        return $attributeCategoryService->updateAttributeCategory([
             'attributeName' => $attributeName,
             'attributeCategory' => [
                 'id' => $categoryId,
