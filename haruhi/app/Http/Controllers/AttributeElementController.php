@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Balance;
-use App\Models\KindElement;
 use App\Service\AttributeElementService;
 use App\Exceptions\InvalidParameterException;
 
