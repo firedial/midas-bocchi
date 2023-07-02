@@ -52,13 +52,13 @@ class BalanceDaoImpl implements BalanceDao
 
     public function updateBalance(array $balance)
     {
-        // @todo 移動処理じゃないことを確認したほうがいい
+        // @todo 移動処理じゃないことを確認したほうがいい(移動処理でもこの関数使うのでもっと上位で)
         return DB::table('m_balance')->where('id', '=', $balance['id'])->update($balance);
     }
 
     public function deleteBalance(int $id)
     {
-        // @todo 移動処理じゃないことを確認したほうがいい
+        // @todo 移動処理じゃないことを確認したほうがいい(移動処理でもこの関数使うのでもっと上位で)
         return DB::table('m_balance')->where('id', '=', $id)->delete();
     }
 
