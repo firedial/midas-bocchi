@@ -12,65 +12,56 @@ class BalanceController extends Controller
 {
     public function index(Request $request)
     {
-        $query = DB::table('m_balance')
-            ->select(
-                'm_balance.id AS id',
-                'm_balance.amount AS amount',
-                'm_balance.item AS item',
-                'm_balance.kind_element_id AS kind_element_id',
-                'm_balance.purpose_element_id AS purpose_element_id',
-                'm_balance.place_element_id AS place_element_id',
-                'm_balance.date AS date',
-                'm_kind_element.description AS kind_element_description',
-                'm_purpose_element.description AS purpose_element_description',
-                'm_place_element.description AS place_element_description'
-            )
-            ->join('m_kind_element', 'm_kind_element.id', '=', 'm_balance.kind_element_id')
-            ->join('m_purpose_element', 'm_purpose_element.id', '=', 'm_balance.purpose_element_id')
-            ->join('m_place_element', 'm_place_element.id', '=', 'm_balance.place_element_id')
-            ->where('m_balance.kind_element_id', '<>', KindElement::MOVE_ID);
-        if (is_numeric($request->input('limit'))) {
-            $query->limit($request->input('limit'));
-        }
-        // @todo クエリそのまま入れているので後で修正する
-        if (!is_null($request->input('orderby'))) {
-            $query->orderby('m_balance.id', $request->input('orderby'));
-        }
+        $params = [];
+        $params['limit'] = $request->input('limit');
+        $params['orderby'] = $request->input('orderby');
+        $params['id'] = $request->input('id');
 
-        return $query->get();
+        $balanceService = new BalanceService();
+        return $balanceService->index($params);
     }
 
     public function show(Balance $balance)
     {
-        return $balance;
+        // @todo ここら辺セットしなくてもいいようにする
+        $params = [];
+        $params['limit'] = null;
+        $params['orderby'] = null;
+        $params['id'] = $balance['id'];
+
+        $balanceService = new BalanceService();
+        // @todo あるかどうか判定する
+        return $balanceService->index($params)[0];
     }
 
     public function store(Request $request)
     {
-        return BalanceService::createBalance(self::getBalance($request));
+        $balanceService = new BalanceService();
+        return $balanceService->store(self::getBalance($request));
     }
 
-    public function update(Request $request, Balance $balance)
+    public function update(Request $request)
     {
-        $balance->update($request->all());
-        return $balance;
+        $balanceService = new BalanceService();
+        return $balanceService->update(self::getBalance($request));
     }
 
-    public function destroy(Balance $balance): boolean
+    public function destroy(Balance $balance): bool
     {
-        return BalanceService::deleteBalance($balance);
+        $balanceService = new BalanceService();
+        return $balanceService->destroy($balance['id']);
     }
 
-    private static function getBalance(Request $request): Balance
+    private static function getBalance(Request $request): array
     {
-        $balance = new Balance();
-        $balance->id = $request->id === null ? null : (int)$request->id;
-        $balance->amount = (int)$request->amount;
-        $balance->item = (string)$request->item;
-        $balance->kind_element_id = (int)$request->kind_element_id;
-        $balance->purpose_element_id = (int)$request->purpose_element_id;
-        $balance->place_element_id = (int)$request->place_element_id;
-        $balance->date = (string)$request->date;
+        $balance = [];
+        $balance['id'] = $request->input('id') === null ? null : (int)$request->input('id');
+        $balance['amount'] = (int)$request->input('amount');
+        $balance['item'] = (string)$request->input('item');
+        $balance['kind_element_id'] = (int)$request->input('kind_element_id');
+        $balance['purpose_element_id'] = (int)$request->input('purpose_element_id');
+        $balance['place_element_id'] = (int)$request->input('place_element_id');
+        $balance['date'] = (string)$request->input('date');
         return $balance;
     }
 }

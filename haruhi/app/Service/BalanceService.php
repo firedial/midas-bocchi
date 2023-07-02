@@ -6,6 +6,8 @@ use App\Models\KindElement;
 use App\Models\PurposeElement;
 use App\Models\PlaceElement;
 use App\Models\Balance;
+use App\Models\Dao\BalanceDao;
+use App\Models\Dao\Impl\BalanceDaoImpl;
 use App\Util\DateUtil;
 use App\Exceptions\InvalidParameterException;
 
@@ -14,6 +16,38 @@ use App\Exceptions\InvalidParameterException;
  */
 class BalanceService
 {
+
+    private $balanceDao;
+
+    public function __construct(BalanceDao $balanceDao = null)
+    {
+        $this->balanceDao = $balanceDao ?: new BalanceDaoImpl();
+    }
+
+    public function index(array $params): array
+    {
+        return $this->balanceDao->selectBalance($params);
+    }
+
+    public function show(array $params): array
+    {
+        return $this->balanceDao->selectBalance($params);
+    }
+
+    public function store(array $balance): bool
+    {
+        return $this->balanceDao->insertBalance($balance);
+    }
+
+    public function update(array $balance): bool
+    {
+        return $this->balanceDao->updateBalance($balance);
+    }
+
+    public function destroy(int $id): bool
+    {
+        return $this->balanceDao->deleteBalance($id);
+    }
 
     public static function createBalance(Balance $balance): Bool
     {
