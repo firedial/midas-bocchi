@@ -51,6 +51,7 @@ class MoveService
         return DB::transaction(function () use ($before, $after) {
             $this->balanceDao->insertBalance($before);
             $this->balanceDao->insertBalance($after);
+            // @todo 連番になっていることを確認したほうがいい
         });
     }
 
@@ -92,6 +93,7 @@ class MoveService
             'date' => $move['date']
         );
 
+        // @todo 移動処理が選択されていないか確認する
         if ($this->attributeName === 'purpose') {
             $before['purpose_element_id'] = $move['beforeId'];
             $before['place_element_id'] = PlaceElement::MOVE_ID;

@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Service\MoveService;
-use App\Models\Dao\MoveDao;
+use App\Exceptions\InvalidParameterException;
+use App\Util\DateUtil;
 
 class MoveController extends Controller
 {
@@ -24,12 +25,13 @@ class MoveController extends Controller
     public function store(Request $request, String $attributeName)
     {
         $move = [];
-        $move['item'] = $request->input('item');
-        $move['amount'] = $request->input('amount');
-        $move['date'] = $request->input('date');
-        $move['beforeId'] = $request->input('before_id');
-        $move['afterId'] = $request->input('after_id');
+        $move['item'] = (string)$request->input('item');
+        $move['amount'] = (int)$request->input('amount');
+        $move['date'] = (string)$request->input('date');
+        $move['beforeId'] = (int)$request->input('before_id');
+        $move['afterId'] = (int)$request->input('after_id');
 
+        self::validation($move);
         $moveService = new MoveService($attributeName);
         return $moveService->store($move);
     }
@@ -37,20 +39,47 @@ class MoveController extends Controller
     public function update(Request $request, String $attributeName, Int $id)
     {
         $move = [];
-        $move['item'] = $request->input('item');
-        $move['amount'] = $request->input('amount');
-        $move['date'] = $request->input('date');
-        $move['beforeId'] = $request->input('before_id');
-        $move['afterId'] = $request->input('after_id');
+        $move['item'] = (string)$request->input('item');
+        $move['amount'] = (int)$request->input('amount');
+        $move['date'] = (string)$request->input('date');
+        $move['beforeId'] = (int)$request->input('before_id');
+        $move['afterId'] = (int)$request->input('after_id');
 
+        if (is_null($id)) {
+            throw new InvalidParameterException('Move id is null.');
+        }
+
+        self::validation($move);
         $moveService = new MoveService($attributeName);
         return $moveService->update($move, $id);
-        return MoveDao::updateMove(self::getTableName($attributeName), $request, $id);
     }
 
     public function destroy(String $attributeName, Int $id)
     {
         $moveService = new MoveService($attributeName);
         return $moveService->destroy($id);
+    }
+
+    private static function validation(array $move): void
+    {
+        // 金額は 1 以上じゃないとダメ
+        if ($move['amount'] <= 0) {
+            throw new InvalidParameterException('Amount is zero or minus.');
+        }
+
+        // 項目は空文字ではないとダメ
+        if ($move['item'] === '') {
+            throw new InvalidParameterException('Item is empty.');
+        }
+
+        // 移動していないとダメ
+        if ($move['beforeId'] === $move['afterId']) {
+            throw new InvalidParameterException('Before id and after id is the same.');
+        }
+
+        // 日付が正しい形式か
+        if (!DateUtil::isValidDateString($move['date'])) {
+            throw new InvalidParameterException('Date is invalid.');
+        }
     }
 }
