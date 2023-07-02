@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Balance;
-use App\Models\KindElement;
 use App\Service\BalanceService;
+use App\Models\KindElement;
+use App\Models\PurposeElement;
+use App\Models\PlaceElement;
+use App\Util\DateUtil;
+use App\Exceptions\InvalidParameterException;
 
 class BalanceController extends Controller
 {
@@ -37,13 +41,20 @@ class BalanceController extends Controller
     public function store(Request $request)
     {
         $balanceService = new BalanceService();
-        return $balanceService->store(self::getBalance($request));
+        $balance = self::getBalance($request);
+        self::validation($balance);
+        return $balanceService->store($balance);
     }
 
     public function update(Request $request)
     {
         $balanceService = new BalanceService();
-        return $balanceService->update(self::getBalance($request));
+        $balance = self::getBalance($request);
+        if (is_null($balance['id'])) {
+            throw new InvalidParameterException('Balance id is null.');
+        }
+        self::validation($balance);
+        return $balanceService->update($balance);
     }
 
     public function destroy(Balance $balance): bool
@@ -63,5 +74,34 @@ class BalanceController extends Controller
         $balance['place_element_id'] = (int)$request->input('place_element_id');
         $balance['date'] = (string)$request->input('date');
         return $balance;
+    }
+
+    private static function validation(array $balance): void
+    {
+        // 移動処理を表す id が入っていた場合は不正
+        if ($balance['kind_element_id'] === KindElement::MOVE_ID) {
+            throw new InvalidParameterException('Kind element id is move id.');
+        }
+        if ($balance['purpose_element_id'] === PurposeElement::MOVE_ID) {
+            throw new InvalidParameterException('Purpose element id is move id.');
+        }
+        if ($balance['place_element_id'] === PlaceElement::MOVE_ID) {
+            throw new InvalidParameterException('Place element id is move id.');
+        }
+
+        // 金額は 0 でない値じゃないとダメ
+        if ($balance['amount'] === 0) {
+            throw new InvalidParameterException('Amount is zero.');
+        }
+
+        // 項目は空文字ではないとダメ
+        if ($balance['item'] === '') {
+            throw new InvalidParameterException('Item is empty.');
+        }
+
+        // 日付が正しい形式か
+        if (!DateUtil::isValidDateString($balance['date'])) {
+            throw new InvalidParameterException('Date is invalid.');
+        }
     }
 }
