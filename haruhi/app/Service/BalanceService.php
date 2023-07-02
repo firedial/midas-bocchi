@@ -42,9 +42,4 @@ class BalanceService
     {
         return $this->balanceDao->deleteBalance($id);
     }
-
-    public static function deleteBalance(Balance $balance): Bool
-    {
-        return $balance->delete();
-    }
 }
