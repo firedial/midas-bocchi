@@ -50,8 +50,14 @@ class MoveService
 
         return DB::transaction(function () use ($before, $after) {
             $this->balanceDao->insertBalance($before);
+            $beforeId = (int)DB::getPdo()->lastInsertId();
+
             $this->balanceDao->insertBalance($after);
-            // @todo 連番になっていることを確認したほうがいい
+            $afterId = (int)DB::getPdo()->lastInsertId();
+
+            if ($beforeId + 1 !== $afterId) {
+                throw new InternalException("Move insert wrong.");
+            }
         });
     }
 
