@@ -9,10 +9,8 @@ RUN apt-get update && apt-get install -y \
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf && a2enmod rewrite
 
 COPY ./ /var/www/html/
-
-ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN composer install
-
-RUN npm run production
-
 RUN chown -R www-data /var/www/html
+USER www-data
+
+RUN composer install
+RUN npm run production
