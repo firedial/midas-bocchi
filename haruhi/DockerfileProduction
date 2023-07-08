@@ -12,4 +12,5 @@ COPY ./haruhi /var/www/html/
 RUN chown -R www-data /var/www/html
 
 RUN composer install
+RUN npm install
 RUN npm run production
