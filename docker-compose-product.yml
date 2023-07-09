@@ -54,6 +54,8 @@ services:
             - DB_TASK_USER=$DB_TASK_USER
             - DB_TASK_PASSWORD=$DB_TASK_PASSWORD
         hostname: yui
+        volumes:
+            - ./yui/initdb.d:/docker-entrypoint-initdb.d
             - db:/var/lib/mysql
     rikka:
         image: firedial/midas-bocchi-rikka
@@ -70,6 +72,8 @@ services:
             - ENCRYPTION_KEY=$ENCRYPTION_KEY
             - SLACK_URL=$SLACK_URL
             - SLACK_USER=$SLACK_USER
+        volumes:
+         - ./rikka:/home/root
         privileged: true
         tty: true
 volumes:
