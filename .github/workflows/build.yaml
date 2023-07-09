@@ -3,7 +3,7 @@ name: ci
 on:
   push:
     branches:
-      - 'image_build'
+      - 'main'
 
 jobs:
   docker:
@@ -29,36 +29,3 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-haruhi:latest
           file: haruhi/DockerfileProduction
           platforms: linux/arm/v7
-      -
-        name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-eru:latest
-          file: eru/Dockerfile
-          platforms: linux/arm/v7
-      -
-        name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-rikka:latest
-          file: rikka/Dockerfile
-          platforms: linux/arm/v7
-      -
-        name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-yui:latest
-          file: yui/Dockerfile
-          platforms: linux/arm/v7
-      -
-        name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-konata:latest
-          file: konata/Dockerfile
-          platforms: linux/arm/v7
-
