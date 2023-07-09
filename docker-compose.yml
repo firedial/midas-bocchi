@@ -18,6 +18,11 @@ services:
         hostname: haruhi
         # command: npm run watch
         environment:
+            - APP_ENV=$APP_ENV
+            - APP_DEBUG=$APP_DEBUG
+            - APP_URL=$APP_URL
+            - APP_DOMAIN=$APP_DOMAIN
+            - APP_KEY=$APP_KEY
             - DB_HOST=$DB_HOST
             - DB_DATABASE=$DB_DATABASE
             - DB_USERNAME=$DB_MIDAS_API_USER
