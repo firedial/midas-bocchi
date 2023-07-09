@@ -7,6 +7,8 @@ services:
         volumes:
          - ./konata/conf.d/:/etc/nginx/conf.d
          - ./konata/ssl/:/etc/nginx/ssl
+        environment:
+            - APP_DOMAIN=$APP_DOMAIN
         depends_on:
          - haruhi
          - eru
@@ -27,6 +29,8 @@ services:
             - DB_DATABASE=$DB_DATABASE
             - DB_USERNAME=$DB_MIDAS_API_USER
             - DB_PASSWORD=$DB_MIDAS_API_PASSWORD
+            - SANCTUM_STATEFUL_DOMAINS=$APP_DOMAIN
+            - SESSION_DOMAIN=$APP_DOMAIN
         volumes:
             - ./haruhi:/var/www/html
     eru:

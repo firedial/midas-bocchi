@@ -14,33 +14,33 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/login', ['as' => 'login', 'uses' => 'App\Http\Controllers\LoginController@login']);
+Route::post('/logout', 'App\Http\Controllers\LoginController@logout');
+
+Route::middleware('auth:sanctum')->group(function() {
+    Route::get('/balances', 'App\Http\Controllers\BalanceController@index');
+    Route::post('/balances', 'App\Http\Controllers\BalanceController@store');
+    Route::get('/balances/{balance}', 'App\Http\Controllers\BalanceController@show');
+    Route::put('/balances/{balance}', 'App\Http\Controllers\BalanceController@update');
+    Route::delete('/balances/{balance}', 'App\Http\Controllers\BalanceController@destroy');
+
+    Route::get('/moves/{attribute_name}', 'App\Http\Controllers\MoveController@index');
+    Route::post('/moves/{attribute_name}', 'App\Http\Controllers\MoveController@store');
+    Route::get('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@show');
+    Route::put('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@update');
+    Route::delete('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@destroy');
+
+    Route::get('/attribute_elements/{attribute_name}', 'App\Http\Controllers\AttributeElementController@index');
+    Route::post('/attribute_elements/{attribute_name}', 'App\Http\Controllers\AttributeElementController@store');
+    Route::get('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@show');
+    Route::put('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@update');
+
+    Route::get('/attribute_categories/{attribute_name}', 'App\Http\Controllers\AttributeCategoryController@index');
+    Route::post('/attribute_categories/{attribute_name}', 'App\Http\Controllers\AttributeCategoryController@store');
+    Route::put('/attribute_categories/{attribute_name}/{category_id}', 'App\Http\Controllers\AttributeCategoryController@update');
+
+    Route::post('/salary', 'App\Http\Controllers\SalaryController@store');
+    Route::post('/bonus', 'App\Http\Controllers\BonusController@store');
+
+    Route::post('/monthly', 'App\Http\Controllers\MonthlyController@store');
 });
-
-Route::get('/balances', 'App\Http\Controllers\BalanceController@index');
-Route::post('/balances', 'App\Http\Controllers\BalanceController@store');
-Route::get('/balances/{balance}', 'App\Http\Controllers\BalanceController@show');
-Route::put('/balances/{balance}', 'App\Http\Controllers\BalanceController@update');
-Route::delete('/balances/{balance}', 'App\Http\Controllers\BalanceController@destroy');
-
-Route::get('/moves/{attribute_name}', 'App\Http\Controllers\MoveController@index');
-Route::post('/moves/{attribute_name}', 'App\Http\Controllers\MoveController@store');
-Route::get('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@show');
-Route::put('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@update');
-Route::delete('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@destroy');
-
-Route::get('/attribute_elements/{attribute_name}', 'App\Http\Controllers\AttributeElementController@index');
-Route::post('/attribute_elements/{attribute_name}', 'App\Http\Controllers\AttributeElementController@store');
-Route::get('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@show');
-Route::put('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@update');
-
-Route::get('/attribute_categories/{attribute_name}', 'App\Http\Controllers\AttributeCategoryController@index');
-Route::post('/attribute_categories/{attribute_name}', 'App\Http\Controllers\AttributeCategoryController@store');
-Route::put('/attribute_categories/{attribute_name}/{category_id}', 'App\Http\Controllers\AttributeCategoryController@update');
-
-Route::post('/salary', 'App\Http\Controllers\SalaryController@store');
-Route::post('/bonus', 'App\Http\Controllers\BonusController@store');
-
-Route::post('/monthly', 'App\Http\Controllers\MonthlyController@store');
-

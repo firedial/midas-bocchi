@@ -24,97 +24,107 @@
 </template>
 
 <script>
-    export default {
-        data: function () {
-            return {
-                links: [
-                    {
-                        name: '給料',
-                        url: 'salary.create',
-                        value: 'salary create',
-                    },
-                    {
-                        name: 'ボーナス',
-                        url: 'bonus.create',
-                        value: 'bonus create',
-                    },
-                    {
-                        name: '月々の支払',
-                        url: 'monthly.create',
-                        value: 'monthly create',
-                    },
-                    {
-                        name: '収支表',
-                        url: 'balance.list',
-                        value: 'balance list',
-                    },
-                    {
-                        name: '収支追加',
-                        url: 'balance.create',
-                        value: 'balance add',
-                    },
-                    {
-                        name: '予算移動リスト',
-                        url: 'move.list',
-                        value: 'purpose move list',
-                        attributeName: 'purposes',
-                    },
-                    {
-                        name: '予算移動追加',
-                        url: 'move.create',
-                        value: 'purpose move add',
-                        attributeName: 'purposes',
-                    },
-                    {
-                        name: '場所移動リスト',
-                        url: 'move.list',
-                        value: 'place move list',
-                        attributeName: 'places',
-                    },
-                    {
-                        name: '場所移動追加',
-                        url: 'move.create',
-                        value: 'place move add',
-                        attributeName: 'places',
-                    },
-                    {
-                        name: '種別属性要素',
-                        url: 'element.list',
-                        value: 'kind element add',
-                        attributeName: 'kind',
-                    },
-                    {
-                        name: '予算属性要素',
-                        url: 'element.list',
-                        value: 'purpose element add',
-                        attributeName: 'purpose',
-                    },
-                    {
-                        name: '場所属性要素',
-                        url: 'element.list',
-                        value: 'place element add',
-                        attributeName: 'place',
-                    },
-                    {
-                        name: '種別属性カテゴリ',
-                        url: 'category.list',
-                        value: 'kind category add',
-                        attributeName: 'kind',
-                    },
-                    {
-                        name: '予算属性カテゴリ',
-                        url: 'category.list',
-                        value: 'purpose category add',
-                        attributeName: 'purpose',
-                    },
-                    {
-                        name: '場所属性カテゴリ',
-                        url: 'category.list',
-                        value: 'place category add',
-                        attributeName: 'place',
-                    },
-                ],
-            }
+export default {
+    data: function () {
+        return {
+            links: [
+                {
+                    name: 'ログイン',
+                    url: 'login',
+                    value: 'login',
+                },
+                {
+                    name: '給料',
+                    url: 'salary.create',
+                    value: 'salary create',
+                },
+                {
+                    name: 'ボーナス',
+                    url: 'bonus.create',
+                    value: 'bonus create',
+                },
+                {
+                    name: '月々の支払',
+                    url: 'monthly.create',
+                    value: 'monthly create',
+                },
+                {
+                    name: '収支表',
+                    url: 'balance.list',
+                    value: 'balance list',
+                },
+                {
+                    name: '収支追加',
+                    url: 'balance.create',
+                    value: 'balance add',
+                },
+                {
+                    name: '予算移動リスト',
+                    url: 'move.list',
+                    value: 'purpose move list',
+                    attributeName: 'purposes',
+                },
+                {
+                    name: '予算移動追加',
+                    url: 'move.create',
+                    value: 'purpose move add',
+                    attributeName: 'purposes',
+                },
+                {
+                    name: '場所移動リスト',
+                    url: 'move.list',
+                    value: 'place move list',
+                    attributeName: 'places',
+                },
+                {
+                    name: '場所移動追加',
+                    url: 'move.create',
+                    value: 'place move add',
+                    attributeName: 'places',
+                },
+                {
+                    name: '種別属性要素',
+                    url: 'element.list',
+                    value: 'kind element add',
+                    attributeName: 'kind',
+                },
+                {
+                    name: '予算属性要素',
+                    url: 'element.list',
+                    value: 'purpose element add',
+                    attributeName: 'purpose',
+                },
+                {
+                    name: '場所属性要素',
+                    url: 'element.list',
+                    value: 'place element add',
+                    attributeName: 'place',
+                },
+                {
+                    name: '種別属性カテゴリ',
+                    url: 'category.list',
+                    value: 'kind category add',
+                    attributeName: 'kind',
+                },
+                {
+                    name: '予算属性カテゴリ',
+                    url: 'category.list',
+                    value: 'purpose category add',
+                    attributeName: 'purpose',
+                },
+                {
+                    name: '場所属性カテゴリ',
+                    url: 'category.list',
+                    value: 'place category add',
+                    attributeName: 'place',
+                },
+                {
+                    name: 'ログアウト',
+                    url: 'logout',
+                    value: 'logout',
+                },
+            ],
         }
     }
+}
 </script>
