@@ -1,24 +1,19 @@
 version: '3.8'
 services:
     konata:
-        build: ./konata
+        image: firedial/midas-bocchi-konata
         ports:
          - "443:443"
         volumes:
          - ./konata/conf.d/:/etc/nginx/conf.d
          - ./konata/ssl/:/etc/nginx/ssl
-        environment:
-            - APP_DOMAIN=$APP_DOMAIN
         depends_on:
          - haruhi
          - eru
     haruhi:
-        build:
-            context: ./haruhi
-            dockerfile: Dockerfile
+        image: firedial/midas-bocchi-haruhi
         restart: always
         hostname: haruhi
-        # command: npm run watch
         environment:
             - APP_ENV=$APP_ENV
             - APP_DEBUG=$APP_DEBUG
@@ -29,14 +24,8 @@ services:
             - DB_DATABASE=$DB_DATABASE
             - DB_USERNAME=$DB_MIDAS_API_USER
             - DB_PASSWORD=$DB_MIDAS_API_PASSWORD
-            - SANCTUM_STATEFUL_DOMAINS=$APP_DOMAIN
-            - SESSION_DOMAIN=$APP_DOMAIN
-        volumes:
-            - ./haruhi:/var/www/html
     eru:
-        build:
-            context: ./eru
-            dockerfile: Dockerfile
+        image: firedial/midas-bocchi-eru
         restart: always
         environment:
             - MB_DB_TYPE=mysql
@@ -46,9 +35,7 @@ services:
             - MB_DB_PASS=$DB_METABASE_ROOT_PASSWORD
             - MB_DB_HOST=$DB_HOST
     yui:
-        build:
-            context: ./yui
-            dockerfile: Dockerfile
+        image: firedial/midas-bocchi-yui
         restart: always
         environment:
             - MYSQL_ROOT_PASSWORD=$DB_ROOT_PASSWORD
@@ -67,11 +54,9 @@ services:
             - DB_TASK_USER=$DB_TASK_USER
             - DB_TASK_PASSWORD=$DB_TASK_PASSWORD
         hostname: yui
-        volumes:
-            - ./yui/initdb.d:/docker-entrypoint-initdb.d
             - db:/var/lib/mysql
     rikka:
-        build: ./rikka
+        image: firedial/midas-bocchi-rikka
         restart: always
         environment:
             - NAS_PATH=$NAS_PATH
@@ -85,8 +70,6 @@ services:
             - ENCRYPTION_KEY=$ENCRYPTION_KEY
             - SLACK_URL=$SLACK_URL
             - SLACK_USER=$SLACK_USER
-        volumes:
-         - ./rikka:/home/root
         privileged: true
         tty: true
 volumes:
