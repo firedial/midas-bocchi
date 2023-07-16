@@ -4,7 +4,7 @@ import subprocess
 
 '''
 下記コマンドでバックグランドで起動しておく
-$ nohup python backup.py &
+$ nohup python button.py &
 '''
 
 GPIO.setmode(GPIO.BCM)
