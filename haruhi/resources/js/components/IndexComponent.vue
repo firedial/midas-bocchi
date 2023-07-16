@@ -101,19 +101,19 @@ export default {
                     attributeName: 'place',
                 },
                 {
-                    name: '種別属性カテゴリ',
+                    name: '種別属性カテゴリ(category)',
                     url: 'category.list',
                     value: 'kind category add',
                     attributeName: 'kind',
                 },
                 {
-                    name: '予算属性カテゴリ',
+                    name: '予算属性カテゴリ(category)',
                     url: 'category.list',
                     value: 'purpose category add',
                     attributeName: 'purpose',
                 },
                 {
-                    name: '場所属性カテゴリ',
+                    name: '場所属性カテゴリ(category)',
                     url: 'category.list',
                     value: 'place category add',
                     attributeName: 'place',
