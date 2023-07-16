@@ -18,10 +18,8 @@ GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 # スイッチに接続
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+# rikka コンテナの名前
 DOCKER_CONTEINER_RIKKA_NAME = 'midas-bocchi_rikka_1'
-
-# バックアップコマンド
-command = ['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/backup/main.sh']
 
 
 def deploy():
@@ -31,8 +29,7 @@ def deploy():
     GPIO.output(24, GPIO.HIGH)
 
     # イメージのプル
-    dockerPullCommand = ['docker', 'pull', 'firedial/midas-bocchi-haruhi']
-    cp = subprocess.run(dockerPullCommand)
+    cp = subprocess.run(['docker', 'pull', 'firedial/midas-bocchi-haruhi'])
 
     if int(cp.returncode) != 0:
         # 失敗した時は赤をつける
@@ -46,8 +43,7 @@ def deploy():
         return
 
     # コンテナに反映
-    dockerCommand = ['docker-compose', '-f', 'docker-compose-product.yml', 'up', '-d']
-    cp = subprocess.run(dockerCommand)
+    cp = subprocess.run(['docker-compose', '-f', 'docker-compose-product.yml', 'up', '-d'])
 
     if int(cp.returncode) == 0:
         # 成功した時は緑をつける
@@ -73,7 +69,7 @@ def backup():
     GPIO.output(24, GPIO.HIGH)
 
     # バックアップコマンド実行
-    cp = subprocess.run(command)
+    cp = subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/backup/main.sh'])
 
     if int(cp.returncode) == 0:
         # 成功した時は緑をつける
