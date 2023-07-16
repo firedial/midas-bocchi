@@ -70,8 +70,7 @@ services:
             - DB_MIDAS_DATABASE_NAME=$DB_DATABASE
             - DB_METABASE_DATABASE_NAME=$DB_METABASE_DATABASE
             - ENCRYPTION_KEY=$ENCRYPTION_KEY
-            - SLACK_URL=$SLACK_URL
-            - SLACK_USER=$SLACK_USER
+            - DISCORD_URL=$DISCORD_URL
         volumes:
          - ./rikka:/home/root
         privileged: true
