@@ -49,12 +49,12 @@ def deploy():
         # 成功した時は緑をつける
         GPIO.output(25, GPIO.HIGH)
         GPIO.output(24, GPIO.LOW)
-        # subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/button/notify.sh', 'deploy success!'])
+        subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/button/notify.sh', 'deploy success!'])
     else:
         # 失敗した時は赤をつける
         GPIO.output(25, GPIO.LOW)
         GPIO.output(24, GPIO.HIGH)
-        # subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/button/notify.sh', 'deploy fail!'])
+        subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/button/notify.sh', 'deploy fail!'])
 
     # 1秒間点灯させて消す
     sleep(1)
