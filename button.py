@@ -21,6 +21,9 @@ GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 # rikka コンテナの名前
 DOCKER_CONTEINER_RIKKA_NAME = 'midas-bocchi_rikka_1'
 
+def notify(message):
+    return subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/discord/notify.sh', message])
+
 
 def deploy():
     # ボタン押された時
@@ -49,12 +52,12 @@ def deploy():
         # 成功した時は緑をつける
         GPIO.output(25, GPIO.HIGH)
         GPIO.output(24, GPIO.LOW)
-        subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/discord/notify.sh', 'deploy success!'])
+        notify('deploy success!')
     else:
         # 失敗した時は赤をつける
         GPIO.output(25, GPIO.LOW)
         GPIO.output(24, GPIO.HIGH)
-        subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/discord/notify.sh', 'deploy fail!'])
+        notify('deploy failed!')
 
     # 1秒間点灯させて消す
     sleep(1)
@@ -75,10 +78,12 @@ def backup():
         # 成功した時は緑をつける
         GPIO.output(25, GPIO.HIGH)
         GPIO.output(24, GPIO.LOW)
+        notify('backup success!')
     else:
         # 失敗した時は赤をつける
         GPIO.output(25, GPIO.LOW)
         GPIO.output(24, GPIO.HIGH)
+        notify('backup failed!')
 
     # 1秒間点灯させて消す
     sleep(1)
@@ -109,6 +114,8 @@ try:
 
 
         else:
+            GPIO.output(25, GPIO.LOW)
+            GPIO.output(24, GPIO.LOW)
             # バックアップモード
             if GPIO.input(27) == GPIO.HIGH:
                 backup()
