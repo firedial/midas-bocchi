@@ -2,11 +2,11 @@
 
 namespace App\Util;
 
-class Date {
-    
+class DateUtil {
+
     /**
      * 日付の形式が正しいかをチェックする
-     * 
+     *
      * ハイフン区切りでありえない日付でないかをみる
      * 正しい例: 2021-2-5, 2020-2-28, 2021-02-3
      * 不正: 2021/2/5, 2021-2-29, 2021-2-6-3, 2021-1
@@ -17,10 +17,10 @@ class Date {
         if (count($d) !== 3) {
             return false;
         }
-        
-        $day = (int)$d[0];
+
+        $day = (int)$d[2];
         $month = (int)$d[1];
-        $year = (int)$d[2];
+        $year = (int)$d[0];
 
         return checkdate($month, $day, $year);
     }

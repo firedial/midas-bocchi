@@ -3,48 +3,83 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Dao\MoveDao;
+use App\Service\MoveService;
+use App\Exceptions\InvalidParameterException;
+use App\Util\DateUtil;
 
 class MoveController extends Controller
 {
     // @todo 入力値をそのまま入れているのでバリデーションを入れる
     public function index(String $attributeName)
     {
-        return MoveDao::getMoves(self::getTableName($attributeName));
+        $moveService = new MoveService($attributeName);
+        return $moveService->index();
     }
 
     public function show(String $attributeName, Int $id)
     {
-        return MoveDao::getMoveById(self::getTableName($attributeName), $id);
+        $moveService = new MoveService($attributeName);
+        return $moveService->show($id);
     }
 
     public function store(Request $request, String $attributeName)
     {
-        return MoveDao::insertMove(self::getTableName($attributeName), $request);
+        $move = [];
+        $move['item'] = (string)$request->input('item');
+        $move['amount'] = (int)$request->input('amount');
+        $move['date'] = (string)$request->input('date');
+        $move['beforeId'] = (int)$request->input('before_id');
+        $move['afterId'] = (int)$request->input('after_id');
+
+        self::validation($move);
+        $moveService = new MoveService($attributeName);
+        return $moveService->store($move);
     }
 
     public function update(Request $request, String $attributeName, Int $id)
     {
-        return MoveDao::updateMove(self::getTableName($attributeName), $request, $id);
+        $move = [];
+        $move['item'] = (string)$request->input('item');
+        $move['amount'] = (int)$request->input('amount');
+        $move['date'] = (string)$request->input('date');
+        $move['beforeId'] = (int)$request->input('before_id');
+        $move['afterId'] = (int)$request->input('after_id');
+
+        if (is_null($id)) {
+            throw new InvalidParameterException('Move id is null.');
+        }
+
+        self::validation($move);
+        $moveService = new MoveService($attributeName);
+        return $moveService->update($move, $id);
     }
 
     public function destroy(String $attributeName, Int $id)
     {
-        // Note: $attributeName は処理に使っていない
-        return MoveDao::deleteMove($id);
+        $moveService = new MoveService($attributeName);
+        return $moveService->destroy($id);
     }
 
-
-    private static function getTableName($attributeName)
+    private static function validation(array $move): void
     {
-        if ($attributeName === 'purposes') {
-            return 'purpose';
-        }
-        if ($attributeName === 'places') {
-            return 'place';
+        // 金額は 1 以上じゃないとダメ
+        if ($move['amount'] <= 0) {
+            throw new InvalidParameterException('Amount is zero or minus.');
         }
 
-        // ここにはこない想定
-        return '';
+        // 項目は空文字ではないとダメ
+        if ($move['item'] === '') {
+            throw new InvalidParameterException('Item is empty.');
+        }
+
+        // 移動していないとダメ
+        if ($move['beforeId'] === $move['afterId']) {
+            throw new InvalidParameterException('Before id and after id is the same.');
+        }
+
+        // 日付が正しい形式か
+        if (!DateUtil::isValidDateString($move['date'])) {
+            throw new InvalidParameterException('Date is invalid.');
+        }
     }
 }

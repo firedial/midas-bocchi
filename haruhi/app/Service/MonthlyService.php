@@ -3,10 +3,9 @@
 namespace App\Service;
 
 use App\Models\Balance;
-use App\Util\Date;
 use App\Exceptions\InvalidParameterException;
-use App\Models\Dao\MoveDao;
 use App\Models\Dao\BalanceDao;
+use App\Models\Dao\Impl\BalanceDaoImpl;
 
 /**
  * 賞与操作のサービスクラス
@@ -23,7 +22,14 @@ class MonthlyService
 
     const WITHDRAWAL_PLACE_ELEMENT_ID = 9;
 
-    public static function registerMonthly(array $data): Bool
+    private $balanceDao;
+
+    public function __construct(BalanceDao $balanceDao = null)
+    {
+        $this->balanceDao = $balanceDao ?: new BalanceDaoImpl();
+    }
+
+    public function registerMonthly(array $data): Bool
     {
         \DB::beginTransaction();
         try {
@@ -36,7 +42,7 @@ class MonthlyService
                     'place_element_id' => self::WITHDRAWAL_PLACE_ELEMENT_ID,
                     'date' => (string)$data['houseRent']['date']
                 ];
-                BalanceDao::insertBalance($value);
+                $this->balanceDao->insertBalance($value);
             }
 
             if ((int)$data['gas']['amount'] !== 0) {
@@ -48,7 +54,7 @@ class MonthlyService
                     'place_element_id' => self::WITHDRAWAL_PLACE_ELEMENT_ID,
                     'date' => (string)$data['gas']['date']
                 ];
-                BalanceDao::insertBalance($value);
+                $this->balanceDao->insertBalance($value);
             }
 
             if ((int)$data['water']['amount'] !== 0) {
@@ -60,7 +66,7 @@ class MonthlyService
                     'place_element_id' => self::WITHDRAWAL_PLACE_ELEMENT_ID,
                     'date' => (string)$data['water']['date']
                 ];
-                BalanceDao::insertBalance($value);
+                $this->balanceDao->insertBalance($value);
             }
 
             if ((int)$data['elect']['amount'] !== 0) {
@@ -72,7 +78,7 @@ class MonthlyService
                     'place_element_id' => self::WITHDRAWAL_PLACE_ELEMENT_ID,
                     'date' => (string)$data['elect']['date']
                 ];
-                BalanceDao::insertBalance($value);
+                $this->balanceDao->insertBalance($value);
             }
 
             if ((int)$data['net']['amount'] !== 0) {
@@ -84,7 +90,7 @@ class MonthlyService
                     'place_element_id' => self::WITHDRAWAL_PLACE_ELEMENT_ID,
                     'date' => (string)$data['net']['date']
                 ];
-                BalanceDao::insertBalance($value);
+                $this->balanceDao->insertBalance($value);
             }
 
             \DB::commit();

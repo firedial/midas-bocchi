@@ -6,9 +6,9 @@ use App\Models\KindElement;
 use App\Models\PurposeElement;
 use App\Models\PlaceElement;
 use App\Models\Balance;
-use App\Util\Date;
 use App\Exceptions\InvalidParameterException;
 use App\Models\Dao\AttributeElementDao;
+use App\Models\Dao\Impl\AttributeElementDaoImpl;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -16,9 +16,16 @@ use Illuminate\Support\Facades\DB;
  */
 class AttributeElementService
 {
-    public static function getAttributeElements(array $input): array
+    private $attributeElementDao;
+
+    public function __construct(AttributeElementDao $attributeElementDao = null)
     {
-        $records = AttributeElementDao::getAttributeElement($input['attributeName']);
+        $this->attributeElementDao = $attributeElementDao ?: new AttributeElementDaoImpl();
+    }
+
+    public function getAttributeElements(array $input): array
+    {
+        $records = $this->attributeElementDao->getAttributeElement($input['attributeName']);
         return array_map(
             function ($record) {
                 return [
@@ -32,9 +39,9 @@ class AttributeElementService
         );
     }
 
-    public static function getAttributeElementByElementId(array $input): array
+    public function getAttributeElementByElementId(array $input): array
     {
-        $records = AttributeElementDao::getAttributeElementByElementId($input['attributeName'], $input['elementId']);
+        $records = $this->attributeElementDao->getAttributeElementByElementId($input['attributeName'], $input['elementId']);
         return array_map(
             function ($record) {
                 return [
@@ -48,13 +55,13 @@ class AttributeElementService
         );
     }
 
-    public static function createAttributeElement(array $input): Bool
+    public function createAttributeElement(array $input): Bool
     {
-        return AttributeElementDao::insertAttributeElement($input['attributeName'], $input['attributeElement']);
+        return $this->attributeElementDao->insertAttributeElement($input['attributeName'], $input['attributeElement']);
     }
 
-    public static function updateAttributeElement(array $input): Bool
+    public function updateAttributeElement(array $input): Bool
     {
-        return AttributeElementDao::updateAttributeElement($input['attributeName'], $input['attributeElement']);
+        return $this->attributeElementDao->updateAttributeElement($input['attributeName'], $input['attributeElement']);
     }
 }

@@ -2,16 +2,10 @@
 
 namespace App\Models\Dao;
 
-use Illuminate\Support\Facades\DB;
-
-/**
- * 家計簿処理のレコードを取得するための Dao
- */
-class BalanceDao
+interface BalanceDao
 {
-
-    public static function insertBalance(Array $balance)
-    {
-        return DB::table('m_balance')->insert($balance);
-    }
+    public function selectBalance(array $params);
+    public function insertBalance(array $balance);
+    public function updateBalance(array $balance);
+    public function deleteBalance(int $id);
 }

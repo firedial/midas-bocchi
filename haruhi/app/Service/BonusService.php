@@ -3,10 +3,11 @@
 namespace App\Service;
 
 use App\Models\Balance;
-use App\Util\Date;
 use App\Exceptions\InvalidParameterException;
-use App\Models\Dao\MoveDao;
 use App\Models\Dao\BalanceDao;
+use App\Models\Dao\Impl\BalanceDaoImpl;
+use App\Models\Dao\MoveDao;
+use App\Models\Dao\Impl\MoveDaoImpl;
 
 /**
  * 賞与操作のサービスクラス
@@ -26,7 +27,16 @@ class BonusService
     const SKY_PLACE_ELEMENT_ID = 4;
     const SALARY_PLACE_ELEMENT_ID = 8;
 
-    public static function registerBonus(array $bonus): Bool
+    private $balanceDao;
+    private $moveDao;
+
+    public function __construct(BalanceDao $balanceDao = null, MoveDao $moveDao = null)
+    {
+        $this->balanceDao = $balanceDao ?: new BalanceDaoImpl();
+        $this->moveDao = $moveDao ?: new MoveDaoImpl();
+    }
+
+    public function registerBonus(array $bonus): Bool
     {
         \DB::beginTransaction();
         try {
@@ -38,7 +48,7 @@ class BonusService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            BalanceDao::insertBalance($bonusValue);
+            $this->balanceDao->insertBalance($bonusValue);
 
             $deductionValue =
                 (int)$bonus['healthInsurance'] +
@@ -53,7 +63,7 @@ class BonusService
                 'after_id' => self::DEDUCTION_PURPOSE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            MoveDao::insertMoveByArray('purpose', $deductionMove);
+            $this->moveDao->insertMoveByArray('purpose', $deductionMove);
 
             $healthInsurance = [
                 'amount' => (-1) * (int)$bonus['healthInsurance'],
@@ -63,7 +73,7 @@ class BonusService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            BalanceDao::insertBalance($healthInsurance);
+            $this->balanceDao->insertBalance($healthInsurance);
 
             $welfarePension = [
                 'amount' => (-1) * (int)$bonus['welfarePension'],
@@ -73,7 +83,7 @@ class BonusService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            BalanceDao::insertBalance($welfarePension);
+            $this->balanceDao->insertBalance($welfarePension);
 
             $employmentInsurance = [
                 'amount' => (-1) * (int)$bonus['employmentInsurance'],
@@ -83,7 +93,7 @@ class BonusService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            BalanceDao::insertBalance($employmentInsurance);
+            $this->balanceDao->insertBalance($employmentInsurance);
 
             $incomeTax = [
                 'amount' => (-1) * (int)$bonus['incomeTax'],
@@ -93,7 +103,7 @@ class BonusService
                 'place_element_id' => self::SKY_PLACE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            BalanceDao::insertBalance($incomeTax);
+            $this->balanceDao->insertBalance($incomeTax);
 
             $takeBonus = (int)$bonus['bonus'] - $deductionValue;
 
@@ -104,7 +114,7 @@ class BonusService
                 'after_id' => self::SALARY_PLACE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            MoveDao::insertMoveByArray('place', $mainMove);
+            $this->moveDao->insertMoveByArray('place', $mainMove);
 
             \DB::commit();
         } catch (Exception $e) {

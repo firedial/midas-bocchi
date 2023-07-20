@@ -2,75 +2,105 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Balance;
-use App\Models\KindElement;
 use App\Service\BalanceService;
+use App\Models\KindElement;
+use App\Models\PurposeElement;
+use App\Models\PlaceElement;
+use App\Util\DateUtil;
+use App\Exceptions\InvalidParameterException;
 
 class BalanceController extends Controller
 {
     public function index(Request $request)
     {
-        $query = DB::table('m_balance')
-            ->select(
-                'm_balance.id AS id',
-                'm_balance.amount AS amount',
-                'm_balance.item AS item',
-                'm_balance.kind_element_id AS kind_element_id',
-                'm_balance.purpose_element_id AS purpose_element_id',
-                'm_balance.place_element_id AS place_element_id',
-                'm_balance.date AS date',
-                'm_kind_element.description AS kind_element_description',
-                'm_purpose_element.description AS purpose_element_description',
-                'm_place_element.description AS place_element_description'
-            )
-            ->join('m_kind_element', 'm_kind_element.id', '=', 'm_balance.kind_element_id')
-            ->join('m_purpose_element', 'm_purpose_element.id', '=', 'm_balance.purpose_element_id')
-            ->join('m_place_element', 'm_place_element.id', '=', 'm_balance.place_element_id')
-            ->where('m_balance.kind_element_id', '<>', KindElement::MOVE_ID);
-        if (is_numeric($request->input('limit'))) {
-            $query->limit($request->input('limit'));
-        }
-        // @todo クエリそのまま入れているので後で修正する
-        if (!is_null($request->input('orderby'))) {
-            $query->orderby('m_balance.id', $request->input('orderby'));
-        }
+        $params = [];
+        $params['limit'] = $request->input('limit');
+        $params['orderby'] = $request->input('orderby');
+        $params['id'] = $request->input('id');
 
-        return $query->get();
+        $balanceService = new BalanceService();
+        return $balanceService->index($params);
     }
 
     public function show(Balance $balance)
     {
-        return $balance;
+        // @todo ここら辺セットしなくてもいいようにする
+        $params = [];
+        $params['limit'] = null;
+        $params['orderby'] = null;
+        $params['id'] = $balance['id'];
+
+        $balanceService = new BalanceService();
+        // @todo あるかどうか判定する
+        return $balanceService->index($params)[0];
     }
 
     public function store(Request $request)
     {
-        return BalanceService::createBalance(self::getBalance($request));
+        $balanceService = new BalanceService();
+        $balance = self::getBalance($request);
+        self::validation($balance);
+        return $balanceService->store($balance);
     }
 
-    public function update(Request $request, Balance $balance)
+    public function update(Request $request)
     {
-        $balance->update($request->all());
+        $balanceService = new BalanceService();
+        $balance = self::getBalance($request);
+        if (is_null($balance['id'])) {
+            throw new InvalidParameterException('Balance id is null.');
+        }
+        self::validation($balance);
+        return $balanceService->update($balance);
+    }
+
+    public function destroy(Balance $balance): bool
+    {
+        $balanceService = new BalanceService();
+        return $balanceService->destroy($balance['id']);
+    }
+
+    private static function getBalance(Request $request): array
+    {
+        $balance = [];
+        $balance['id'] = $request->input('id') === null ? null : (int)$request->input('id');
+        $balance['amount'] = (int)$request->input('amount');
+        $balance['item'] = (string)$request->input('item');
+        $balance['kind_element_id'] = (int)$request->input('kind_element_id');
+        $balance['purpose_element_id'] = (int)$request->input('purpose_element_id');
+        $balance['place_element_id'] = (int)$request->input('place_element_id');
+        $balance['date'] = (string)$request->input('date');
         return $balance;
     }
 
-    public function destroy(Balance $balance): boolean
+    private static function validation(array $balance): void
     {
-        return BalanceService::deleteBalance($balance);
-    }
+        // 移動処理を表す id が入っていた場合は不正
+        if ($balance['kind_element_id'] === KindElement::MOVE_ID) {
+            throw new InvalidParameterException('Kind element id is move id.');
+        }
+        if ($balance['purpose_element_id'] === PurposeElement::MOVE_ID) {
+            throw new InvalidParameterException('Purpose element id is move id.');
+        }
+        if ($balance['place_element_id'] === PlaceElement::MOVE_ID) {
+            throw new InvalidParameterException('Place element id is move id.');
+        }
 
-    private static function getBalance(Request $request): Balance
-    {
-        $balance = new Balance();
-        $balance->id = $request->id === null ? null : (int)$request->id;
-        $balance->amount = (int)$request->amount;
-        $balance->item = (string)$request->item;
-        $balance->kind_element_id = (int)$request->kind_element_id;
-        $balance->purpose_element_id = (int)$request->purpose_element_id;
-        $balance->place_element_id = (int)$request->place_element_id;
-        $balance->date = (string)$request->date;
-        return $balance;
+        // 金額は 0 でない値じゃないとダメ
+        if ($balance['amount'] === 0) {
+            throw new InvalidParameterException('Amount is zero.');
+        }
+
+        // 項目は空文字ではないとダメ
+        if ($balance['item'] === '') {
+            throw new InvalidParameterException('Item is empty.');
+        }
+
+        // 日付が正しい形式か
+        if (!DateUtil::isValidDateString($balance['date'])) {
+            throw new InvalidParameterException('Date is invalid.');
+        }
     }
 }

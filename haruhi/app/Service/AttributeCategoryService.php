@@ -6,9 +6,9 @@ use App\Models\KindElement;
 use App\Models\PurposeElement;
 use App\Models\PlaceElement;
 use App\Models\Balance;
-use App\Util\Date;
 use App\Exceptions\InvalidParameterException;
 use App\Models\Dao\AttributeCategoryDao;
+use App\Models\Dao\Impl\AttributeCategoryDaoImpl;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -16,9 +16,16 @@ use Illuminate\Support\Facades\DB;
  */
 class AttributeCategoryService
 {
-    public static function getAttributeCategories(array $input): array
+    private $attributeCategoryDao;
+
+    public function __construct(AttributeCategoryDao $attributeCategoryDao = null)
     {
-        $records = AttributeCategoryDao::getAttributeCategories($input['attributeName']);
+        $this->attributeCategoryDao = $attributeCategoryDao ?: new AttributeCategoryDaoImpl();
+    }
+
+    public function getAttributeCategories(array $input): array
+    {
+        $records = $this->attributeCategoryDao->getAttributeCategories($input['attributeName']);
         return array_map(
             function ($record) {
                 return [
@@ -31,13 +38,13 @@ class AttributeCategoryService
         );
     }
 
-    public static function createAttributeCategory(array $input): Bool
+    public function createAttributeCategory(array $input): Bool
     {
-        return AttributeCategoryDao::insertAttributeCategory($input['attributeName'], $input['attributeCategory']);
+        return $this->attributeCategoryDao->insertAttributeCategory($input['attributeName'], $input['attributeCategory']);
     }
 
-    public static function updateAttributeCategory(array $input): Bool
+    public function updateAttributeCategory(array $input): Bool
     {
-        return AttributeCategoryDao::updateAttributeCategory($input['attributeName'], $input['attributeCategory']);
+        return $this->attributeCategoryDao->updateAttributeCategory($input['attributeName'], $input['attributeCategory']);
     }
 }

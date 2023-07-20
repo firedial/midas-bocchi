@@ -2,12 +2,8 @@
 
 namespace App\Service;
 
-use App\Models\KindElement;
-use App\Models\PurposeElement;
-use App\Models\PlaceElement;
-use App\Models\Balance;
-use App\Util\Date;
-use App\Exceptions\InvalidParameterException;
+use App\Models\Dao\BalanceDao;
+use App\Models\Dao\Impl\BalanceDaoImpl;
 
 /**
  * balance テーブルの操作のサービスクラス
@@ -15,51 +11,35 @@ use App\Exceptions\InvalidParameterException;
 class BalanceService
 {
 
-    public static function createBalance(Balance $balance): Bool
+    private $balanceDao;
+
+    public function __construct(BalanceDao $balanceDao = null)
     {
-        // 登録処理なので id は空である
-        if (!is_null($balance->id)) {
-            throw new InvalidParameterException('Id is not null.');
-        }
-
-        self::validation($balance);
-
-
-        return $balance->save();
+        $this->balanceDao = $balanceDao ?: new BalanceDaoImpl();
     }
 
-    public static function deleteBalance(Balance $balance): Bool
+    public function index(array $params): array
     {
-        return $balance->delete();
+        return $this->balanceDao->selectBalance($params);
     }
 
-    private static function validation(Balance $balance): void
+    public function show(array $params): array
     {
-        // 移動処理を表す id が入っていた場合は不正
-        if ($balance->kind_element_id === KindElement::MOVE_ID) {
-            throw new InvalidParameterException('Kind element id is move id.');
-        }
-        if ($balance->purpose_element_id === PurposeElement::MOVE_ID) {
-            throw new InvalidParameterException('Purpose element id is move id.');
-        }
-        if ($balance->place_element_id === PlaceElement::MOVE_ID) {
-            throw new InvalidParameterException('Place element id is move id.');
-        }
+        return $this->balanceDao->selectBalance($params);
+    }
 
-        // 金額は 0 でない値じゃないとダメ
-        if ($balance->amount === 0) {
-            throw new InvalidParameterException('Amount is zero.');
-        }
+    public function store(array $balance): bool
+    {
+        return $this->balanceDao->insertBalance($balance);
+    }
 
-        // 項目は空文字ではないとダメ
-        if ($balance->item === '') {
-            throw new InvalidParameterException('Item is empty.');
-        }
+    public function update(array $balance): bool
+    {
+        return $this->balanceDao->updateBalance($balance);
+    }
 
-        // 日付が正しい形式か
-        if (!Date::isValidDateString($balance->date)) {
-            // @todo 現状スラッシュ区切りで渡されているので、フロント側を修正する必要あり
-            // throw new InvalidParameterException('Date is invalid.');
-        }
+    public function destroy(int $id): bool
+    {
+        return $this->balanceDao->deleteBalance($id);
     }
 }
