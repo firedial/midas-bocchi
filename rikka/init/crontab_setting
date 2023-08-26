@@ -1,2 +1,2 @@
 
-50 0 * * * /home/root/batch/batch.sh /home/root/backup/main.sh 
+50 0 * * * /home/root/backup/main.sh
