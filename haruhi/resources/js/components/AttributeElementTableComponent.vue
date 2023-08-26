@@ -6,6 +6,7 @@
                     <th scope="col">Id</th>
                     <th scope="col">Name</th>
                     <th scope="col">Description</th>
+                    <th scope="col">Priority</th>
                     <th scope="col">Category Id</th>
                     <th scope="col">Edit</th>
                     <th scope="col">Save</th>
@@ -16,6 +17,7 @@
                     <th>+</th>
                     <td><input type="text" class="col-sm-9 form-control" v-model="newAttributeElement.name"></td>
                     <td><input type="text" class="col-sm-9 form-control" v-model="newAttributeElement.description"></td>
+                    <td><input type="text" class="col-sm-9 form-control" v-model="newAttributeElement.priority"></td>
                     <td>
                         <select class="form-select form-select-sm" v-model="newAttributeElement.category_id">
                             <option value=""></option>
@@ -38,6 +40,8 @@
                             v-model="attributeElement.name"></td>
                     <td><input type="text" class="col-sm-9 form-control" v-bind:readonly="isReadOnly(attributeElement.id)"
                             v-model="attributeElement.description"></td>
+                    <td><input type="text" class="col-sm-9 form-control" v-bind:readonly="isReadOnly(attributeElement.id)"
+                            v-model="attributeElement.priority"></td>
                     <td v-if="isReadOnly(attributeElement.id)"><input type="text" class="col-sm-9 form-control" readonly
                             v-model="attributeElement.category_id"></td>
                     <td v-else>

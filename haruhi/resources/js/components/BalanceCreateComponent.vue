@@ -6,7 +6,8 @@
                     <div class="form-group row">
                         <label for="amount" class="col-sm-3 col-form-label">Amount</label>
                         <input type="text" class="col-sm-6 form-control" id="amount" v-model="balance.amount">
-                        <input type="checkbox" class="col-sm-1 form-control" id="amount_checkbox" v-model="balanceLeave.amount">
+                        <input type="checkbox" class="col-sm-1 form-control" id="amount_checkbox"
+                            v-model="balanceLeave.amount">
                     </div>
                     <div class="form-group row">
                         <label for="item" class="col-sm-3 col-form-label">Item</label>
@@ -21,17 +22,20 @@
                                 {{ kindElement.description }}
                             </option>
                         </select>
-                        <input type="checkbox" class="col-sm-1 form-control" id="kind_element_id_checkbox" v-model="balanceLeave.kindElementId">
+                        <input type="checkbox" class="col-sm-1 form-control" id="kind_element_id_checkbox"
+                            v-model="balanceLeave.kindElementId">
                     </div>
                     <div class="form-group row">
                         <label for="purpose_element" class="col-sm-3 col-form-label">Purpose Element</label>
                         <select class="form-select col-sm-6" v-model="balance.purpose_element_id">
                             <option value=""></option>
-                            <option v-for="purposeElement in purposeElements" :value="purposeElement.id" :key="purposeElement.id">
+                            <option v-for="purposeElement in purposeElements" :value="purposeElement.id"
+                                :key="purposeElement.id">
                                 {{ purposeElement.description }}
                             </option>
                         </select>
-                        <input type="checkbox" class="col-sm-1 form-control" id="purpose_element_id_checkbox" v-model="balanceLeave.purposeElementId">
+                        <input type="checkbox" class="col-sm-1 form-control" id="purpose_element_id_checkbox"
+                            v-model="balanceLeave.purposeElementId">
                     </div>
                     <div class="form-group row">
                         <label for="place_element" class="col-sm-3 col-form-label">Place Element</label>
@@ -41,7 +45,8 @@
                                 {{ placeElement.description }}
                             </option>
                         </select>
-                        <input type="checkbox" class="col-sm-1 form-control" id="place_element_id_checkbox" v-model="balanceLeave.placeElementId">
+                        <input type="checkbox" class="col-sm-1 form-control" id="place_element_id_checkbox"
+                            v-model="balanceLeave.placeElementId">
                     </div>
                     <div class="form-group row">
                         <label for="date" class="col-sm-3 col-form-label">Date</label>
@@ -66,86 +71,86 @@
 </template>
 
 <script>
-    export default {
-        data: function () {
-            return {
-                balance: {},
-                balanceLeave: {
-                    amount: false,
-                    item: false,
-                    kineElementId: false,
-                    purposeElementId: false,
-                    placeElementId: false,
-                    date: false
-                },
-                kindElements: [],
-                purposeElements: [],
-                placeElements: [],
-                response: {
-                    isReturned: false,
-                    isSucceeded: false,
-                    returnMessage: ''
-                }
+export default {
+    data: function () {
+        return {
+            balance: {},
+            balanceLeave: {
+                amount: false,
+                item: false,
+                kineElementId: false,
+                purposeElementId: false,
+                placeElementId: false,
+                date: false
+            },
+            kindElements: [],
+            purposeElements: [],
+            placeElements: [],
+            response: {
+                isReturned: false,
+                isSucceeded: false,
+                returnMessage: ''
             }
-        },
-        methods: {
-            getKindElements() {
-                axios.get('/api/attribute_elements/kind_element')
-                    .then((res) => {
-                        this.kindElements = res.data;
-                    });
-            },
-            getPurposeElements() {
-                axios.get('/api/attribute_elements/purpose_element')
-                    .then((res) => {
-                        this.purposeElements = res.data;
-                    });
-            },
-            getPlaceElements() {
-                axios.get('/api/attribute_elements/place_element')
-                    .then((res) => {
-                        this.placeElements = res.data;
-                    });
-            },
-            flushBalance() {
-                if (!this.balanceLeave.amount) {
-                    this.balance.amount = undefined;
-                }
-                if (!this.balanceLeave.item) {
-                    this.balance.item = undefined;
-                }
-                if (!this.balanceLeave.kindElementId) {
-                    this.balance.kind_element_id = undefined;
-                }
-                if (!this.balanceLeave.purposeElementId) {
-                    this.balance.purpose_element_id = undefined;
-                }
-                if (!this.balanceLeave.placeElementId) {
-                    this.balance.place_element_id = undefined;
-                }
-                if (!this.balanceLeave.date) {
-                    this.balance.date = undefined;
-                }
-            },
-            submit() {
-                this.response.isReturned = false;
-                axios.post('/api/balances', this.balance)
-                    .then((res) => {
-                        this.response.isReturned = true;
-                        this.response.isSucceeded = true;
-                        this.flushBalance();
-                    }).catch((error) => {
-                        this.response.isReturned = true;
-                        this.response.isSucceeded = false;
-                        this.response.returnMessage = error.response.data.message;
-                    });
-            }
-        },
-        mounted() {
-            this.getKindElements();
-            this.getPurposeElements();
-            this.getPlaceElements();
         }
+    },
+    methods: {
+        getKindElements() {
+            axios.get('/api/attribute_elements/kind_element/?isOnlySelectable=true')
+                .then((res) => {
+                    this.kindElements = res.data;
+                });
+        },
+        getPurposeElements() {
+            axios.get('/api/attribute_elements/purpose_element/?isOnlySelectable=true')
+                .then((res) => {
+                    this.purposeElements = res.data;
+                });
+        },
+        getPlaceElements() {
+            axios.get('/api/attribute_elements/place_element/?isOnlySelectable=true')
+                .then((res) => {
+                    this.placeElements = res.data;
+                });
+        },
+        flushBalance() {
+            if (!this.balanceLeave.amount) {
+                this.balance.amount = undefined;
+            }
+            if (!this.balanceLeave.item) {
+                this.balance.item = undefined;
+            }
+            if (!this.balanceLeave.kindElementId) {
+                this.balance.kind_element_id = undefined;
+            }
+            if (!this.balanceLeave.purposeElementId) {
+                this.balance.purpose_element_id = undefined;
+            }
+            if (!this.balanceLeave.placeElementId) {
+                this.balance.place_element_id = undefined;
+            }
+            if (!this.balanceLeave.date) {
+                this.balance.date = undefined;
+            }
+        },
+        submit() {
+            this.response.isReturned = false;
+            axios.post('/api/balances', this.balance)
+                .then((res) => {
+                    this.response.isReturned = true;
+                    this.response.isSucceeded = true;
+                    this.flushBalance();
+                }).catch((error) => {
+                    this.response.isReturned = true;
+                    this.response.isSucceeded = false;
+                    this.response.returnMessage = error.response.data.message;
+                });
+        }
+    },
+    mounted() {
+        this.getKindElements();
+        this.getPurposeElements();
+        this.getPlaceElements();
     }
+}
 </script>
 
