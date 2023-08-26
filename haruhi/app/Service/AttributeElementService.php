@@ -25,13 +25,14 @@ class AttributeElementService
 
     public function getAttributeElements(array $input): array
     {
-        $records = $this->attributeElementDao->getAttributeElement($input['attributeName']);
+        $records = $this->attributeElementDao->getAttributeElement($input['attributeName'], $input['isOnlySelectable']);
         return array_map(
             function ($record) {
                 return [
                     'id' => $record->id,
                     'name' => $record->name,
                     'description' => $record->description,
+                    'priority' => $record->priority,
                     'category_id' => $record->category_id,
                 ];
             },
@@ -48,6 +49,7 @@ class AttributeElementService
                     'id' => $record->id,
                     'name' => $record->name,
                     'description' => $record->description,
+                    'priority' => $record->priority,
                     'category_id' => $record->category_id,
                 ];
             },
