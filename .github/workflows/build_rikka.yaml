@@ -1,4 +1,4 @@
-name: ci
+name: rikka image build
 
 on: [ workflow_dispatch ]
 
