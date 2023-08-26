@@ -1,4 +1,4 @@
-name: ci
+name: yui image build
 
 on: [ workflow_dispatch ]
 

@@ -1,4 +1,4 @@
-name: ci
+name: konata image build
 
 on: [ workflow_dispatch ]
 
