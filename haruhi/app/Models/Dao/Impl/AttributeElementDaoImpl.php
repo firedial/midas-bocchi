@@ -11,9 +11,13 @@ use App\Models\Dao\AttributeElementDao;
 class AttributeElementDaoImpl implements AttributeElementDao
 {
 
-    public function getAttributeElement(string $attributeName)
+    public function getAttributeElement(string $attributeName, bool $isOnlySelectable)
     {
-        return DB::table(self::getAttributeTableName($attributeName))->get()->toArray();
+        $query = DB::table(self::getAttributeTableName($attributeName));
+        if ($isOnlySelectable) {
+            $query->where('priority', '>', 0);
+        }
+        return $query->orderby('priority', 'desc')->orderby('id', 'asc')->get()->toArray();
     }
 
     public function getAttributeElementByElementId(string $attributeName, string $elementId)
@@ -26,6 +30,7 @@ class AttributeElementDaoImpl implements AttributeElementDao
         $data = [
             'name' => $attributeElement['name'],
             'description' => $attributeElement['description'],
+            'priority' => $attributeElement['priority'],
             'category_id' => $attributeElement['categoryId'],
         ];
         return DB::table(self::getAttributeTableName($attributeName))->insert($data);
@@ -36,6 +41,7 @@ class AttributeElementDaoImpl implements AttributeElementDao
         $data = [
             'name' => $attributeElement['name'],
             'description' => $attributeElement['description'],
+            'priority' => $attributeElement['priority'],
             'category_id' => $attributeElement['categoryId'],
         ];
         return DB::table(self::getAttributeTableName($attributeName))->where('id', $attributeElement['id'])->update($data);

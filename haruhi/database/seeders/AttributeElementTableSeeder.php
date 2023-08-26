@@ -19,16 +19,19 @@ class AttributeElementTableSeeder extends Seeder
         KindElement::create([
             'name' => 'kind_move_none',
             'description' => 'kind_e_move_none',
+            'priority' => 0,
             'category_id' => 1,
         ]);
         PurposeElement::create([
             'name' => 'purpose_move_none',
             'description' => 'purpose_e_move_none',
+            'priority' => 0,
             'category_id' => 1,
         ]);
         PlaceElement::create([
             'name' => 'place_e_move_none',
             'description' => 'place_e_move_none',
+            'priority' => 0,
             'category_id' => 1,
         ]);
 
@@ -36,16 +39,19 @@ class AttributeElementTableSeeder extends Seeder
             KindElement::create([
                 'name' => 'kind_e_name' . $i,
                 'description' => 'kind_e_desc' . $i,
+                'priority' => (int)($i / 10),
                 'category_id' => $i,
             ]);
             PurposeElement::create([
                 'name' => 'purpose_e_name' . $i,
                 'description' => 'purpose_e_desc' . $i,
+                'priority' => (int)($i / 10),
                 'category_id' => $i,
             ]);
             PlaceElement::create([
                 'name' => 'place_e_name' . $i,
                 'description' => 'place_e_desc' . $i,
+                'priority' => (int)($i / 10),
                 'category_id' => $i,
             ]);
         }

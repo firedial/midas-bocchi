@@ -8,14 +8,16 @@ use App\Exceptions\InvalidParameterException;
 
 class AttributeElementController extends Controller
 {
-    public function index(String $attributeName)
+    public function index(Request $request, String $attributeName)
     {
         if (!in_array($attributeName, ['kind_element', 'purpose_element', 'place_element'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
         }
 
+        $isOnlySelectable = $request->input('isOnlySelectable') === 'true';
+
         $attributeElementService = new AttributeElementService();
-        return $attributeElementService->getAttributeElements(['attributeName' => $attributeName]);
+        return $attributeElementService->getAttributeElements(['attributeName' => $attributeName, 'isOnlySelectable' => $isOnlySelectable]);
     }
 
     public function show(String $attributeName, string $elementId)
@@ -48,6 +50,11 @@ class AttributeElementController extends Controller
             throw new InvalidParameterException("Wrong description {$description}.");
         }
 
+        $priority = (int)$request->input('priority');
+        if (!(0 <= $priority && $priority <= 100)) {
+            throw new InvalidParameterException("Wrong priority {$priority}.");
+        }
+
         $categoryId = $request->input('category_id');
         if (empty($categoryId)) {
             throw new InvalidParameterException("Wrong category id.");
@@ -61,6 +68,7 @@ class AttributeElementController extends Controller
             'attributeElement' => [
                 'name' => $name,
                 'description' => $description,
+                'priority' => $priority,
                 'categoryId' => $categoryId,
             ],
         ]);
@@ -86,6 +94,11 @@ class AttributeElementController extends Controller
             throw new InvalidParameterException("Wrong description {$description}.");
         }
 
+        $priority = (int)$request->input('priority');
+        if (!(0 <= $priority && $priority <= 100)) {
+            throw new InvalidParameterException("Wrong priority {$priority}.");
+        }
+
         $categoryId = $request->input('category_id');
         if (empty($categoryId)) {
             throw new InvalidParameterException("Wrong category id.");
@@ -100,6 +113,7 @@ class AttributeElementController extends Controller
                 'id' => $elementId,
                 'name' => $name,
                 'description' => $description,
+                'priority' => $priority,
                 'categoryId' => $categoryId,
             ],
         ]);
