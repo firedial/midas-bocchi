@@ -8,4 +8,5 @@ interface MoveDao
 {
     public function getMoves(String $attributeName);
     public function getMoveById(String $attributeName, Int $id);
+    public function insertMove(String $attributeName, array $move);
 }

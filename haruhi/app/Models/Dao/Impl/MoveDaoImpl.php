@@ -93,4 +93,46 @@ class MoveDaoImpl implements MoveDao
 
         return (array)$list[0];
     }
+
+    /**
+     * ID で指定された移動処理を取得する
+     *
+     * @param string $attributeName 移動処理を登録したい属性名
+     * @param array $move 登録データ
+     */
+    public function insertMove(string $attributeName, array $move)
+    {
+        $before = array(
+            'item' => $move['item'],
+            'amount' => (-1) * $move['amount'],
+            'kind_element_id' => KindElement::MOVE_ID,
+            'date' => $move['date']
+        );
+
+        $after = array(
+            'item' => $move['item'],
+            'amount' => $move['amount'],
+            'kind_element_id' => KindElement::MOVE_ID,
+            'date' => $move['date']
+        );
+
+        if ($attributeName === 'purpose') {
+            $before['purpose_element_id'] = $move['before_id'];
+            $before['place_element_id'] = PlaceElement::MOVE_ID;
+            $after['purpose_element_id'] = $move['after_id'];
+            $after['place_element_id'] = PlaceElement::MOVE_ID;
+        } else if ($attributeName === 'place') {
+            $before['purpose_element_id'] = PurposeElement::MOVE_ID;
+            $before['place_element_id'] = $move['before_id'];
+            $after['purpose_element_id'] = PurposeElement::MOVE_ID;
+            $after['place_element_id'] = $move['after_id'];
+        } else {
+            // ここにはこない想定
+            // exception 吐いたほうがいい
+            // もっと上位で処理しても良さそう
+        }
+
+        return DB::table('m_balance')->insert([$before, $after]);
+    }
+
 }
