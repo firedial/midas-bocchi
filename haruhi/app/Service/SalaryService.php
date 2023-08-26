@@ -87,7 +87,7 @@ class SalaryService
                 'after_id' => self::TRANSPORTATION_PURPOSE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            $this->moveDao->insertMoveByArray('purpose', $transportationMove);
+            $this->moveDao->insertMove('purpose', $transportationMove);
 
             $deductionValue =
                 (int)$salary['healthInsurance'] +
@@ -104,7 +104,7 @@ class SalaryService
                 'after_id' => self::DEDUCTION_PURPOSE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            $this->moveDao->insertMoveByArray('purpose', $deductionMove);
+            $this->moveDao->insertMove('purpose', $deductionMove);
 
             $healthInsurance = [
                 'amount' => (-1) * (int)$salary['healthInsurance'],
@@ -180,7 +180,7 @@ class SalaryService
                 'after_id' => self::SALARY_PLACE_ELEMENT_ID,
                 'date' => (string)$salary['date']
             ];
-            $this->moveDao->insertMoveByArray('place', $mainMove);
+            $this->moveDao->insertMove('place', $mainMove);
 
             \DB::commit();
         } catch (Exception $e) {

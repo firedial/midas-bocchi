@@ -63,7 +63,7 @@ class BonusService
                 'after_id' => self::DEDUCTION_PURPOSE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            $this->moveDao->insertMoveByArray('purpose', $deductionMove);
+            $this->moveDao->insertMove('purpose', $deductionMove);
 
             $healthInsurance = [
                 'amount' => (-1) * (int)$bonus['healthInsurance'],
@@ -114,7 +114,7 @@ class BonusService
                 'after_id' => self::SALARY_PLACE_ELEMENT_ID,
                 'date' => (string)$bonus['date']
             ];
-            $this->moveDao->insertMoveByArray('place', $mainMove);
+            $this->moveDao->insertMove('place', $mainMove);
 
             \DB::commit();
         } catch (Exception $e) {
