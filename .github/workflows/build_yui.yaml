@@ -1,9 +1,6 @@
 name: ci
 
-on:
-  push:
-    branches:
-      - 'main'
+on: [ workflow_dispatch ]
 
 jobs:
   docker:
@@ -26,6 +23,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-haruhi:latest
-          file: haruhi/DockerfileProduction
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-yui:latest
+          file: yui/Dockerfile
           platforms: linux/arm/v7
