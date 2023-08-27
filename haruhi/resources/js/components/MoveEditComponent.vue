@@ -70,7 +70,7 @@
                     elementPath = 'purpose_element';
                 }
 
-                axios.get('/api/attribute_elements/' + elementPath)
+                axios.get('/api/attribute_elements/' + elementPath + '?isOnlySelectable=true')
                     .then((res) => {
                         this.elements = res.data;
                     });
