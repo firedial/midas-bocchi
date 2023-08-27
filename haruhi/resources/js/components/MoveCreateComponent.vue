@@ -41,38 +41,38 @@
 </template>
 
 <script>
-    export default {
-        props: {
-            attributeName: String
-        },
-        data: function () {
-            return {
-                move: {},
-                elements: []
-            }
-        },
-        methods: {
-            submit() {
-                axios.post('/api/moves/' + this.attributeName, this.move)
-                    .then((res) => {
-                        this.$router.push({name: 'move.list'});
-                    });
-            },
-            getElements() {
-                let elementPath = 'place_element';
-                if (this.attributeName === 'purposes') {
-                    elementPath = 'purpose_element';
-                }
-
-                axios.get('/api/attribute_elements/' + elementPath)
-                    .then((res) => {
-                        this.elements = res.data;
-                    });
-            }
-        },
-        mounted() {
-            this.getElements();
+export default {
+    props: {
+        attributeName: String
+    },
+    data: function () {
+        return {
+            move: {},
+            elements: []
         }
+    },
+    methods: {
+        submit() {
+            axios.post('/api/moves/' + this.attributeName, this.move)
+                .then((res) => {
+                    this.$router.push({ name: 'move.list' });
+                });
+        },
+        getElements() {
+            let elementPath = 'place_element';
+            if (this.attributeName === 'purposes') {
+                elementPath = 'purpose_element';
+            }
+
+            axios.get('/api/attribute_elements/' + elementPath + '?isOnlySelectable=true')
+                .then((res) => {
+                    this.elements = res.data;
+                });
+        }
+    },
+    mounted() {
+        this.getElements();
     }
+}
 </script>
 
