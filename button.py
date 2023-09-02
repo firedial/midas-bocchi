@@ -22,7 +22,7 @@ GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 DOCKER_CONTEINER_RIKKA_NAME = 'midas-bocchi_rikka_1'
 
 def notify(message):
-    return subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/discord/notify.sh', message])
+    return subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/app/discord/notify.sh', message])
 
 
 def deploy():
@@ -72,7 +72,7 @@ def backup():
     GPIO.output(24, GPIO.HIGH)
 
     # バックアップコマンド実行
-    cp = subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/home/root/backup/main.sh'])
+    cp = subprocess.run(['docker', 'exec', DOCKER_CONTEINER_RIKKA_NAME, '/app/backup/main.sh'])
 
     if int(cp.returncode) == 0:
         # 成功した時は緑をつける

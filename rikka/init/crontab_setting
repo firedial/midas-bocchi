@@ -1,2 +1,2 @@
 
-50 0 * * * /home/root/backup/main.sh
+50 0 * * * /app/backup/main.sh

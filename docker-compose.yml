@@ -85,7 +85,7 @@ services:
             - ENCRYPTION_KEY=$ENCRYPTION_KEY
             - DISCORD_URL=$DISCORD_URL
         volumes:
-         - ./rikka:/home/root
+         - ./rikka:/app
         privileged: true
         tty: true
 volumes:
