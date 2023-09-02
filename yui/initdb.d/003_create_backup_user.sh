@@ -1,4 +1,6 @@
+#!/bin/sh
 
 mysql -u root -p${MYSQL_ROOT_PASSWORD} -e"CREATE USER ${DB_TASK_USER}@'%' IDENTIFIED BY '${DB_TASK_PASSWORD}';"
 mysql -u root -p${MYSQL_ROOT_PASSWORD} -e"GRANT ALL ON ${MYSQL_DATABASE}.* TO ${DB_TASK_USER}@'%';"
 mysql -u root -p${MYSQL_ROOT_PASSWORD} -e"GRANT ALL ON ${DB_METABASE_DATABASE}.* TO ${DB_TASK_USER}@'%';"
+mysql -u root -p${MYSQL_ROOT_PASSWORD} -e"GRANT SET USER ON *.* TO ${DB_TASK_USER}@'%';"
