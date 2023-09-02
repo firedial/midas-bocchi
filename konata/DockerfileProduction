@@ -1,0 +1,3 @@
+FROM nginx
+
+COPY ./konata/conf.d /etc/nginx/conf.d/
