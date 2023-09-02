@@ -12,3 +12,4 @@ RUN apk add mariadb-dev && \
 
 RUN mkdir /mnt/nas
 
+COPY . /app/
