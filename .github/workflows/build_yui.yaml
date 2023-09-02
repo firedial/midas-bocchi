@@ -24,5 +24,5 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-yui:latest
-          file: yui/DockerfileProductiton
+          file: yui/DockerfileProduction
           platforms: linux/arm/v7
