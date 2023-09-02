@@ -2,6 +2,7 @@ version: '3.8'
 services:
     konata:
         image: firedial/midas-bocchi-konata
+        restart: always
         ports:
          - "443:443"
         volumes:
@@ -72,7 +73,7 @@ services:
             - ENCRYPTION_KEY=$ENCRYPTION_KEY
             - DISCORD_URL=$DISCORD_URL
         volumes:
-         - ./rikka:/home/root
+         - ./rikka:/app
         privileged: true
         tty: true
 volumes:

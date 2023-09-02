@@ -122,6 +122,6 @@ rikka コンテナからリストアする。それぞれ DB と Metabase のリ
 
 ```
 $ docker compose exec rikka sh
-$ sh /home/root/backup/crypt_restore.sh
-$ sh /home/root/backup/crypt_metabase_restore.sh
+$ sh /app/backup/crypt_restore.sh
+$ sh /app/backup/crypt_metabase_restore.sh
 ```
