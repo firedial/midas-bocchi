@@ -1,0 +1,3 @@
+FROM yobasystems/alpine-mariadb:10.11.2
+
+COPY ./yui/initdb.d /docker-entrypoint-initdb.d/
