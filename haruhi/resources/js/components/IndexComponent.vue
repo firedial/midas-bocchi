@@ -4,7 +4,7 @@
             <thead class="thead-light">
                 <tr>
                     <th scope="col">項目</th>
-                    <th scope="col">リンク</th>
+                    <th scope="col">ページ</th>
                 </tr>
             </thead>
             <tbody>
