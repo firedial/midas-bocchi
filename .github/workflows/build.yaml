@@ -21,7 +21,7 @@ jobs:
           curl -H "Content-Type: application/json" \
           -X POST \
           -d '{
-            "content": "[$${{ inputs.name }}] build start"
+            "content": "[${{ inputs.name }}] build start"
           }' \
           ${{ secrets.DISCORD_WEBHOOK_URL }}
       - name: Set up QEMU
