@@ -12,6 +12,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Notify Discord (start)
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{
+            "content": "[swagger] build start"
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
       - name: Chekcout code
         uses: actions/checkout@v4
       - name: Install swagger-cli
@@ -39,3 +47,21 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Notify Discord (success)
+        if: ${{ success() }}
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{
+            "content": "[swagger] build successed"
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+      - name: Notify Discord (fail)
+        if: ${{ failure() }}
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{
+            "content": "[swagger] build failed"
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
