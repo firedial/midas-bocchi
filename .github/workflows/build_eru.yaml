@@ -10,7 +10,7 @@ on:
 
 jobs:
   plan:
-    uses: firedial/midas-bocchi/.github/workflows/build_common.yaml@build_notify_auto
+    uses: firedial/midas-bocchi/.github/workflows/build_common.yaml@main
     with:
       name: eru
     secrets:
