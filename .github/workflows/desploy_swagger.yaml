@@ -21,6 +21,7 @@ jobs:
         with:
           output: swagger-ui
           spec-file: document/api/swagger.yaml
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Documents
         uses: actions/upload-pages-artifact@v3
         with:
