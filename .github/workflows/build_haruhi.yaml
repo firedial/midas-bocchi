@@ -10,7 +10,7 @@ on:
 
 jobs:
   plan:
-    uses: firedial/midas-bocchi/.github/workflows/build.yaml@main
+    uses: firedial/midas-bocchi/.github/workflows/build.yaml@build_notify_auto
     with:
       name: haruhi
     secrets:
