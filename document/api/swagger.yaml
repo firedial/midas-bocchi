@@ -631,3 +631,397 @@ paths:
                   message:
                     type: string
                     example: error_message
+
+  "/attribute_elements/{attributeName}":
+    get:
+      summary: "属性要素表取得"
+      description: "属性要素表を取得する"
+      tags: ["attribute_elements"]
+      parameters:
+        - name: attributeName
+          required: true
+          in: path
+          description: >
+            取得する属性要素
+              * `kind` - 種別
+              * `purposes` - 予算
+              * `places` - 場所
+          schema:
+            type: string
+            enum:
+              - kind
+              - purposes
+              - places
+            example: places
+        - name: isOnlySelectable
+          in: query
+          description: >
+            * `true` - priority が 1 以上のものだけ取得する
+          schema:
+            type: string
+            example: true
+      responses:
+        "200":
+          description: "Success operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      description: 属性要素ID
+                      example: 100
+                    name:
+                      type: string
+                      description: 属性要素名
+                      example: lunch
+                    description:
+                      type: string
+                      description: 属性要素説明
+                      example: 昼食
+                    priority:
+                      type: number
+                      description: 優先度
+                      example: 10
+                    category_id:
+                      type: number
+                      description: 親カテゴリーID
+                      example: 32
+    post:
+      summary: "属性要素登録"
+      description: "属性要素を登録する"
+      tags: ["attribute_elements"]
+      parameters:
+        - name: attributeName
+          required: true
+          in: path
+          description: >
+            登録する属性
+              * `kind` - 種別
+              * `purposes` - 予算
+              * `places` - 場所
+          schema:
+            type: string
+            enum:
+              - kind
+              - purposes
+              - places
+            example: places
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 属性要素名
+                  example: lunch
+                description:
+                  type: string
+                  description: 属性要素説明
+                  example: 昼食
+                priority:
+                  type: number
+                  description: 優先度
+                  example: 10
+                category_id:
+                  type: number
+                  description: 親カテゴリーID
+                  example: 32
+      responses:
+        "200":
+          description: "Success operation"
+        "400":
+          description: "登録失敗"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: error_message
+
+  "/attribute_elements/{attributeName}/{elementId}":
+    get:
+      summary: "属性要素取得"
+      description: "属性要素を取得する"
+      tags: ["attribute_elements"]
+      parameters:
+        - name: attributeName
+          required: true
+          in: path
+          description: >
+            取得する属性
+              * `kind` - 種別
+              * `purposes` - 予算
+              * `places` - 場所
+          schema:
+            type: string
+            enum:
+              - kind
+              - purposes
+              - places
+            example: places
+        - name: elementId
+          required: true
+          in: path
+          description: 要素ID
+          schema:
+            type: string
+            example: 123
+      responses:
+        "200":
+          description: "Success operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: 属性要素ID
+                    example: 100
+                  name:
+                    type: string
+                    description: 属性要素名
+                    example: lunch
+                  description:
+                    type: string
+                    description: 属性要素説明
+                    example: 昼食
+                  priority:
+                    type: number
+                    description: 優先度
+                    example: 10
+                  category_id:
+                    type: number
+                    description: 親カテゴリーID
+                    example: 32
+        "500":
+          description: "取得失敗"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: error_message
+    put:
+      summary: "属性要素更新"
+      description: "属性要素を更新する"
+      tags: ["attribute_elements"]
+      parameters:
+        - name: attributeName
+          required: true
+          in: path
+          description: >
+            更新する属性
+              * `kind` - 種別
+              * `purposes` - 予算
+              * `places` - 場所
+          schema:
+            type: string
+            enum:
+              - kind
+              - purposes
+              - places
+            example: places
+        - name: elementId
+          required: true
+          in: path
+          description: 要素ID
+          schema:
+            type: string
+            example: 123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 属性要素名
+                  example: lunch
+                description:
+                  type: string
+                  description: 属性要素説明
+                  example: 昼食
+                priority:
+                  type: number
+                  description: 優先度
+                  example: 10
+                category_id:
+                  type: number
+                  description: 親カテゴリーID
+                  example: 32
+      responses:
+        "200":
+          description: "Success operation"
+        "400":
+          description: "更新失敗"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: error_message
+
+  "/attribute_categories/{attributeName}":
+    get:
+      summary: "属性カテゴリー表取得"
+      description: "属性カテゴリー表を取得する"
+      tags: ["attribute_categories"]
+      parameters:
+        - name: attributeName
+          required: true
+          in: path
+          description: >
+            取得する属性要素
+              * `kind` - 種別
+              * `purposes` - 予算
+              * `places` - 場所
+          schema:
+            type: string
+            enum:
+              - kind
+              - purposes
+              - places
+            example: places
+      responses:
+        "200":
+          description: "Success operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      description: 属性カテゴリーID
+                      example: 100
+                    name:
+                      type: string
+                      description: 属性カテゴリー名
+                      example: food
+                    description:
+                      type: string
+                      description: 属性カテゴリー説明
+                      example: 食費
+    post:
+      summary: "属性カテゴリー登録"
+      description: "属性カテゴリーを登録する"
+      tags: ["attribute_categories"]
+      parameters:
+        - name: attributeName
+          required: true
+          in: path
+          description: >
+            登録する属性
+              * `kind` - 種別
+              * `purposes` - 予算
+              * `places` - 場所
+          schema:
+            type: string
+            enum:
+              - kind
+              - purposes
+              - places
+            example: places
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 属性カテゴリー名
+                  example: food
+                description:
+                  type: string
+                  description: 属性カテゴリー説明
+                  example: 食費
+      responses:
+        "200":
+          description: "Success operation"
+        "400":
+          description: "登録失敗"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: error_message
+
+  "/attribute_categories/{attributeName}/{categoryId}":
+    put:
+      summary: "属性カテゴリー更新"
+      description: "属性カテゴリーを更新する"
+      tags: ["attribute_categories"]
+      parameters:
+        - name: attributeName
+          required: true
+          in: path
+          description: >
+            更新する属性
+              * `kind` - 種別
+              * `purposes` - 予算
+              * `places` - 場所
+          schema:
+            type: string
+            enum:
+              - kind
+              - purposes
+              - places
+            example: places
+        - name: categoryId
+          required: true
+          in: path
+          description: カテゴリーID
+          schema:
+            type: string
+            example: 123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 属性カテゴリー名
+                  example: food
+                description:
+                  type: string
+                  description: 属性カテゴリー説明
+                  example: 食費
+      responses:
+        "200":
+          description: "Success operation"
+        "400":
+          description: "更新失敗"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: error_message
