@@ -18,7 +18,7 @@ class BalanceController extends Controller
         $params = [];
         $params['limit'] = $request->input('limit');
         $params['orderby'] = $request->input('orderby');
-        $params['id'] = $request->input('id');
+        $params['id'] = null;
 
         $balanceService = new BalanceService();
         return $balanceService->index($params);
