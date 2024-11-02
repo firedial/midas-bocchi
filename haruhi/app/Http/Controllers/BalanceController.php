@@ -32,7 +32,7 @@ class BalanceController extends Controller
         return $balanceService->index($params);
     }
 
-    public function show(string $id)
+    public function show(int $id)
     {
         // @todo ここら辺セットしなくてもいいようにする
         $params = [];
@@ -59,7 +59,7 @@ class BalanceController extends Controller
         $balanceService->store($balance);
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $id)
     {
         $balanceService = new BalanceService();
         $balance = self::getBalance($request);
@@ -70,7 +70,7 @@ class BalanceController extends Controller
         $balanceService->update($balance);
     }
 
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
         $balanceService = new BalanceService();
         if (is_null($id) || !is_numeric($id)) {

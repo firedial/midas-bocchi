@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 interface MoveDao
 {
-    public function getMoves(String $attributeName);
-    public function getMoveById(String $attributeName, Int $id);
-    public function insertMove(String $attributeName, array $move);
+    public function getMoves(string $attributeName);
+    public function getMoveById(string $attributeName, int $id);
+    public function insertMove(string $attributeName, array $move);
 }

@@ -36,7 +36,7 @@ class SalaryService
         $this->moveDao = $moveDao ?: new MoveDaoImpl();
     }
 
-    public function registerSalary(array $salary): Bool
+    public function registerSalary(array $salary): bool
     {
         \DB::beginTransaction();
         try {

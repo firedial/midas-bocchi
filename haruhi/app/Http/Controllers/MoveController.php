@@ -10,19 +10,19 @@ use App\Util\DateUtil;
 class MoveController extends Controller
 {
     // @todo 入力値をそのまま入れているのでバリデーションを入れる
-    public function index(String $attributeName)
+    public function index(string $attributeName)
     {
         $moveService = new MoveService($attributeName);
         return $moveService->index();
     }
 
-    public function show(String $attributeName, Int $id)
+    public function show(string $attributeName, int $id)
     {
         $moveService = new MoveService($attributeName);
         return $moveService->show($id);
     }
 
-    public function store(Request $request, String $attributeName)
+    public function store(Request $request, string $attributeName)
     {
         $move = [];
         $move['item'] = (string)$request->input('item');
@@ -36,7 +36,7 @@ class MoveController extends Controller
         return $moveService->store($move);
     }
 
-    public function update(Request $request, String $attributeName, Int $id)
+    public function update(Request $request, string $attributeName, int $id)
     {
         $move = [];
         $move['item'] = (string)$request->input('item');
@@ -54,7 +54,7 @@ class MoveController extends Controller
         return $moveService->update($move, $id);
     }
 
-    public function destroy(String $attributeName, Int $id)
+    public function destroy(string $attributeName, int $id)
     {
         $moveService = new MoveService($attributeName);
         return $moveService->destroy($id);

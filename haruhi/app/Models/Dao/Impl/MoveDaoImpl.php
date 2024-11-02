@@ -23,7 +23,7 @@ class MoveDaoImpl implements MoveDao
      * @return array 移動処理のレコード
      */
 
-    public function getMoves(String $attributeName)
+    public function getMoves(string $attributeName)
     {
         $moveAttributeConditionColumn = '';
         $moveAttributeConditionId = '';
@@ -69,7 +69,7 @@ class MoveDaoImpl implements MoveDao
      * @param Int 取得する主キー
      * @return array 指定された移動処理のレコード
      */
-    public function getMoveById(String $attributeName, Int $id)
+    public function getMoveById(string $attributeName, int $id)
     {
         $list = DB::table('m_balance as before')
             ->select(

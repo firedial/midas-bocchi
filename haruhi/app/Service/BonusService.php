@@ -36,7 +36,7 @@ class BonusService
         $this->moveDao = $moveDao ?: new MoveDaoImpl();
     }
 
-    public function registerBonus(array $bonus): Bool
+    public function registerBonus(array $bonus): bool
     {
         \DB::beginTransaction();
         try {
