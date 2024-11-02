@@ -34,20 +34,6 @@ services:
             - SESSION_DOMAIN=$APP_DOMAIN
         volumes:
             - ./haruhi:/var/www/html
-    nagisa:
-        ports:
-         - "8000:8000"
-        build:
-            context: ./nagisa
-            dockerfile: Dockerfile
-        restart: always
-        hostname: nagisa
-        environment:
-            - APP_ENV=$APP_ENV
-        volumes:
-            - ./nagisa:/app
-        # entrypoint: "elm make src/Main.elm --output=main.js"
-        tty: true
     eru:
         build:
             context: ./eru
