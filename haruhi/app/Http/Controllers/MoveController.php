@@ -18,6 +18,10 @@ class MoveController extends Controller
 
     public function show(string $attributeName, int $id)
     {
+        if (is_null($id) || !is_numeric($id)) {
+            throw new InvalidParameterException('Move id is null.');
+        }
+
         $moveService = new MoveService($attributeName);
         return $moveService->show($id);
     }
@@ -33,7 +37,7 @@ class MoveController extends Controller
 
         self::validation($move);
         $moveService = new MoveService($attributeName);
-        return $moveService->store($move);
+        $moveService->store($move);
     }
 
     public function update(Request $request, string $attributeName, int $id)
@@ -45,19 +49,19 @@ class MoveController extends Controller
         $move['beforeId'] = (int)$request->input('before_id');
         $move['afterId'] = (int)$request->input('after_id');
 
-        if (is_null($id)) {
+        if (is_null($id) || !is_numeric($id)) {
             throw new InvalidParameterException('Move id is null.');
         }
 
         self::validation($move);
         $moveService = new MoveService($attributeName);
-        return $moveService->update($move, $id);
+        $moveService->update($move, $id);
     }
 
     public function destroy(string $attributeName, int $id)
     {
         $moveService = new MoveService($attributeName);
-        return $moveService->destroy($id);
+        $moveService->destroy($id);
     }
 
     private static function validation(array $move): void
