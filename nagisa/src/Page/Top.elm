@@ -8,7 +8,6 @@ import Http
 type alias Model =
     { name : String
     , count : Int
-    , domain : String
     }
 
 
@@ -17,9 +16,9 @@ type Msg
     | GetJson (Result Http.Error String)
 
 
-init : String -> Int -> String -> ( Model, Cmd Msg )
-init name count domain =
-    ( Model name count domain, Http.get { url = domain ++ "/api/balances", expect = Http.expectString GetJson } )
+init : String -> Int -> ( Model, Cmd Msg )
+init name count =
+    ( Model name count, Http.get { url = "/api/balances", expect = Http.expectString GetJson } )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -40,6 +39,6 @@ update msg model =
 view : Model -> Html.Html Msg
 view model =
     Html.div []
-        [ Html.text model.domain
-        , Html.a [ Html.Attributes.href "/account" ] [ Html.text model.domain ]
+        [ Html.text model.name
+        , Html.a [ Html.Attributes.href "/account" ] [ Html.text "here" ]
         ]

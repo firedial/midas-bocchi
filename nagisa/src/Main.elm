@@ -9,7 +9,7 @@ import Route
 import Url
 
 
-main : Program Env Model Msg
+main : Program () Model Msg
 main =
     Browser.application
         { init = init
@@ -30,18 +30,12 @@ type Page
 type alias Model =
     { key : Navigation.Key
     , page : Page
-    , env : Env
     }
 
 
-type alias Env =
-    { domain : String
-    }
-
-
-init : Env -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
-init env url key =
-    Model key NotFound env |> goTo (Route.parse url)
+init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
+init _ url key =
+    Model key NotFound |> goTo (Route.parse url)
 
 
 type Msg
@@ -123,7 +117,7 @@ goTo maybeRoute model =
         Just Route.Top ->
             let
                 ( topModel, topCmd ) =
-                    Page.Top.init model.env.domain 1 model.env.domain
+                    Page.Top.init "top" 1
             in
             ( { model | page = Top topModel }
             , Cmd.map TopMsg topCmd
