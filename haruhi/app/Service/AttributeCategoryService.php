@@ -38,12 +38,12 @@ class AttributeCategoryService
         );
     }
 
-    public function createAttributeCategory(array $input): Bool
+    public function createAttributeCategory(array $input): bool
     {
         return $this->attributeCategoryDao->insertAttributeCategory($input['attributeName'], $input['attributeCategory']);
     }
 
-    public function updateAttributeCategory(array $input): Bool
+    public function updateAttributeCategory(array $input): bool
     {
         return $this->attributeCategoryDao->updateAttributeCategory($input['attributeName'], $input['attributeCategory']);
     }

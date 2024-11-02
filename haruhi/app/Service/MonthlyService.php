@@ -29,7 +29,7 @@ class MonthlyService
         $this->balanceDao = $balanceDao ?: new BalanceDaoImpl();
     }
 
-    public function registerMonthly(array $data): Bool
+    public function registerMonthly(array $data): bool
     {
         \DB::beginTransaction();
         try {

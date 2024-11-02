@@ -57,12 +57,12 @@ class AttributeElementService
         );
     }
 
-    public function createAttributeElement(array $input): Bool
+    public function createAttributeElement(array $input): bool
     {
         return $this->attributeElementDao->insertAttributeElement($input['attributeName'], $input['attributeElement']);
     }
 
-    public function updateAttributeElement(array $input): Bool
+    public function updateAttributeElement(array $input): bool
     {
         return $this->attributeElementDao->updateAttributeElement($input['attributeName'], $input['attributeElement']);
     }

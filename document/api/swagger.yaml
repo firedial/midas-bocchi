@@ -74,11 +74,11 @@ paths:
                   type: object
                   properties:
                     id:
-                      type: string
+                      type: number
                       description: 収支ID
                       example: 123
                     amount:
-                      type: string
+                      type: number
                       description: 金額
                       example: -500
                     item:
@@ -86,15 +86,15 @@ paths:
                       description: 項目
                       example: うどん
                     kind_element_id:
-                      type: string
+                      type: number
                       description: 種別ID
                       example: 2
                     purpose_element_id:
-                      type: string
+                      type: number
                       description: 予算ID
                       example: 5
                     place_element_id:
-                      type: string
+                      type: number
                       description: 場所ID
                       example: 6
                     date:
@@ -129,7 +129,7 @@ paths:
               type: object
               properties:
                 amount:
-                  type: string
+                  type: number
                   description: 金額
                   example: -500
                 item:
@@ -137,15 +137,15 @@ paths:
                   description: 項目
                   example: うどん
                 kind_element_id:
-                  type: string
+                  type: number
                   description: 種別ID
                   example: 2
                 purpose_element_id:
-                  type: string
+                  type: number
                   description: 予算ID
                   example: 5
                 place_element_id:
-                  type: string
+                  type: number
                   description: 場所ID
                   example: 6
                 date:
@@ -153,8 +153,8 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -171,7 +171,7 @@ paths:
           in: path
           description: 収支ID
           schema:
-            type: string
+            type: number
             example: 123
       responses:
         "200":
@@ -182,11 +182,11 @@ paths:
                 type: object
                 properties:
                   id:
-                    type: string
+                    type: number
                     description: 収支ID
                     example: 123
                   amount:
-                    type: string
+                    type: number
                     description: 金額
                     example: -500
                   item:
@@ -194,15 +194,15 @@ paths:
                     description: 項目
                     example: うどん
                   kind_element_id:
-                    type: string
+                    type: number
                     description: 種別ID
                     example: 2
                   purpose_element_id:
-                    type: string
+                    type: number
                     description: 予算ID
                     example: 5
                   place_element_id:
-                    type: string
+                    type: number
                     description: 場所ID
                     example: 6
                   date:
@@ -237,7 +237,7 @@ paths:
           in: path
           description: 収支ID
           schema:
-            type: string
+            type: number
             example: 123
       requestBody:
         required: true
@@ -247,7 +247,7 @@ paths:
               type: object
               properties:
                 amount:
-                  type: string
+                  type: number
                   description: 金額
                   example: -500
                 item:
@@ -255,15 +255,15 @@ paths:
                   description: 項目
                   example: うどん
                 kind_element_id:
-                  type: string
+                  type: number
                   description: 種別ID
                   example: 2
                 purpose_element_id:
-                  type: string
+                  type: number
                   description: 予算ID
                   example: 5
                 place_element_id:
-                  type: string
+                  type: number
                   description: 場所ID
                   example: 6
                 date:
@@ -271,8 +271,8 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -289,11 +289,11 @@ paths:
           in: path
           description: 収支ID
           schema:
-            type: string
+            type: number
             example: 123
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -319,11 +319,11 @@ paths:
                   type: object
                   properties:
                     id:
-                      type: string
+                      type: number
                       description: 移動ID
                       example: 123
                     amount:
-                      type: string
+                      type: number
                       description: 金額
                       example: 500
                     item:
@@ -331,11 +331,11 @@ paths:
                       description: 項目
                       example: チャージ
                     before_id:
-                      type: string
+                      type: number
                       description: 移動前ID
                       example: 2
                     after_id:
-                      type: string
+                      type: number
                       description: 移行後ID
                       example: 5
                     date:
@@ -368,7 +368,7 @@ paths:
               type: object
               properties:
                 amount:
-                  type: string
+                  type: number
                   description: 金額
                   minimum: 1
                   example: 500
@@ -377,11 +377,11 @@ paths:
                   description: 項目
                   example: チャージ
                 before_id:
-                  type: string
+                  type: number
                   description: 移動前ID
                   example: 2
                 after_id:
-                  type: string
+                  type: number
                   description: 移行後ID
                   example: 5
                 date:
@@ -389,8 +389,8 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -408,7 +408,7 @@ paths:
           in: path
           description: 移動ID
           schema:
-            type: string
+            type: number
             example: 123
       responses:
         "200":
@@ -419,11 +419,11 @@ paths:
                 type: object
                 properties:
                   id:
-                    type: string
+                    type: number
                     description: 移動ID
                     example: 123
                   amount:
-                    type: string
+                    type: number
                     description: 金額
                     example: 500
                   item:
@@ -431,11 +431,11 @@ paths:
                     description: 項目
                     example: チャージ
                   before_id:
-                    type: string
+                    type: number
                     description: 移動前ID
                     example: 2
                   after_id:
-                    type: string
+                    type: number
                     description: 移行後ID
                     example: 5
                   date:
@@ -467,7 +467,7 @@ paths:
           in: path
           description: 移動ID
           schema:
-            type: string
+            type: number
             example: 123
       requestBody:
         required: true
@@ -477,7 +477,7 @@ paths:
               type: object
               properties:
                 amount:
-                  type: string
+                  type: number
                   description: 金額
                   minimum: 1
                   example: 500
@@ -486,11 +486,11 @@ paths:
                   description: 項目
                   example: チャージ
                 before_id:
-                  type: string
+                  type: number
                   description: 移動前ID
                   example: 2
                 after_id:
-                  type: string
+                  type: number
                   description: 移行後ID
                   example: 5
                 date:
@@ -498,8 +498,8 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -518,11 +518,11 @@ paths:
           in: path
           description: 移動ID
           schema:
-            type: string
+            type: number
             example: 123
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -608,8 +608,8 @@ paths:
                   description: 親カテゴリーID
                   example: 32
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -627,7 +627,7 @@ paths:
           in: path
           description: 要素ID
           schema:
-            type: string
+            type: number
             example: 123
       responses:
         "200":
@@ -674,7 +674,7 @@ paths:
           in: path
           description: 要素ID
           schema:
-            type: string
+            type: number
             example: 123
       requestBody:
         required: true
@@ -700,8 +700,8 @@ paths:
                   description: 親カテゴリーID
                   example: 32
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -765,8 +765,8 @@ paths:
                   description: 属性カテゴリー説明
                   example: 食費
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -784,7 +784,7 @@ paths:
           in: path
           description: カテゴリーID
           schema:
-            type: string
+            type: number
             example: 123
       requestBody:
         required: true
@@ -802,8 +802,8 @@ paths:
                   description: 属性カテゴリー説明
                   example: 食費
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -878,8 +878,8 @@ paths:
                   description: 支給日
                   example: "2024-02-25"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -927,8 +927,8 @@ paths:
                   description: 支給日
                   example: "2024-02-25"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -1017,8 +1017,8 @@ paths:
                       description: 支払日
                       example: "2024-02-01"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -1059,7 +1059,7 @@ components:
         example: places
 
   responses:
-    NoContent:
+    Ok:
       description: 処理成功
     BadRequest:
       description: パラメータ不正
