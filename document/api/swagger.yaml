@@ -113,6 +113,10 @@ paths:
                       type: string
                       description: 場所名
                       example: 財布
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     post:
       summary: "収支登録"
       description: "収支を登録する"
@@ -149,23 +153,12 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "200":
-          description: "Success operation"
-          content:
-            text/html:
-              schema:
-                type: string
-              example: 1
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "500":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
 
   "/balances/{balanceId}":
     get:
@@ -228,16 +221,12 @@ paths:
                     type: string
                     description: 場所名
                     example: 財布
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "取得失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
     put:
       summary: "収支更新"
       description: "収支を更新する"
@@ -282,23 +271,14 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "200":
-          description: "Success operation"
-          content:
-            text/html:
-              schema:
-                type: string
-              example: 1
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "更新失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
     delete:
       summary: "収支削除"
       description: "収支を削除する"
@@ -312,23 +292,14 @@ paths:
             type: string
             example: 123
       responses:
-        "200":
-          description: "Success operation"
-          content:
-            text/html:
-              schema:
-                type: string
-              example: 1
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "削除失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
 
   "/moves/{attributeName}":
     get:
@@ -391,6 +362,10 @@ paths:
                       type: string
                       description: 移動後名
                       example: ICカード
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     post:
       summary: "移動登録"
       description: "移動を登録する"
@@ -438,18 +413,12 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/moves/{attributeName}/{moveId}":
     get:
@@ -517,16 +486,12 @@ paths:
                     type: string
                     description: 移動後名
                     example: ICカード
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "取得失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
     put:
       summary: "移動更新"
       description: "移動を更新する"
@@ -581,18 +546,15 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "更新失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
     delete:
       summary: "移動削除"
       description: "移動を削除する"
@@ -619,18 +581,14 @@ paths:
             type: string
             example: 123
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "削除失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
 
   "/attribute_elements/{attributeName}":
     get:
@@ -690,6 +648,10 @@ paths:
                       type: number
                       description: 親カテゴリーID
                       example: 32
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     post:
       summary: "属性要素登録"
       description: "属性要素を登録する"
@@ -734,18 +696,12 @@ paths:
                   description: 親カテゴリーID
                   example: 32
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/attribute_elements/{attributeName}/{elementId}":
     get:
@@ -803,16 +759,12 @@ paths:
                     type: number
                     description: 親カテゴリーID
                     example: 32
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "取得失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
     put:
       summary: "属性要素更新"
       description: "属性要素を更新する"
@@ -864,18 +816,14 @@ paths:
                   description: 親カテゴリーID
                   example: 32
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "更新失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/attribute_categories/{attributeName}":
     get:
@@ -920,6 +868,11 @@ paths:
                       type: string
                       description: 属性カテゴリー説明
                       example: 食費
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
     post:
       summary: "属性カテゴリー登録"
       description: "属性カテゴリーを登録する"
@@ -956,18 +909,12 @@ paths:
                   description: 属性カテゴリー説明
                   example: 食費
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/attribute_categories/{attributeName}/{categoryId}":
     put:
@@ -1013,18 +960,14 @@ paths:
                   description: 属性カテゴリー説明
                   example: 食費
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "更新失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/salary":
     post:
@@ -1093,18 +1036,12 @@ paths:
                   description: 支給日
                   example: "2024-02-25"
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/bonus":
     post:
@@ -1148,18 +1085,12 @@ paths:
                   description: 支給日
                   example: "2024-02-25"
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/monthly":
     post:
@@ -1183,7 +1114,7 @@ paths:
                       minimum: 1
                       description: 金額
                       example: 50000
-                    data:
+                    date:
                       type: string
                       description: 支払日
                       example: "2024-02-27"
@@ -1197,7 +1128,7 @@ paths:
                       minimum: 1
                       description: 金額
                       example: 3000
-                    data:
+                    date:
                       type: string
                       description: 支払日
                       example: "2024-02-15"
@@ -1211,7 +1142,7 @@ paths:
                       minimum: 1
                       description: 金額
                       example: 2000
-                    data:
+                    date:
                       type: string
                       description: 支払日
                       example: "2024-02-15"
@@ -1225,7 +1156,7 @@ paths:
                       minimum: 1
                       description: 金額
                       example: 5000
-                    data:
+                    date:
                       type: string
                       description: 支払日
                       example: "2024-02-10"
@@ -1239,20 +1170,47 @@ paths:
                       minimum: 1
                       description: 金額
                       example: 6000
-                    data:
+                    date:
                       type: string
                       description: 支払日
                       example: "2024-02-01"
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  responses:
+    NoContent:
+      description: 処理成功
+    BadRequest:
+      description: パラメータ不正
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: NotFound
+    InternalServerError:
+      description: 予期せぬエラー
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "error_message"
