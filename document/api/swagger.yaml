@@ -153,8 +153,8 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -271,8 +271,8 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -292,8 +292,8 @@ paths:
             type: number
             example: 123
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -389,8 +389,8 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -498,8 +498,8 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -521,8 +521,8 @@ paths:
             type: number
             example: 123
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -608,8 +608,8 @@ paths:
                   description: 親カテゴリーID
                   example: 32
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -700,8 +700,8 @@ paths:
                   description: 親カテゴリーID
                   example: 32
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -765,8 +765,8 @@ paths:
                   description: 属性カテゴリー説明
                   example: 食費
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -802,8 +802,8 @@ paths:
                   description: 属性カテゴリー説明
                   example: 食費
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -878,8 +878,8 @@ paths:
                   description: 支給日
                   example: "2024-02-25"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -927,8 +927,8 @@ paths:
                   description: 支給日
                   example: "2024-02-25"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -1017,8 +1017,8 @@ paths:
                       description: 支払日
                       example: "2024-02-01"
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "200":
+          $ref: "#/components/responses/Ok"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -1059,7 +1059,7 @@ components:
         example: places
 
   responses:
-    NoContent:
+    Ok:
       description: 処理成功
     BadRequest:
       description: パラメータ不正
