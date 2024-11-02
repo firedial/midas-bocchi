@@ -113,6 +113,10 @@ paths:
                       type: string
                       description: 場所名
                       example: 財布
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     post:
       summary: "収支登録"
       description: "収支を登録する"
@@ -149,23 +153,12 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "200":
-          description: "Success operation"
-          content:
-            text/html:
-              schema:
-                type: string
-              example: 1
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "500":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
 
   "/balances/{balanceId}":
     get:
@@ -228,16 +221,12 @@ paths:
                     type: string
                     description: 場所名
                     example: 財布
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "取得失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
     put:
       summary: "収支更新"
       description: "収支を更新する"
@@ -282,23 +271,14 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "200":
-          description: "Success operation"
-          content:
-            text/html:
-              schema:
-                type: string
-              example: 1
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "更新失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
     delete:
       summary: "収支削除"
       description: "収支を削除する"
@@ -312,23 +292,14 @@ paths:
             type: string
             example: 123
       responses:
-        "200":
-          description: "Success operation"
-          content:
-            text/html:
-              schema:
-                type: string
-              example: 1
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "削除失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
 
   "/moves/{attributeName}":
     get:
@@ -336,19 +307,7 @@ paths:
       description: "移動表を取得する"
       tags: ["moves"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            移動させる属性
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/moveAttributeName"
       responses:
         "200":
           description: "Success operation"
@@ -391,24 +350,16 @@ paths:
                       type: string
                       description: 移動後名
                       example: ICカード
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     post:
       summary: "移動登録"
       description: "移動を登録する"
       tags: ["moves"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            移動させる属性
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/moveAttributeName"
       requestBody:
         required: true
         content:
@@ -438,18 +389,12 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/moves/{attributeName}/{moveId}":
     get:
@@ -457,19 +402,7 @@ paths:
       description: "移動を取得する"
       tags: ["moves"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            移動させる属性
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/moveAttributeName"
         - name: moveId
           required: true
           in: path
@@ -517,34 +450,18 @@ paths:
                     type: string
                     description: 移動後名
                     example: ICカード
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "取得失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
     put:
       summary: "移動更新"
       description: "移動を更新する"
       tags: ["moves"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            移動させる属性
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/moveAttributeName"
         - name: moveId
           required: true
           in: path
@@ -581,36 +498,21 @@ paths:
                   description: 日付
                   example: "2024-10-23"
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "更新失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
     delete:
       summary: "移動削除"
       description: "移動を削除する"
       tags: ["moves"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            移動させる属性
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/moveAttributeName"
         - name: moveId
           required: true
           in: path
@@ -619,18 +521,14 @@ paths:
             type: string
             example: 123
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "削除失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
 
   "/attribute_elements/{attributeName}":
     get:
@@ -638,21 +536,7 @@ paths:
       description: "属性要素表を取得する"
       tags: ["attribute_elements"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            取得する属性要素
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
         - name: isOnlySelectable
           in: query
           description: >
@@ -690,26 +574,16 @@ paths:
                       type: number
                       description: 親カテゴリーID
                       example: 32
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     post:
       summary: "属性要素登録"
       description: "属性要素を登録する"
       tags: ["attribute_elements"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            登録する属性
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
       requestBody:
         required: true
         content:
@@ -734,18 +608,12 @@ paths:
                   description: 親カテゴリーID
                   example: 32
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/attribute_elements/{attributeName}/{elementId}":
     get:
@@ -753,21 +621,7 @@ paths:
       description: "属性要素を取得する"
       tags: ["attribute_elements"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            取得する属性
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
         - name: elementId
           required: true
           in: path
@@ -803,36 +657,18 @@ paths:
                     type: number
                     description: 親カテゴリーID
                     example: 32
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
-          description: "取得失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/InternalServerError"
     put:
       summary: "属性要素更新"
       description: "属性要素を更新する"
       tags: ["attribute_elements"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            更新する属性
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
         - name: elementId
           required: true
           in: path
@@ -864,18 +700,14 @@ paths:
                   description: 親カテゴリーID
                   example: 32
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "更新失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/attribute_categories/{attributeName}":
     get:
@@ -883,21 +715,7 @@ paths:
       description: "属性カテゴリー表を取得する"
       tags: ["attribute_categories"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            取得する属性要素
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
       responses:
         "200":
           description: "Success operation"
@@ -920,26 +738,17 @@ paths:
                       type: string
                       description: 属性カテゴリー説明
                       example: 食費
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
     post:
       summary: "属性カテゴリー登録"
       description: "属性カテゴリーを登録する"
       tags: ["attribute_categories"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            登録する属性
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
       requestBody:
         required: true
         content:
@@ -956,18 +765,12 @@ paths:
                   description: 属性カテゴリー説明
                   example: 食費
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "登録失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   "/attribute_categories/{attributeName}/{categoryId}":
     put:
@@ -975,21 +778,7 @@ paths:
       description: "属性カテゴリーを更新する"
       tags: ["attribute_categories"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            更新する属性
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
         - name: categoryId
           required: true
           in: path
@@ -1013,15 +802,290 @@ paths:
                   description: 属性カテゴリー説明
                   example: 食費
       responses:
-        "200":
-          description: "Success operation"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
-          description: "更新失敗"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: error_message
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  "/salary":
+    post:
+      summary: "給料明細登録"
+      description: "給料明細を登録する"
+      tags: ["others"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                baseSalarary:
+                  type: integer
+                  minimum: 1
+                  description: 基本給
+                  example: 200000
+                adjustmentSalary:
+                  type: integer
+                  minimum: 1
+                  description: 職務調整給
+                  example: 50000
+                transportation:
+                  type: integer
+                  minimum: 1
+                  description: 交通費
+                  example: 6000
+                holdingIncentives:
+                  type: integer
+                  minimum: 1
+                  description: 持株奨励金
+                  example: 1000
+                healthInsurance:
+                  type: integer
+                  minimum: 1
+                  description: 健康保険料
+                  example: 12000
+                welfarePension:
+                  type: integer
+                  minimum: 1
+                  description: 厚生年金保険
+                  example: 3000
+                residentTax:
+                  type: integer
+                  minimum: 1
+                  description: 住民税
+                  example: 9000
+                employmentInsurance:
+                  type: integer
+                  minimum: 1
+                  description: 雇用保険料
+                  example: 900
+                incomeTax:
+                  type: integer
+                  minimum: 1
+                  description: 所得税
+                  example: 14000
+                holding:
+                  type: integer
+                  minimum: 1
+                  description: 持株
+                  example: 15000
+                date:
+                  type: string
+                  description: 支給日
+                  example: "2024-02-25"
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  "/bonus":
+    post:
+      summary: "賞与明細登録"
+      description: "賞与明細を登録する"
+      tags: ["others"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bonus:
+                  type: integer
+                  minimum: 1
+                  description: ボーナス
+                  example: 200000
+                healthInsurance:
+                  type: integer
+                  minimum: 1
+                  description: 健康保険料
+                  example: 12000
+                welfarePension:
+                  type: integer
+                  minimum: 1
+                  description: 厚生年金保険
+                  example: 3000
+                employmentInsurance:
+                  type: integer
+                  minimum: 1
+                  description: 雇用保険料
+                  example: 900
+                incomeTax:
+                  type: integer
+                  minimum: 1
+                  description: 所得税
+                  example: 14000
+                date:
+                  type: string
+                  description: 支給日
+                  example: "2024-02-25"
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  "/monthly":
+    post:
+      summary: "月々の支払い登録"
+      description: "月々の支払いを登録する"
+      tags: ["others"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                house_rent:
+                  type: object
+                  nullable: true
+                  description: 家賃
+                  properties:
+                    amount:
+                      type: integer
+                      minimum: 1
+                      description: 金額
+                      example: 50000
+                    date:
+                      type: string
+                      description: 支払日
+                      example: "2024-02-27"
+                gas:
+                  type: object
+                  nullable: true
+                  description: ガス
+                  properties:
+                    amount:
+                      type: integer
+                      minimum: 1
+                      description: 金額
+                      example: 3000
+                    date:
+                      type: string
+                      description: 支払日
+                      example: "2024-02-15"
+                water:
+                  type: object
+                  nullable: true
+                  description: 水道
+                  properties:
+                    amount:
+                      type: integer
+                      minimum: 1
+                      description: 金額
+                      example: 2000
+                    date:
+                      type: string
+                      description: 支払日
+                      example: "2024-02-15"
+                elect:
+                  type: object
+                  nullable: true
+                  description: 電気
+                  properties:
+                    amount:
+                      type: integer
+                      minimum: 1
+                      description: 金額
+                      example: 5000
+                    date:
+                      type: string
+                      description: 支払日
+                      example: "2024-02-10"
+                net:
+                  type: object
+                  nullable: true
+                  description: ネット
+                  properties:
+                    amount:
+                      type: integer
+                      minimum: 1
+                      description: 金額
+                      example: 6000
+                    date:
+                      type: string
+                      description: 支払日
+                      example: "2024-02-01"
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  parameters:
+    attributeName:
+      name: attributeName
+      required: true
+      in: path
+      description: >
+        対象の属性
+          * `kind` - 種別
+          * `purposes` - 予算
+          * `places` - 場所
+      schema:
+        type: string
+        enum:
+          - kind
+          - purposes
+          - places
+        example: places
+    moveAttributeName:
+      name: attributeName
+      required: true
+      in: path
+      description: >
+        対象の属性
+          * `purposes` - 予算
+          * `places` - 場所
+      schema:
+        type: string
+        enum:
+          - kind
+          - purposes
+          - places
+        example: places
+
+  responses:
+    NoContent:
+      description: 処理成功
+    BadRequest:
+      description: パラメータ不正
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: NotFound
+    InternalServerError:
+      description: 予期せぬエラー
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "error_message"
