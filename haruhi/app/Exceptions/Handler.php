@@ -6,6 +6,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Throwable;
 use App\Exceptions\InvalidParameterException;
+use App\Exceptions\NotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -45,6 +46,8 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'message' => $e->getMessage()
                 ], 400);
+            } else if ($e instanceof NotFoundException) {
+                return response()->make("", 404);
             } else {
                 return response()->json([
                     'message' => $e->getMessage()

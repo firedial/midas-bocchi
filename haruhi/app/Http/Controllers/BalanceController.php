@@ -10,31 +10,45 @@ use App\Models\PurposeElement;
 use App\Models\PlaceElement;
 use App\Util\DateUtil;
 use App\Exceptions\InvalidParameterException;
+use App\Exceptions\NotFoundException;
 
 class BalanceController extends Controller
 {
     public function index(Request $request)
     {
         $params = [];
+
         $params['limit'] = $request->input('limit');
+        if (!is_null($params['limit']) && !is_numeric($params['limit'])) {
+            throw new InvalidParameterException('limit is wrong');
+        }
         $params['orderby'] = $request->input('orderby');
+        if (!is_null($params['orderby']) && ($params['orderby'] !== 'asc' && $params['orderby'] !== 'desc')) {
+            throw new InvalidParameterException('orderby is wrong');
+        }
         $params['id'] = null;
 
         $balanceService = new BalanceService();
         return $balanceService->index($params);
     }
 
-    public function show(Balance $balance)
+    public function show(string $id)
     {
         // @todo ここら辺セットしなくてもいいようにする
         $params = [];
         $params['limit'] = null;
         $params['orderby'] = null;
-        $params['id'] = $balance['id'];
+        $params['id'] = $id;
+        if (is_null($params['id']) || !is_numeric($params['id'])) {
+            throw new InvalidParameterException('id is wrong');
+        }
 
         $balanceService = new BalanceService();
-        // @todo あるかどうか判定する
-        return $balanceService->index($params)[0];
+        $balances = $balanceService->index($params);
+        if (count($balances) === 0) {
+            throw new NotFoundException();
+        }
+        return $balances[0];
     }
 
     public function store(Request $request)
@@ -42,24 +56,27 @@ class BalanceController extends Controller
         $balanceService = new BalanceService();
         $balance = self::getBalance($request);
         self::validation($balance);
-        return $balanceService->store($balance);
+        $balanceService->store($balance);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, string $id)
     {
         $balanceService = new BalanceService();
         $balance = self::getBalance($request);
-        if (is_null($balance['id'])) {
+        if (is_null($id) || !is_numeric($id)) {
             throw new InvalidParameterException('Balance id is null.');
         }
         self::validation($balance);
-        return $balanceService->update($balance);
+        $balanceService->update($balance);
     }
 
-    public function destroy(Balance $balance): bool
+    public function destroy(string $id)
     {
         $balanceService = new BalanceService();
-        return $balanceService->destroy($balance['id']);
+        if (is_null($id) || !is_numeric($id)) {
+            throw new InvalidParameterException('Balance id is null.');
+        }
+        $balanceService->destroy($id);
     }
 
     private static function getBalance(Request $request): array

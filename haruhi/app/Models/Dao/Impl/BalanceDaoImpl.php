@@ -33,7 +33,6 @@ class BalanceDaoImpl implements BalanceDao
         if (is_numeric($params['limit'])) {
             $query->limit($params['limit']);
         }
-        // @todo クエリそのまま入れているので後で修正する
         if (!is_null($params['orderby'])) {
             $query->orderby('m_balance.id', $params['orderby']);
         }
