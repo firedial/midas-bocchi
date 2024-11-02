@@ -307,19 +307,7 @@ paths:
       description: "移動表を取得する"
       tags: ["moves"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            移動させる属性
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/moveAttributeName"
       responses:
         "200":
           description: "Success operation"
@@ -371,19 +359,7 @@ paths:
       description: "移動を登録する"
       tags: ["moves"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            移動させる属性
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/moveAttributeName"
       requestBody:
         required: true
         content:
@@ -426,19 +402,7 @@ paths:
       description: "移動を取得する"
       tags: ["moves"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            移動させる属性
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/moveAttributeName"
         - name: moveId
           required: true
           in: path
@@ -497,19 +461,7 @@ paths:
       description: "移動を更新する"
       tags: ["moves"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            移動させる属性
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/moveAttributeName"
         - name: moveId
           required: true
           in: path
@@ -560,19 +512,7 @@ paths:
       description: "移動を削除する"
       tags: ["moves"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            移動させる属性
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/moveAttributeName"
         - name: moveId
           required: true
           in: path
@@ -596,21 +536,7 @@ paths:
       description: "属性要素表を取得する"
       tags: ["attribute_elements"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            取得する属性要素
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
         - name: isOnlySelectable
           in: query
           description: >
@@ -657,21 +583,7 @@ paths:
       description: "属性要素を登録する"
       tags: ["attribute_elements"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            登録する属性
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
       requestBody:
         required: true
         content:
@@ -709,21 +621,7 @@ paths:
       description: "属性要素を取得する"
       tags: ["attribute_elements"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            取得する属性
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
         - name: elementId
           required: true
           in: path
@@ -770,21 +668,7 @@ paths:
       description: "属性要素を更新する"
       tags: ["attribute_elements"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            更新する属性
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
         - name: elementId
           required: true
           in: path
@@ -831,21 +715,7 @@ paths:
       description: "属性カテゴリー表を取得する"
       tags: ["attribute_categories"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            取得する属性要素
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
       responses:
         "200":
           description: "Success operation"
@@ -878,21 +748,7 @@ paths:
       description: "属性カテゴリーを登録する"
       tags: ["attribute_categories"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            登録する属性
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
       requestBody:
         required: true
         content:
@@ -922,21 +778,7 @@ paths:
       description: "属性カテゴリーを更新する"
       tags: ["attribute_categories"]
       parameters:
-        - name: attributeName
-          required: true
-          in: path
-          description: >
-            更新する属性
-              * `kind` - 種別
-              * `purposes` - 予算
-              * `places` - 場所
-          schema:
-            type: string
-            enum:
-              - kind
-              - purposes
-              - places
-            example: places
+        - $ref: "#/components/parameters/attributeName"
         - name: categoryId
           required: true
           in: path
@@ -1183,6 +1025,39 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
 components:
+  parameters:
+    attributeName:
+      name: attributeName
+      required: true
+      in: path
+      description: >
+        対象の属性
+          * `kind` - 種別
+          * `purposes` - 予算
+          * `places` - 場所
+      schema:
+        type: string
+        enum:
+          - kind
+          - purposes
+          - places
+        example: places
+    moveAttributeName:
+      name: attributeName
+      required: true
+      in: path
+      description: >
+        対象の属性
+          * `purposes` - 予算
+          * `places` - 場所
+      schema:
+        type: string
+        enum:
+          - kind
+          - purposes
+          - places
+        example: places
+
   responses:
     NoContent:
       description: 処理成功
