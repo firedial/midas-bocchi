@@ -62,12 +62,12 @@ update msg model =
         UrlChanged url ->
             goTo (Route.parse url) model
 
-        TopMsg topMsg ->
+        TopMsg pageMsg ->
             case model.page of
-                Top topModel ->
+                Top pageModel ->
                     let
                         ( newModel, newCmd ) =
-                            Page.Top.update topMsg topModel
+                            Page.Top.update pageMsg pageModel
                     in
                     ( { model | page = Top newModel }
                     , Cmd.map TopMsg newCmd
@@ -76,12 +76,12 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        AccountMsg accountMsg ->
+        AccountMsg pageMsg ->
             case model.page of
-                Account accountModel ->
+                Account pageModel ->
                     let
                         ( newModel, newCmd ) =
-                            Page.Account.update accountMsg accountModel
+                            Page.Account.update pageMsg pageModel
                     in
                     ( { model | page = Account newModel }
                     , Cmd.map AccountMsg newCmd
@@ -90,12 +90,12 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        BalanceTableMsg balanceTableMsg ->
+        BalanceTableMsg pageMsg ->
             case model.page of
-                BalanceTable balanceTableModel ->
+                BalanceTable pageModel ->
                     let
                         ( newModel, newCmd ) =
-                            Page.BalanceTable.update balanceTableMsg balanceTableModel
+                            Page.BalanceTable.update pageMsg pageModel
                     in
                     ( { model | page = BalanceTable newModel }
                     , Cmd.map BalanceTableMsg newCmd
@@ -114,16 +114,16 @@ view model =
             NotFound ->
                 Html.text "not found"
 
-            Top topModel ->
-                Page.Top.view topModel
+            Top pageModel ->
+                Page.Top.view pageModel
                     |> Html.map TopMsg
 
-            Account accountModel ->
-                Page.Account.view accountModel
+            Account pageModel ->
+                Page.Account.view pageModel
                     |> Html.map AccountMsg
 
-            BalanceTable balanceTableModel ->
-                Page.BalanceTable.view balanceTableModel
+            BalanceTable pageModel ->
+                Page.BalanceTable.view pageModel
                     |> Html.map BalanceTableMsg
         ]
     }
@@ -137,27 +137,27 @@ goTo maybeRoute model =
 
         Just Route.Top ->
             let
-                ( topModel, topCmd ) =
+                ( newModel, newCmd ) =
                     Page.Top.init "top" 1
             in
-            ( { model | page = Top topModel }
-            , Cmd.map TopMsg topCmd
+            ( { model | page = Top newModel }
+            , Cmd.map TopMsg newCmd
             )
 
         Just Route.Account ->
             let
-                ( accountModel, accountCmd ) =
+                ( newModel, newCmd ) =
                     Page.Account.init "account" 1
             in
-            ( { model | page = Account accountModel }
-            , Cmd.map AccountMsg accountCmd
+            ( { model | page = Account newModel }
+            , Cmd.map AccountMsg newCmd
             )
 
         Just Route.BalanceTable ->
             let
-                ( balanceTableModel, balanceTableCmd ) =
+                ( newModel, newCmd ) =
                     Page.BalanceTable.init "account" 1
             in
-            ( { model | page = Account balanceTableModel }
-            , Cmd.map BalanceTableMsg balanceTableCmd
+            ( { model | page = Account newModel }
+            , Cmd.map BalanceTableMsg newCmd
             )
