@@ -7,6 +7,7 @@ import Url.Parser as Parser exposing (Parser)
 type Route
     = Top
     | Account
+    | BalanceTable
 
 
 parse : Url -> Maybe Route
@@ -19,5 +20,5 @@ routes =
     Parser.oneOf
         [ Parser.map Top Parser.top
         , Parser.map Account (Parser.s "account")
-        , Parser.map Top (Parser.s "index.html")
+        , Parser.map BalanceTable (Parser.s "balances")
         ]

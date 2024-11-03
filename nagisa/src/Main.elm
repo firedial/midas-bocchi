@@ -4,6 +4,7 @@ import Browser
 import Browser.Navigation as Navigation
 import Html
 import Page.Account
+import Page.BalanceTable
 import Page.Top
 import Route
 import Url
@@ -25,6 +26,7 @@ type Page
     = NotFound
     | Top Page.Top.Model
     | Account Page.Account.Model
+    | BalanceTable Page.BalanceTable.Model
 
 
 type alias Model =
@@ -43,6 +45,7 @@ type Msg
     | UrlRequested Browser.UrlRequest
     | TopMsg Page.Top.Msg
     | AccountMsg Page.Account.Msg
+    | BalanceTableMsg Page.BalanceTable.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -87,6 +90,20 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        BalanceTableMsg balanceTableMsg ->
+            case model.page of
+                BalanceTable balanceTableModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.BalanceTable.update balanceTableMsg balanceTableModel
+                    in
+                    ( { model | page = BalanceTable newModel }
+                    , Cmd.map BalanceTableMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
 
 view : Model -> Browser.Document Msg
 view model =
@@ -104,6 +121,10 @@ view model =
             Account accountModel ->
                 Page.Account.view accountModel
                     |> Html.map AccountMsg
+
+            BalanceTable balanceTableModel ->
+                Page.BalanceTable.view balanceTableModel
+                    |> Html.map BalanceTableMsg
         ]
     }
 
@@ -130,4 +151,13 @@ goTo maybeRoute model =
             in
             ( { model | page = Account accountModel }
             , Cmd.map AccountMsg accountCmd
+            )
+
+        Just Route.BalanceTable ->
+            let
+                ( balanceTableModel, balanceTableCmd ) =
+                    Page.BalanceTable.init "account" 1
+            in
+            ( { model | page = Account balanceTableModel }
+            , Cmd.map BalanceTableMsg balanceTableCmd
             )

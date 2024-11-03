@@ -1,4 +1,4 @@
-module Page.Top exposing (Model, Msg, init, update, view)
+module Page.BalanceTable exposing (Model, Msg, init, update, view)
 
 import Html
 import Html.Attributes
@@ -41,5 +41,4 @@ view model =
     Html.div []
         [ Html.text model.name
         , Html.a [ Html.Attributes.href "/account" ] [ Html.text "here" ]
-        , Html.a [ Html.Attributes.href "/balances" ] [ Html.text "balance" ]
         ]
