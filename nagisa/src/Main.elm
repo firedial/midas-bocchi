@@ -156,8 +156,8 @@ goTo maybeRoute model =
         Just Route.BalanceTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.BalanceTable.init "account" 1
+                    Page.BalanceTable.init
             in
-            ( { model | page = Account newModel }
+            ( { model | page = BalanceTable newModel }
             , Cmd.map BalanceTableMsg newCmd
             )
