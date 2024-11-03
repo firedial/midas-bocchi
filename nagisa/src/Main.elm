@@ -3,7 +3,6 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Navigation
 import Html
-import Page.Account
 import Page.BalanceTable
 import Page.Top
 import Route
@@ -25,7 +24,6 @@ main =
 type Page
     = NotFound
     | Top Page.Top.Model
-    | Account Page.Account.Model
     | BalanceTable Page.BalanceTable.Model
 
 
@@ -44,7 +42,6 @@ type Msg
     = UrlChanged Url.Url
     | UrlRequested Browser.UrlRequest
     | TopMsg Page.Top.Msg
-    | AccountMsg Page.Account.Msg
     | BalanceTableMsg Page.BalanceTable.Msg
 
 
@@ -71,20 +68,6 @@ update msg model =
                     in
                     ( { model | page = Top newModel }
                     , Cmd.map TopMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
-        AccountMsg pageMsg ->
-            case model.page of
-                Account pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.Account.update pageMsg pageModel
-                    in
-                    ( { model | page = Account newModel }
-                    , Cmd.map AccountMsg newCmd
                     )
 
                 _ ->
@@ -118,10 +101,6 @@ view model =
                 Page.Top.view pageModel
                     |> Html.map TopMsg
 
-            Account pageModel ->
-                Page.Account.view pageModel
-                    |> Html.map AccountMsg
-
             BalanceTable pageModel ->
                 Page.BalanceTable.view pageModel
                     |> Html.map BalanceTableMsg
@@ -142,15 +121,6 @@ goTo maybeRoute model =
             in
             ( { model | page = Top newModel }
             , Cmd.map TopMsg newCmd
-            )
-
-        Just Route.Account ->
-            let
-                ( newModel, newCmd ) =
-                    Page.Account.init "account" 1
-            in
-            ( { model | page = Account newModel }
-            , Cmd.map AccountMsg newCmd
             )
 
         Just Route.BalanceTable ->

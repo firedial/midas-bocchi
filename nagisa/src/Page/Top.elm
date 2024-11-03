@@ -40,6 +40,5 @@ view : Model -> Html.Html Msg
 view model =
     Html.div []
         [ Html.text model.name
-        , Html.a [ Html.Attributes.href "/account" ] [ Html.text "here" ]
         , Html.a [ Html.Attributes.href "/balances" ] [ Html.text "balance" ]
         ]
