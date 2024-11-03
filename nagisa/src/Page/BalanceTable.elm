@@ -3,25 +3,25 @@ module Page.BalanceTable exposing (Model, Msg, init, update, view)
 import Enitity.BalanceEntity as BalanceEntity
 import Html
 import Html.Attributes
-import Http
 import List
 import Maybe
+import Request
 
 
 type alias Model =
     { balances : BalanceEntity.Balances
-    , responseMessage : Maybe String
+    , errorMessage : Maybe String
     }
 
 
 type Msg
     = None
-    | GetBalances (Result Http.Error BalanceEntity.Balances)
+    | GetBalances (Result String BalanceEntity.Balances)
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model [] Nothing, Http.get { url = "/api/balances", expect = Http.expectJson GetBalances BalanceEntity.decodeBalances } )
+    ( Model [] Nothing, Request.getBalances GetBalances )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -35,14 +35,14 @@ update msg model =
                 Ok response ->
                     ( { model | balances = response }, Cmd.none )
 
-                Err _ ->
-                    ( model, Cmd.none )
+                Err message ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
 
 
 view : Model -> Html.Html Msg
 view model =
     Html.div []
-        ([ Html.text (model.responseMessage |> Maybe.withDefault "")
+        ([ Html.text (model.errorMessage |> Maybe.withDefault "")
          , Html.a [ Html.Attributes.href "/account" ] [ Html.text "here" ]
          ]
             ++ List.map (\balance -> Html.div [] [ Html.text balance.item ]) model.balances
