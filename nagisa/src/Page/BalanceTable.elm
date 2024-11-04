@@ -2,10 +2,11 @@ module Page.BalanceTable exposing (Model, Msg, init, update, view)
 
 import Enitity.BalanceEntity as BalanceEntity
 import Html
-import Html.Attributes
+import Html.Attributes as Attributes
 import List
 import Maybe
 import Request
+import String
 
 
 type alias Model =
@@ -42,8 +43,30 @@ update msg model =
 view : Model -> Html.Html Msg
 view model =
     Html.div []
-        ([ Html.text (model.errorMessage |> Maybe.withDefault "")
-         , Html.a [ Html.Attributes.href "/account" ] [ Html.text "here" ]
-         ]
-            ++ List.map (\balance -> Html.div [] [ Html.text balance.item ]) model.balances
-        )
+        [ Html.text (model.errorMessage |> Maybe.withDefault "")
+        , Html.table [ Attributes.attribute "border" "1" ]
+            (Html.tr
+                []
+                [ Html.td [] [ Html.text "id" ]
+                , Html.td [] [ Html.text "金額" ]
+                , Html.td [] [ Html.text "項目" ]
+                , Html.td [] [ Html.text "種別" ]
+                , Html.td [] [ Html.text "予算" ]
+                , Html.td [] [ Html.text "場所" ]
+                , Html.td [] [ Html.text "日付" ]
+                ]
+                :: List.map
+                    (\balance ->
+                        Html.tr []
+                            [ Html.td [] [ Html.text <| String.fromInt balance.balanceId ]
+                            , Html.td [] [ Html.text <| String.fromInt balance.amount ]
+                            , Html.td [] [ Html.text balance.item ]
+                            , Html.td [] [ Html.text balance.kindElementDescription ]
+                            , Html.td [] [ Html.text balance.purposeElementDescription ]
+                            , Html.td [] [ Html.text balance.placeElementDescription ]
+                            , Html.td [] [ Html.text balance.date ]
+                            ]
+                    )
+                    model.balances
+            )
+        ]
