@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Navigation
 import Html
+import Html.Attributes as Attributes
 import Page.BalanceTable
 import Page.Top
 import Route
@@ -92,7 +93,9 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "midas"
     , body =
-        [ Html.br [] []
+        [ Html.div []
+            [ Html.a [ Attributes.href "/balances" ] [ Html.text "balance" ]
+            ]
         , case model.page of
             NotFound ->
                 Html.text "not found"
