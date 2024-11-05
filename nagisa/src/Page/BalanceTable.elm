@@ -44,16 +44,16 @@ view : Model -> Html.Html Msg
 view model =
     Html.div []
         [ Html.text (model.errorMessage |> Maybe.withDefault "")
-        , Html.table [ Attributes.attribute "border" "1" ]
+        , Html.table [ Attributes.class "balance" ]
             (Html.tr
                 []
-                [ Html.td [] [ Html.text "id" ]
-                , Html.td [] [ Html.text "金額" ]
-                , Html.td [] [ Html.text "項目" ]
-                , Html.td [] [ Html.text "種別" ]
-                , Html.td [] [ Html.text "予算" ]
-                , Html.td [] [ Html.text "場所" ]
-                , Html.td [] [ Html.text "日付" ]
+                [ Html.th [] [ Html.text "id" ]
+                , Html.th [] [ Html.text "金額" ]
+                , Html.th [] [ Html.text "項目" ]
+                , Html.th [] [ Html.text "種別" ]
+                , Html.th [] [ Html.text "予算" ]
+                , Html.th [] [ Html.text "場所" ]
+                , Html.th [] [ Html.text "日付" ]
                 ]
                 :: List.map
                     (\balance ->
