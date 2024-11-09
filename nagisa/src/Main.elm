@@ -93,8 +93,14 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "midas"
     , body =
-        [ Html.div []
-            [ Html.a [ Attributes.href "/balances" ] [ Html.text "balance" ]
+        [ Html.header []
+            [ Html.h1 [] [ Html.a [ Attributes.href "/" ] [ Html.text "Midas" ] ]
+            , Html.nav []
+                [ Html.ul []
+                    [ Html.li [] [ Html.a [ Attributes.href "/" ] [ Html.text "top" ] ]
+                    , Html.li [] [ Html.a [ Attributes.href "/balances" ] [ Html.text "balance" ] ]
+                    ]
+                ]
             ]
         , case model.page of
             NotFound ->

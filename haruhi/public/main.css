@@ -1,5 +1,41 @@
 @charset "UTF-8";
 
+/* header start */
+
+header {
+    display: flex;
+}
+
+header h1 {
+    margin: 20px 0 0 20px;
+}
+
+header nav {
+    margin: 0 0 0 auto;
+}
+
+header nav ul {
+    list-style-type: none;
+    margin: 20px 0;
+    padding: 0;
+    display: flex;
+}
+
+header nav ul li a,
+header nav ul li a:link,
+header nav ul li a:visited {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #000000;
+}
+
+header nav ul li a:hover {
+    color: #888888;
+}
+
+/* header end */
+
 body {
     background: #fffbec;
 }
