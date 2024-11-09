@@ -1,20 +1,24 @@
-version: '3.8'
 services:
     konata:
-        image: firedial/midas-bocchi-konata
+        build: ./konata
         restart: always
         ports:
          - "443:443"
         volumes:
          - ./konata/conf.d/:/etc/nginx/conf.d
          - ./konata/ssl/:/etc/nginx/ssl
+        environment:
+            - APP_DOMAIN=$APP_DOMAIN
         depends_on:
          - haruhi
          - eru
     haruhi:
-        image: firedial/midas-bocchi-haruhi
+        build:
+            context: ./haruhi
+            dockerfile: Dockerfile
         restart: always
         hostname: haruhi
+        # command: npm run watch
         environment:
             - APP_ENV=$APP_ENV
             - APP_DEBUG=$APP_DEBUG
@@ -25,8 +29,14 @@ services:
             - DB_DATABASE=$DB_DATABASE
             - DB_USERNAME=$DB_MIDAS_API_USER
             - DB_PASSWORD=$DB_MIDAS_API_PASSWORD
+            - SANCTUM_STATEFUL_DOMAINS=$APP_DOMAIN
+            - SESSION_DOMAIN=$APP_DOMAIN
+        volumes:
+            - ./haruhi:/var/www/html
     eru:
-        image: firedial/midas-bocchi-eru
+        build:
+            context: ./eru
+            dockerfile: Dockerfile
         restart: always
         environment:
             - MB_DB_TYPE=mysql
@@ -36,7 +46,9 @@ services:
             - MB_DB_PASS=$DB_METABASE_ROOT_PASSWORD
             - MB_DB_HOST=$DB_HOST
     yui:
-        image: firedial/midas-bocchi-yui
+        build:
+            context: ./yui
+            dockerfile: Dockerfile
         restart: always
         environment:
             - MYSQL_ROOT_PASSWORD=$DB_ROOT_PASSWORD
@@ -59,7 +71,7 @@ services:
             - ./yui/initdb.d:/docker-entrypoint-initdb.d
             - db:/var/lib/mysql
     rikka:
-        image: firedial/midas-bocchi-rikka
+        build: ./rikka
         restart: always
         environment:
             - NAS_PATH=$NAS_PATH
