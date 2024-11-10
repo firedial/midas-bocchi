@@ -146,7 +146,8 @@ update msg model =
             ( model, Request.postBalance model.xsrfToken newBalance PostBalance )
 
         Delete balanceId ->
-            ( model, Request.deleteBalance model.xsrfToken balanceId DeleteBalance )
+            -- ( model, Request.deleteBalance model.xsrfToken balanceId DeleteBalance )
+            ( model, Cmd.none )
 
 
 view : Model -> Html.Html Msg
