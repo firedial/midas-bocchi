@@ -12,12 +12,12 @@ import String
 
 type alias Model =
     { balances : BalanceEntity.Balances
-    , newBalance : NewBalance
+    , inputBalance : InputBalance
     , errorMessage : Maybe String
     }
 
 
-type alias NewBalance =
+type alias InputBalance =
     { amount : String
     , item : String
     , kindElementId : String
@@ -30,6 +30,7 @@ type alias NewBalance =
 type Msg
     = None
     | GetBalances (Result String BalanceEntity.Balances)
+    | PostBalance (Result String String)
     | InputAmount String
     | InputItem String
     | InputKindElementId String
@@ -42,7 +43,7 @@ type Msg
 init : ( Model, Cmd Msg )
 init =
     ( Model []
-        (NewBalance
+        (InputBalance
             ""
             ""
             ""
@@ -69,50 +70,68 @@ update msg model =
                 Err message ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
+        PostBalance result ->
+            case result of
+                Ok _ ->
+                    ( model, Cmd.none )
+
+                Err message ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
+
         InputAmount amount ->
             let
                 newBalance =
-                    model.newBalance
+                    model.inputBalance
             in
-            ( { model | newBalance = { newBalance | amount = amount } }, Cmd.none )
+            ( { model | inputBalance = { newBalance | amount = amount } }, Cmd.none )
 
         InputItem item ->
             let
                 newBalance =
-                    model.newBalance
+                    model.inputBalance
             in
-            ( { model | newBalance = { newBalance | item = item } }, Cmd.none )
+            ( { model | inputBalance = { newBalance | item = item } }, Cmd.none )
 
         InputKindElementId id ->
             let
                 newBalance =
-                    model.newBalance
+                    model.inputBalance
             in
-            ( { model | newBalance = { newBalance | kindElementId = id } }, Cmd.none )
+            ( { model | inputBalance = { newBalance | kindElementId = id } }, Cmd.none )
 
         InputPurposeElementId id ->
             let
                 newBalance =
-                    model.newBalance
+                    model.inputBalance
             in
-            ( { model | newBalance = { newBalance | purposeElementId = id } }, Cmd.none )
+            ( { model | inputBalance = { newBalance | purposeElementId = id } }, Cmd.none )
 
         InputPlaceElementId id ->
             let
                 newBalance =
-                    model.newBalance
+                    model.inputBalance
             in
-            ( { model | newBalance = { newBalance | placeElementId = id } }, Cmd.none )
+            ( { model | inputBalance = { newBalance | placeElementId = id } }, Cmd.none )
 
         InputDate date ->
             let
                 newBalance =
-                    model.newBalance
+                    model.inputBalance
             in
-            ( { model | newBalance = { newBalance | date = date } }, Cmd.none )
+            ( { model | inputBalance = { newBalance | date = date } }, Cmd.none )
 
         Save ->
-            ( { model | newBalance = NewBalance "" "" "" "" "" "" }, Cmd.none )
+            let
+                newBalance =
+                    BalanceEntity.NewBalance
+                        (model.inputBalance.amount |> String.toInt |> Maybe.withDefault 0)
+                        model.inputBalance.item
+                        (model.inputBalance.kindElementId |> String.toInt |> Maybe.withDefault 0)
+                        (model.inputBalance.purposeElementId |> String.toInt |> Maybe.withDefault 0)
+                        (model.inputBalance.placeElementId |> String.toInt |> Maybe.withDefault 0)
+                        model.inputBalance.date
+            in
+            ( { model | inputBalance = InputBalance "" "" "" "" "" "" }, Request.postBalance newBalance PostBalance )
 
 
 view : Model -> Html.Html Msg
@@ -136,12 +155,12 @@ view model =
                 :: Html.tr
                     []
                     [ Html.td [] [ Html.text "+" ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.newBalance.amount, onInput InputAmount ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.newBalance.item, onInput InputItem ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.newBalance.kindElementId, onInput InputKindElementId ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.newBalance.purposeElementId, onInput InputPurposeElementId ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.newBalance.placeElementId, onInput InputPlaceElementId ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.newBalance.date, onInput InputDate ] [] ]
+                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.amount, onInput InputAmount ] [] ]
+                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.item, onInput InputItem ] [] ]
+                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.kindElementId, onInput InputKindElementId ] [] ]
+                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.purposeElementId, onInput InputPurposeElementId ] [] ]
+                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.placeElementId, onInput InputPlaceElementId ] [] ]
+                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.date, onInput InputDate ] [] ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.button [ onClick Save ] [ Html.text "保存" ] ]
                     , Html.td [] [ Html.text "" ]

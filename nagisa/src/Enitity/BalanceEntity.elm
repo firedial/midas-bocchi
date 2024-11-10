@@ -1,7 +1,8 @@
-module Enitity.BalanceEntity exposing (Balance, Balances, decodeBalance, decodeBalances)
+module Enitity.BalanceEntity exposing (Balance, Balances, NewBalance, decodeBalance, decodeBalances, encodeNewBalance)
 
 import Json.Decode as D
 import Json.Decode.Pipeline as DP
+import Json.Encode as E
 
 
 type alias Balance =
@@ -21,8 +22,21 @@ type alias Balance =
 type alias Balances =
     List Balance
 
+
+type alias NewBalance =
+    { amount : Int
+    , item : String
+    , kindElementId : Int
+    , purposeElementId : Int
+    , placeElementId : Int
+    , date : String
+    }
+
+
 decodeBalances : D.Decoder Balances
-decodeBalances = D.list decodeBalance
+decodeBalances =
+    D.list decodeBalance
+
 
 decodeBalance : D.Decoder Balance
 decodeBalance =
@@ -39,14 +53,13 @@ decodeBalance =
         |> DP.required "place_element_description" D.string
 
 
-
--- encodeBalance : Balance -> Encode.Value
--- encodeBalance balance =
---     Encode.object
---         [ ( "amount", Encode.int balance.amount )
---         , ( "item", Encode.string balance.item )
---         , ( "kind_id", Encode.int balance.kindId )
---         , ( "purpose_id", Encode.int balance.purposeId )
---         , ( "place_id", Encode.int balance.placeId )
---         , ( "date", Encode.string balance.date )
---         ]
+encodeNewBalance : NewBalance -> E.Value
+encodeNewBalance balance =
+    E.object
+        [ ( "amount", E.int balance.amount )
+        , ( "item", E.string balance.item )
+        , ( "kind_element_id", E.int balance.kindElementId )
+        , ( "purpose_element_id", E.int balance.purposeElementId )
+        , ( "place_element_id", E.int balance.placeElementId )
+        , ( "date", E.string balance.date )
+        ]

@@ -1,7 +1,8 @@
-module BaseRequest exposing (get)
+module BaseRequest exposing (get, post)
 
 import Http
 import Json.Decode
+import Json.Encode
 
 
 type alias ErrorResponse =
@@ -12,6 +13,21 @@ type alias ErrorResponse =
 get : String -> Json.Decode.Decoder a -> (Result String a -> msg) -> Cmd msg
 get url decoder toMsg =
     Http.get { url = url, expect = getExpect decoder toMsg }
+
+
+post : String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result String a -> msg) -> Cmd msg
+post url body decoder toMsg =
+    Http.request
+        { method = "POST"
+        , headers =
+            [ Http.header "X-XSRF-TOKEN" ""
+            ]
+        , url = url
+        , body = Http.jsonBody body
+        , expect = getExpect decoder toMsg
+        , timeout = Nothing
+        , tracker = Nothing
+        }
 
 
 errorDecoder : Json.Decode.Decoder ErrorResponse
