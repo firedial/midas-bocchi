@@ -14,6 +14,7 @@ type alias Model =
     { balances : BalanceEntity.Balances
     , inputBalance : InputBalance
     , errorMessage : Maybe String
+    , xsrfToken : String
     }
 
 
@@ -30,7 +31,7 @@ type alias InputBalance =
 type Msg
     = None
     | GetBalances (Result String BalanceEntity.Balances)
-    | PostBalance (Result String String)
+    | PostBalance (Result String ())
     | InputAmount String
     | InputItem String
     | InputKindElementId String
@@ -40,8 +41,8 @@ type Msg
     | Save
 
 
-init : ( Model, Cmd Msg )
-init =
+init : String -> ( Model, Cmd Msg )
+init xsrfToken =
     ( Model []
         (InputBalance
             ""
@@ -52,6 +53,7 @@ init =
             ""
         )
         Nothing
+        xsrfToken
     , Request.getBalances GetBalances
     )
 
@@ -131,7 +133,7 @@ update msg model =
                         (model.inputBalance.placeElementId |> String.toInt |> Maybe.withDefault 0)
                         model.inputBalance.date
             in
-            ( { model | inputBalance = InputBalance "" "" "" "" "" "" }, Request.postBalance newBalance PostBalance )
+            ( model, Request.postBalance model.xsrfToken newBalance PostBalance )
 
 
 view : Model -> Html.Html Msg

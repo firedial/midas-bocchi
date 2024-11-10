@@ -15,16 +15,16 @@ get url decoder toMsg =
     Http.get { url = url, expect = getExpect decoder toMsg }
 
 
-post : String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result String a -> msg) -> Cmd msg
-post url body decoder toMsg =
+post : String -> String -> Json.Encode.Value -> (Result String () -> msg) -> Cmd msg
+post xsrfToken url body toMsg =
     Http.request
         { method = "POST"
         , headers =
-            [ Http.header "X-XSRF-TOKEN" ""
+            [ Http.header "X-XSRF-TOKEN" xsrfToken
             ]
         , url = url
         , body = Http.jsonBody body
-        , expect = getExpect decoder toMsg
+        , expect = postExpect toMsg
         , timeout = Nothing
         , tracker = Nothing
         }
@@ -67,3 +67,30 @@ getExpect decoder toMsg =
 
                         Err error ->
                             Err ("Failed to decode: " ++ Json.Decode.errorToString error)
+
+
+postExpect : (Result String () -> msg) -> Http.Expect msg
+postExpect toMsg =
+    Http.expectStringResponse toMsg <|
+        \response ->
+            case response of
+                Http.BadUrl_ url ->
+                    Err ("Invalid URL: " ++ url)
+
+                Http.Timeout_ ->
+                    Err "Request timed out"
+
+                Http.NetworkError_ ->
+                    Err "Network error occurred"
+
+                Http.BadStatus_ _ body ->
+                    case Json.Decode.decodeString errorDecoder body of
+                        Ok errorResponse ->
+                            Err ("Server error: " ++ errorResponse.message)
+
+                        Err _ ->
+                            -- JSONデコードに失敗した場合は生のボディを返す
+                            Err ("Server error: " ++ body)
+
+                Http.GoodStatus_ _ _ ->
+                    Ok ()

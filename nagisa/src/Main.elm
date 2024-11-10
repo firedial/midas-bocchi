@@ -10,7 +10,7 @@ import Route
 import Url
 
 
-main : Program () Model Msg
+main : Program String Model Msg
 main =
     Browser.application
         { init = init
@@ -31,12 +31,13 @@ type Page
 type alias Model =
     { key : Navigation.Key
     , page : Page
+    , xsrfToken : String
     }
 
 
-init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
-init _ url key =
-    Model key NotFound |> goTo (Route.parse url)
+init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
+init xsrfToken url key =
+    Model key NotFound xsrfToken |> goTo (Route.parse url)
 
 
 type Msg
@@ -135,7 +136,7 @@ goTo maybeRoute model =
         Just Route.BalanceTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.BalanceTable.init
+                    Page.BalanceTable.init model.xsrfToken
             in
             ( { model | page = BalanceTable newModel }
             , Cmd.map BalanceTableMsg newCmd
