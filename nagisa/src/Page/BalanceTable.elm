@@ -32,6 +32,7 @@ type Msg
     = None
     | GetBalances (Result String BalanceEntity.Balances)
     | PostBalance (Result String ())
+    | DeleteBalance (Result String ())
     | InputAmount String
     | InputItem String
     | InputKindElementId String
@@ -39,6 +40,7 @@ type Msg
     | InputPlaceElementId String
     | InputDate String
     | Save
+    | Delete Int
 
 
 init : String -> ( Model, Cmd Msg )
@@ -76,6 +78,14 @@ update msg model =
             case result of
                 Ok _ ->
                     ( { model | inputBalance = InputBalance "" "" "" "" "" "" }, Cmd.none )
+
+                Err message ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
+
+        DeleteBalance result ->
+            case result of
+                Ok _ ->
+                    ( model, Cmd.none )
 
                 Err message ->
                     ( { model | errorMessage = Just message }, Cmd.none )
@@ -135,6 +145,9 @@ update msg model =
             in
             ( model, Request.postBalance model.xsrfToken newBalance PostBalance )
 
+        Delete balanceId ->
+            ( model, Request.deleteBalance model.xsrfToken balanceId DeleteBalance )
+
 
 view : Model -> Html.Html Msg
 view model =
@@ -179,7 +192,7 @@ view model =
                             , Html.td [] [ Html.text balance.date ]
                             , Html.td [] [ Html.text "編集" ]
                             , Html.td [] [ Html.text "保存" ]
-                            , Html.td [] [ Html.text "削除" ]
+                            , Html.td [] [ Html.button [ onClick (Delete balance.balanceId) ] [ Html.text "削除" ] ]
                             ]
                     )
                     model.balances

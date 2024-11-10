@@ -1,4 +1,4 @@
-module BaseRequest exposing (get, post)
+module BaseRequest exposing (delete, get, post)
 
 import Http
 import Json.Decode
@@ -24,6 +24,21 @@ post xsrfToken url body toMsg =
             ]
         , url = url
         , body = Http.jsonBody body
+        , expect = postExpect toMsg
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+delete : String -> String -> (Result String () -> msg) -> Cmd msg
+delete xsrfToken url toMsg =
+    Http.request
+        { method = "DELETE"
+        , headers =
+            [ Http.header "X-XSRF-TOKEN" xsrfToken
+            ]
+        , url = url
+        , body = Http.emptyBody
         , expect = postExpect toMsg
         , timeout = Nothing
         , tracker = Nothing
