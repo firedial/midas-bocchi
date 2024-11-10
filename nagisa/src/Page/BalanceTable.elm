@@ -75,7 +75,7 @@ update msg model =
         PostBalance result ->
             case result of
                 Ok _ ->
-                    ( model, Cmd.none )
+                    ( { model | inputBalance = InputBalance "" "" "" "" "" "" }, Cmd.none )
 
                 Err message ->
                     ( { model | errorMessage = Just message }, Cmd.none )
