@@ -12,11 +12,11 @@ type alias ErrorResponse =
 
 get : String -> Json.Decode.Decoder a -> (Result String a -> msg) -> Cmd msg
 get url decoder toMsg =
-    Http.get { url = url, expect = getExpect decoder toMsg }
+    Http.get { url = url, expect = expect decoder toMsg }
 
 
-post : String -> String -> Json.Encode.Value -> (Result String () -> msg) -> Cmd msg
-post xsrfToken url body toMsg =
+post : String -> String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result String a -> msg) -> Cmd msg
+post xsrfToken url body decoder toMsg =
     Http.request
         { method = "POST"
         , headers =
@@ -24,14 +24,14 @@ post xsrfToken url body toMsg =
             ]
         , url = url
         , body = Http.jsonBody body
-        , expect = postExpect toMsg
+        , expect = expect decoder toMsg
         , timeout = Nothing
         , tracker = Nothing
         }
 
 
-delete : String -> String -> (Result String () -> msg) -> Cmd msg
-delete xsrfToken url toMsg =
+delete : String -> String -> Json.Decode.Decoder a -> (Result String a -> msg) -> Cmd msg
+delete xsrfToken url decoder toMsg =
     Http.request
         { method = "DELETE"
         , headers =
@@ -39,7 +39,7 @@ delete xsrfToken url toMsg =
             ]
         , url = url
         , body = Http.emptyBody
-        , expect = postExpect toMsg
+        , expect = expect decoder toMsg
         , timeout = Nothing
         , tracker = Nothing
         }
@@ -51,8 +51,8 @@ errorDecoder =
         (Json.Decode.field "message" Json.Decode.string)
 
 
-getExpect : Json.Decode.Decoder a -> (Result String a -> msg) -> Http.Expect msg
-getExpect decoder toMsg =
+expect : Json.Decode.Decoder a -> (Result String a -> msg) -> Http.Expect msg
+expect decoder toMsg =
     Http.expectStringResponse toMsg <|
         \response ->
             case response of
@@ -76,36 +76,20 @@ getExpect decoder toMsg =
 
                 Http.GoodStatus_ _ body ->
                     -- 正常なレスポンスの場合はデコード
-                    case Json.Decode.decodeString decoder body of
-                        Ok value ->
-                            Ok value
+                    if body == "" then
+                        -- 空文字列を JSON に変換できないのでこうしている
+                        -- @todo それを直す
+                        case Json.Decode.decodeString decoder "1" of
+                            Ok value ->
+                                Ok value
 
-                        Err error ->
-                            Err ("Failed to decode: " ++ Json.Decode.errorToString error)
+                            Err error ->
+                                Err ("Failed to decode: " ++ Json.Decode.errorToString error)
 
+                    else
+                        case Json.Decode.decodeString decoder body of
+                            Ok value ->
+                                Ok value
 
-postExpect : (Result String () -> msg) -> Http.Expect msg
-postExpect toMsg =
-    Http.expectStringResponse toMsg <|
-        \response ->
-            case response of
-                Http.BadUrl_ url ->
-                    Err ("Invalid URL: " ++ url)
-
-                Http.Timeout_ ->
-                    Err "Request timed out"
-
-                Http.NetworkError_ ->
-                    Err "Network error occurred"
-
-                Http.BadStatus_ _ body ->
-                    case Json.Decode.decodeString errorDecoder body of
-                        Ok errorResponse ->
-                            Err ("Server error: " ++ errorResponse.message)
-
-                        Err _ ->
-                            -- JSONデコードに失敗した場合は生のボディを返す
-                            Err ("Server error: " ++ body)
-
-                Http.GoodStatus_ _ _ ->
-                    Ok ()
+                            Err error ->
+                                Err ("Failed to decode: " ++ Json.Decode.errorToString error)
