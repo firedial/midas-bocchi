@@ -1,4 +1,4 @@
-module BaseRequest exposing (delete, get, post)
+module BaseRequest exposing (delete, get, post, put)
 
 import Http
 import Json.Decode
@@ -19,6 +19,21 @@ post : String -> String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result
 post xsrfToken url body decoder toMsg =
     Http.request
         { method = "POST"
+        , headers =
+            [ Http.header "X-XSRF-TOKEN" xsrfToken
+            ]
+        , url = url
+        , body = Http.jsonBody body
+        , expect = expect decoder toMsg
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+put : String -> String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result String a -> msg) -> Cmd msg
+put xsrfToken url body decoder toMsg =
+    Http.request
+        { method = "PUT"
         , headers =
             [ Http.header "X-XSRF-TOKEN" xsrfToken
             ]
