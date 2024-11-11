@@ -5,6 +5,7 @@ import Browser.Navigation as Navigation
 import Html
 import Html.Attributes as Attributes
 import Page.BalanceTable
+import Page.Login
 import Page.Top
 import Route
 import Url
@@ -26,6 +27,7 @@ type Page
     = NotFound
     | Top Page.Top.Model
     | BalanceTable Page.BalanceTable.Model
+    | Login Page.Login.Model
 
 
 type alias Model =
@@ -45,6 +47,7 @@ type Msg
     | UrlRequested Browser.UrlRequest
     | TopMsg Page.Top.Msg
     | BalanceTableMsg Page.BalanceTable.Msg
+    | LoginMsg Page.Login.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -89,6 +92,20 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        LoginMsg pageMsg ->
+            case model.page of
+                Login pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.Login.update pageMsg pageModel
+                    in
+                    ( { model | page = Login newModel }
+                    , Cmd.map LoginMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
 
 view : Model -> Browser.Document Msg
 view model =
@@ -114,6 +131,10 @@ view model =
             BalanceTable pageModel ->
                 Page.BalanceTable.view pageModel
                     |> Html.map BalanceTableMsg
+
+            Login pageModel ->
+                Page.Login.view pageModel
+                    |> Html.map LoginMsg
         ]
     }
 
@@ -140,4 +161,13 @@ goTo maybeRoute model =
             in
             ( { model | page = BalanceTable newModel }
             , Cmd.map BalanceTableMsg newCmd
+            )
+
+        Just Route.Login ->
+            let
+                ( newModel, newCmd ) =
+                    Page.Login.init model.xsrfToken
+            in
+            ( { model | page = Login newModel }
+            , Cmd.map LoginMsg newCmd
             )
