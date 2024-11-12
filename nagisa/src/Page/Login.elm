@@ -3,7 +3,7 @@ module Page.Login exposing (Model, Msg, init, update, view)
 import Html
 import Html.Attributes as Attributes
 import Html.Events exposing (onClick, onInput)
-import Request
+import Request.Request as Request
 
 
 type alias Model =

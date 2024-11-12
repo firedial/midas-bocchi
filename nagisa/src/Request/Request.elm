@@ -1,10 +1,10 @@
-module Request exposing (deleteBalance, getBalances, postBalance, postLogin, putBalance)
+module Request.Request exposing (deleteBalance, getBalances, postBalance, postLogin, putBalance)
 
-import BaseRequest
 import Enitity.BalanceEntity as BalanceEntity
 import Json.Decode as D
 import Json.Decode.Pipeline as DP
 import Json.Encode as E
+import Request.BaseRequest as BaseRequest
 
 
 getBalances : (Result String BalanceEntity.Balances -> msg) -> Cmd msg

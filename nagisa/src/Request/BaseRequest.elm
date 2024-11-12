@@ -1,4 +1,4 @@
-module BaseRequest exposing (delete, get, post, put)
+module Request.BaseRequest exposing (delete, get, post, put)
 
 import Http
 import Json.Decode

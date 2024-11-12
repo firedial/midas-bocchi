@@ -6,7 +6,7 @@ import Html.Attributes as Attributes
 import Html.Events exposing (onClick, onInput)
 import List
 import Maybe
-import Request
+import Request.Request as Request
 import String
 
 
