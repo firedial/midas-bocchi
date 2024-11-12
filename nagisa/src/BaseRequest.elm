@@ -91,20 +91,19 @@ expect decoder toMsg =
 
                 Http.GoodStatus_ _ body ->
                     -- 正常なレスポンスの場合はデコード
-                    if body == "" then
+                    let
                         -- 空文字列を JSON に変換できないのでこうしている
                         -- @todo それを直す
-                        case Json.Decode.decodeString decoder "1" of
-                            Ok value ->
-                                Ok value
+                        body_ =
+                            if body == "" then
+                                "1"
 
-                            Err error ->
-                                Err ("Failed to decode: " ++ Json.Decode.errorToString error)
+                            else
+                                body
+                    in
+                    case Json.Decode.decodeString decoder body_ of
+                        Ok value ->
+                            Ok value
 
-                    else
-                        case Json.Decode.decodeString decoder body of
-                            Ok value ->
-                                Ok value
-
-                            Err error ->
-                                Err ("Failed to decode: " ++ Json.Decode.errorToString error)
+                        Err error ->
+                            Err ("[request succeeded] Failed to decode: " ++ Json.Decode.errorToString error)
