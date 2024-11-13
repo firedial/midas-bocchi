@@ -7,6 +7,7 @@ import Html.Events exposing (onClick, onInput)
 import List
 import Maybe
 import Request.Request as Request
+import Request.RequestError as RequestError
 import String
 
 
@@ -30,9 +31,9 @@ type alias InputBalance =
 
 type Msg
     = None
-    | GetBalances (Result String BalanceEntity.Balances)
-    | PostBalance (Result String ())
-    | DeleteBalance (Result String ())
+    | GetBalances (Result RequestError.Error BalanceEntity.Balances)
+    | PostBalance (Result RequestError.Error ())
+    | DeleteBalance (Result RequestError.Error ())
     | InputAmount String
     | InputItem String
     | InputKindElementId String
@@ -71,7 +72,10 @@ update msg model =
                 Ok response ->
                     ( { model | balances = response }, Cmd.none )
 
-                Err message ->
+                Err (RequestError.DecodeError message) ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
+
+                Err (RequestError.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
         PostBalance result ->
@@ -79,15 +83,21 @@ update msg model =
                 Ok _ ->
                     ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Nothing }, Cmd.none )
 
-                Err message ->
+                Err (RequestError.DecodeError message) ->
+                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Just message }, Cmd.none )
+
+                Err (RequestError.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
         DeleteBalance result ->
             case result of
                 Ok _ ->
-                    ( model, Cmd.none )
+                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Nothing }, Cmd.none )
 
-                Err message ->
+                Err (RequestError.DecodeError message) ->
+                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Just message }, Cmd.none )
+
+                Err (RequestError.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
         InputAmount amount ->

@@ -5,9 +5,10 @@ import Json.Decode as D
 import Json.Decode.Pipeline as DP
 import Json.Encode as E
 import Request.BaseRequest as BaseRequest
+import Request.RequestError as RequestError
 
 
-getBalances : (Result String BalanceEntity.Balances -> msg) -> Cmd msg
+getBalances : (Result RequestError.Error BalanceEntity.Balances -> msg) -> Cmd msg
 getBalances toMsg =
     let
         decodeBalance =
@@ -29,7 +30,7 @@ getBalances toMsg =
     BaseRequest.get "api/balances" decodeBalances toMsg
 
 
-postBalance : String -> BalanceEntity.NewBalance -> (Result String () -> msg) -> Cmd msg
+postBalance : String -> BalanceEntity.NewBalance -> (Result RequestError.Error () -> msg) -> Cmd msg
 postBalance xsrfToken newBalance toMsg =
     let
         encodedNewBalance =
@@ -45,7 +46,7 @@ postBalance xsrfToken newBalance toMsg =
     BaseRequest.post xsrfToken "api/balances" encodedNewBalance (D.succeed ()) toMsg
 
 
-putBalance : String -> BalanceEntity.Balance -> (Result String () -> msg) -> Cmd msg
+putBalance : String -> BalanceEntity.Balance -> (Result RequestError.Error () -> msg) -> Cmd msg
 putBalance xsrfToken balance toMsg =
     let
         encodedBalance =
@@ -62,12 +63,12 @@ putBalance xsrfToken balance toMsg =
     BaseRequest.put xsrfToken "api/balances/1/" encodedBalance (D.succeed ()) toMsg
 
 
-deleteBalance : String -> Int -> (Result String () -> msg) -> Cmd msg
+deleteBalance : String -> Int -> (Result RequestError.Error () -> msg) -> Cmd msg
 deleteBalance xsrfToken balanceId toMsg =
     BaseRequest.delete xsrfToken ("api/balances/" ++ String.fromInt balanceId) (D.succeed ()) toMsg
 
 
-postLogin : String -> String -> String -> (Result String () -> msg) -> Cmd msg
+postLogin : String -> String -> String -> (Result RequestError.Error () -> msg) -> Cmd msg
 postLogin xsrfToken email password toMsg =
     let
         data =
