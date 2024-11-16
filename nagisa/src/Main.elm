@@ -147,11 +147,11 @@ view model =
     { title = "midas"
     , body =
         [ Html.header []
-            [ Html.h1 [] [ Html.a [ Attributes.href "/" ] [ Html.text "Midas" ] ]
+            [ Html.h1 [] [ Html.a [ Attributes.href (Route.toPath Route.Top) ] [ Html.text "Midas" ] ]
             , Html.nav []
                 [ Html.ul []
-                    [ Html.li [] [ Html.a [ Attributes.href "/" ] [ Html.text "top" ] ]
-                    , Html.li [] [ Html.a [ Attributes.href "/balances" ] [ Html.text "balance" ] ]
+                    [ Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.Top) ] [ Html.text "top" ] ]
+                    , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.BalanceTable) ] [ Html.text "balance" ] ]
                     ]
                 ]
             ]
