@@ -7,7 +7,7 @@ import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.BalanceEntity as BalanceEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Request.BaseRequest as BaseRequest
-import Result exposing (mapError)
+import Result
 
 
 type Error
