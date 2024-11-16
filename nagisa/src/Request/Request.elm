@@ -27,7 +27,7 @@ getBalances toMsg =
         decodeBalances =
             D.list decodeBalance
     in
-    BaseRequest.get "api/balances" decodeBalances toMsg
+    BaseRequest.get "/api/balances" decodeBalances toMsg
 
 
 postBalance : String -> BalanceEntity.NewBalance -> (Result RequestError.Error () -> msg) -> Cmd msg
@@ -43,7 +43,7 @@ postBalance xsrfToken newBalance toMsg =
                 , ( "date", E.string newBalance.date )
                 ]
     in
-    BaseRequest.post xsrfToken "api/balances" encodedNewBalance (D.succeed ()) toMsg
+    BaseRequest.post xsrfToken "/api/balances" encodedNewBalance (D.succeed ()) toMsg
 
 
 putBalance : String -> BalanceEntity.Balance -> (Result RequestError.Error () -> msg) -> Cmd msg
@@ -60,12 +60,12 @@ putBalance xsrfToken balance toMsg =
                 , ( "date", E.string balance.date )
                 ]
     in
-    BaseRequest.put xsrfToken "api/balances/1/" encodedBalance (D.succeed ()) toMsg
+    BaseRequest.put xsrfToken "/api/balances/1/" encodedBalance (D.succeed ()) toMsg
 
 
 deleteBalance : String -> Int -> (Result RequestError.Error () -> msg) -> Cmd msg
 deleteBalance xsrfToken balanceId toMsg =
-    BaseRequest.delete xsrfToken ("api/balances/" ++ String.fromInt balanceId) (D.succeed ()) toMsg
+    BaseRequest.delete xsrfToken ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) toMsg
 
 
 postLogin : String -> String -> String -> (Result RequestError.Error () -> msg) -> Cmd msg
@@ -77,4 +77,4 @@ postLogin xsrfToken email password toMsg =
                 , ( "password", E.string password )
                 ]
     in
-    BaseRequest.post xsrfToken "api/login" data (D.succeed ()) toMsg
+    BaseRequest.post xsrfToken "/api/login" data (D.succeed ()) toMsg

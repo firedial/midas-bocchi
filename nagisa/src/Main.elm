@@ -2,9 +2,11 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Navigation
+import Enitity.AttributeEntity as AttributeEntity
 import Html
 import Html.Attributes as Attributes
 import Page.BalanceTable
+import Page.ElementTable
 import Page.Login
 import Page.Top
 import Route
@@ -27,6 +29,7 @@ type Page
     = NotFound
     | Top Page.Top.Model
     | BalanceTable Page.BalanceTable.Model
+    | ElementTable Page.ElementTable.Model
     | Login Page.Login.Model
 
 
@@ -47,6 +50,7 @@ type Msg
     | UrlRequested Browser.UrlRequest
     | TopMsg Page.Top.Msg
     | BalanceTableMsg Page.BalanceTable.Msg
+    | ElementTableMsg Page.ElementTable.Msg
     | LoginMsg Page.Login.Msg
 
 
@@ -92,6 +96,20 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        ElementTableMsg pageMsg ->
+            case model.page of
+                ElementTable pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.ElementTable.update pageMsg pageModel
+                    in
+                    ( { model | page = ElementTable newModel }
+                    , Cmd.map ElementTableMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
         LoginMsg pageMsg ->
             case model.page of
                 Login pageModel ->
@@ -132,6 +150,10 @@ view model =
                 Page.BalanceTable.view pageModel
                     |> Html.map BalanceTableMsg
 
+            ElementTable pageModel ->
+                Page.ElementTable.view pageModel
+                    |> Html.map ElementTableMsg
+
             Login pageModel ->
                 Page.Login.view pageModel
                     |> Html.map LoginMsg
@@ -161,6 +183,33 @@ goTo maybeRoute model =
             in
             ( { model | page = BalanceTable newModel }
             , Cmd.map BalanceTableMsg newCmd
+            )
+
+        Just Route.KindElementTable ->
+            let
+                ( newModel, newCmd ) =
+                    Page.ElementTable.init AttributeEntity.Kind
+            in
+            ( { model | page = ElementTable newModel }
+            , Cmd.map ElementTableMsg newCmd
+            )
+
+        Just Route.PurposeElementTable ->
+            let
+                ( newModel, newCmd ) =
+                    Page.ElementTable.init AttributeEntity.Purpose
+            in
+            ( { model | page = ElementTable newModel }
+            , Cmd.map ElementTableMsg newCmd
+            )
+
+        Just Route.PlaceElementTable ->
+            let
+                ( newModel, newCmd ) =
+                    Page.ElementTable.init AttributeEntity.Place
+            in
+            ( { model | page = ElementTable newModel }
+            , Cmd.map ElementTableMsg newCmd
             )
 
         Just Route.Login ->
