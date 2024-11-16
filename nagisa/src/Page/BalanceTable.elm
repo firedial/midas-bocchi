@@ -186,7 +186,7 @@ view model =
                     , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.kindElementId, onInput InputKindElementId ] [] ]
                     , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.purposeElementId, onInput InputPurposeElementId ] [] ]
                     , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.placeElementId, onInput InputPlaceElementId ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.date, onInput InputDate ] [] ]
+                    , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.inputBalance.date, onInput InputDate ] [] ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.button [ onClick Save ] [ Html.text "保存" ] ]
                     , Html.td [] [ Html.text "" ]
