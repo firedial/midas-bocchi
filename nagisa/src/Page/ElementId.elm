@@ -2,7 +2,6 @@ module Page.ElementId exposing (Model, Msg, init, update, view)
 
 import Html
 import Html.Attributes as Attributes
-import List
 import Maybe
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
