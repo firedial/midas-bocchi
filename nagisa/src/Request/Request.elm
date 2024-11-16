@@ -92,7 +92,7 @@ getAttributeElements attributeValueObject toMsg =
                 AttributeValueObject.Place ->
                     "place"
     in
-    BaseRequest.get ("/api/attribute_elements/" ++ attributeName) (D.list decodeAttributeElement) toMsg
+    BaseRequest.get ("/api/attribute_elements/" ++ attributeName ++ "_element") (D.list decodeAttributeElement) toMsg
 
 
 postLogin : String -> String -> String -> (Result RequestError.Error () -> msg) -> Cmd msg

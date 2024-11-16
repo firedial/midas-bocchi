@@ -2,10 +2,9 @@ module Page.ElementTable exposing (Model, Msg, init, update, view)
 
 import Html
 import Html.Attributes as Attributes
-import Html.Events exposing (onClick, onInput)
 import List
 import Maybe
-import Model.Enitity.BalanceEntity as BalanceEntity
+import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Request.Request as Request
 import Request.RequestError as RequestError
@@ -13,52 +12,23 @@ import String
 
 
 type alias Model =
-    { balances : BalanceEntity.Balances
-    , inputBalance : InputBalance
+    { attributeElements : AttributeElementEntity.AttributeElements
     , attributeName : AttributeValueObject.Attribute
     , errorMessage : Maybe String
     }
 
 
-type alias InputBalance =
-    { amount : String
-    , item : String
-    , kindElementId : String
-    , purposeElementId : String
-    , placeElementId : String
-    , date : String
-    }
-
-
 type Msg
     = None
-    | GetBalances (Result RequestError.Error BalanceEntity.Balances)
-    | PostBalance (Result RequestError.Error ())
-    | DeleteBalance (Result RequestError.Error ())
-    | InputAmount String
-    | InputItem String
-    | InputKindElementId String
-    | InputPurposeElementId String
-    | InputPlaceElementId String
-    | InputDate String
-    | Save
-    | Delete Int
+    | GetAttributeElements (Result RequestError.Error AttributeElementEntity.AttributeElements)
 
 
 init : AttributeValueObject.Attribute -> ( Model, Cmd Msg )
 init attributeValueObject =
     ( Model []
-        (InputBalance
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-        )
         attributeValueObject
         Nothing
-    , Request.getBalances GetBalances
+    , Request.getAttributeElements attributeValueObject GetAttributeElements
     )
 
 
@@ -68,98 +38,16 @@ update msg model =
         None ->
             ( model, Cmd.none )
 
-        GetBalances result ->
+        GetAttributeElements result ->
             case result of
                 Ok response ->
-                    ( { model | balances = response }, Cmd.none )
+                    ( { model | attributeElements = response }, Cmd.none )
 
                 Err (RequestError.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
                 Err (RequestError.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
-
-        PostBalance result ->
-            case result of
-                Ok _ ->
-                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Nothing }, Cmd.none )
-
-                Err (RequestError.DecodeError message) ->
-                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Just message }, Cmd.none )
-
-                Err (RequestError.RequestError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
-
-        DeleteBalance result ->
-            case result of
-                Ok _ ->
-                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Nothing }, Cmd.none )
-
-                Err (RequestError.DecodeError message) ->
-                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Just message }, Cmd.none )
-
-                Err (RequestError.RequestError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
-
-        InputAmount amount ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | amount = amount } }, Cmd.none )
-
-        InputItem item ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | item = item } }, Cmd.none )
-
-        InputKindElementId id ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | kindElementId = id } }, Cmd.none )
-
-        InputPurposeElementId id ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | purposeElementId = id } }, Cmd.none )
-
-        InputPlaceElementId id ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | placeElementId = id } }, Cmd.none )
-
-        InputDate date ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | date = date } }, Cmd.none )
-
-        Save ->
-            let
-                newBalance =
-                    BalanceEntity.NewBalance
-                        (model.inputBalance.amount |> String.toInt |> Maybe.withDefault 0)
-                        model.inputBalance.item
-                        (model.inputBalance.kindElementId |> String.toInt |> Maybe.withDefault 0)
-                        (model.inputBalance.purposeElementId |> String.toInt |> Maybe.withDefault 0)
-                        (model.inputBalance.placeElementId |> String.toInt |> Maybe.withDefault 0)
-                        model.inputBalance.date
-            in
-            ( model, Request.postBalance "aa" newBalance PostBalance )
-
-        -- Delete balanceId ->
-        -- ( model, Request.deleteBalance model.xsrfToken balanceId DeleteBalance )
-        Delete _ ->
-            ( model, Cmd.none )
 
 
 view : Model -> Html.Html Msg
@@ -170,44 +58,23 @@ view model =
             (Html.tr
                 []
                 [ Html.th [] [ Html.text "id" ]
-                , Html.th [] [ Html.text "金額" ]
-                , Html.th [] [ Html.text "項目" ]
-                , Html.th [] [ Html.text "種別" ]
-                , Html.th [] [ Html.text "予算" ]
-                , Html.th [] [ Html.text "場所" ]
-                , Html.th [] [ Html.text "日付" ]
+                , Html.th [] [ Html.text "名前" ]
+                , Html.th [] [ Html.text "概要" ]
+                , Html.th [] [ Html.text "優先度" ]
+                , Html.th [] [ Html.text "親id" ]
                 , Html.th [] [ Html.text "編集" ]
-                , Html.th [] [ Html.text "保存" ]
-                , Html.th [] [ Html.text "削除" ]
                 ]
-                :: Html.tr
-                    []
-                    [ Html.td [] [ Html.text "+" ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.amount, onInput InputAmount ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.item, onInput InputItem ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.kindElementId, onInput InputKindElementId ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.purposeElementId, onInput InputPurposeElementId ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.placeElementId, onInput InputPlaceElementId ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.date, onInput InputDate ] [] ]
-                    , Html.td [] [ Html.text "" ]
-                    , Html.td [] [ Html.button [ onClick Save ] [ Html.text "保存" ] ]
-                    , Html.td [] [ Html.text "" ]
-                    ]
                 :: List.map
-                    (\balance ->
+                    (\attributeElement ->
                         Html.tr []
-                            [ Html.td [] [ Html.text <| String.fromInt balance.balanceId ]
-                            , Html.td [] [ Html.text <| String.fromInt balance.amount ]
-                            , Html.td [] [ Html.text balance.item ]
-                            , Html.td [] [ Html.text balance.kindElementDescription ]
-                            , Html.td [] [ Html.text balance.purposeElementDescription ]
-                            , Html.td [] [ Html.text balance.placeElementDescription ]
-                            , Html.td [] [ Html.text balance.date ]
+                            [ Html.td [] [ Html.text <| String.fromInt attributeElement.id ]
+                            , Html.td [] [ Html.text attributeElement.name ]
+                            , Html.td [] [ Html.text attributeElement.desription ]
+                            , Html.td [] [ Html.text <| String.fromInt attributeElement.priority ]
+                            , Html.td [] [ Html.text <| String.fromInt attributeElement.categoryId ]
                             , Html.td [] [ Html.text "編集" ]
-                            , Html.td [] [ Html.text "保存" ]
-                            , Html.td [] [ Html.button [ onClick (Delete balance.balanceId) ] [ Html.text "削除" ] ]
                             ]
                     )
-                    model.balances
+                    model.attributeElements
             )
         ]
