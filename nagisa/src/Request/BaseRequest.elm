@@ -1,9 +1,8 @@
-module Request.BaseRequest exposing (delete, get, post, put)
+module Request.BaseRequest exposing (Error(..), delete, get, post, put)
 
 import Http
 import Json.Decode
 import Json.Encode
-import Request.RequestError as RequestError
 
 
 type alias ErrorResponse =
@@ -11,12 +10,21 @@ type alias ErrorResponse =
     }
 
 
-get : String -> Json.Decode.Decoder a -> (Result RequestError.Error a -> msg) -> Cmd msg
+type Error
+    = BadUrl String
+    | Timeout
+    | NetworkError
+    | BadStatus String
+    | BadStatusDecodeError String
+    | GoodStatusDecodeError String
+
+
+get : String -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
 get url decoder toMsg =
     Http.get { url = url, expect = expect decoder toMsg }
 
 
-post : String -> String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result RequestError.Error a -> msg) -> Cmd msg
+post : String -> String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
 post xsrfToken url body decoder toMsg =
     Http.request
         { method = "POST"
@@ -31,7 +39,7 @@ post xsrfToken url body decoder toMsg =
         }
 
 
-put : String -> String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result RequestError.Error a -> msg) -> Cmd msg
+put : String -> String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
 put xsrfToken url body decoder toMsg =
     Http.request
         { method = "PUT"
@@ -46,7 +54,7 @@ put xsrfToken url body decoder toMsg =
         }
 
 
-delete : String -> String -> Json.Decode.Decoder a -> (Result RequestError.Error a -> msg) -> Cmd msg
+delete : String -> String -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
 delete xsrfToken url decoder toMsg =
     Http.request
         { method = "DELETE"
@@ -67,28 +75,28 @@ errorDecoder =
         (Json.Decode.field "message" Json.Decode.string)
 
 
-expect : Json.Decode.Decoder a -> (Result RequestError.Error a -> msg) -> Http.Expect msg
+expect : Json.Decode.Decoder a -> (Result Error a -> msg) -> Http.Expect msg
 expect decoder toMsg =
     Http.expectStringResponse toMsg <|
         \response ->
             case response of
                 Http.BadUrl_ url ->
-                    Err (RequestError.RequestError ("Invalid URL: " ++ url))
+                    Err (BadUrl url)
 
                 Http.Timeout_ ->
-                    Err (RequestError.RequestError "Request timed out")
+                    Err Timeout
 
                 Http.NetworkError_ ->
-                    Err (RequestError.RequestError "Network error occurred")
+                    Err NetworkError
 
                 Http.BadStatus_ _ body ->
                     case Json.Decode.decodeString errorDecoder body of
                         Ok errorResponse ->
-                            Err (RequestError.RequestError ("Server error: " ++ errorResponse.message))
+                            Err (BadStatus errorResponse.message)
 
                         Err _ ->
                             -- JSONデコードに失敗した場合は生のボディを返す
-                            Err (RequestError.RequestError ("Server error: " ++ body))
+                            Err (BadStatusDecodeError body)
 
                 Http.GoodStatus_ _ body ->
                     -- 正常なレスポンスの場合はデコード
@@ -107,4 +115,4 @@ expect decoder toMsg =
                             Ok value
 
                         Err error ->
-                            Err (RequestError.DecodeError ("[request succeeded] Failed to decode: " ++ Json.Decode.errorToString error))
+                            Err (GoodStatusDecodeError (Json.Decode.errorToString error))

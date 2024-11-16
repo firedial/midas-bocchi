@@ -4,7 +4,6 @@ import Html
 import Html.Attributes as Attributes
 import Html.Events exposing (onClick, onInput)
 import Request.Request as Request
-import Request.RequestError as RequestError
 
 
 type alias Model =
@@ -20,7 +19,7 @@ type Msg
     | InputEmail String
     | InputPassword String
     | Login
-    | PostLogin (Result RequestError.Error ())
+    | PostLogin (Result Request.Error ())
 
 
 init : String -> ( Model, Cmd Msg )
@@ -48,10 +47,10 @@ update msg model =
                 Ok _ ->
                     ( { model | errorMessage = Nothing }, Cmd.none )
 
-                Err (RequestError.DecodeError message) ->
+                Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
-                Err (RequestError.RequestError message) ->
+                Err (Request.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
 

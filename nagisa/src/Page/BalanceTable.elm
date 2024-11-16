@@ -1,13 +1,12 @@
 module Page.BalanceTable exposing (Model, Msg, init, update, view)
 
-import Model.Enitity.BalanceEntity as BalanceEntity
 import Html
 import Html.Attributes as Attributes
 import Html.Events exposing (onClick, onInput)
 import List
 import Maybe
+import Model.Enitity.BalanceEntity as BalanceEntity
 import Request.Request as Request
-import Request.RequestError as RequestError
 import String
 
 
@@ -31,9 +30,9 @@ type alias InputBalance =
 
 type Msg
     = None
-    | GetBalances (Result RequestError.Error BalanceEntity.Balances)
-    | PostBalance (Result RequestError.Error ())
-    | DeleteBalance (Result RequestError.Error ())
+    | GetBalances (Result Request.Error BalanceEntity.Balances)
+    | PostBalance (Result Request.Error ())
+    | DeleteBalance (Result Request.Error ())
     | InputAmount String
     | InputItem String
     | InputKindElementId String
@@ -72,10 +71,10 @@ update msg model =
                 Ok response ->
                     ( { model | balances = response }, Cmd.none )
 
-                Err (RequestError.DecodeError message) ->
+                Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
-                Err (RequestError.RequestError message) ->
+                Err (Request.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
         PostBalance result ->
@@ -83,10 +82,10 @@ update msg model =
                 Ok _ ->
                     ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Nothing }, Cmd.none )
 
-                Err (RequestError.DecodeError message) ->
+                Err (Request.DecodeError message) ->
                     ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Just message }, Cmd.none )
 
-                Err (RequestError.RequestError message) ->
+                Err (Request.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
         DeleteBalance result ->
@@ -94,10 +93,10 @@ update msg model =
                 Ok _ ->
                     ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Nothing }, Cmd.none )
 
-                Err (RequestError.DecodeError message) ->
+                Err (Request.DecodeError message) ->
                     ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Just message }, Cmd.none )
 
-                Err (RequestError.RequestError message) ->
+                Err (Request.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
         InputAmount amount ->

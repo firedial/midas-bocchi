@@ -7,7 +7,6 @@ import Maybe
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Request.Request as Request
-import Request.RequestError as RequestError
 import String
 
 
@@ -20,7 +19,7 @@ type alias Model =
 
 type Msg
     = None
-    | GetAttributeElements (Result RequestError.Error AttributeElementEntity.AttributeElements)
+    | GetAttributeElements (Result Request.Error AttributeElementEntity.AttributeElements)
 
 
 init : AttributeValueObject.Attribute -> ( Model, Cmd Msg )
@@ -43,10 +42,10 @@ update msg model =
                 Ok response ->
                     ( { model | attributeElements = response }, Cmd.none )
 
-                Err (RequestError.DecodeError message) ->
+                Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
-                Err (RequestError.RequestError message) ->
+                Err (Request.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
 

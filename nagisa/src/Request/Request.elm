@@ -7,10 +7,15 @@ import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.BalanceEntity as BalanceEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Request.BaseRequest as BaseRequest
-import Request.RequestError as RequestError
+import Result exposing (mapError)
 
 
-getBalances : (Result RequestError.Error BalanceEntity.Balances -> msg) -> Cmd msg
+type Error
+    = DecodeError String
+    | RequestError String
+
+
+getBalances : (Result Error BalanceEntity.Balances -> msg) -> Cmd msg
 getBalances toMsg =
     let
         decodeBalance =
@@ -29,10 +34,10 @@ getBalances toMsg =
         decodeBalances =
             D.list decodeBalance
     in
-    BaseRequest.get "/api/balances" decodeBalances toMsg
+    BaseRequest.get "/api/balances" decodeBalances (toMsg << Result.mapError mapError)
 
 
-postBalance : String -> BalanceEntity.NewBalance -> (Result RequestError.Error () -> msg) -> Cmd msg
+postBalance : String -> BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg
 postBalance xsrfToken newBalance toMsg =
     let
         encodedNewBalance =
@@ -45,10 +50,10 @@ postBalance xsrfToken newBalance toMsg =
                 , ( "date", E.string newBalance.date )
                 ]
     in
-    BaseRequest.post xsrfToken "/api/balances" encodedNewBalance (D.succeed ()) toMsg
+    BaseRequest.post xsrfToken "/api/balances" encodedNewBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putBalance : String -> BalanceEntity.Balance -> (Result RequestError.Error () -> msg) -> Cmd msg
+putBalance : String -> BalanceEntity.Balance -> (Result Error () -> msg) -> Cmd msg
 putBalance xsrfToken balance toMsg =
     let
         encodedBalance =
@@ -62,15 +67,15 @@ putBalance xsrfToken balance toMsg =
                 , ( "date", E.string balance.date )
                 ]
     in
-    BaseRequest.put xsrfToken "/api/balances/1/" encodedBalance (D.succeed ()) toMsg
+    BaseRequest.put xsrfToken "/api/balances/1/" encodedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-deleteBalance : String -> Int -> (Result RequestError.Error () -> msg) -> Cmd msg
+deleteBalance : String -> Int -> (Result Error () -> msg) -> Cmd msg
 deleteBalance xsrfToken balanceId toMsg =
-    BaseRequest.delete xsrfToken ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) toMsg
+    BaseRequest.delete xsrfToken ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-getAttributeElements : AttributeValueObject.Attribute -> (Result RequestError.Error AttributeElementEntity.AttributeElements -> msg) -> Cmd msg
+getAttributeElements : AttributeValueObject.Attribute -> (Result Error AttributeElementEntity.AttributeElements -> msg) -> Cmd msg
 getAttributeElements attributeValueObject toMsg =
     let
         decodeAttributeElement =
@@ -92,10 +97,10 @@ getAttributeElements attributeValueObject toMsg =
                 AttributeValueObject.Place ->
                     "place"
     in
-    BaseRequest.get ("/api/attribute_elements/" ++ attributeName ++ "_element") (D.list decodeAttributeElement) toMsg
+    BaseRequest.get ("/api/attribute_elements/" ++ attributeName ++ "_element") (D.list decodeAttributeElement) (toMsg << Result.mapError mapError)
 
 
-postLogin : String -> String -> String -> (Result RequestError.Error () -> msg) -> Cmd msg
+postLogin : String -> String -> String -> (Result Error () -> msg) -> Cmd msg
 postLogin xsrfToken email password toMsg =
     let
         data =
@@ -104,4 +109,26 @@ postLogin xsrfToken email password toMsg =
                 , ( "password", E.string password )
                 ]
     in
-    BaseRequest.post xsrfToken "/api/login" data (D.succeed ()) toMsg
+    BaseRequest.post xsrfToken "/api/login" data (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+mapError : BaseRequest.Error -> Error
+mapError baseRequestError =
+    case baseRequestError of
+        BaseRequest.BadUrl url ->
+            RequestError ("Bad Url: " ++ url)
+
+        BaseRequest.Timeout ->
+            RequestError "Timeout"
+
+        BaseRequest.NetworkError ->
+            RequestError "NetworkError"
+
+        BaseRequest.BadStatus body ->
+            RequestError ("BadStatus: " ++ body)
+
+        BaseRequest.BadStatusDecodeError body ->
+            RequestError ("BadStatusDecodeError: " ++ body)
+
+        BaseRequest.GoodStatusDecodeError body ->
+            DecodeError ("GoodStatusDecodeError: " ++ body)
