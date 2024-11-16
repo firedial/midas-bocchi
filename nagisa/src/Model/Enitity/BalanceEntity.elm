@@ -1,4 +1,4 @@
-module Enitity.BalanceEntity exposing (Balance, Balances, NewBalance)
+module Model.Enitity.BalanceEntity exposing (Balance, Balances, NewBalance)
 
 
 type alias Balance =

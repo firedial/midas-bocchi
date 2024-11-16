@@ -1,6 +1,6 @@
 module Page.BalanceTable exposing (Model, Msg, init, update, view)
 
-import Enitity.BalanceEntity as BalanceEntity
+import Model.Enitity.BalanceEntity as BalanceEntity
 import Html
 import Html.Attributes as Attributes
 import Html.Events exposing (onClick, onInput)

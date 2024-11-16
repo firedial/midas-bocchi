@@ -1,9 +1,11 @@
 module Request.Request exposing (..)
 
-import Enitity.BalanceEntity as BalanceEntity
 import Json.Decode as D
 import Json.Decode.Pipeline as DP
 import Json.Encode as E
+import Model.Enitity.AttributeElementEntity as AttributeElementEntity
+import Model.Enitity.BalanceEntity as BalanceEntity
+import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Request.BaseRequest as BaseRequest
 import Request.RequestError as RequestError
 
@@ -66,6 +68,31 @@ putBalance xsrfToken balance toMsg =
 deleteBalance : String -> Int -> (Result RequestError.Error () -> msg) -> Cmd msg
 deleteBalance xsrfToken balanceId toMsg =
     BaseRequest.delete xsrfToken ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) toMsg
+
+
+getAttributeElements : AttributeValueObject.Attribute -> (Result RequestError.Error AttributeElementEntity.AttributeElements -> msg) -> Cmd msg
+getAttributeElements attributeValueObject toMsg =
+    let
+        decodeAttributeElement =
+            D.succeed AttributeElementEntity.AttributeElement
+                |> DP.required "id" D.int
+                |> DP.required "name" D.string
+                |> DP.required "description" D.string
+                |> DP.required "priority" D.int
+                |> DP.required "category_id" D.int
+
+        attributeName =
+            case attributeValueObject of
+                AttributeValueObject.Kind ->
+                    "kind"
+
+                AttributeValueObject.Purpose ->
+                    "purpose"
+
+                AttributeValueObject.Place ->
+                    "place"
+    in
+    BaseRequest.get ("/api/attribute_elements/" ++ attributeName) (D.list decodeAttributeElement) toMsg
 
 
 postLogin : String -> String -> String -> (Result RequestError.Error () -> msg) -> Cmd msg

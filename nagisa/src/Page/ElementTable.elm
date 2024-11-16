@@ -1,12 +1,12 @@
 module Page.ElementTable exposing (Model, Msg, init, update, view)
 
-import Enitity.BalanceEntity as BalanceEntity
-import Enitity.AttributeEntity as AttributeEntity
 import Html
 import Html.Attributes as Attributes
 import Html.Events exposing (onClick, onInput)
 import List
 import Maybe
+import Model.Enitity.BalanceEntity as BalanceEntity
+import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Request.Request as Request
 import Request.RequestError as RequestError
 import String
@@ -15,7 +15,7 @@ import String
 type alias Model =
     { balances : BalanceEntity.Balances
     , inputBalance : InputBalance
-    , attributeName : AttributeEntity.Attribute
+    , attributeName : AttributeValueObject.Attribute
     , errorMessage : Maybe String
     }
 
@@ -45,8 +45,8 @@ type Msg
     | Delete Int
 
 
-init : AttributeEntity.Attribute -> ( Model, Cmd Msg )
-init attributeName =
+init : AttributeValueObject.Attribute -> ( Model, Cmd Msg )
+init attributeValueObject =
     ( Model []
         (InputBalance
             ""
@@ -56,7 +56,7 @@ init attributeName =
             ""
             ""
         )
-        attributeName
+        attributeValueObject
         Nothing
     , Request.getBalances GetBalances
     )

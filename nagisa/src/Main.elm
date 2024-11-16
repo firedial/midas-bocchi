@@ -2,9 +2,9 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Navigation
-import Enitity.AttributeEntity as AttributeEntity
 import Html
 import Html.Attributes as Attributes
+import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Page.BalanceTable
 import Page.ElementTable
 import Page.Login
@@ -188,7 +188,7 @@ goTo maybeRoute model =
         Just Route.KindElementTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementTable.init AttributeEntity.Kind
+                    Page.ElementTable.init AttributeValueObject.Kind
             in
             ( { model | page = ElementTable newModel }
             , Cmd.map ElementTableMsg newCmd
@@ -197,7 +197,7 @@ goTo maybeRoute model =
         Just Route.PurposeElementTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementTable.init AttributeEntity.Purpose
+                    Page.ElementTable.init AttributeValueObject.Purpose
             in
             ( { model | page = ElementTable newModel }
             , Cmd.map ElementTableMsg newCmd
@@ -206,7 +206,7 @@ goTo maybeRoute model =
         Just Route.PlaceElementTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementTable.init AttributeEntity.Place
+                    Page.ElementTable.init AttributeValueObject.Place
             in
             ( { model | page = ElementTable newModel }
             , Cmd.map ElementTableMsg newCmd
