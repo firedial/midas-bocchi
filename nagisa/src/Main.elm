@@ -6,6 +6,7 @@ import Html
 import Html.Attributes as Attributes
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Page.BalanceTable
+import Page.ElementId
 import Page.ElementTable
 import Page.Login
 import Page.Top
@@ -30,6 +31,7 @@ type Page
     | Top Page.Top.Model
     | BalanceTable Page.BalanceTable.Model
     | ElementTable Page.ElementTable.Model
+    | ElementId Page.ElementId.Model
     | Login Page.Login.Model
 
 
@@ -51,6 +53,7 @@ type Msg
     | TopMsg Page.Top.Msg
     | BalanceTableMsg Page.BalanceTable.Msg
     | ElementTableMsg Page.ElementTable.Msg
+    | ElementIdMsg Page.ElementId.Msg
     | LoginMsg Page.Login.Msg
 
 
@@ -110,6 +113,20 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        ElementIdMsg pageMsg ->
+            case model.page of
+                ElementId pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.ElementId.update pageMsg pageModel
+                    in
+                    ( { model | page = ElementId newModel }
+                    , Cmd.map ElementIdMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
         LoginMsg pageMsg ->
             case model.page of
                 Login pageModel ->
@@ -153,6 +170,10 @@ view model =
             ElementTable pageModel ->
                 Page.ElementTable.view pageModel
                     |> Html.map ElementTableMsg
+
+            ElementId pageModel ->
+                Page.ElementId.view pageModel
+                    |> Html.map ElementIdMsg
 
             Login pageModel ->
                 Page.Login.view pageModel
@@ -210,6 +231,33 @@ goTo maybeRoute model =
             in
             ( { model | page = ElementTable newModel }
             , Cmd.map ElementTableMsg newCmd
+            )
+
+        Just (Route.KindElementId id) ->
+            let
+                ( newModel, newCmd ) =
+                    Page.ElementId.init AttributeValueObject.Kind id
+            in
+            ( { model | page = ElementId newModel }
+            , Cmd.map ElementIdMsg newCmd
+            )
+
+        Just (Route.PurposeElementId id) ->
+            let
+                ( newModel, newCmd ) =
+                    Page.ElementId.init AttributeValueObject.Purpose id
+            in
+            ( { model | page = ElementId newModel }
+            , Cmd.map ElementIdMsg newCmd
+            )
+
+        Just (Route.PlaceElementId id) ->
+            let
+                ( newModel, newCmd ) =
+                    Page.ElementId.init AttributeValueObject.Place id
+            in
+            ( { model | page = ElementId newModel }
+            , Cmd.map ElementIdMsg newCmd
             )
 
         Just Route.Login ->

@@ -1,4 +1,4 @@
-module Route exposing (Route(..), parse)
+module Route exposing (Route(..), parse, toPath)
 
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser)
@@ -10,6 +10,9 @@ type Route
     | KindElementTable
     | PurposeElementTable
     | PlaceElementTable
+    | KindElementId Int
+    | PurposeElementId Int
+    | PlaceElementId Int
     | Login
 
 
@@ -26,5 +29,39 @@ routes =
         , Parser.map KindElementTable (Parser.s "kind" </> Parser.s "elements")
         , Parser.map PurposeElementTable (Parser.s "purpose" </> Parser.s "elements")
         , Parser.map PlaceElementTable (Parser.s "place" </> Parser.s "elements")
+        , Parser.map KindElementId (Parser.s "kind" </> Parser.s "elements" </> Parser.int)
+        , Parser.map PurposeElementId (Parser.s "purpose" </> Parser.s "elements" </> Parser.int)
+        , Parser.map PlaceElementId (Parser.s "place" </> Parser.s "elements" </> Parser.int)
         , Parser.map Login (Parser.s "login")
         ]
+
+
+toPath : Route -> String
+toPath route =
+    case route of
+        Top ->
+            "/"
+
+        BalanceTable ->
+            "/balances"
+
+        KindElementTable ->
+            "/kind/elements"
+
+        PurposeElementTable ->
+            "/purpose/elements"
+
+        PlaceElementTable ->
+            "/place/elements"
+
+        KindElementId id ->
+            "/kind/elements/" ++ String.fromInt id
+
+        PurposeElementId id ->
+            "/purpose/elements/" ++ String.fromInt id
+
+        PlaceElementId id ->
+            "/place/elements/" ++ String.fromInt id
+
+        Login ->
+            "/login"

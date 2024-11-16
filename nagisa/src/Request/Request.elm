@@ -75,6 +75,31 @@ deleteBalance xsrfToken balanceId toMsg =
     BaseRequest.delete xsrfToken ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
+getAttributeElement : AttributeValueObject.Attribute -> Int -> (Result Error AttributeElementEntity.AttributeElement -> msg) -> Cmd msg
+getAttributeElement attributeValueObject id toMsg =
+    let
+        decodeAttributeElement =
+            D.succeed AttributeElementEntity.AttributeElement
+                |> DP.required "id" D.int
+                |> DP.required "name" D.string
+                |> DP.required "description" D.string
+                |> DP.required "priority" D.int
+                |> DP.required "category_id" D.int
+
+        attributeName =
+            case attributeValueObject of
+                AttributeValueObject.Kind ->
+                    "kind"
+
+                AttributeValueObject.Purpose ->
+                    "purpose"
+
+                AttributeValueObject.Place ->
+                    "place"
+    in
+    BaseRequest.get ("/api/attribute_elements/" ++ attributeName ++ "_element/" ++ String.fromInt id) decodeAttributeElement (toMsg << Result.mapError mapError)
+
+
 getAttributeElements : AttributeValueObject.Attribute -> (Result Error AttributeElementEntity.AttributeElements -> msg) -> Cmd msg
 getAttributeElements attributeValueObject toMsg =
     let

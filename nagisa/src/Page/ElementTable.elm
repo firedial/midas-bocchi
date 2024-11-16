@@ -7,12 +7,13 @@ import Maybe
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Request.Request as Request
+import Route
 import String
 
 
 type alias Model =
     { attributeElements : AttributeElementEntity.AttributeElements
-    , attributeName : AttributeValueObject.Attribute
+    , attributeValueObject : AttributeValueObject.Attribute
     , errorMessage : Maybe String
     }
 
@@ -51,6 +52,18 @@ update msg model =
 
 view : Model -> Html.Html Msg
 view model =
+    let
+        routing id =
+            case model.attributeValueObject of
+                AttributeValueObject.Kind ->
+                    Route.toPath (Route.KindElementId id)
+
+                AttributeValueObject.Purpose ->
+                    Route.toPath (Route.PurposeElementId id)
+
+                AttributeValueObject.Place ->
+                    Route.toPath (Route.PlaceElementId id)
+    in
     Html.div []
         [ Html.text (model.errorMessage |> Maybe.withDefault "")
         , Html.table [ Attributes.class "balance" ]
@@ -61,17 +74,15 @@ view model =
                 , Html.th [] [ Html.text "概要" ]
                 , Html.th [] [ Html.text "優先度" ]
                 , Html.th [] [ Html.text "親id" ]
-                , Html.th [] [ Html.text "編集" ]
                 ]
                 :: List.map
                     (\attributeElement ->
                         Html.tr []
-                            [ Html.td [] [ Html.text <| String.fromInt attributeElement.id ]
+                            [ Html.td [] [ Html.a [ Attributes.href (routing attributeElement.id) ] [ Html.text <| String.fromInt attributeElement.id ] ]
                             , Html.td [] [ Html.text attributeElement.name ]
                             , Html.td [] [ Html.text attributeElement.desription ]
                             , Html.td [] [ Html.text <| String.fromInt attributeElement.priority ]
                             , Html.td [] [ Html.text <| String.fromInt attributeElement.categoryId ]
-                            , Html.td [] [ Html.text "編集" ]
                             ]
                     )
                     model.attributeElements
