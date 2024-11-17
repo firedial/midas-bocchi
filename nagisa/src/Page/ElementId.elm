@@ -1,5 +1,6 @@
 module Page.ElementId exposing (Model, Msg, init, update, view)
 
+import Browser.Navigation as Navigation
 import Html
 import Html.Attributes as Attributes
 import Html.Events exposing (onClick, onInput)
@@ -8,6 +9,7 @@ import Model.Enitity.AttributeCategoryEntity as AttributeCategoryEntity
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Request.Request as Request
+import Route
 import String
 
 
@@ -17,6 +19,7 @@ type alias Model =
     , xsrfToken : String
     , attributeName : AttributeValueObject.Attribute
     , id : Maybe Int
+    , key : Navigation.Key
     , errorMessage : Maybe String
     }
 
@@ -38,13 +41,12 @@ type Msg
     | GetAttributeElement (Result Request.Error AttributeElementEntity.AttributeElement)
     | GetAttributeCategories (Result Request.Error AttributeCategoryEntity.AttributeCategories)
     | Save
-    | PutElement (Result Request.Error ())
     | Create
-    | PostElement (Result Request.Error ())
+    | UpsertResult (Result Request.Error ())
 
 
-init : String -> AttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
-init xsrfToken attributeValueObject id =
+init : String -> Navigation.Key -> AttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
+init xsrfToken key attributeValueObject id =
     ( Model
         (case id of
             Nothing ->
@@ -57,6 +59,7 @@ init xsrfToken attributeValueObject id =
         xsrfToken
         attributeValueObject
         id
+        key
         Nothing
     , Cmd.batch
         (case id of
@@ -166,18 +169,7 @@ update msg model =
                                             |> Maybe.withDefault 0
                                         )
                             in
-                            ( model, Request.putAttributeElement model.xsrfToken model.attributeName requestAttributeElement PutElement )
-
-        PutElement result ->
-            case result of
-                Ok _ ->
-                    ( { model | errorMessage = Just "OK" }, Cmd.none )
-
-                Err (Request.DecodeError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
-
-                Err (Request.RequestError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
+                            ( model, Request.putAttributeElement model.xsrfToken model.attributeName requestAttributeElement UpsertResult )
 
         Create ->
             case model.attributeElement of
@@ -201,15 +193,27 @@ update msg model =
                                             |> Maybe.withDefault 0
                                         )
                             in
-                            ( model, Request.postAttributeElement model.xsrfToken model.attributeName requestAttributeElement PostElement )
+                            ( model, Request.postAttributeElement model.xsrfToken model.attributeName requestAttributeElement UpsertResult )
 
                         Just _ ->
                             ( model, Cmd.none )
 
-        PostElement result ->
+        UpsertResult result ->
+            let
+                redirectRouting =
+                    case model.attributeName of
+                        AttributeValueObject.Kind ->
+                            Route.toPath Route.KindElementTable
+
+                        AttributeValueObject.Purpose ->
+                            Route.toPath Route.PurposeElementTable
+
+                        AttributeValueObject.Place ->
+                            Route.toPath Route.PlaceElementTable
+            in
             case result of
                 Ok _ ->
-                    ( { model | errorMessage = Just "OK" }, Cmd.none )
+                    ( { model | errorMessage = Just "OK" }, Navigation.pushUrl model.key redirectRouting )
 
                 Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
