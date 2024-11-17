@@ -2,7 +2,9 @@ module Page.ElementId exposing (Model, Msg, init, update, view)
 
 import Html
 import Html.Attributes as Attributes
+import Html.Events exposing (onInput)
 import Maybe
+import Model.Enitity.AttributeCategoryEntity as AttributeCategoryEntity
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Request.Request as Request
@@ -10,30 +12,32 @@ import String
 
 
 type alias Model =
-    { attributeElement : InitGet
+    { attributeElement : Maybe AttributeElementEntity.AttributeElement
+    , attributeCategories : Maybe AttributeCategoryEntity.AttributeCategories
     , attributeName : AttributeValueObject.Attribute
     , id : Int
     , errorMessage : Maybe String
     }
 
 
-type InitGet
-    = NoData
-    | Success AttributeElementEntity.AttributeElement
-
-
 type Msg
     = None
+    | SelectedCategory String
     | GetAttributeElement (Result Request.Error AttributeElementEntity.AttributeElement)
+    | GetAttributeCategories (Result Request.Error AttributeCategoryEntity.AttributeCategories)
 
 
 init : AttributeValueObject.Attribute -> Int -> ( Model, Cmd Msg )
 init attributeValueObject id =
-    ( Model NoData
+    ( Model Nothing
+        Nothing
         attributeValueObject
         id
         Nothing
-    , Request.getAttributeElement attributeValueObject id GetAttributeElement
+    , Cmd.batch
+        [ Request.getAttributeElement attributeValueObject id GetAttributeElement
+        , Request.getAttributeCategories attributeValueObject GetAttributeCategories
+        ]
     )
 
 
@@ -43,10 +47,29 @@ update msg model =
         None ->
             ( model, Cmd.none )
 
+        SelectedCategory id ->
+            let
+                newAttributeElement =
+                    model.attributeElement
+                        |> Maybe.andThen (\attributeElement -> Just { attributeElement | id = String.toInt id |> Maybe.withDefault 0 })
+            in
+            ( { model | attributeElement = newAttributeElement }, Cmd.none )
+
         GetAttributeElement result ->
             case result of
                 Ok response ->
-                    ( { model | attributeElement = Success response }, Cmd.none )
+                    ( { model | attributeElement = Just response }, Cmd.none )
+
+                Err (Request.DecodeError message) ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
+
+                Err (Request.RequestError message) ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
+
+        GetAttributeCategories result ->
+            case result of
+                Ok response ->
+                    ( { model | attributeCategories = Just response }, Cmd.none )
 
                 Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
@@ -58,12 +81,12 @@ update msg model =
 view : Model -> Html.Html Msg
 view model =
     case model.attributeElement of
-        NoData ->
+        Nothing ->
             Html.div []
                 [ Html.text (model.errorMessage |> Maybe.withDefault "")
                 ]
 
-        Success attributeElement ->
+        Just attributeElement ->
             Html.div []
                 [ Html.text (model.errorMessage |> Maybe.withDefault "")
                 , Html.table [ Attributes.class "balance" ]
@@ -80,7 +103,21 @@ view model =
                         , Html.td [] [ Html.text attributeElement.name ]
                         , Html.td [] [ Html.text attributeElement.desription ]
                         , Html.td [] [ Html.text <| String.fromInt attributeElement.priority ]
-                        , Html.td [] [ Html.text <| String.fromInt attributeElement.categoryId ]
+                        , Html.td []
+                            [ Html.select [ onInput SelectedCategory, Attributes.value <| String.fromInt attributeElement.id ]
+                                (case model.attributeCategories of
+                                    Nothing ->
+                                        []
+
+                                    Just attributeCategories ->
+                                        List.map
+                                            (\attributeCategory ->
+                                                Html.option [ Attributes.value <| String.fromInt attributeCategory.id ]
+                                                    [ Html.text <| attributeCategory.desription ]
+                                            )
+                                            attributeCategories
+                                )
+                            ]
                         ]
                     ]
                 ]

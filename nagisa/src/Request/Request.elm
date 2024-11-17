@@ -3,6 +3,7 @@ module Request.Request exposing (..)
 import Json.Decode as D
 import Json.Decode.Pipeline as DP
 import Json.Encode as E
+import Model.Enitity.AttributeCategoryEntity as AttributeCategoryEntity
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.BalanceEntity as BalanceEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
@@ -123,6 +124,29 @@ getAttributeElements attributeValueObject toMsg =
                     "place"
     in
     BaseRequest.get ("/api/attribute_elements/" ++ attributeName ++ "_element") (D.list decodeAttributeElement) (toMsg << Result.mapError mapError)
+
+
+getAttributeCategories : AttributeValueObject.Attribute -> (Result Error AttributeCategoryEntity.AttributeCategories -> msg) -> Cmd msg
+getAttributeCategories attributeValueObject toMsg =
+    let
+        decodeAttributeCategory =
+            D.succeed AttributeCategoryEntity.AttributeCategory
+                |> DP.required "id" D.int
+                |> DP.required "name" D.string
+                |> DP.required "description" D.string
+
+        attributeName =
+            case attributeValueObject of
+                AttributeValueObject.Kind ->
+                    "kind"
+
+                AttributeValueObject.Purpose ->
+                    "purpose"
+
+                AttributeValueObject.Place ->
+                    "place"
+    in
+    BaseRequest.get ("/api/attribute_categories/" ++ attributeName ++ "_category") (D.list decodeAttributeCategory) (toMsg << Result.mapError mapError)
 
 
 postLogin : String -> String -> String -> (Result Error () -> msg) -> Cmd msg
