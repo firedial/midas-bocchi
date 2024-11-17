@@ -98,19 +98,8 @@ getAttributeElement attributeValueObject id toMsg =
                 |> DP.required "description" D.string
                 |> DP.required "priority" D.int
                 |> DP.required "category_id" D.int
-
-        attributeName =
-            case attributeValueObject of
-                AttributeValueObject.Kind ->
-                    "kind"
-
-                AttributeValueObject.Purpose ->
-                    "purpose"
-
-                AttributeValueObject.Place ->
-                    "place"
     in
-    BaseRequest.get ("/api/attribute_elements/" ++ attributeName ++ "_element/" ++ String.fromInt id) decodeAttributeElement (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) decodeAttributeElement (toMsg << Result.mapError mapError)
 
 
 getAttributeElements : AttributeValueObject.Attribute -> (Result Error AttributeElementEntity.AttributeElements -> msg) -> Cmd msg
@@ -123,19 +112,8 @@ getAttributeElements attributeValueObject toMsg =
                 |> DP.required "description" D.string
                 |> DP.required "priority" D.int
                 |> DP.required "category_id" D.int
-
-        attributeName =
-            case attributeValueObject of
-                AttributeValueObject.Kind ->
-                    "kind"
-
-                AttributeValueObject.Purpose ->
-                    "purpose"
-
-                AttributeValueObject.Place ->
-                    "place"
     in
-    BaseRequest.get ("/api/attribute_elements/" ++ attributeName ++ "_element") (D.list decodeAttributeElement) (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") (D.list decodeAttributeElement) (toMsg << Result.mapError mapError)
 
 
 postAttributeElement : String -> AttributeValueObject.Attribute -> AttributeElementEntity.NewAttributeElement -> (Result Error () -> msg) -> Cmd msg
@@ -148,19 +126,8 @@ postAttributeElement xsrfToken attributeValueObject newAttributeElement toMsg =
                 , ( "priority", E.int newAttributeElement.priority )
                 , ( "category_id", E.int newAttributeElement.categoryId )
                 ]
-
-        attributeName =
-            case attributeValueObject of
-                AttributeValueObject.Kind ->
-                    "kind"
-
-                AttributeValueObject.Purpose ->
-                    "purpose"
-
-                AttributeValueObject.Place ->
-                    "place"
     in
-    BaseRequest.post xsrfToken ("/api/attribute_elements/" ++ attributeName ++ "_element") encodedNewAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post xsrfToken ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") encodedNewAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 putAttributeElement : String -> AttributeValueObject.Attribute -> AttributeElementEntity.AttributeElement -> (Result Error () -> msg) -> Cmd msg
@@ -174,19 +141,8 @@ putAttributeElement xsrfToken attributeValueObject attributeElement toMsg =
                 , ( "priority", E.int attributeElement.priority )
                 , ( "category_id", E.int attributeElement.categoryId )
                 ]
-
-        attributeName =
-            case attributeValueObject of
-                AttributeValueObject.Kind ->
-                    "kind"
-
-                AttributeValueObject.Purpose ->
-                    "purpose"
-
-                AttributeValueObject.Place ->
-                    "place"
     in
-    BaseRequest.put xsrfToken ("/api/attribute_elements/" ++ attributeName ++ "_element/" ++ String.fromInt attributeElement.id) encodedAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put xsrfToken ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt attributeElement.id) encodedAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getAttributeCategories : AttributeValueObject.Attribute -> (Result Error AttributeCategoryEntity.AttributeCategories -> msg) -> Cmd msg
@@ -197,19 +153,8 @@ getAttributeCategories attributeValueObject toMsg =
                 |> DP.required "id" D.int
                 |> DP.required "name" D.string
                 |> DP.required "description" D.string
-
-        attributeName =
-            case attributeValueObject of
-                AttributeValueObject.Kind ->
-                    "kind"
-
-                AttributeValueObject.Purpose ->
-                    "purpose"
-
-                AttributeValueObject.Place ->
-                    "place"
     in
-    BaseRequest.get ("/api/attribute_categories/" ++ attributeName ++ "_category") (D.list decodeAttributeCategory) (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/attribute_categories/" ++ mapAttributeName attributeValueObject ++ "_category") (D.list decodeAttributeCategory) (toMsg << Result.mapError mapError)
 
 
 postLogin : String -> String -> String -> (Result Error () -> msg) -> Cmd msg
@@ -222,6 +167,19 @@ postLogin xsrfToken email password toMsg =
                 ]
     in
     BaseRequest.post xsrfToken "/api/login" data (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+mapAttributeName : AttributeValueObject.Attribute -> String
+mapAttributeName attributeName =
+    case attributeName of
+        AttributeValueObject.Kind ->
+            "kind"
+
+        AttributeValueObject.Purpose ->
+            "purpose"
+
+        AttributeValueObject.Place ->
+            "place"
 
 
 mapError : BaseRequest.Error -> Error
