@@ -1,4 +1,16 @@
-module Request.Request exposing (..)
+module Request.Request exposing
+    ( Error(..)
+    , deleteBalance
+    , getAttributeCategories
+    , getAttributeElement
+    , getAttributeElements
+    , getBalances
+    , postAttributeElement
+    , postBalance
+    , postLogin
+    , putAttributeElement
+    , putBalance
+    )
 
 import Json.Decode as D
 import Json.Decode.Pipeline as DP
