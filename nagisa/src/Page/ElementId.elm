@@ -104,7 +104,7 @@ view model =
                         , Html.td [] [ Html.text attributeElement.desription ]
                         , Html.td [] [ Html.text <| String.fromInt attributeElement.priority ]
                         , Html.td []
-                            [ Html.select [ onInput SelectedCategory, Attributes.value <| String.fromInt attributeElement.id ]
+                            [ Html.select [ onInput SelectedCategory, Attributes.value <| String.fromInt attributeElement.categoryId ]
                                 (case model.attributeCategories of
                                     Nothing ->
                                         []
@@ -112,7 +112,10 @@ view model =
                                     Just attributeCategories ->
                                         List.map
                                             (\attributeCategory ->
-                                                Html.option [ Attributes.value <| String.fromInt attributeCategory.id ]
+                                                Html.option
+                                                    [ Attributes.value <| String.fromInt attributeCategory.id
+                                                    , Attributes.selected (attributeCategory.id == attributeElement.categoryId)
+                                                    ]
                                                     [ Html.text <| attributeCategory.desription ]
                                             )
                                             attributeCategories
