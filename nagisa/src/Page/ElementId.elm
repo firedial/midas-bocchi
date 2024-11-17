@@ -16,7 +16,7 @@ type alias Model =
     , attributeCategories : Maybe AttributeCategoryEntity.AttributeCategories
     , xsrfToken : String
     , attributeName : AttributeValueObject.Attribute
-    , id : Int
+    , id : Maybe Int
     , errorMessage : Maybe String
     }
 
@@ -39,21 +39,36 @@ type Msg
     | GetAttributeCategories (Result Request.Error AttributeCategoryEntity.AttributeCategories)
     | Save
     | PutElement (Result Request.Error ())
+    | Create
+    | PostElement (Result Request.Error ())
 
 
-init : String -> AttributeValueObject.Attribute -> Int -> ( Model, Cmd Msg )
+init : String -> AttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
 init xsrfToken attributeValueObject id =
     ( Model
-        Nothing
+        (case id of
+            Nothing ->
+                Just (StringAttributeElement "" "" "" "")
+
+            Just _ ->
+                Nothing
+        )
         Nothing
         xsrfToken
         attributeValueObject
         id
         Nothing
     , Cmd.batch
-        [ Request.getAttributeElement attributeValueObject id GetAttributeElement
-        , Request.getAttributeCategories attributeValueObject GetAttributeCategories
-        ]
+        (case id of
+            Nothing ->
+                [ Request.getAttributeCategories attributeValueObject GetAttributeCategories
+                ]
+
+            Just id_ ->
+                [ Request.getAttributeElement attributeValueObject id_ GetAttributeElement
+                , Request.getAttributeCategories attributeValueObject GetAttributeCategories
+                ]
+        )
     )
 
 
@@ -131,24 +146,67 @@ update msg model =
                     ( model, Cmd.none )
 
                 Just attributeElement ->
-                    let
-                        requestAttributeElement =
-                            AttributeElementEntity.AttributeElement
-                                model.id
-                                attributeElement.name
-                                attributeElement.description
-                                (String.toInt
-                                    attributeElement.priority
-                                    |> Maybe.withDefault 0
-                                )
-                                (String.toInt
-                                    attributeElement.categoryId
-                                    |> Maybe.withDefault 0
-                                )
-                    in
-                    ( model, Request.putAttributeElement model.xsrfToken model.attributeName requestAttributeElement PutElement )
+                    case model.id of
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                        Just id ->
+                            let
+                                requestAttributeElement =
+                                    AttributeElementEntity.AttributeElement
+                                        id
+                                        attributeElement.name
+                                        attributeElement.description
+                                        (String.toInt
+                                            attributeElement.priority
+                                            |> Maybe.withDefault 0
+                                        )
+                                        (String.toInt
+                                            attributeElement.categoryId
+                                            |> Maybe.withDefault 0
+                                        )
+                            in
+                            ( model, Request.putAttributeElement model.xsrfToken model.attributeName requestAttributeElement PutElement )
 
         PutElement result ->
+            case result of
+                Ok _ ->
+                    ( { model | errorMessage = Just "OK" }, Cmd.none )
+
+                Err (Request.DecodeError message) ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
+
+                Err (Request.RequestError message) ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
+
+        Create ->
+            case model.attributeElement of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just attributeElement ->
+                    case model.id of
+                        Nothing ->
+                            let
+                                requestAttributeElement =
+                                    AttributeElementEntity.NewAttributeElement
+                                        attributeElement.name
+                                        attributeElement.description
+                                        (String.toInt
+                                            attributeElement.priority
+                                            |> Maybe.withDefault 0
+                                        )
+                                        (String.toInt
+                                            attributeElement.categoryId
+                                            |> Maybe.withDefault 0
+                                        )
+                            in
+                            ( model, Request.postAttributeElement model.xsrfToken model.attributeName requestAttributeElement PostElement )
+
+                        Just _ ->
+                            ( model, Cmd.none )
+
+        PostElement result ->
             case result of
                 Ok _ ->
                     ( { model | errorMessage = Just "OK" }, Cmd.none )
@@ -181,7 +239,16 @@ view model =
                         , Html.th [] [ Html.text "親id" ]
                         ]
                     , Html.tr []
-                        [ Html.td [] [ Html.text <| String.fromInt model.id ]
+                        [ Html.td []
+                            [ Html.text
+                                (case model.id of
+                                    Nothing ->
+                                        "+"
+
+                                    Just id ->
+                                        String.fromInt id
+                                )
+                            ]
                         , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value attributeElement.name, onInput InputName ] [] ]
                         , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value attributeElement.description, onInput InputDescription ] [] ]
                         , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value attributeElement.priority, onInput InputPriority ] [] ]
@@ -205,5 +272,12 @@ view model =
                             ]
                         ]
                     ]
-                , Html.td [] [ Html.button [ onClick Save ] [ Html.text "保存" ] ]
+                , Html.td []
+                    (case model.id of
+                        Nothing ->
+                            [ Html.button [ onClick Create ] [ Html.text "作成" ] ]
+
+                        Just _ ->
+                            [ Html.button [ onClick Save ] [ Html.text "保存" ] ]
+                    )
                 ]

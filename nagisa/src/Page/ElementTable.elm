@@ -63,6 +63,17 @@ view model =
 
                 AttributeValueObject.Place ->
                     Route.toPath (Route.PlaceElementId id)
+
+        createRouting =
+            case model.attributeValueObject of
+                AttributeValueObject.Kind ->
+                    Route.toPath Route.KindElementCreate
+
+                AttributeValueObject.Purpose ->
+                    Route.toPath Route.PurposeElementCreate
+
+                AttributeValueObject.Place ->
+                    Route.toPath Route.PlaceElementCreate
     in
     Html.div []
         [ Html.text (model.errorMessage |> Maybe.withDefault "")
@@ -75,6 +86,14 @@ view model =
                 , Html.th [] [ Html.text "優先度" ]
                 , Html.th [] [ Html.text "親id" ]
                 ]
+                :: Html.tr
+                    []
+                    [ Html.td [] [ Html.a [ Attributes.href createRouting ] [ Html.text "+" ] ]
+                    , Html.td [] [ Html.text "" ]
+                    , Html.td [] [ Html.text "" ]
+                    , Html.td [] [ Html.text "" ]
+                    , Html.td [] [ Html.text "" ]
+                    ]
                 :: List.map
                     (\attributeElement ->
                         Html.tr []

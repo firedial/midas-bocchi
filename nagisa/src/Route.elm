@@ -10,6 +10,9 @@ type Route
     | KindElementTable
     | PurposeElementTable
     | PlaceElementTable
+    | KindElementCreate
+    | PurposeElementCreate
+    | PlaceElementCreate
     | KindElementId Int
     | PurposeElementId Int
     | PlaceElementId Int
@@ -29,6 +32,9 @@ routes =
         , Parser.map KindElementTable (Parser.s "kind" </> Parser.s "elements")
         , Parser.map PurposeElementTable (Parser.s "purpose" </> Parser.s "elements")
         , Parser.map PlaceElementTable (Parser.s "place" </> Parser.s "elements")
+        , Parser.map KindElementCreate (Parser.s "kind" </> Parser.s "elements" </> Parser.s "create")
+        , Parser.map PurposeElementCreate (Parser.s "purpose" </> Parser.s "elements" </> Parser.s "create")
+        , Parser.map PlaceElementCreate (Parser.s "place" </> Parser.s "elements" </> Parser.s "create")
         , Parser.map KindElementId (Parser.s "kind" </> Parser.s "elements" </> Parser.int)
         , Parser.map PurposeElementId (Parser.s "purpose" </> Parser.s "elements" </> Parser.int)
         , Parser.map PlaceElementId (Parser.s "place" </> Parser.s "elements" </> Parser.int)
@@ -53,6 +59,15 @@ toPath route =
 
         PlaceElementTable ->
             "/place/elements"
+
+        KindElementCreate ->
+            "/kind/elements/create"
+
+        PurposeElementCreate ->
+            "/purpose/elements/create"
+
+        PlaceElementCreate ->
+            "/place/elements/create"
 
         KindElementId id ->
             "/kind/elements/" ++ String.fromInt id

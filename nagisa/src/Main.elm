@@ -236,10 +236,37 @@ goTo maybeRoute model =
             , Cmd.map ElementTableMsg newCmd
             )
 
+        Just Route.KindElementCreate ->
+            let
+                ( newModel, newCmd ) =
+                    Page.ElementId.init model.xsrfToken AttributeValueObject.Kind Nothing
+            in
+            ( { model | page = ElementId newModel }
+            , Cmd.map ElementIdMsg newCmd
+            )
+
+        Just Route.PurposeElementCreate ->
+            let
+                ( newModel, newCmd ) =
+                    Page.ElementId.init model.xsrfToken AttributeValueObject.Purpose Nothing
+            in
+            ( { model | page = ElementId newModel }
+            , Cmd.map ElementIdMsg newCmd
+            )
+
+        Just Route.PlaceElementCreate ->
+            let
+                ( newModel, newCmd ) =
+                    Page.ElementId.init model.xsrfToken AttributeValueObject.Place Nothing
+            in
+            ( { model | page = ElementId newModel }
+            , Cmd.map ElementIdMsg newCmd
+            )
+
         Just (Route.KindElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.xsrfToken AttributeValueObject.Kind id
+                    Page.ElementId.init model.xsrfToken AttributeValueObject.Kind (Just id)
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -248,7 +275,7 @@ goTo maybeRoute model =
         Just (Route.PurposeElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.xsrfToken AttributeValueObject.Purpose id
+                    Page.ElementId.init model.xsrfToken AttributeValueObject.Purpose (Just id)
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -257,7 +284,7 @@ goTo maybeRoute model =
         Just (Route.PlaceElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.xsrfToken AttributeValueObject.Place id
+                    Page.ElementId.init model.xsrfToken AttributeValueObject.Place (Just id)
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
