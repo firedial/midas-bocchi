@@ -239,7 +239,7 @@ goTo maybeRoute model =
         Just (Route.KindElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init AttributeValueObject.Kind id
+                    Page.ElementId.init model.xsrfToken AttributeValueObject.Kind id
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -248,7 +248,7 @@ goTo maybeRoute model =
         Just (Route.PurposeElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init AttributeValueObject.Purpose id
+                    Page.ElementId.init model.xsrfToken AttributeValueObject.Purpose id
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -257,7 +257,7 @@ goTo maybeRoute model =
         Just (Route.PlaceElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init AttributeValueObject.Place id
+                    Page.ElementId.init model.xsrfToken AttributeValueObject.Place id
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd

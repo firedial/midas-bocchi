@@ -126,6 +126,32 @@ getAttributeElements attributeValueObject toMsg =
     BaseRequest.get ("/api/attribute_elements/" ++ attributeName ++ "_element") (D.list decodeAttributeElement) (toMsg << Result.mapError mapError)
 
 
+putAttributeElement : String -> AttributeValueObject.Attribute -> AttributeElementEntity.AttributeElement -> (Result Error () -> msg) -> Cmd msg
+putAttributeElement xsrfToken attributeValueObject attributeElement toMsg =
+    let
+        encodedAttributeElement =
+            E.object
+                [ ( "id", E.int attributeElement.id )
+                , ( "name", E.string attributeElement.name )
+                , ( "description", E.string attributeElement.description )
+                , ( "priority", E.int attributeElement.priority )
+                , ( "category_id", E.int attributeElement.categoryId )
+                ]
+
+        attributeName =
+            case attributeValueObject of
+                AttributeValueObject.Kind ->
+                    "kind"
+
+                AttributeValueObject.Purpose ->
+                    "purpose"
+
+                AttributeValueObject.Place ->
+                    "place"
+    in
+    BaseRequest.put xsrfToken ("/api/attribute_elements/" ++ attributeName ++ "_element/" ++ String.fromInt attributeElement.id) encodedAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
 getAttributeCategories : AttributeValueObject.Attribute -> (Result Error AttributeCategoryEntity.AttributeCategories -> msg) -> Cmd msg
 getAttributeCategories attributeValueObject toMsg =
     let

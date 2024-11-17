@@ -2,7 +2,7 @@ module Page.ElementId exposing (Model, Msg, init, update, view)
 
 import Html
 import Html.Attributes as Attributes
-import Html.Events exposing (onInput)
+import Html.Events exposing (onClick, onInput)
 import Maybe
 import Model.Enitity.AttributeCategoryEntity as AttributeCategoryEntity
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
@@ -14,6 +14,7 @@ import String
 type alias Model =
     { attributeElement : Maybe AttributeElementEntity.AttributeElement
     , attributeCategories : Maybe AttributeCategoryEntity.AttributeCategories
+    , xsrfToken : String
     , attributeName : AttributeValueObject.Attribute
     , id : Int
     , errorMessage : Maybe String
@@ -28,12 +29,16 @@ type Msg
     | SelectedCategory String
     | GetAttributeElement (Result Request.Error AttributeElementEntity.AttributeElement)
     | GetAttributeCategories (Result Request.Error AttributeCategoryEntity.AttributeCategories)
+    | Save
+    | PutElement (Result Request.Error ())
 
 
-init : AttributeValueObject.Attribute -> Int -> ( Model, Cmd Msg )
-init attributeValueObject id =
-    ( Model Nothing
+init : String -> AttributeValueObject.Attribute -> Int -> ( Model, Cmd Msg )
+init xsrfToken attributeValueObject id =
+    ( Model
         Nothing
+        Nothing
+        xsrfToken
         attributeValueObject
         id
         Nothing
@@ -74,11 +79,11 @@ update msg model =
             in
             ( { model | attributeElement = newAttributeElement }, Cmd.none )
 
-        SelectedCategory id ->
+        SelectedCategory categoryId ->
             let
                 newAttributeElement =
                     model.attributeElement
-                        |> Maybe.andThen (\attributeElement -> Just { attributeElement | id = String.toInt id |> Maybe.withDefault 0 })
+                        |> Maybe.andThen (\attributeElement -> Just { attributeElement | categoryId = String.toInt categoryId |> Maybe.withDefault 0 })
             in
             ( { model | attributeElement = newAttributeElement }, Cmd.none )
 
@@ -97,6 +102,25 @@ update msg model =
             case result of
                 Ok response ->
                     ( { model | attributeCategories = Just response }, Cmd.none )
+
+                Err (Request.DecodeError message) ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
+
+                Err (Request.RequestError message) ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
+
+        Save ->
+            case model.attributeElement of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just attributeElement ->
+                    ( model, Request.putAttributeElement model.xsrfToken model.attributeName attributeElement PutElement )
+
+        PutElement result ->
+            case result of
+                Ok _ ->
+                    ( { model | errorMessage = Just "OK" }, Cmd.none )
 
                 Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
@@ -150,4 +174,5 @@ view model =
                             ]
                         ]
                     ]
+                , Html.td [] [ Html.button [ onClick Save ] [ Html.text "保存" ] ]
                 ]
