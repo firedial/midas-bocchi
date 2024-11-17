@@ -22,6 +22,9 @@ type alias Model =
 
 type Msg
     = None
+    | InputName String
+    | InputDescription String
+    | InputPriority String
     | SelectedCategory String
     | GetAttributeElement (Result Request.Error AttributeElementEntity.AttributeElement)
     | GetAttributeCategories (Result Request.Error AttributeCategoryEntity.AttributeCategories)
@@ -46,6 +49,30 @@ update msg model =
     case msg of
         None ->
             ( model, Cmd.none )
+
+        InputName name ->
+            let
+                newAttributeElement =
+                    model.attributeElement
+                        |> Maybe.andThen (\attributeElement -> Just { attributeElement | name = name })
+            in
+            ( { model | attributeElement = newAttributeElement }, Cmd.none )
+
+        InputDescription description ->
+            let
+                newAttributeElement =
+                    model.attributeElement
+                        |> Maybe.andThen (\attributeElement -> Just { attributeElement | description = description })
+            in
+            ( { model | attributeElement = newAttributeElement }, Cmd.none )
+
+        InputPriority priority ->
+            let
+                newAttributeElement =
+                    model.attributeElement
+                        |> Maybe.andThen (\attributeElement -> Just { attributeElement | priority = String.toInt priority |> Maybe.withDefault 0 })
+            in
+            ( { model | attributeElement = newAttributeElement }, Cmd.none )
 
         SelectedCategory id ->
             let
@@ -100,9 +127,9 @@ view model =
                         ]
                     , Html.tr []
                         [ Html.td [] [ Html.text <| String.fromInt attributeElement.id ]
-                        , Html.td [] [ Html.text attributeElement.name ]
-                        , Html.td [] [ Html.text attributeElement.desription ]
-                        , Html.td [] [ Html.text <| String.fromInt attributeElement.priority ]
+                        , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value attributeElement.name, onInput InputName ] [] ]
+                        , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value attributeElement.description, onInput InputDescription ] [] ]
+                        , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value <| String.fromInt attributeElement.priority, onInput InputPriority ] [] ]
                         , Html.td []
                             [ Html.select [ onInput SelectedCategory, Attributes.value <| String.fromInt attributeElement.categoryId ]
                                 (case model.attributeCategories of
@@ -116,7 +143,7 @@ view model =
                                                     [ Attributes.value <| String.fromInt attributeCategory.id
                                                     , Attributes.selected (attributeCategory.id == attributeElement.categoryId)
                                                     ]
-                                                    [ Html.text <| attributeCategory.desription ]
+                                                    [ Html.text <| attributeCategory.description ]
                                             )
                                             attributeCategories
                                 )

@@ -4,7 +4,7 @@ module Model.Enitity.AttributeElementEntity exposing (AttributeElement, Attribut
 type alias AttributeElement =
     { id : Int
     , name : String
-    , desription : String
+    , description : String
     , priority : Int
     , categoryId : Int
     }

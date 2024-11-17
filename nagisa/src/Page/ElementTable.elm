@@ -80,7 +80,7 @@ view model =
                         Html.tr []
                             [ Html.td [] [ Html.a [ Attributes.href (routing attributeElement.id) ] [ Html.text <| String.fromInt attributeElement.id ] ]
                             , Html.td [] [ Html.text attributeElement.name ]
-                            , Html.td [] [ Html.text attributeElement.desription ]
+                            , Html.td [] [ Html.text attributeElement.description ]
                             , Html.td [] [ Html.text <| String.fromInt attributeElement.priority ]
                             , Html.td [] [ Html.text <| String.fromInt attributeElement.categoryId ]
                             ]

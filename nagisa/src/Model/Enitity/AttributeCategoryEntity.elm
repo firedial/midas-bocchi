@@ -4,7 +4,7 @@ module Model.Enitity.AttributeCategoryEntity exposing (AttributeCategories, Attr
 type alias AttributeCategory =
     { id : Int
     , name : String
-    , desription : String
+    , description : String
     }
 
 
