@@ -42,6 +42,7 @@ type Msg
     | GetAttributeCategories (Result Request.Error AttributeCategoryEntity.AttributeCategories)
     | Save
     | Create
+    | Cancel
     | UpsertResult (Result Request.Error ())
 
 
@@ -198,6 +199,21 @@ update msg model =
                         Just _ ->
                             ( model, Cmd.none )
 
+        Cancel ->
+            let
+                redirectRouting =
+                    case model.attributeName of
+                        AttributeValueObject.Kind ->
+                            Route.toPath Route.KindElementTable
+
+                        AttributeValueObject.Purpose ->
+                            Route.toPath Route.PurposeElementTable
+
+                        AttributeValueObject.Place ->
+                            Route.toPath Route.PlaceElementTable
+            in
+            ( model, Navigation.pushUrl model.key redirectRouting )
+
         UpsertResult result ->
             let
                 redirectRouting =
@@ -213,7 +229,7 @@ update msg model =
             in
             case result of
                 Ok _ ->
-                    ( { model | errorMessage = Just "OK" }, Navigation.pushUrl model.key redirectRouting )
+                    ( model, Navigation.pushUrl model.key redirectRouting )
 
                 Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
@@ -276,7 +292,7 @@ view model =
                             ]
                         ]
                     ]
-                , Html.td []
+                , Html.div []
                     (case model.id of
                         Nothing ->
                             [ Html.button [ onClick Create ] [ Html.text "作成" ] ]
@@ -284,4 +300,6 @@ view model =
                         Just _ ->
                             [ Html.button [ onClick Save ] [ Html.text "保存" ] ]
                     )
+                , Html.div []
+                    [ Html.button [ onClick Cancel ] [ Html.text "キャンセル" ] ]
                 ]
