@@ -12,12 +12,20 @@ import String
 
 
 type alias Model =
-    { attributeElement : Maybe AttributeElementEntity.AttributeElement
+    { attributeElement : Maybe StringAttributeElement
     , attributeCategories : Maybe AttributeCategoryEntity.AttributeCategories
     , xsrfToken : String
     , attributeName : AttributeValueObject.Attribute
     , id : Int
     , errorMessage : Maybe String
+    }
+
+
+type alias StringAttributeElement =
+    { name : String
+    , description : String
+    , priority : String
+    , categoryId : String
     }
 
 
@@ -75,7 +83,7 @@ update msg model =
             let
                 newAttributeElement =
                     model.attributeElement
-                        |> Maybe.andThen (\attributeElement -> Just { attributeElement | priority = String.toInt priority |> Maybe.withDefault 0 })
+                        |> Maybe.andThen (\attributeElement -> Just { attributeElement | priority = priority })
             in
             ( { model | attributeElement = newAttributeElement }, Cmd.none )
 
@@ -83,14 +91,22 @@ update msg model =
             let
                 newAttributeElement =
                     model.attributeElement
-                        |> Maybe.andThen (\attributeElement -> Just { attributeElement | categoryId = String.toInt categoryId |> Maybe.withDefault 0 })
+                        |> Maybe.andThen (\attributeElement -> Just { attributeElement | categoryId = categoryId })
             in
             ( { model | attributeElement = newAttributeElement }, Cmd.none )
 
         GetAttributeElement result ->
             case result of
                 Ok response ->
-                    ( { model | attributeElement = Just response }, Cmd.none )
+                    let
+                        stringAttributeElement =
+                            StringAttributeElement
+                                response.name
+                                response.description
+                                (String.fromInt response.priority)
+                                (String.fromInt response.categoryId)
+                    in
+                    ( { model | attributeElement = Just stringAttributeElement }, Cmd.none )
 
                 Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
@@ -115,7 +131,22 @@ update msg model =
                     ( model, Cmd.none )
 
                 Just attributeElement ->
-                    ( model, Request.putAttributeElement model.xsrfToken model.attributeName attributeElement PutElement )
+                    let
+                        requestAttributeElement =
+                            AttributeElementEntity.AttributeElement
+                                model.id
+                                attributeElement.name
+                                attributeElement.description
+                                (String.toInt
+                                    attributeElement.priority
+                                    |> Maybe.withDefault 0
+                                )
+                                (String.toInt
+                                    attributeElement.categoryId
+                                    |> Maybe.withDefault 0
+                                )
+                    in
+                    ( model, Request.putAttributeElement model.xsrfToken model.attributeName requestAttributeElement PutElement )
 
         PutElement result ->
             case result of
@@ -150,12 +181,12 @@ view model =
                         , Html.th [] [ Html.text "親id" ]
                         ]
                     , Html.tr []
-                        [ Html.td [] [ Html.text <| String.fromInt attributeElement.id ]
+                        [ Html.td [] [ Html.text <| String.fromInt model.id ]
                         , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value attributeElement.name, onInput InputName ] [] ]
                         , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value attributeElement.description, onInput InputDescription ] [] ]
-                        , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value <| String.fromInt attributeElement.priority, onInput InputPriority ] [] ]
+                        , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value attributeElement.priority, onInput InputPriority ] [] ]
                         , Html.td []
-                            [ Html.select [ onInput SelectedCategory, Attributes.value <| String.fromInt attributeElement.categoryId ]
+                            [ Html.select [ onInput SelectedCategory, Attributes.value <| attributeElement.categoryId ]
                                 (case model.attributeCategories of
                                     Nothing ->
                                         []
@@ -165,7 +196,7 @@ view model =
                                             (\attributeCategory ->
                                                 Html.option
                                                     [ Attributes.value <| String.fromInt attributeCategory.id
-                                                    , Attributes.selected (attributeCategory.id == attributeElement.categoryId)
+                                                    , Attributes.selected (String.fromInt attributeCategory.id == attributeElement.categoryId)
                                                     ]
                                                     [ Html.text <| attributeCategory.description ]
                                             )
