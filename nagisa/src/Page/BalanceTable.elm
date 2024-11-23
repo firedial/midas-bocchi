@@ -17,8 +17,7 @@ type alias Model =
 
 
 type Msg
-    = None
-    | GetBalances (Result Request.Error BalanceEntity.Balances)
+    = GetBalances (Result Request.Error BalanceEntity.Balances)
 
 
 init : ( Model, Cmd Msg )
@@ -31,9 +30,6 @@ init =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        None ->
-            ( model, Cmd.none )
-
         GetBalances result ->
             case result of
                 Ok response ->
