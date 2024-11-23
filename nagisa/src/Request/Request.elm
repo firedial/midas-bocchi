@@ -12,6 +12,7 @@ module Request.Request exposing
     , postAttributeElement
     , postBalance
     , postLogin
+    , postLogout
     , postMove
     , putAttributeElement
     , putBalance
@@ -263,6 +264,11 @@ postLogin xsrfToken email password toMsg =
                 ]
     in
     BaseRequest.post xsrfToken "/api/login" data (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+postLogout : String -> (Result Error () -> msg) -> Cmd msg
+postLogout xsrfToken toMsg =
+    BaseRequest.post xsrfToken "/api/logout" (E.object []) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 mapAttributeName : AttributeValueObject.Attribute -> String

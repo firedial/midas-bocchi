@@ -4,6 +4,7 @@ import Browser
 import Browser.Navigation as Navigation
 import Html
 import Html.Attributes as Attributes
+import Html.Events
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Page.BalanceId
@@ -14,6 +15,7 @@ import Page.Login
 import Page.MoveId
 import Page.MoveTable
 import Page.Top
+import Request.Request as Request
 import Route
 import Url
 
@@ -65,6 +67,8 @@ type Msg
     | ElementTableMsg Page.ElementTable.Msg
     | ElementIdMsg Page.ElementId.Msg
     | LoginMsg Page.Login.Msg
+    | Logout
+    | LogoutResult (Result Request.Error ())
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -193,6 +197,17 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        Logout ->
+            ( model, Request.postLogout model.xsrfToken LogoutResult )
+
+        LogoutResult result ->
+            case result of
+                Ok _ ->
+                    ( model, Navigation.pushUrl model.key (Route.toPath Route.Login) )
+
+                _ ->
+                    ( model, Cmd.none )
+
 
 view : Model -> Browser.Document Msg
 view model =
@@ -209,6 +224,7 @@ view model =
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PlaceElementTable) ] [ Html.text "place_element" ] ]
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PurposeMoveTable) ] [ Html.text "purpose_move" ] ]
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PlaceMoveTable) ] [ Html.text "place_move" ] ]
+                    , Html.li [] [ Html.button [ Html.Events.onClick Logout ] [ Html.text "logout" ] ]
                     ]
                 ]
             ]
@@ -431,7 +447,7 @@ goTo maybeRoute model =
         Just Route.Login ->
             let
                 ( newModel, newCmd ) =
-                    Page.Login.init model.xsrfToken
+                    Page.Login.init model.xsrfToken model.key
             in
             ( { model | page = Login newModel }
             , Cmd.map LoginMsg newCmd

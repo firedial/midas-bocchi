@@ -1,14 +1,17 @@
 module Page.Login exposing (Model, Msg, init, update, view)
 
+import Browser.Navigation as Navigation
 import Html
 import Html.Attributes as Attributes
 import Html.Events exposing (onClick, onInput)
 import Request.Request as Request
+import Route
 
 
 type alias Model =
     { xsrfToken : String
     , errorMessage : Maybe String
+    , key : Navigation.Key
     , email : String
     , password : String
     }
@@ -22,9 +25,9 @@ type Msg
     | PostLogin (Result Request.Error ())
 
 
-init : String -> ( Model, Cmd Msg )
-init xsrfToken =
-    ( Model xsrfToken Nothing "" "", Cmd.none )
+init : String -> Navigation.Key -> ( Model, Cmd Msg )
+init xsrfToken key =
+    ( Model xsrfToken Nothing key "" "", Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -45,7 +48,7 @@ update msg model =
         PostLogin result ->
             case result of
                 Ok _ ->
-                    ( { model | errorMessage = Nothing }, Cmd.none )
+                    ( model, Navigation.pushUrl model.key (Route.toPath Route.Top) )
 
                 Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
