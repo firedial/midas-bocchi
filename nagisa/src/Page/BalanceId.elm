@@ -39,8 +39,7 @@ type alias StringBalance =
 
 
 type Msg
-    = None
-    | InputAmount String
+    = InputAmount String
     | InputItem String
     | InputKindElementId String
     | InputPurposeElementId String
@@ -95,9 +94,6 @@ init xsrfToken key id =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        None ->
-            ( model, Cmd.none )
-
         InputAmount amount ->
             let
                 newBalance =
