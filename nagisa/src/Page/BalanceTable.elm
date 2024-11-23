@@ -6,6 +6,7 @@ import List
 import Maybe
 import Model.Enitity.BalanceEntity as BalanceEntity
 import Request.Request as Request
+import Route
 import String
 
 
@@ -60,10 +61,20 @@ view model =
                 , Html.th [] [ Html.text "場所" ]
                 , Html.th [] [ Html.text "日付" ]
                 ]
+                :: Html.tr
+                    []
+                    [ Html.td [] [ Html.text "+" ]
+                    , Html.td [] [ Html.text "" ]
+                    , Html.td [] [ Html.text "" ]
+                    , Html.td [] [ Html.text "" ]
+                    , Html.td [] [ Html.text "" ]
+                    , Html.td [] [ Html.text "" ]
+                    , Html.td [] [ Html.text "" ]
+                    ]
                 :: List.map
                     (\balance ->
                         Html.tr []
-                            [ Html.td [] [ Html.text <| String.fromInt balance.balanceId ]
+                            [ Html.td [] [ Html.a [ Attributes.href <| Route.toPath (Route.BalanceId balance.balanceId) ] [ Html.text <| String.fromInt balance.balanceId ] ]
                             , Html.td [] [ Html.text <| String.fromInt balance.amount ]
                             , Html.td [] [ Html.text balance.item ]
                             , Html.td [] [ Html.text balance.kindElementDescription ]

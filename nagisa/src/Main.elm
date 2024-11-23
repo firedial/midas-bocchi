@@ -6,6 +6,7 @@ import Html
 import Html.Attributes as Attributes
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
+import Page.BalanceId
 import Page.BalanceTable
 import Page.ElementId
 import Page.ElementTable
@@ -33,6 +34,7 @@ type Page
     = NotFound
     | Top Page.Top.Model
     | BalanceTable Page.BalanceTable.Model
+    | BalanceId Page.BalanceId.Model
     | MoveTable Page.MoveTable.Model
     | MoveId Page.MoveId.Model
     | ElementTable Page.ElementTable.Model
@@ -57,6 +59,7 @@ type Msg
     | UrlRequested Browser.UrlRequest
     | TopMsg Page.Top.Msg
     | BalanceTableMsg Page.BalanceTable.Msg
+    | BalanceIdMsg Page.BalanceId.Msg
     | MoveTableMsg Page.MoveTable.Msg
     | MoveIdMsg Page.MoveId.Msg
     | ElementTableMsg Page.ElementTable.Msg
@@ -101,6 +104,20 @@ update msg model =
                     in
                     ( { model | page = BalanceTable newModel }
                     , Cmd.map BalanceTableMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        BalanceIdMsg pageMsg ->
+            case model.page of
+                BalanceId pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.BalanceId.update pageMsg pageModel
+                    in
+                    ( { model | page = BalanceId newModel }
+                    , Cmd.map BalanceIdMsg newCmd
                     )
 
                 _ ->
@@ -207,6 +224,10 @@ view model =
                 Page.BalanceTable.view pageModel
                     |> Html.map BalanceTableMsg
 
+            BalanceId pageModel ->
+                Page.BalanceId.view pageModel
+                    |> Html.map BalanceIdMsg
+
             MoveTable pageModel ->
                 Page.MoveTable.view pageModel
                     |> Html.map MoveTableMsg
@@ -252,6 +273,15 @@ goTo maybeRoute model =
             in
             ( { model | page = BalanceTable newModel }
             , Cmd.map BalanceTableMsg newCmd
+            )
+
+        Just (Route.BalanceId id) ->
+            let
+                ( newModel, newCmd ) =
+                    Page.BalanceId.init model.xsrfToken model.key (Just id)
+            in
+            ( { model | page = BalanceId newModel }
+            , Cmd.map BalanceIdMsg newCmd
             )
 
         Just Route.PurposeMoveTable ->

@@ -5,6 +5,7 @@ module Request.Request exposing
     , getAttributeCategories
     , getAttributeElement
     , getAttributeElements
+    , getBalance
     , getBalances
     , getMove
     , getMoves
@@ -33,6 +34,25 @@ import Result
 type Error
     = DecodeError String
     | RequestError String
+
+
+getBalance : Int -> (Result Error BalanceEntity.Balance -> msg) -> Cmd msg
+getBalance id toMsg =
+    let
+        decodeBalance =
+            D.succeed BalanceEntity.Balance
+                |> DP.required "id" D.int
+                |> DP.required "amount" D.int
+                |> DP.required "item" D.string
+                |> DP.required "kind_element_id" D.int
+                |> DP.required "purpose_element_id" D.int
+                |> DP.required "place_element_id" D.int
+                |> DP.required "date" D.string
+                |> DP.required "kind_element_description" D.string
+                |> DP.required "purpose_element_description" D.string
+                |> DP.required "place_element_description" D.string
+    in
+    BaseRequest.get ("/api/balances/" ++ String.fromInt id) decodeBalance (toMsg << Result.mapError mapError)
 
 
 getBalances : (Result Error BalanceEntity.Balances -> msg) -> Cmd msg
@@ -73,12 +93,12 @@ postBalance xsrfToken newBalance toMsg =
     BaseRequest.post xsrfToken "/api/balances" encodedNewBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putBalance : String -> BalanceEntity.Balance -> (Result Error () -> msg) -> Cmd msg
-putBalance xsrfToken balance toMsg =
+putBalance : String -> Int -> BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg
+putBalance xsrfToken id balance toMsg =
     let
         encodedBalance =
             E.object
-                [ ( "id", E.int balance.balanceId )
+                [ ( "id", E.int id )
                 , ( "amount", E.int balance.amount )
                 , ( "item", E.string balance.item )
                 , ( "kind_element_id", E.int balance.kindElementId )
