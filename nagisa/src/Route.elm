@@ -24,6 +24,7 @@ type Route
     | KindElementId Int
     | PurposeElementId Int
     | PlaceElementId Int
+    | Salary
     | Login
 
 
@@ -54,6 +55,7 @@ routes =
         , Parser.map KindElementId (Parser.s "kind" </> Parser.s "elements" </> Parser.int)
         , Parser.map PurposeElementId (Parser.s "purpose" </> Parser.s "elements" </> Parser.int)
         , Parser.map PlaceElementId (Parser.s "place" </> Parser.s "elements" </> Parser.int)
+        , Parser.map Salary (Parser.s "salary")
         , Parser.map Login (Parser.s "login")
         ]
 
@@ -117,6 +119,9 @@ toPath route =
 
         PlaceElementId id ->
             "/place/elements/" ++ String.fromInt id
+
+        Salary ->
+            "/salary"
 
         Login ->
             "/login"

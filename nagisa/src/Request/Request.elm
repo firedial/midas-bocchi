@@ -14,6 +14,7 @@ module Request.Request exposing
     , postLogin
     , postLogout
     , postMove
+    , postSalary
     , putAttributeElement
     , putBalance
     , putMove
@@ -252,6 +253,27 @@ getAttributeCategories attributeValueObject toMsg =
                 |> required "description" D.string
     in
     BaseRequest.get ("/api/attribute_categories/" ++ mapAttributeName attributeValueObject ++ "_category") (D.list decodeAttributeCategory) (toMsg << Result.mapError mapError)
+
+
+postSalary : String -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
+postSalary xsrfToken baseSalary adjustmentSalary transportation holdingIncentives healthInsurance welfarePension residentTax employmentInsurance incomeTax holding date toMsg =
+    let
+        encodedSalary =
+            E.object
+                [ ( "baseSalary", E.int baseSalary )
+                , ( "adjustmentSalary", E.int adjustmentSalary )
+                , ( "transportation", E.int transportation )
+                , ( "holdingIncentives", E.int holdingIncentives )
+                , ( "healthInsurance", E.int healthInsurance )
+                , ( "welfarePension", E.int welfarePension )
+                , ( "residentTax", E.int residentTax )
+                , ( "employmentInsurance", E.int employmentInsurance )
+                , ( "incomeTax", E.int incomeTax )
+                , ( "holding", E.int holding )
+                , ( "date", E.string date )
+                ]
+    in
+    BaseRequest.post xsrfToken "/api/salary" encodedSalary (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 postLogin : String -> String -> String -> (Result Error () -> msg) -> Cmd msg

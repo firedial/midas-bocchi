@@ -14,6 +14,7 @@ import Page.ElementTable
 import Page.Login
 import Page.MoveId
 import Page.MoveTable
+import Page.Salary
 import Page.Top
 import Request.Request as Request
 import Route
@@ -41,6 +42,7 @@ type Page
     | MoveId Page.MoveId.Model
     | ElementTable Page.ElementTable.Model
     | ElementId Page.ElementId.Model
+    | Salary Page.Salary.Model
     | Login Page.Login.Model
 
 
@@ -66,6 +68,7 @@ type Msg
     | MoveIdMsg Page.MoveId.Msg
     | ElementTableMsg Page.ElementTable.Msg
     | ElementIdMsg Page.ElementId.Msg
+    | SalaryMsg Page.Salary.Msg
     | LoginMsg Page.Login.Msg
     | Logout
     | LogoutResult (Result Request.Error ())
@@ -183,6 +186,20 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        SalaryMsg pageMsg ->
+            case model.page of
+                Salary pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.Salary.update pageMsg pageModel
+                    in
+                    ( { model | page = Salary newModel }
+                    , Cmd.map SalaryMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
         LoginMsg pageMsg ->
             case model.page of
                 Login pageModel ->
@@ -259,6 +276,10 @@ view model =
             ElementId pageModel ->
                 Page.ElementId.view pageModel
                     |> Html.map ElementIdMsg
+
+            Salary pageModel ->
+                Page.Salary.view pageModel
+                    |> Html.map SalaryMsg
 
             Login pageModel ->
                 Page.Login.view pageModel
@@ -442,6 +463,15 @@ goTo maybeRoute model =
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
+            )
+
+        Just Route.Salary ->
+            let
+                ( newModel, newCmd ) =
+                    Page.Salary.init model.xsrfToken model.key
+            in
+            ( { model | page = Salary newModel }
+            , Cmd.map SalaryMsg newCmd
             )
 
         Just Route.Login ->
