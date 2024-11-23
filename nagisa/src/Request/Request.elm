@@ -19,7 +19,6 @@ module Request.Request exposing
     )
 
 import Json.Decode as D
-import Json.Decode.Pipeline as DP
 import Json.Encode as E
 import Model.Enitity.AttributeCategoryEntity as AttributeCategoryEntity
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
@@ -41,16 +40,16 @@ getBalance id toMsg =
     let
         decodeBalance =
             D.succeed BalanceEntity.Balance
-                |> DP.required "id" D.int
-                |> DP.required "amount" D.int
-                |> DP.required "item" D.string
-                |> DP.required "kind_element_id" D.int
-                |> DP.required "purpose_element_id" D.int
-                |> DP.required "place_element_id" D.int
-                |> DP.required "date" D.string
-                |> DP.required "kind_element_description" D.string
-                |> DP.required "purpose_element_description" D.string
-                |> DP.required "place_element_description" D.string
+                |> required "id" D.int
+                |> required "amount" D.int
+                |> required "item" D.string
+                |> required "kind_element_id" D.int
+                |> required "purpose_element_id" D.int
+                |> required "place_element_id" D.int
+                |> required "date" D.string
+                |> required "kind_element_description" D.string
+                |> required "purpose_element_description" D.string
+                |> required "place_element_description" D.string
     in
     BaseRequest.get ("/api/balances/" ++ String.fromInt id) decodeBalance (toMsg << Result.mapError mapError)
 
@@ -60,16 +59,16 @@ getBalances toMsg =
     let
         decodeBalance =
             D.succeed BalanceEntity.Balance
-                |> DP.required "id" D.int
-                |> DP.required "amount" D.int
-                |> DP.required "item" D.string
-                |> DP.required "kind_element_id" D.int
-                |> DP.required "purpose_element_id" D.int
-                |> DP.required "place_element_id" D.int
-                |> DP.required "date" D.string
-                |> DP.required "kind_element_description" D.string
-                |> DP.required "purpose_element_description" D.string
-                |> DP.required "place_element_description" D.string
+                |> required "id" D.int
+                |> required "amount" D.int
+                |> required "item" D.string
+                |> required "kind_element_id" D.int
+                |> required "purpose_element_id" D.int
+                |> required "place_element_id" D.int
+                |> required "date" D.string
+                |> required "kind_element_description" D.string
+                |> required "purpose_element_description" D.string
+                |> required "place_element_description" D.string
 
         decodeBalances =
             D.list decodeBalance
@@ -120,14 +119,14 @@ getMove moveAttributeValueObject id toMsg =
     let
         decodeMove =
             D.succeed MoveEntity.Move
-                |> DP.required "id" D.int
-                |> DP.required "amount" D.int
-                |> DP.required "item" D.string
-                |> DP.required "before_id" D.int
-                |> DP.required "after_id" D.int
-                |> DP.required "date" D.string
-                |> DP.required "before_description" D.string
-                |> DP.required "after_description" D.string
+                |> required "id" D.int
+                |> required "amount" D.int
+                |> required "item" D.string
+                |> required "before_id" D.int
+                |> required "after_id" D.int
+                |> required "date" D.string
+                |> required "before_description" D.string
+                |> required "after_description" D.string
     in
     BaseRequest.get ("/api/moves/" ++ mapMoveAttributeName moveAttributeValueObject ++ "s/" ++ String.fromInt id) decodeMove (toMsg << Result.mapError mapError)
 
@@ -137,14 +136,14 @@ getMoves moveAttributeValueObject toMsg =
     let
         decodeMove =
             D.succeed MoveEntity.Move
-                |> DP.required "id" D.int
-                |> DP.required "amount" D.int
-                |> DP.required "item" D.string
-                |> DP.required "before_id" D.int
-                |> DP.required "after_id" D.int
-                |> DP.required "date" D.string
-                |> DP.required "before_description" D.string
-                |> DP.required "after_description" D.string
+                |> required "id" D.int
+                |> required "amount" D.int
+                |> required "item" D.string
+                |> required "before_id" D.int
+                |> required "after_id" D.int
+                |> required "date" D.string
+                |> required "before_description" D.string
+                |> required "after_description" D.string
     in
     BaseRequest.get ("/api/moves/" ++ mapMoveAttributeName moveAttributeValueObject ++ "s") (D.list decodeMove) (toMsg << Result.mapError mapError)
 
@@ -190,11 +189,11 @@ getAttributeElement attributeValueObject id toMsg =
     let
         decodeAttributeElement =
             D.succeed AttributeElementEntity.AttributeElement
-                |> DP.required "id" D.int
-                |> DP.required "name" D.string
-                |> DP.required "description" D.string
-                |> DP.required "priority" D.int
-                |> DP.required "category_id" D.int
+                |> required "id" D.int
+                |> required "name" D.string
+                |> required "description" D.string
+                |> required "priority" D.int
+                |> required "category_id" D.int
     in
     BaseRequest.get ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) decodeAttributeElement (toMsg << Result.mapError mapError)
 
@@ -204,11 +203,11 @@ getAttributeElements attributeValueObject toMsg =
     let
         decodeAttributeElement =
             D.succeed AttributeElementEntity.AttributeElement
-                |> DP.required "id" D.int
-                |> DP.required "name" D.string
-                |> DP.required "description" D.string
-                |> DP.required "priority" D.int
-                |> DP.required "category_id" D.int
+                |> required "id" D.int
+                |> required "name" D.string
+                |> required "description" D.string
+                |> required "priority" D.int
+                |> required "category_id" D.int
     in
     BaseRequest.get ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") (D.list decodeAttributeElement) (toMsg << Result.mapError mapError)
 
@@ -247,9 +246,9 @@ getAttributeCategories attributeValueObject toMsg =
     let
         decodeAttributeCategory =
             D.succeed AttributeCategoryEntity.AttributeCategory
-                |> DP.required "id" D.int
-                |> DP.required "name" D.string
-                |> DP.required "description" D.string
+                |> required "id" D.int
+                |> required "name" D.string
+                |> required "description" D.string
     in
     BaseRequest.get ("/api/attribute_categories/" ++ mapAttributeName attributeValueObject ++ "_category") (D.list decodeAttributeCategory) (toMsg << Result.mapError mapError)
 
@@ -309,3 +308,8 @@ mapError baseRequestError =
 
         BaseRequest.GoodStatusDecodeError body ->
             DecodeError ("GoodStatusDecodeError: " ++ body)
+
+
+required : String -> D.Decoder a -> D.Decoder (a -> b) -> D.Decoder b
+required key decoder pipeDecoder =
+    D.map2 (|>) (D.field key decoder) pipeDecoder
