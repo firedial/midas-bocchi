@@ -64,10 +64,10 @@ view model =
         createRouting =
             case model.moveAttributeValueObject of
                 MoveAttributeValueObject.Purpose ->
-                    Route.toPath Route.PurposeElementCreate
+                    Route.toPath Route.PurposeMoveCreate
 
                 MoveAttributeValueObject.Place ->
-                    Route.toPath Route.PlaceElementCreate
+                    Route.toPath Route.PlaceMoveCreate
     in
     Html.div []
         [ Html.text (model.errorMessage |> Maybe.withDefault "")

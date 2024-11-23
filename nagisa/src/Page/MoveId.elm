@@ -5,7 +5,7 @@ import Html
 import Html.Attributes as Attributes
 import Html.Events exposing (onClick, onInput)
 import Maybe
-import Model.Enitity.AttributeElementEntity as AttributeElementEntity exposing (AttributeElement)
+import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.MoveEntity as MoveEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject

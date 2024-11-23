@@ -272,6 +272,24 @@ goTo maybeRoute model =
             , Cmd.map MoveTableMsg newCmd
             )
 
+        Just Route.PurposeMoveCreate ->
+            let
+                ( newModel, newCmd ) =
+                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Purpose Nothing
+            in
+            ( { model | page = MoveId newModel }
+            , Cmd.map MoveIdMsg newCmd
+            )
+
+        Just Route.PlaceMoveCreate ->
+            let
+                ( newModel, newCmd ) =
+                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Purpose Nothing
+            in
+            ( { model | page = MoveId newModel }
+            , Cmd.map MoveIdMsg newCmd
+            )
+
         Just (Route.PurposeMoveId id) ->
             let
                 ( newModel, newCmd ) =
