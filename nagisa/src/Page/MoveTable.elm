@@ -19,8 +19,7 @@ type alias Model =
 
 
 type Msg
-    = None
-    | GetAttributeMoves (Result Request.Error MoveEntity.Moves)
+    = GetAttributeMoves (Result Request.Error MoveEntity.Moves)
 
 
 init : MoveAttributeValueObject.Attribute -> ( Model, Cmd Msg )
@@ -35,9 +34,6 @@ init moveAttributeValueObject =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        None ->
-            ( model, Cmd.none )
-
         GetAttributeMoves result ->
             case result of
                 Ok response ->

@@ -15,8 +15,8 @@ import String
 
 
 type alias Model =
-    { move : Maybe StringMove
-    , attributeElements : Maybe AttributeElementEntity.AttributeElements
+    { move : StringMove
+    , attributeElements : AttributeElementEntity.AttributeElements
     , xsrfToken : String
     , moveAttributeName : MoveAttributeValueObject.Attribute
     , id : Maybe Int
@@ -37,20 +37,18 @@ type alias StringMove =
 
 
 type Msg
-    = None
-    | InputAmount String
+    = InputAmount String
     | InputItem String
-    | SelectedBeforeElementId String
-    | SelectedAfterElementId String
+    | InputBeforeElementId String
+    | InputAfterElementId String
     | InputDate String
     | GetMove (Result Request.Error MoveEntity.Move)
     | GetAttributeElements (Result Request.Error AttributeElementEntity.AttributeElements)
-    | Save
-    | Create
+    | Upsert
     | Cancel
     | Delete Int
     | InputDeleteString String
-    | UpsertResult (Result Request.Error ())
+    | ModifiedResult (Result Request.Error ())
 
 
 init : String -> Navigation.Key -> MoveAttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
@@ -65,14 +63,8 @@ init xsrfToken key moveAttributeValueObject id =
                     AttributeValueObject.Place
     in
     ( Model
-        (case id of
-            Nothing ->
-                Just (StringMove "" "" "" "" "")
-
-            Just _ ->
-                Nothing
-        )
-        Nothing
+        (StringMove "" "" "" "" "")
+        []
         xsrfToken
         moveAttributeValueObject
         id
@@ -97,62 +89,54 @@ init xsrfToken key moveAttributeValueObject id =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        None ->
-            ( model, Cmd.none )
-
         InputAmount amount ->
             let
                 newMove =
                     model.move
-                        |> Maybe.andThen (\move -> Just { move | amount = amount })
             in
-            ( { model | move = newMove }, Cmd.none )
+            ( { model | move = { newMove | amount = amount } }, Cmd.none )
 
         InputItem item ->
             let
                 newMove =
                     model.move
-                        |> Maybe.andThen (\move -> Just { move | item = item })
             in
-            ( { model | move = newMove }, Cmd.none )
+            ( { model | move = { newMove | item = item } }, Cmd.none )
 
-        SelectedBeforeElementId elementId ->
+        InputBeforeElementId elementId ->
             let
                 newMove =
                     model.move
-                        |> Maybe.andThen (\move -> Just { move | beforeId = elementId })
             in
-            ( { model | move = newMove }, Cmd.none )
+            ( { model | move = { newMove | beforeId = elementId } }, Cmd.none )
 
-        SelectedAfterElementId elementId ->
+        InputAfterElementId elementId ->
             let
                 newMove =
                     model.move
-                        |> Maybe.andThen (\move -> Just { move | afterId = elementId })
             in
-            ( { model | move = newMove }, Cmd.none )
+            ( { model | move = { newMove | afterId = elementId } }, Cmd.none )
 
         InputDate date ->
             let
                 newMove =
                     model.move
-                        |> Maybe.andThen (\move -> Just { move | date = date })
             in
-            ( { model | move = newMove }, Cmd.none )
+            ( { model | move = { newMove | date = date } }, Cmd.none )
 
         GetMove result ->
             case result of
-                Ok response ->
+                Ok move ->
                     let
                         stringMove =
                             StringMove
-                                (String.fromInt response.amount)
-                                response.item
-                                (String.fromInt response.beforeId)
-                                (String.fromInt response.afterId)
-                                response.date
+                                (String.fromInt move.amount)
+                                move.item
+                                (String.fromInt move.beforeId)
+                                (String.fromInt move.afterId)
+                                move.date
                     in
-                    ( { model | move = Just stringMove }, Cmd.none )
+                    ( { model | move = stringMove }, Cmd.none )
 
                 Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
@@ -162,8 +146,8 @@ update msg model =
 
         GetAttributeElements result ->
             case result of
-                Ok response ->
-                    ( { model | attributeElements = Just response }, Cmd.none )
+                Ok attributeElements ->
+                    ( { model | attributeElements = attributeElements }, Cmd.none )
 
                 Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
@@ -171,70 +155,34 @@ update msg model =
                 Err (Request.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
-        Save ->
-            case model.move of
-                Nothing ->
-                    ( model, Cmd.none )
+        Upsert ->
+            let
+                newMove =
+                    MoveEntity.NewMove
+                        (String.toInt
+                            model.move.amount
+                            |> Maybe.withDefault 0
+                        )
+                        model.move.item
+                        (String.toInt
+                            model.move.beforeId
+                            |> Maybe.withDefault 0
+                        )
+                        (String.toInt
+                            model.move.afterId
+                            |> Maybe.withDefault 0
+                        )
+                        model.move.date
 
-                Just move ->
+                cmd =
                     case model.id of
                         Nothing ->
-                            ( model, Cmd.none )
+                            Request.postMove model.xsrfToken model.moveAttributeName newMove ModifiedResult
 
                         Just id ->
-                            let
-                                requestMove =
-                                    MoveEntity.Move
-                                        id
-                                        (String.toInt
-                                            move.amount
-                                            |> Maybe.withDefault 0
-                                        )
-                                        move.item
-                                        (String.toInt
-                                            move.beforeId
-                                            |> Maybe.withDefault 0
-                                        )
-                                        (String.toInt
-                                            move.afterId
-                                            |> Maybe.withDefault 0
-                                        )
-                                        move.date
-                                        ""
-                                        ""
-                            in
-                            ( model, Request.putMove model.xsrfToken model.moveAttributeName requestMove UpsertResult )
-
-        Create ->
-            case model.move of
-                Nothing ->
-                    ( model, Cmd.none )
-
-                Just move ->
-                    case model.id of
-                        Nothing ->
-                            let
-                                requestMove =
-                                    MoveEntity.NewMove
-                                        (String.toInt
-                                            move.amount
-                                            |> Maybe.withDefault 0
-                                        )
-                                        move.item
-                                        (String.toInt
-                                            move.beforeId
-                                            |> Maybe.withDefault 0
-                                        )
-                                        (String.toInt
-                                            move.afterId
-                                            |> Maybe.withDefault 0
-                                        )
-                                        move.date
-                            in
-                            ( model, Request.postMove model.xsrfToken model.moveAttributeName requestMove UpsertResult )
-
-                        Just _ ->
-                            ( model, Cmd.none )
+                            Request.putMove model.xsrfToken model.moveAttributeName id newMove ModifiedResult
+            in
+            ( model, cmd )
 
         Cancel ->
             let
@@ -250,7 +198,7 @@ update msg model =
 
         Delete moveId ->
             if model.deleteString == "delete" then
-                ( model, Request.deleteMove model.xsrfToken model.moveAttributeName moveId UpsertResult )
+                ( model, Request.deleteMove model.xsrfToken model.moveAttributeName moveId ModifiedResult )
 
             else
                 ( { model | enableInputDeleteString = True }, Cmd.none )
@@ -258,7 +206,7 @@ update msg model =
         InputDeleteString deleteString ->
             ( { model | deleteString = deleteString }, Cmd.none )
 
-        UpsertResult result ->
+        ModifiedResult result ->
             let
                 redirectRouting =
                     case model.moveAttributeName of
@@ -281,88 +229,71 @@ update msg model =
 
 view : Model -> Html.Html Msg
 view model =
-    case model.move of
-        Nothing ->
-            Html.div []
-                [ Html.text (model.errorMessage |> Maybe.withDefault "")
+    Html.div []
+        [ Html.text (model.errorMessage |> Maybe.withDefault "")
+        , Html.table [ Attributes.class "balance" ]
+            [ Html.tr
+                []
+                [ Html.th [] [ Html.text "id" ]
+                , Html.th [] [ Html.text "金額" ]
+                , Html.th [] [ Html.text "概要" ]
+                , Html.th [] [ Html.text "移動前" ]
+                , Html.th [] [ Html.text "移動後" ]
+                , Html.th [] [ Html.text "日付" ]
                 ]
+            , Html.tr []
+                [ Html.td []
+                    [ Html.text
+                        (case model.id of
+                            Nothing ->
+                                "+"
 
-        Just move ->
-            Html.div []
-                [ Html.text (model.errorMessage |> Maybe.withDefault "")
-                , Html.table [ Attributes.class "balance" ]
-                    [ Html.tr
-                        []
-                        [ Html.th [] [ Html.text "id" ]
-                        , Html.th [] [ Html.text "金額" ]
-                        , Html.th [] [ Html.text "概要" ]
-                        , Html.th [] [ Html.text "移動前" ]
-                        , Html.th [] [ Html.text "移動後" ]
-                        , Html.th [] [ Html.text "日付" ]
-                        ]
-                    , Html.tr []
-                        [ Html.td []
-                            [ Html.text
-                                (case model.id of
-                                    Nothing ->
-                                        "+"
-
-                                    Just id ->
-                                        String.fromInt id
-                                )
-                            ]
-                        , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value move.amount, onInput InputAmount ] [] ]
-                        , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value move.item, onInput InputItem ] [] ]
-                        , Html.td []
-                            [ Html.select [ onInput SelectedBeforeElementId, Attributes.value <| move.beforeId ]
-                                (case model.attributeElements of
-                                    Nothing ->
-                                        []
-
-                                    Just attributeElements ->
-                                        List.map
-                                            (\attributeElement ->
-                                                Html.option
-                                                    [ Attributes.value <| String.fromInt attributeElement.id
-                                                    , Attributes.selected (String.fromInt attributeElement.id == move.beforeId)
-                                                    ]
-                                                    [ Html.text <| attributeElement.description ]
-                                            )
-                                            attributeElements
-                                )
-                            ]
-                        , Html.td []
-                            [ Html.select [ onInput SelectedAfterElementId, Attributes.value <| move.afterId ]
-                                (case model.attributeElements of
-                                    Nothing ->
-                                        []
-
-                                    Just attributeElements ->
-                                        List.map
-                                            (\attributeElement ->
-                                                Html.option
-                                                    [ Attributes.value <| String.fromInt attributeElement.id
-                                                    , Attributes.selected (String.fromInt attributeElement.id == move.afterId)
-                                                    ]
-                                                    [ Html.text <| attributeElement.description ]
-                                            )
-                                            attributeElements
-                                )
-                            ]
-                        , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value move.date, onInput InputDate ] [] ]
-                        ]
+                            Just id ->
+                                String.fromInt id
+                        )
                     ]
-                , Html.div []
-                    (case model.id of
-                        Nothing ->
-                            [ Html.button [ onClick Create ] [ Html.text "作成" ] ]
-
-                        Just moveId ->
-                            [ Html.button [ onClick Save ] [ Html.text "保存" ]
-                            , Html.button [ onClick (Delete moveId) ] [ Html.text "削除" ]
-                            , Html.input [ Attributes.type_ "text", Attributes.value model.deleteString, onInput InputDeleteString, Attributes.hidden (not model.enableInputDeleteString) ] []
-                            ]
-                    )
-                , Html.div []
-                    [ Html.button [ onClick Cancel ] [ Html.text "キャンセル" ] ]
+                , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.move.amount, onInput InputAmount ] [] ]
+                , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.move.item, onInput InputItem ] [] ]
+                , Html.td []
+                    [ Html.select [ onInput InputBeforeElementId, Attributes.value <| model.move.beforeId ]
+                        (List.map
+                            (\attributeElement ->
+                                Html.option
+                                    [ Attributes.value <| String.fromInt attributeElement.id
+                                    , Attributes.selected (String.fromInt attributeElement.id == model.move.beforeId)
+                                    ]
+                                    [ Html.text <| attributeElement.description ]
+                            )
+                            model.attributeElements
+                        )
+                    ]
+                , Html.td []
+                    [ Html.select [ onInput InputAfterElementId, Attributes.value <| model.move.afterId ]
+                        (List.map
+                            (\attributeElement ->
+                                Html.option
+                                    [ Attributes.value <| String.fromInt attributeElement.id
+                                    , Attributes.selected (String.fromInt attributeElement.id == model.move.afterId)
+                                    ]
+                                    [ Html.text <| attributeElement.description ]
+                            )
+                            model.attributeElements
+                        )
+                    ]
+                , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.move.date, onInput InputDate ] [] ]
                 ]
+            ]
+        , Html.div []
+            (case model.id of
+                Nothing ->
+                    [ Html.button [ onClick Upsert ] [ Html.text "作成" ] ]
+
+                Just moveId ->
+                    [ Html.button [ onClick Upsert ] [ Html.text "保存" ]
+                    , Html.button [ onClick (Delete moveId) ] [ Html.text "削除" ]
+                    , Html.input [ Attributes.type_ "text", Attributes.value model.deleteString, onInput InputDeleteString, Attributes.hidden (not model.enableInputDeleteString) ] []
+                    ]
+            )
+        , Html.div []
+            [ Html.button [ onClick Cancel ] [ Html.text "キャンセル" ] ]
+        ]

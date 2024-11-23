@@ -164,12 +164,12 @@ postMove xsrfToken moveAttributeName newMove toMsg =
     BaseRequest.post xsrfToken ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s") encodedNewMove (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putMove : String -> MoveAttributeValueObject.Attribute -> MoveEntity.Move -> (Result Error () -> msg) -> Cmd msg
-putMove xsrfToken moveAttributeName move toMsg =
+putMove : String -> MoveAttributeValueObject.Attribute -> Int -> MoveEntity.NewMove -> (Result Error () -> msg) -> Cmd msg
+putMove xsrfToken moveAttributeName id move toMsg =
     let
         encodedMove =
             E.object
-                [ ( "id", E.int move.id )
+                [ ( "id", E.int id )
                 , ( "amount", E.int move.amount )
                 , ( "item", E.string move.item )
                 , ( "before_id", E.int move.beforeId )
@@ -177,7 +177,7 @@ putMove xsrfToken moveAttributeName move toMsg =
                 , ( "date", E.string move.date )
                 ]
     in
-    BaseRequest.put xsrfToken ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt move.id) encodedMove (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put xsrfToken ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt id) encodedMove (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 deleteMove : String -> MoveAttributeValueObject.Attribute -> Int -> (Result Error () -> msg) -> Cmd msg
