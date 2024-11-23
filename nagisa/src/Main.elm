@@ -10,6 +10,7 @@ import Page.BalanceTable
 import Page.ElementId
 import Page.ElementTable
 import Page.Login
+import Page.MoveId
 import Page.MoveTable
 import Page.Top
 import Route
@@ -33,6 +34,7 @@ type Page
     | Top Page.Top.Model
     | BalanceTable Page.BalanceTable.Model
     | MoveTable Page.MoveTable.Model
+    | MoveId Page.MoveId.Model
     | ElementTable Page.ElementTable.Model
     | ElementId Page.ElementId.Model
     | Login Page.Login.Model
@@ -56,6 +58,7 @@ type Msg
     | TopMsg Page.Top.Msg
     | BalanceTableMsg Page.BalanceTable.Msg
     | MoveTableMsg Page.MoveTable.Msg
+    | MoveIdMsg Page.MoveId.Msg
     | ElementTableMsg Page.ElementTable.Msg
     | ElementIdMsg Page.ElementId.Msg
     | LoginMsg Page.Login.Msg
@@ -131,6 +134,20 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        MoveIdMsg pageMsg ->
+            case model.page of
+                MoveId pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.MoveId.update pageMsg pageModel
+                    in
+                    ( { model | page = MoveId newModel }
+                    , Cmd.map MoveIdMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
         ElementIdMsg pageMsg ->
             case model.page of
                 ElementId pageModel ->
@@ -173,6 +190,8 @@ view model =
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.KindElementTable) ] [ Html.text "kind_element" ] ]
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PurposeElementTable) ] [ Html.text "purpose_element" ] ]
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PlaceElementTable) ] [ Html.text "place_element" ] ]
+                    , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PurposeMoveTable) ] [ Html.text "purpose_move" ] ]
+                    , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PlaceMoveTable) ] [ Html.text "place_move" ] ]
                     ]
                 ]
             ]
@@ -191,6 +210,10 @@ view model =
             MoveTable pageModel ->
                 Page.MoveTable.view pageModel
                     |> Html.map MoveTableMsg
+
+            MoveId pageModel ->
+                Page.MoveId.view pageModel
+                    |> Html.map MoveIdMsg
 
             ElementTable pageModel ->
                 Page.ElementTable.view pageModel
@@ -247,6 +270,24 @@ goTo maybeRoute model =
             in
             ( { model | page = MoveTable newModel }
             , Cmd.map MoveTableMsg newCmd
+            )
+
+        Just (Route.PurposeMoveId id) ->
+            let
+                ( newModel, newCmd ) =
+                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Purpose (Just id)
+            in
+            ( { model | page = MoveId newModel }
+            , Cmd.map MoveIdMsg newCmd
+            )
+
+        Just (Route.PlaceMoveId id) ->
+            let
+                ( newModel, newCmd ) =
+                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Purpose (Just id)
+            in
+            ( { model | page = MoveId newModel }
+            , Cmd.map MoveIdMsg newCmd
             )
 
         Just Route.KindElementTable ->

@@ -9,6 +9,8 @@ type Route
     | BalanceTable
     | PurposeMoveTable
     | PlaceMoveTable
+    | PurposeMoveId Int
+    | PlaceMoveId Int
     | KindElementTable
     | PurposeElementTable
     | PlaceElementTable
@@ -33,6 +35,8 @@ routes =
         , Parser.map BalanceTable (Parser.s "balances")
         , Parser.map PurposeMoveTable (Parser.s "purpose" </> Parser.s "moves")
         , Parser.map PlaceMoveTable (Parser.s "place" </> Parser.s "moves")
+        , Parser.map PurposeMoveId (Parser.s "purpose" </> Parser.s "moves" </> Parser.int)
+        , Parser.map PlaceMoveId (Parser.s "place" </> Parser.s "moves" </> Parser.int)
         , Parser.map KindElementTable (Parser.s "kind" </> Parser.s "elements")
         , Parser.map PurposeElementTable (Parser.s "purpose" </> Parser.s "elements")
         , Parser.map PlaceElementTable (Parser.s "place" </> Parser.s "elements")
@@ -60,6 +64,12 @@ toPath route =
 
         PlaceMoveTable ->
             "/place/moves"
+
+        PurposeMoveId id ->
+            "/purpose/moves/" ++ String.fromInt id
+
+        PlaceMoveId id ->
+            "/place/moves/" ++ String.fromInt id
 
         KindElementTable ->
             "/kind/elements"

@@ -1,16 +1,20 @@
 module Request.Request exposing
     ( Error(..)
     , deleteBalance
+    , deleteMove
     , getAttributeCategories
     , getAttributeElement
     , getAttributeElements
     , getBalances
+    , getMove
     , getMoves
     , postAttributeElement
     , postBalance
     , postLogin
+    , postMove
     , putAttributeElement
     , putBalance
+    , putMove
     )
 
 import Json.Decode as D
@@ -91,18 +95,21 @@ deleteBalance xsrfToken balanceId toMsg =
     BaseRequest.delete xsrfToken ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-getAttributeElement : AttributeValueObject.Attribute -> Int -> (Result Error AttributeElementEntity.AttributeElement -> msg) -> Cmd msg
-getAttributeElement attributeValueObject id toMsg =
+getMove : MoveAttributeValueObject.Attribute -> Int -> (Result Error MoveEntity.Move -> msg) -> Cmd msg
+getMove moveAttributeValueObject id toMsg =
     let
-        decodeAttributeElement =
-            D.succeed AttributeElementEntity.AttributeElement
+        decodeMove =
+            D.succeed MoveEntity.Move
                 |> DP.required "id" D.int
-                |> DP.required "name" D.string
-                |> DP.required "description" D.string
-                |> DP.required "priority" D.int
-                |> DP.required "category_id" D.int
+                |> DP.required "amount" D.int
+                |> DP.required "item" D.string
+                |> DP.required "before_id" D.int
+                |> DP.required "after_id" D.int
+                |> DP.required "date" D.string
+                |> DP.required "before_description" D.string
+                |> DP.required "after_description" D.string
     in
-    BaseRequest.get ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) decodeAttributeElement (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/moves/" ++ mapMoveAttributeName moveAttributeValueObject ++ "s/" ++ String.fromInt id) decodeMove (toMsg << Result.mapError mapError)
 
 
 getMoves : MoveAttributeValueObject.Attribute -> (Result Error MoveEntity.Moves -> msg) -> Cmd msg
@@ -120,6 +127,56 @@ getMoves moveAttributeValueObject toMsg =
                 |> DP.required "after_description" D.string
     in
     BaseRequest.get ("/api/moves/" ++ mapMoveAttributeName moveAttributeValueObject ++ "s") (D.list decodeMove) (toMsg << Result.mapError mapError)
+
+
+postMove : String -> MoveAttributeValueObject.Attribute -> MoveEntity.NewMove -> (Result Error () -> msg) -> Cmd msg
+postMove xsrfToken moveAttributeName newMove toMsg =
+    let
+        encodedNewMove =
+            E.object
+                [ ( "amount", E.int newMove.amount )
+                , ( "item", E.string newMove.item )
+                , ( "before_id", E.int newMove.beforeId )
+                , ( "after_id", E.int newMove.afterId )
+                , ( "date", E.string newMove.date )
+                ]
+    in
+    BaseRequest.post xsrfToken ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s") encodedNewMove (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+putMove : String -> MoveAttributeValueObject.Attribute -> MoveEntity.Move -> (Result Error () -> msg) -> Cmd msg
+putMove xsrfToken moveAttributeName move toMsg =
+    let
+        encodedMove =
+            E.object
+                [ ( "id", E.int move.id )
+                , ( "amount", E.int move.amount )
+                , ( "item", E.string move.item )
+                , ( "before_id", E.int move.beforeId )
+                , ( "after_id", E.int move.afterId )
+                , ( "date", E.string move.date )
+                ]
+    in
+    BaseRequest.put xsrfToken ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt move.id) encodedMove (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+deleteMove : String -> MoveAttributeValueObject.Attribute -> Int -> (Result Error () -> msg) -> Cmd msg
+deleteMove xsrfToken moveAttributeName moveId toMsg =
+    BaseRequest.delete xsrfToken ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt moveId) (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+getAttributeElement : AttributeValueObject.Attribute -> Int -> (Result Error AttributeElementEntity.AttributeElement -> msg) -> Cmd msg
+getAttributeElement attributeValueObject id toMsg =
+    let
+        decodeAttributeElement =
+            D.succeed AttributeElementEntity.AttributeElement
+                |> DP.required "id" D.int
+                |> DP.required "name" D.string
+                |> DP.required "description" D.string
+                |> DP.required "priority" D.int
+                |> DP.required "category_id" D.int
+    in
+    BaseRequest.get ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) decodeAttributeElement (toMsg << Result.mapError mapError)
 
 
 getAttributeElements : AttributeValueObject.Attribute -> (Result Error AttributeElementEntity.AttributeElements -> msg) -> Cmd msg

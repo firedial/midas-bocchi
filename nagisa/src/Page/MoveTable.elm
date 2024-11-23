@@ -56,10 +56,10 @@ view model =
         routing id =
             case model.moveAttributeValueObject of
                 MoveAttributeValueObject.Purpose ->
-                    Route.toPath (Route.PurposeElementId id)
+                    Route.toPath (Route.PurposeMoveId id)
 
                 MoveAttributeValueObject.Place ->
-                    Route.toPath (Route.PlaceElementId id)
+                    Route.toPath (Route.PlaceMoveId id)
 
         createRouting =
             case model.moveAttributeValueObject of
