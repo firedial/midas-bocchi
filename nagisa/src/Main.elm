@@ -5,10 +5,12 @@ import Browser.Navigation as Navigation
 import Html
 import Html.Attributes as Attributes
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
+import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Page.BalanceTable
 import Page.ElementId
 import Page.ElementTable
 import Page.Login
+import Page.MoveTable
 import Page.Top
 import Route
 import Url
@@ -30,6 +32,7 @@ type Page
     = NotFound
     | Top Page.Top.Model
     | BalanceTable Page.BalanceTable.Model
+    | MoveTable Page.MoveTable.Model
     | ElementTable Page.ElementTable.Model
     | ElementId Page.ElementId.Model
     | Login Page.Login.Model
@@ -52,6 +55,7 @@ type Msg
     | UrlRequested Browser.UrlRequest
     | TopMsg Page.Top.Msg
     | BalanceTableMsg Page.BalanceTable.Msg
+    | MoveTableMsg Page.MoveTable.Msg
     | ElementTableMsg Page.ElementTable.Msg
     | ElementIdMsg Page.ElementId.Msg
     | LoginMsg Page.Login.Msg
@@ -108,6 +112,20 @@ update msg model =
                     in
                     ( { model | page = ElementTable newModel }
                     , Cmd.map ElementTableMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        MoveTableMsg pageMsg ->
+            case model.page of
+                MoveTable pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.MoveTable.update pageMsg pageModel
+                    in
+                    ( { model | page = MoveTable newModel }
+                    , Cmd.map MoveTableMsg newCmd
                     )
 
                 _ ->
@@ -170,6 +188,10 @@ view model =
                 Page.BalanceTable.view pageModel
                     |> Html.map BalanceTableMsg
 
+            MoveTable pageModel ->
+                Page.MoveTable.view pageModel
+                    |> Html.map MoveTableMsg
+
             ElementTable pageModel ->
                 Page.ElementTable.view pageModel
                     |> Html.map ElementTableMsg
@@ -207,6 +229,24 @@ goTo maybeRoute model =
             in
             ( { model | page = BalanceTable newModel }
             , Cmd.map BalanceTableMsg newCmd
+            )
+
+        Just Route.PurposeMoveTable ->
+            let
+                ( newModel, newCmd ) =
+                    Page.MoveTable.init MoveAttributeValueObject.Purpose
+            in
+            ( { model | page = MoveTable newModel }
+            , Cmd.map MoveTableMsg newCmd
+            )
+
+        Just Route.PlaceMoveTable ->
+            let
+                ( newModel, newCmd ) =
+                    Page.MoveTable.init MoveAttributeValueObject.Place
+            in
+            ( { model | page = MoveTable newModel }
+            , Cmd.map MoveTableMsg newCmd
             )
 
         Just Route.KindElementTable ->

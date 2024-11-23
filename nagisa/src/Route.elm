@@ -7,6 +7,8 @@ import Url.Parser as Parser exposing ((</>), Parser)
 type Route
     = Top
     | BalanceTable
+    | PurposeMoveTable
+    | PlaceMoveTable
     | KindElementTable
     | PurposeElementTable
     | PlaceElementTable
@@ -29,6 +31,8 @@ routes =
     Parser.oneOf
         [ Parser.map Top Parser.top
         , Parser.map BalanceTable (Parser.s "balances")
+        , Parser.map PurposeMoveTable (Parser.s "purpose" </> Parser.s "moves")
+        , Parser.map PlaceMoveTable (Parser.s "place" </> Parser.s "moves")
         , Parser.map KindElementTable (Parser.s "kind" </> Parser.s "elements")
         , Parser.map PurposeElementTable (Parser.s "purpose" </> Parser.s "elements")
         , Parser.map PlaceElementTable (Parser.s "place" </> Parser.s "elements")
@@ -50,6 +54,12 @@ toPath route =
 
         BalanceTable ->
             "/balances"
+
+        PurposeMoveTable ->
+            "/purpose/moves"
+
+        PlaceMoveTable ->
+            "/place/moves"
 
         KindElementTable ->
             "/kind/elements"

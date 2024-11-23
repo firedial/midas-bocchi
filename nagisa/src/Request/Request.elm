@@ -5,6 +5,7 @@ module Request.Request exposing
     , getAttributeElement
     , getAttributeElements
     , getBalances
+    , getMoves
     , postAttributeElement
     , postBalance
     , postLogin
@@ -18,7 +19,9 @@ import Json.Encode as E
 import Model.Enitity.AttributeCategoryEntity as AttributeCategoryEntity
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.BalanceEntity as BalanceEntity
+import Model.Enitity.MoveEntity as MoveEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
+import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Request.BaseRequest as BaseRequest
 import Result
 
@@ -102,6 +105,23 @@ getAttributeElement attributeValueObject id toMsg =
     BaseRequest.get ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) decodeAttributeElement (toMsg << Result.mapError mapError)
 
 
+getMoves : MoveAttributeValueObject.Attribute -> (Result Error MoveEntity.Moves -> msg) -> Cmd msg
+getMoves moveAttributeValueObject toMsg =
+    let
+        decodeMove =
+            D.succeed MoveEntity.Move
+                |> DP.required "id" D.int
+                |> DP.required "amount" D.int
+                |> DP.required "item" D.string
+                |> DP.required "before_id" D.int
+                |> DP.required "after_id" D.int
+                |> DP.required "date" D.string
+                |> DP.required "before_description" D.string
+                |> DP.required "after_description" D.string
+    in
+    BaseRequest.get ("/api/moves/" ++ mapMoveAttributeName moveAttributeValueObject ++ "s") (D.list decodeMove) (toMsg << Result.mapError mapError)
+
+
 getAttributeElements : AttributeValueObject.Attribute -> (Result Error AttributeElementEntity.AttributeElements -> msg) -> Cmd msg
 getAttributeElements attributeValueObject toMsg =
     let
@@ -179,6 +199,16 @@ mapAttributeName attributeName =
             "purpose"
 
         AttributeValueObject.Place ->
+            "place"
+
+
+mapMoveAttributeName : MoveAttributeValueObject.Attribute -> String
+mapMoveAttributeName moveAttributeName =
+    case moveAttributeName of
+        MoveAttributeValueObject.Purpose ->
+            "purpose"
+
+        MoveAttributeValueObject.Place ->
             "place"
 
 
