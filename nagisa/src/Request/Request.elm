@@ -227,19 +227,19 @@ postAttributeElement xsrfToken attributeValueObject newAttributeElement toMsg =
     BaseRequest.post xsrfToken ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") encodedNewAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putAttributeElement : String -> AttributeValueObject.Attribute -> AttributeElementEntity.AttributeElement -> (Result Error () -> msg) -> Cmd msg
-putAttributeElement xsrfToken attributeValueObject attributeElement toMsg =
+putAttributeElement : String -> AttributeValueObject.Attribute -> Int -> AttributeElementEntity.NewAttributeElement -> (Result Error () -> msg) -> Cmd msg
+putAttributeElement xsrfToken attributeValueObject id attributeElement toMsg =
     let
         encodedAttributeElement =
             E.object
-                [ ( "id", E.int attributeElement.id )
+                [ ( "id", E.int id )
                 , ( "name", E.string attributeElement.name )
                 , ( "description", E.string attributeElement.description )
                 , ( "priority", E.int attributeElement.priority )
                 , ( "category_id", E.int attributeElement.categoryId )
                 ]
     in
-    BaseRequest.put xsrfToken ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt attributeElement.id) encodedAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put xsrfToken ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) encodedAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getAttributeCategories : AttributeValueObject.Attribute -> (Result Error AttributeCategoryEntity.AttributeCategories -> msg) -> Cmd msg

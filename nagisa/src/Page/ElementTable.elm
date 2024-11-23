@@ -19,8 +19,7 @@ type alias Model =
 
 
 type Msg
-    = None
-    | GetAttributeElements (Result Request.Error AttributeElementEntity.AttributeElements)
+    = GetAttributeElements (Result Request.Error AttributeElementEntity.AttributeElements)
 
 
 init : AttributeValueObject.Attribute -> ( Model, Cmd Msg )
@@ -35,9 +34,6 @@ init attributeValueObject =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        None ->
-            ( model, Cmd.none )
-
         GetAttributeElements result ->
             case result of
                 Ok response ->
