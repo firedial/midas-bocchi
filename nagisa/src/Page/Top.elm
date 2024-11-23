@@ -12,8 +12,7 @@ type alias Model =
 
 
 type Msg
-    = None
-    | GetJson (Result Http.Error String)
+    = GetJson (Result Http.Error String)
 
 
 init : String -> Int -> ( Model, Cmd Msg )
@@ -24,9 +23,6 @@ init name count =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        None ->
-            ( { model | name = "top none" }, Cmd.none )
-
         GetJson result ->
             case result of
                 Ok response ->

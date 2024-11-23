@@ -18,8 +18,7 @@ type alias Model =
 
 
 type Msg
-    = None
-    | InputEmail String
+    = InputEmail String
     | InputPassword String
     | Login
     | PostLogin (Result Request.Error ())
@@ -33,9 +32,6 @@ init xsrfToken key =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        None ->
-            ( model, Cmd.none )
-
         InputEmail email ->
             ( { model | email = email }, Cmd.none )
 
