@@ -2,7 +2,6 @@ module Page.BalanceTable exposing (Model, Msg, init, update, view)
 
 import Html
 import Html.Attributes as Attributes
-import Html.Events exposing (onClick, onInput)
 import List
 import Maybe
 import Model.Enitity.BalanceEntity as BalanceEntity
@@ -12,50 +11,18 @@ import String
 
 type alias Model =
     { balances : BalanceEntity.Balances
-    , inputBalance : InputBalance
     , errorMessage : Maybe String
-    , xsrfToken : String
-    }
-
-
-type alias InputBalance =
-    { amount : String
-    , item : String
-    , kindElementId : String
-    , purposeElementId : String
-    , placeElementId : String
-    , date : String
     }
 
 
 type Msg
     = None
     | GetBalances (Result Request.Error BalanceEntity.Balances)
-    | PostBalance (Result Request.Error ())
-    | DeleteBalance (Result Request.Error ())
-    | InputAmount String
-    | InputItem String
-    | InputKindElementId String
-    | InputPurposeElementId String
-    | InputPlaceElementId String
-    | InputDate String
-    | Save
-    | Delete Int
 
 
-init : String -> ( Model, Cmd Msg )
-init xsrfToken =
-    ( Model []
-        (InputBalance
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-        )
-        Nothing
-        xsrfToken
+init : ( Model, Cmd Msg )
+init =
+    ( Model [] Nothing
     , Request.getBalances GetBalances
     )
 
@@ -77,88 +44,6 @@ update msg model =
                 Err (Request.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
-        PostBalance result ->
-            case result of
-                Ok _ ->
-                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Nothing }, Cmd.none )
-
-                Err (Request.DecodeError message) ->
-                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Just message }, Cmd.none )
-
-                Err (Request.RequestError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
-
-        DeleteBalance result ->
-            case result of
-                Ok _ ->
-                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Nothing }, Cmd.none )
-
-                Err (Request.DecodeError message) ->
-                    ( { model | inputBalance = InputBalance "" "" "" "" "" "", errorMessage = Just message }, Cmd.none )
-
-                Err (Request.RequestError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
-
-        InputAmount amount ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | amount = amount } }, Cmd.none )
-
-        InputItem item ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | item = item } }, Cmd.none )
-
-        InputKindElementId id ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | kindElementId = id } }, Cmd.none )
-
-        InputPurposeElementId id ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | purposeElementId = id } }, Cmd.none )
-
-        InputPlaceElementId id ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | placeElementId = id } }, Cmd.none )
-
-        InputDate date ->
-            let
-                newBalance =
-                    model.inputBalance
-            in
-            ( { model | inputBalance = { newBalance | date = date } }, Cmd.none )
-
-        Save ->
-            let
-                newBalance =
-                    BalanceEntity.NewBalance
-                        (model.inputBalance.amount |> String.toInt |> Maybe.withDefault 0)
-                        model.inputBalance.item
-                        (model.inputBalance.kindElementId |> String.toInt |> Maybe.withDefault 0)
-                        (model.inputBalance.purposeElementId |> String.toInt |> Maybe.withDefault 0)
-                        (model.inputBalance.placeElementId |> String.toInt |> Maybe.withDefault 0)
-                        model.inputBalance.date
-            in
-            ( model, Request.postBalance model.xsrfToken newBalance PostBalance )
-
-        -- Delete balanceId ->
-        -- ( model, Request.deleteBalance model.xsrfToken balanceId DeleteBalance )
-        Delete _ ->
-            ( model, Cmd.none )
-
 
 view : Model -> Html.Html Msg
 view model =
@@ -174,23 +59,7 @@ view model =
                 , Html.th [] [ Html.text "予算" ]
                 , Html.th [] [ Html.text "場所" ]
                 , Html.th [] [ Html.text "日付" ]
-                , Html.th [] [ Html.text "編集" ]
-                , Html.th [] [ Html.text "保存" ]
-                , Html.th [] [ Html.text "削除" ]
                 ]
-                :: Html.tr
-                    []
-                    [ Html.td [] [ Html.text "+" ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.amount, onInput InputAmount ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.item, onInput InputItem ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.kindElementId, onInput InputKindElementId ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.purposeElementId, onInput InputPurposeElementId ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.inputBalance.placeElementId, onInput InputPlaceElementId ] [] ]
-                    , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.inputBalance.date, onInput InputDate ] [] ]
-                    , Html.td [] [ Html.text "" ]
-                    , Html.td [] [ Html.button [ onClick Save ] [ Html.text "保存" ] ]
-                    , Html.td [] [ Html.text "" ]
-                    ]
                 :: List.map
                     (\balance ->
                         Html.tr []
@@ -201,9 +70,6 @@ view model =
                             , Html.td [] [ Html.text balance.purposeElementDescription ]
                             , Html.td [] [ Html.text balance.placeElementDescription ]
                             , Html.td [] [ Html.text balance.date ]
-                            , Html.td [] [ Html.text "編集" ]
-                            , Html.td [] [ Html.text "保存" ]
-                            , Html.td [] [ Html.button [ onClick (Delete balance.balanceId) ] [ Html.text "削除" ] ]
                             ]
                     )
                     model.balances

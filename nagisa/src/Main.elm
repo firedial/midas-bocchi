@@ -248,7 +248,7 @@ goTo maybeRoute model =
         Just Route.BalanceTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.BalanceTable.init model.xsrfToken
+                    Page.BalanceTable.init
             in
             ( { model | page = BalanceTable newModel }
             , Cmd.map BalanceTableMsg newCmd
