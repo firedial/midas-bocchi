@@ -7,6 +7,7 @@ import Url.Parser as Parser exposing ((</>), Parser)
 type Route
     = Top
     | BalanceTable
+    | BalanceCreate
     | BalanceId Int
     | PurposeMoveTable
     | PlaceMoveTable
@@ -36,6 +37,7 @@ routes =
     Parser.oneOf
         [ Parser.map Top Parser.top
         , Parser.map BalanceTable (Parser.s "balances")
+        , Parser.map BalanceCreate (Parser.s "balances" </> Parser.s "create")
         , Parser.map BalanceId (Parser.s "balances" </> Parser.int)
         , Parser.map PurposeMoveTable (Parser.s "purpose" </> Parser.s "moves")
         , Parser.map PlaceMoveTable (Parser.s "place" </> Parser.s "moves")
@@ -64,6 +66,9 @@ toPath route =
 
         BalanceTable ->
             "/balances"
+
+        BalanceCreate ->
+            "/balances/create"
 
         BalanceId id ->
             "/balances/" ++ String.fromInt id

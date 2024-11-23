@@ -275,6 +275,15 @@ goTo maybeRoute model =
             , Cmd.map BalanceTableMsg newCmd
             )
 
+        Just Route.BalanceCreate ->
+            let
+                ( newModel, newCmd ) =
+                    Page.BalanceId.init model.xsrfToken model.key Nothing
+            in
+            ( { model | page = BalanceId newModel }
+            , Cmd.map BalanceIdMsg newCmd
+            )
+
         Just (Route.BalanceId id) ->
             let
                 ( newModel, newCmd ) =

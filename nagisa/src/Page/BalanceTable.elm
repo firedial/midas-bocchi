@@ -63,7 +63,7 @@ view model =
                 ]
                 :: Html.tr
                     []
-                    [ Html.td [] [ Html.text "+" ]
+                    [ Html.td [] [ Html.a [ Attributes.href (Route.toPath Route.BalanceCreate) ] [ Html.text "+" ] ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
