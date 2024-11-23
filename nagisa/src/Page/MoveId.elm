@@ -20,6 +20,8 @@ type alias Model =
     , xsrfToken : String
     , moveAttributeName : MoveAttributeValueObject.Attribute
     , id : Maybe Int
+    , enableInputDeleteString : Bool
+    , deleteString : String
     , key : Navigation.Key
     , errorMessage : Maybe String
     }
@@ -47,6 +49,7 @@ type Msg
     | Create
     | Cancel
     | Delete Int
+    | InputDeleteString String
     | UpsertResult (Result Request.Error ())
 
 
@@ -73,6 +76,8 @@ init xsrfToken key moveAttributeValueObject id =
         xsrfToken
         moveAttributeValueObject
         id
+        False
+        ""
         key
         Nothing
     , Cmd.batch
@@ -244,7 +249,14 @@ update msg model =
             ( model, Navigation.pushUrl model.key redirectRouting )
 
         Delete moveId ->
-            ( model, Request.deleteMove model.xsrfToken model.moveAttributeName moveId UpsertResult )
+            if model.deleteString == "delete" then
+                ( model, Request.deleteMove model.xsrfToken model.moveAttributeName moveId UpsertResult )
+
+            else
+                ( { model | enableInputDeleteString = True }, Cmd.none )
+
+        InputDeleteString deleteString ->
+            ( { model | deleteString = deleteString }, Cmd.none )
 
         UpsertResult result ->
             let
@@ -348,6 +360,7 @@ view model =
                         Just moveId ->
                             [ Html.button [ onClick Save ] [ Html.text "保存" ]
                             , Html.button [ onClick (Delete moveId) ] [ Html.text "削除" ]
+                            , Html.input [ Attributes.type_ "text", Attributes.value model.deleteString, onInput InputDeleteString, Attributes.hidden (not model.enableInputDeleteString) ] []
                             ]
                     )
                 , Html.div []
