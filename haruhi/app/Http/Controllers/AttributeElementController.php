@@ -31,7 +31,7 @@ class AttributeElementController extends Controller
         }
 
         $attributeElementService = new AttributeElementService();
-        return $attributeElementService->getAttributeElementByElementId(['attributeName' => $attributeName, 'elementId' => $elementId]);
+        return $attributeElementService->getAttributeElementByElementId(['attributeName' => $attributeName, 'elementId' => $elementId])[0];
     }
 
     public function store(Request $request, string $attributeName)
