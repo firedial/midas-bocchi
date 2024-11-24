@@ -20,6 +20,7 @@ jobs:
           mv elm /usr/local/bin/
       - name: build file
         run: |
+          pwd
           cd nagisa
           elm make src/Main.elm --output=../dist/main.js
       - name: Upload artifacts
