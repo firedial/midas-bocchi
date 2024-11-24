@@ -56,45 +56,45 @@ update msg model =
     case msg of
         InputBonus value ->
             let
-                newSalary =
+                newBonus =
                     model.bonus
             in
-            ( { model | bonus = { newSalary | bonus = value } }, Cmd.none )
+            ( { model | bonus = { newBonus | bonus = value } }, Cmd.none )
 
         InputHealthInsurance value ->
             let
-                newSalary =
+                newBonus =
                     model.bonus
             in
-            ( { model | bonus = { newSalary | healthInsurance = value } }, Cmd.none )
+            ( { model | bonus = { newBonus | healthInsurance = value } }, Cmd.none )
 
         InputWelfarePension value ->
             let
-                newSalary =
+                newBonus =
                     model.bonus
             in
-            ( { model | bonus = { newSalary | welfarePension = value } }, Cmd.none )
+            ( { model | bonus = { newBonus | welfarePension = value } }, Cmd.none )
 
         InputEmploymentInsurance value ->
             let
-                newSalary =
+                newBonus =
                     model.bonus
             in
-            ( { model | bonus = { newSalary | employmentInsurance = value } }, Cmd.none )
+            ( { model | bonus = { newBonus | employmentInsurance = value } }, Cmd.none )
 
         InputIncomeTax value ->
             let
-                newSalary =
+                newBonus =
                     model.bonus
             in
-            ( { model | bonus = { newSalary | incomeTax = value } }, Cmd.none )
+            ( { model | bonus = { newBonus | incomeTax = value } }, Cmd.none )
 
         InputDate value ->
             let
-                newSalary =
+                newBonus =
                     model.bonus
             in
-            ( { model | bonus = { newSalary | date = value } }, Cmd.none )
+            ( { model | bonus = { newBonus | date = value } }, Cmd.none )
 
         Insert ->
             ( model
