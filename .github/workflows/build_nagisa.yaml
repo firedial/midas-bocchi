@@ -1,0 +1,21 @@
+name: nagisa image build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "nagisa/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: create file
+        run: echo "test" > dist/test.js
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-test
+          path: dist/**
