@@ -9,6 +9,7 @@ import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Page.BalanceId
 import Page.BalanceTable
+import Page.Bonus
 import Page.ElementId
 import Page.ElementTable
 import Page.Login
@@ -43,6 +44,7 @@ type Page
     | ElementTable Page.ElementTable.Model
     | ElementId Page.ElementId.Model
     | Salary Page.Salary.Model
+    | Bonus Page.Bonus.Model
     | Login Page.Login.Model
 
 
@@ -69,6 +71,7 @@ type Msg
     | ElementTableMsg Page.ElementTable.Msg
     | ElementIdMsg Page.ElementId.Msg
     | SalaryMsg Page.Salary.Msg
+    | BonusMsg Page.Bonus.Msg
     | LoginMsg Page.Login.Msg
     | Logout
     | LogoutResult (Result Request.Error ())
@@ -200,6 +203,20 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        BonusMsg pageMsg ->
+            case model.page of
+                Bonus pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.Bonus.update pageMsg pageModel
+                    in
+                    ( { model | page = Bonus newModel }
+                    , Cmd.map BonusMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
         LoginMsg pageMsg ->
             case model.page of
                 Login pageModel ->
@@ -280,6 +297,10 @@ view model =
             Salary pageModel ->
                 Page.Salary.view pageModel
                     |> Html.map SalaryMsg
+
+            Bonus pageModel ->
+                Page.Bonus.view pageModel
+                    |> Html.map BonusMsg
 
             Login pageModel ->
                 Page.Login.view pageModel
@@ -472,6 +493,15 @@ goTo maybeRoute model =
             in
             ( { model | page = Salary newModel }
             , Cmd.map SalaryMsg newCmd
+            )
+
+        Just Route.Bonus ->
+            let
+                ( newModel, newCmd ) =
+                    Page.Bonus.init model.xsrfToken model.key
+            in
+            ( { model | page = Bonus newModel }
+            , Cmd.map BonusMsg newCmd
             )
 
         Just Route.Login ->

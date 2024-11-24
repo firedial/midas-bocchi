@@ -11,6 +11,7 @@ module Request.Request exposing
     , getMoves
     , postAttributeElement
     , postBalance
+    , postBonus
     , postLogin
     , postLogout
     , postMove
@@ -274,6 +275,22 @@ postSalary xsrfToken baseSalary adjustmentSalary transportation holdingIncentive
                 ]
     in
     BaseRequest.post xsrfToken "/api/salary" encodedSalary (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+postBonus : String -> Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
+postBonus xsrfToken bonus healthInsurance welfarePension employmentInsurance incomeTax date toMsg =
+    let
+        encodedBonus =
+            E.object
+                [ ( "bonus", E.int bonus )
+                , ( "healthInsurance", E.int healthInsurance )
+                , ( "welfarePension", E.int welfarePension )
+                , ( "employmentInsurance", E.int employmentInsurance )
+                , ( "incomeTax", E.int incomeTax )
+                , ( "date", E.string date )
+                ]
+    in
+    BaseRequest.post xsrfToken "/api/bonus" encodedBonus (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 postLogin : String -> String -> String -> (Result Error () -> msg) -> Cmd msg
