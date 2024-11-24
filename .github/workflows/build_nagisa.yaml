@@ -12,6 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: elm download
         run: |
           curl -L -o elm.gz https://github.com/elm/compiler/releases/download/0.19.1/binary-for-linux-64-bit.gz
@@ -20,10 +21,6 @@ jobs:
           mv elm /usr/local/bin/
       - name: build file
         run: |
-          pwd
-          ls -al
-          cd ..
-          ls -al
           cd nagisa
           elm make src/Main.elm --output=../dist/main.js
       - name: Upload artifacts
