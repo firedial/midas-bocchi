@@ -20,7 +20,7 @@ jobs:
           chmod +x elm
           mv elm /usr/local/bin/
       - name: install uglifyjs
-        run: apt install -y uglifyjs
+        run: sudo apt install -y uglifyjs
       - name: build file
         run: |
           cd nagisa
