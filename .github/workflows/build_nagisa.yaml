@@ -17,7 +17,7 @@ jobs:
       - name: change directory
         run: cd nagisa
       - name: build file
-        run: elm make nagisa/src/Main.elm --output=../dist/main.js
+        run: elm make src/Main.elm --output=../dist/main.js
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
