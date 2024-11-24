@@ -21,6 +21,7 @@ jobs:
       - name: build file
         run: |
           pwd
+          ls -al
           cd nagisa
           elm make src/Main.elm --output=../dist/main.js
       - name: Upload artifacts
