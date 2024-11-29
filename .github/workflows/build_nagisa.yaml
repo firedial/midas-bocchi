@@ -61,6 +61,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
+          context: ./haruhi
           # tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-haruhi:latest
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-test:latest
           file: haruhi/DockerfileProduction
