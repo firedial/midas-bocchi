@@ -46,6 +46,8 @@ jobs:
         run: ls -al
       - name: move
         run: mv main.js haruhi/public/main.js
+      - name: check
+        run: ls -al haruhi/public
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -59,6 +61,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
+          # tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-haruhi:latest
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-test:latest
           file: haruhi/DockerfileProduction
           platforms: linux/arm/v7
