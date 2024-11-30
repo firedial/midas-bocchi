@@ -58,8 +58,8 @@ getBalance id toMsg =
     BaseRequest.get ("/api/balances/" ++ String.fromInt id) decodeBalance (toMsg << Result.mapError mapError)
 
 
-getBalances : (Result Error BalanceEntity.Balances -> msg) -> Cmd msg
-getBalances toMsg =
+getBalances : Int -> (Result Error BalanceEntity.Balances -> msg) -> Cmd msg
+getBalances limit toMsg =
     let
         decodeBalance =
             D.succeed BalanceEntity.Balance
@@ -77,7 +77,7 @@ getBalances toMsg =
         decodeBalances =
             D.list decodeBalance
     in
-    BaseRequest.get "/api/balances" decodeBalances (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/balances?limit=" ++ String.fromInt limit ++ "&orderby=desc") decodeBalances (toMsg << Result.mapError mapError)
 
 
 postBalance : String -> BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg

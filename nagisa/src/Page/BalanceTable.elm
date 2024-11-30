@@ -23,7 +23,7 @@ type Msg
 init : ( Model, Cmd Msg )
 init =
     ( Model [] Nothing
-    , Request.getBalances GetBalances
+    , Request.getBalances 100 GetBalances
     )
 
 
