@@ -339,7 +339,7 @@ goTo maybeRoute model =
         Just Route.Top ->
             let
                 ( newModel, newCmd ) =
-                    Page.Top.init "top" 1
+                    Page.Top.init
             in
             ( { model | page = Top newModel }
             , Cmd.map TopMsg newCmd

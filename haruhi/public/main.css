@@ -1,8 +1,16 @@
 @charset "UTF-8";
 
+:root {
+    --color-base: #fffbec;
+    --color-primary: #c6bceb;
+    --color-primary-sub: #7f48c7;
+    --color-secondary: #fffbec;
+}
+
 /* header start */
 
 header {
+    background-color: var(--color-primary);
     display: flex;
 }
 
@@ -36,8 +44,38 @@ header nav ul li a:hover {
 
 /* header end */
 
+/* flex start */
+
+.box {
+    display: flex;
+    flex-flow: row wrap;
+    list-style: none;
+}
+
+.item {
+    width: 150px;
+    height: 150px;
+    padding: 10px;
+    margin: 5px;
+    background-color: var(--color-primary);
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.item img {
+    padding: 25px;
+    width: 75px;
+}
+
+.item:hover {
+    background-color: var(--color-primary-sub);
+}
+
+/* flex end */
+
 body {
-    background: #fffbec;
+    background: var(--color-base);
 }
 
 table {
@@ -84,4 +122,12 @@ table.balance th:nth-child(6) {
 table tr:hover {
     cursor: default;
     background: #fce7db;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:visited {
+    color: inherit;
 }
