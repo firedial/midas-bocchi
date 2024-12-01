@@ -14,6 +14,39 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/{any}', function() {
-        # return view('app');
-        return \File::get(public_path() . '/index.html');
+        $env = match (config('APP_ENV')) {
+            'production' => 'prod.css',
+            'staging' => 'stag.css',
+            default => 'dev.css',
+        };
+        return <<< EOF
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Main</title>
+	<script src="/main.js"></script>
+	<link href="/$env" rel="stylesheet" type="text/css">
+	<link href="/main.css" rel="stylesheet" type="text/css">
+	<link href="/sanctum/csrf-cookie" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<div id="myapp"></div>
+	<script>
+		const xsrfToken = document.cookie
+			.split("; ")
+			.find((row) => row.startsWith("XSRF-TOKEN="))
+			?.split("=")[1]
+			.replace("%3D", "=");
+		var app = Elm.Main.init({
+			node: document.getElementById('myapp'),
+			flags: xsrfToken
+		});
+	</script>
+</body>
+
+</html>
+EOF;
     })->where('any', '.*');
