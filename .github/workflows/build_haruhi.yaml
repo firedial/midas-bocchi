@@ -47,6 +47,8 @@ jobs:
     needs: nagisa
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: nagisa_fix
       - name: download nagisa build
         uses: actions/download-artifact@v4
         with:
