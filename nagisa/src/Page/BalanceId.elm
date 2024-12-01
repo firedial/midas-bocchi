@@ -3,7 +3,7 @@ module Page.BalanceId exposing (Model, Msg, init, update, view)
 import Browser.Navigation as Navigation
 import Html
 import Html.Attributes as Attributes
-import Html.Events exposing (onClick, onInput)
+import Html.Events exposing (onCheck, onClick, onInput)
 import List
 import Maybe
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
@@ -21,6 +21,12 @@ type alias Model =
     , placeElements : AttributeElementEntity.AttributeElements
     , xsrfToken : String
     , id : Maybe Int
+    , isRemainAmount : Bool
+    , isRemainItem : Bool
+    , isRemainKind : Bool
+    , isRemainPurpose : Bool
+    , isRemainPlace : Bool
+    , isRemainDate : Bool
     , enableInputDeleteString : Bool
     , deleteString : String
     , key : Navigation.Key
@@ -52,6 +58,12 @@ type Msg
     | Delete Int
     | InputDeleteString String
     | ModifiedResult (Result Request.Error ())
+    | CheckRemainAmount Bool
+    | CheckRemainItem Bool
+    | CheckRemainKind Bool
+    | CheckRemainPurpose Bool
+    | CheckRemainPlace Bool
+    | CheckRemainDate Bool
 
 
 init : String -> Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
@@ -70,6 +82,12 @@ init xsrfToken key id =
         []
         xsrfToken
         id
+        False
+        False
+        False
+        False
+        False
+        False
         False
         ""
         key
@@ -217,13 +235,76 @@ update msg model =
         ModifiedResult result ->
             case result of
                 Ok _ ->
-                    ( model, Navigation.pushUrl model.key (Route.toPath Route.BalanceTable) )
+                    case model.id of
+                        Nothing ->
+                            let
+                                stringBalance =
+                                    StringBalance
+                                        (if model.isRemainAmount then
+                                            model.balance.amount
+
+                                         else
+                                            ""
+                                        )
+                                        (if model.isRemainItem then
+                                            model.balance.item
+
+                                         else
+                                            ""
+                                        )
+                                        (if model.isRemainKind then
+                                            model.balance.kindElementId
+
+                                         else
+                                            ""
+                                        )
+                                        (if model.isRemainPurpose then
+                                            model.balance.purposeElementId
+
+                                         else
+                                            ""
+                                        )
+                                        (if model.isRemainPlace then
+                                            model.balance.placeElementId
+
+                                         else
+                                            ""
+                                        )
+                                        (if model.isRemainDate then
+                                            model.balance.date
+
+                                         else
+                                            ""
+                                        )
+                            in
+                            ( { model | errorMessage = Just "OK", balance = stringBalance }, Cmd.none )
+
+                        _ ->
+                            ( model, Navigation.pushUrl model.key (Route.toPath Route.BalanceTable) )
 
                 Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
 
                 Err (Request.RequestError message) ->
                     ( { model | errorMessage = Just message }, Cmd.none )
+
+        CheckRemainAmount bool ->
+            ( { model | isRemainAmount = bool }, Cmd.none )
+
+        CheckRemainItem bool ->
+            ( { model | isRemainItem = bool }, Cmd.none )
+
+        CheckRemainKind bool ->
+            ( { model | isRemainKind = bool }, Cmd.none )
+
+        CheckRemainPurpose bool ->
+            ( { model | isRemainPurpose = bool }, Cmd.none )
+
+        CheckRemainPlace bool ->
+            ( { model | isRemainPlace = bool }, Cmd.none )
+
+        CheckRemainDate bool ->
+            ( { model | isRemainDate = bool }, Cmd.none )
 
 
 view : Model -> Html.Html Msg
@@ -240,6 +321,15 @@ view model =
                 , Html.th [] [ Html.text "予算" ]
                 , Html.th [] [ Html.text "場所" ]
                 , Html.th [] [ Html.text "日付" ]
+                ]
+            , Html.tr []
+                [ Html.th [] []
+                , Html.th [] [ Html.input [ Attributes.type_ "checkbox", Attributes.checked model.isRemainAmount, onCheck CheckRemainAmount ] [] ]
+                , Html.th [] [ Html.input [ Attributes.type_ "checkbox", Attributes.checked model.isRemainItem, onCheck CheckRemainItem ] [] ]
+                , Html.th [] [ Html.input [ Attributes.type_ "checkbox", Attributes.checked model.isRemainKind, onCheck CheckRemainKind ] [] ]
+                , Html.th [] [ Html.input [ Attributes.type_ "checkbox", Attributes.checked model.isRemainPurpose, onCheck CheckRemainPurpose ] [] ]
+                , Html.th [] [ Html.input [ Attributes.type_ "checkbox", Attributes.checked model.isRemainPlace, onCheck CheckRemainPlace ] [] ]
+                , Html.th [] [ Html.input [ Attributes.type_ "checkbox", Attributes.checked model.isRemainDate, onCheck CheckRemainDate ] [] ]
                 ]
             , Html.tr []
                 [ Html.td []

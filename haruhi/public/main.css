@@ -7,6 +7,10 @@
     --color-secondary: #fffbec;
 }
 
+input[type="checkbox"] {
+    transform: scale(2);
+}
+
 /* header start */
 
 header {
