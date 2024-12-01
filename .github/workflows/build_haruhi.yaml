@@ -44,7 +44,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: nagisa
     steps:
       - uses: actions/checkout@v4
       - name: download nagisa build
