@@ -404,7 +404,7 @@ goTo maybeRoute model =
         Just Route.PlaceMoveCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Purpose Nothing
+                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Place Nothing
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -422,7 +422,7 @@ goTo maybeRoute model =
         Just (Route.PlaceMoveId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Purpose (Just id)
+                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Place (Just id)
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
