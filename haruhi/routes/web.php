@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/{any}', function() {
-        $env = match (config('APP_ENV')) {
+        $env = match (env('APP_ENV')) {
             'production' => 'prod.css',
             'staging' => 'stag.css',
             default => 'dev.css',
