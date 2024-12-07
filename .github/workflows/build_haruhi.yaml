@@ -18,7 +18,7 @@ jobs:
           curl -H "Content-Type: application/json" \
           -X POST \
           -d '{
-            "content": "[${{ inputs.name }}] build start"
+            "content": "[haruhi] build start"
           }' \
           ${{ secrets.DISCORD_WEBHOOK_URL }}
       - uses: actions/checkout@v4
@@ -44,9 +44,11 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: nagisa
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: nagisa_fix
       - name: download nagisa build
         uses: actions/download-artifact@v4
         with:
@@ -76,7 +78,7 @@ jobs:
           curl -H "Content-Type: application/json" \
           -X POST \
           -d '{
-            "content": "[${{ inputs.name }}] build successed"
+            "content": "[haruhi] build successed"
           }' \
           ${{ secrets.DISCORD_WEBHOOK_URL }}
       - name: Notify Discord (fail)
@@ -85,6 +87,6 @@ jobs:
           curl -H "Content-Type: application/json" \
           -X POST \
           -d '{
-            "content": "[${{ inputs.name }}] build failed"
+            "content": "[haruhi] build failed"
           }' \
           ${{ secrets.DISCORD_WEBHOOK_URL }}

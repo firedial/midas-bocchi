@@ -28,6 +28,7 @@ type Route
     | Bonus
     | Monthly
     | Login
+    | Logout
 
 
 parse : Url -> Maybe Route
@@ -61,6 +62,7 @@ routes =
         , Parser.map Bonus (Parser.s "bonus")
         , Parser.map Monthly (Parser.s "monthly")
         , Parser.map Login (Parser.s "login")
+        , Parser.map Logout (Parser.s "logout")
         ]
 
 
@@ -135,3 +137,6 @@ toPath route =
 
         Login ->
             "/login"
+
+        Logout ->
+            "/logout"

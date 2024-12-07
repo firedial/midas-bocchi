@@ -1,9 +1,9 @@
-module Page.Login exposing (Model, Msg, init, update, view)
+module Page.Logout exposing (Model, Msg, init, update, view)
 
 import Browser.Navigation as Navigation
 import Html
 import Html.Attributes as Attributes
-import Html.Events exposing (onClick, onInput)
+import Html.Events exposing (onClick)
 import Request.Request as Request
 import Route
 
@@ -12,36 +12,26 @@ type alias Model =
     { xsrfToken : String
     , errorMessage : Maybe String
     , key : Navigation.Key
-    , email : String
-    , password : String
     }
 
 
 type Msg
-    = InputEmail String
-    | InputPassword String
-    | Login
-    | PostLogin (Result Request.Error ())
+    = Logout
+    | PostLogout (Result Request.Error ())
 
 
 init : String -> Navigation.Key -> ( Model, Cmd Msg )
 init xsrfToken key =
-    ( Model xsrfToken Nothing key "" "", Cmd.none )
+    ( Model xsrfToken Nothing key, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        InputEmail email ->
-            ( { model | email = email }, Cmd.none )
+        Logout ->
+            ( model, Request.postLogout model.xsrfToken PostLogout )
 
-        InputPassword password ->
-            ( { model | password = password }, Cmd.none )
-
-        Login ->
-            ( model, Request.postLogin model.xsrfToken model.email model.password PostLogin )
-
-        PostLogin result ->
+        PostLogout result ->
             case result of
                 Ok _ ->
                     ( model, Navigation.pushUrl model.key (Route.toPath Route.Top) )
@@ -57,7 +47,5 @@ view : Model -> Html.Html Msg
 view model =
     Html.div []
         [ Html.text (model.errorMessage |> Maybe.withDefault "")
-        , Html.input [ Attributes.type_ "text", Attributes.value model.email, onInput InputEmail ] []
-        , Html.input [ Attributes.type_ "password", Attributes.value model.password, onInput InputPassword ] []
-        , Html.button [ Attributes.class "edit-button", onClick Login ] [ Html.text "ログイン" ]
+        , Html.button [ Attributes.class "edit-button", onClick Logout ] [ Html.text "ログアウト" ]
         ]

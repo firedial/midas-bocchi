@@ -4,7 +4,6 @@ import Browser
 import Browser.Navigation as Navigation
 import Html
 import Html.Attributes as Attributes
-import Html.Events
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Page.BalanceId
@@ -13,12 +12,12 @@ import Page.Bonus
 import Page.ElementId
 import Page.ElementTable
 import Page.Login
+import Page.Logout
 import Page.Monthly
 import Page.MoveId
 import Page.MoveTable
 import Page.Salary
 import Page.Top
-import Request.Request as Request
 import Route
 import Url
 
@@ -48,6 +47,7 @@ type Page
     | Bonus Page.Bonus.Model
     | Monthly Page.Monthly.Model
     | Login Page.Login.Model
+    | Logout Page.Logout.Model
 
 
 type alias Model =
@@ -76,8 +76,7 @@ type Msg
     | BonusMsg Page.Bonus.Msg
     | MonthlyMsg Page.Monthly.Msg
     | LoginMsg Page.Login.Msg
-    | Logout
-    | LogoutResult (Result Request.Error ())
+    | LogoutMsg Page.Logout.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -248,13 +247,16 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        Logout ->
-            ( model, Request.postLogout model.xsrfToken LogoutResult )
-
-        LogoutResult result ->
-            case result of
-                Ok _ ->
-                    ( model, Navigation.pushUrl model.key (Route.toPath Route.Login) )
+        LogoutMsg pageMsg ->
+            case model.page of
+                Logout pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.Logout.update pageMsg pageModel
+                    in
+                    ( { model | page = Logout newModel }
+                    , Cmd.map LogoutMsg newCmd
+                    )
 
                 _ ->
                     ( model, Cmd.none )
@@ -270,12 +272,8 @@ view model =
                 [ Html.ul []
                     [ Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.Top) ] [ Html.text "top" ] ]
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.BalanceTable) ] [ Html.text "balance" ] ]
-                    , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.KindElementTable) ] [ Html.text "kind_element" ] ]
-                    , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PurposeElementTable) ] [ Html.text "purpose_element" ] ]
-                    , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PlaceElementTable) ] [ Html.text "place_element" ] ]
-                    , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PurposeMoveTable) ] [ Html.text "purpose_move" ] ]
+                    , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.BalanceCreate) ] [ Html.text "balance_create" ] ]
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PlaceMoveTable) ] [ Html.text "place_move" ] ]
-                    , Html.li [] [ Html.button [ Html.Events.onClick Logout ] [ Html.text "logout" ] ]
                     ]
                 ]
             ]
@@ -326,6 +324,10 @@ view model =
             Login pageModel ->
                 Page.Login.view pageModel
                     |> Html.map LoginMsg
+
+            Logout pageModel ->
+                Page.Logout.view pageModel
+                    |> Html.map LogoutMsg
         ]
     }
 
@@ -339,7 +341,7 @@ goTo maybeRoute model =
         Just Route.Top ->
             let
                 ( newModel, newCmd ) =
-                    Page.Top.init "top" 1
+                    Page.Top.init
             in
             ( { model | page = Top newModel }
             , Cmd.map TopMsg newCmd
@@ -402,7 +404,7 @@ goTo maybeRoute model =
         Just Route.PlaceMoveCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Purpose Nothing
+                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Place Nothing
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -420,7 +422,7 @@ goTo maybeRoute model =
         Just (Route.PlaceMoveId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Purpose (Just id)
+                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Place (Just id)
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -541,4 +543,13 @@ goTo maybeRoute model =
             in
             ( { model | page = Login newModel }
             , Cmd.map LoginMsg newCmd
+            )
+
+        Just Route.Logout ->
+            let
+                ( newModel, newCmd ) =
+                    Page.Logout.init model.xsrfToken model.key
+            in
+            ( { model | page = Logout newModel }
+            , Cmd.map LogoutMsg newCmd
             )

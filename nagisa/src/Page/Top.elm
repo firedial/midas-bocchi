@@ -1,40 +1,56 @@
 module Page.Top exposing (Model, Msg, init, update, view)
 
 import Html
-import Html.Attributes
-import Http
+import Html.Attributes as Attributes
+import Route
 
 
 type alias Model =
-    { name : String
-    , count : Int
-    }
+    {}
 
 
 type Msg
-    = GetJson (Result Http.Error String)
+    = None
 
 
-init : String -> Int -> ( Model, Cmd Msg )
-init name count =
-    ( Model name count, Http.get { url = "/api/balances", expect = Http.expectString GetJson } )
+init : ( Model, Cmd Msg )
+init =
+    ( Model, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GetJson result ->
-            case result of
-                Ok response ->
-                    ( { model | name = response }, Cmd.none )
-
-                Err _ ->
-                    ( model, Cmd.none )
+        None ->
+            ( model, Cmd.none )
 
 
 view : Model -> Html.Html Msg
-view model =
+view _ =
     Html.div []
-        [ Html.text model.name
-        , Html.a [ Html.Attributes.href "/balances" ] [ Html.text "balance" ]
+        [ Html.ul [ Attributes.class "box" ]
+            [ getItem Route.Login "ログイン" "image/door-open.svg"
+            , getItem Route.BalanceTable "収支表" "image/table.svg"
+            , getItem Route.PurposeMoveTable "予算移動" "image/arrow-left-right.svg"
+            , getItem Route.PlaceMoveTable "場所移動" "image/arrow-left-right.svg"
+            , getItem Route.KindElementTable "種別" "image/layout-sidebar.svg"
+            , getItem Route.PurposeElementTable "予算" "image/layout-sidebar.svg"
+            , getItem Route.PlaceElementTable "場所" "image/layout-sidebar.svg"
+            , getItem Route.Salary "給料入力" "image/cash.svg"
+            , getItem Route.Bonus "賞与入力" "image/cash-coin.svg"
+            , getItem Route.Monthly "月々の支払入力" "image/calendar3.svg"
+            , getItem Route.Logout "ログアウト" "image/door-closed.svg"
+            ]
+        ]
+
+
+getItem : Route.Route -> String -> String -> Html.Html Msg
+getItem route text img =
+    Html.a
+        [ Attributes.href <| Route.toPath route ]
+        [ Html.li
+            [ Attributes.class "item" ]
+            [ Html.text text
+            , Html.div [] [ Html.img [ Attributes.src img ] [] ]
+            ]
         ]
