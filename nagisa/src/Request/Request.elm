@@ -9,6 +9,7 @@ module Request.Request exposing
     , getBalances
     , getMove
     , getMoves
+    , getSecret
     , postAttributeElement
     , postBalance
     , postBonus
@@ -20,6 +21,7 @@ module Request.Request exposing
     , putAttributeElement
     , putBalance
     , putMove
+    , putSecret
     )
 
 import Json.Decode as D
@@ -28,6 +30,7 @@ import Model.Enitity.AttributeCategoryEntity as AttributeCategoryEntity
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.BalanceEntity as BalanceEntity
 import Model.Enitity.MoveEntity as MoveEntity
+import Model.Enitity.SecretEntity as SecretEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Request.BaseRequest as BaseRequest
@@ -307,6 +310,33 @@ postMonthly xsrfToken houseRentAmount houseRentDate gasAmount gasDate waterAmoun
                 ]
     in
     BaseRequest.post xsrfToken "/api/monthly" encodedMonthly (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+getSecret : (Result Error SecretEntity.Secret -> msg) -> Cmd msg
+getSecret toMsg =
+    let
+        decodeSecret =
+            D.succeed SecretEntity.Secret
+                |> required "officeTransportation" D.int
+                |> required "insurance" D.int
+                |> required "houseRent" D.int
+                |> required "net" D.int
+    in
+    BaseRequest.get "/api/secret" decodeSecret (toMsg << Result.mapError mapError)
+
+
+putSecret : String -> Int -> Int -> Int -> Int -> (Result Error () -> msg) -> Cmd msg
+putSecret xsrfToken officeTransportation insurance houseRent net toMsg =
+    let
+        encodedSecret =
+            E.object
+                [ ( "officeTransportation", E.int officeTransportation )
+                , ( "insurance", E.int insurance )
+                , ( "houseRent", E.int houseRent )
+                , ( "net", E.int net )
+                ]
+    in
+    BaseRequest.put xsrfToken "/api/secret" encodedSecret (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 postLogin : String -> String -> String -> (Result Error () -> msg) -> Cmd msg
