@@ -1037,7 +1037,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  office_transportation:
+                  officeTransportation:
                     type: number
                     description: 金額
                     example: 100
@@ -1045,7 +1045,7 @@ paths:
                     type: number
                     description: 項目
                     example: 1000
-                  house_rent:
+                  houseRent:
                     type: number
                     description: 項目
                     example: 10000
@@ -1069,7 +1069,7 @@ paths:
             schema:
               type: object
               properties:
-                office_transportation:
+                officeTransportation:
                   type: number
                   description: 金額
                   example: 100
@@ -1077,7 +1077,7 @@ paths:
                   type: number
                   description: 項目
                   example: 1000
-                house_rent:
+                houseRent:
                   type: number
                   description: 項目
                   example: 10000
