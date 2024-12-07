@@ -389,14 +389,14 @@ view model =
         , Html.div []
             (case model.id of
                 Nothing ->
-                    [ Html.button [ onClick Upsert ] [ Html.text "作成" ] ]
+                    [ Html.button [ Attributes.class "edit-button", onClick Upsert ] [ Html.text "作成" ] ]
 
                 Just moveId ->
-                    [ Html.button [ onClick Upsert ] [ Html.text "保存" ]
-                    , Html.button [ onClick (Delete moveId) ] [ Html.text "削除" ]
+                    [ Html.button [ Attributes.class "edit-button", onClick Upsert ] [ Html.text "保存" ]
+                    , Html.button [ Attributes.class "delete-button", onClick (Delete moveId) ] [ Html.text "削除" ]
                     , Html.input [ Attributes.type_ "text", Attributes.value model.deleteString, onInput InputDeleteString, Attributes.hidden (not model.enableInputDeleteString) ] []
                     ]
             )
         , Html.div []
-            [ Html.button [ onClick Cancel ] [ Html.text "キャンセル" ] ]
+            [ Html.button [ Attributes.class "cancel-button", onClick Cancel ] [ Html.text "キャンセル" ] ]
         ]

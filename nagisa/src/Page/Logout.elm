@@ -2,6 +2,7 @@ module Page.Logout exposing (Model, Msg, init, update, view)
 
 import Browser.Navigation as Navigation
 import Html
+import Html.Attributes as Attributes
 import Html.Events exposing (onClick)
 import Request.Request as Request
 import Route
@@ -46,5 +47,5 @@ view : Model -> Html.Html Msg
 view model =
     Html.div []
         [ Html.text (model.errorMessage |> Maybe.withDefault "")
-        , Html.button [ onClick Logout ] [ Html.text "ログアウト" ]
+        , Html.button [ Attributes.class "edit-button", onClick Logout ] [ Html.text "ログアウト" ]
         ]

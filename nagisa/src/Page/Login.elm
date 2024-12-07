@@ -59,5 +59,5 @@ view model =
         [ Html.text (model.errorMessage |> Maybe.withDefault "")
         , Html.input [ Attributes.type_ "text", Attributes.value model.email, onInput InputEmail ] []
         , Html.input [ Attributes.type_ "password", Attributes.value model.password, onInput InputPassword ] []
-        , Html.button [ onClick Login ] [ Html.text "ログイン" ]
+        , Html.button [ Attributes.class "edit-button", onClick Login ] [ Html.text "ログイン" ]
         ]

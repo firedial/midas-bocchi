@@ -238,11 +238,11 @@ view model =
         , Html.div []
             (case model.id of
                 Nothing ->
-                    [ Html.button [ onClick Upsert ] [ Html.text "作成" ] ]
+                    [ Html.button [ Attributes.class "edit-button", onClick Upsert ] [ Html.text "作成" ] ]
 
                 Just _ ->
-                    [ Html.button [ onClick Upsert ] [ Html.text "保存" ] ]
+                    [ Html.button [ Attributes.class "edit-button",onClick Upsert ] [ Html.text "保存" ] ]
             )
         , Html.div []
-            [ Html.button [ onClick Cancel ] [ Html.text "キャンセル" ] ]
+            [ Html.button [ Attributes.class "cancel-button", onClick Cancel ] [ Html.text "キャンセル" ] ]
         ]
