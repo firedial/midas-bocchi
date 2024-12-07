@@ -16,4 +16,9 @@ class SecretDaoImpl implements SecretDao
     {
         return DB::table('s_secret')->where('id', '=', self::SECRET_ID)->update($value);
     }
+
+    public function selectSecret()
+    {
+        return DB::table('s_secret')->where('id', '=', self::SECRET_ID)->select()->get()->toArray();
+    }
 }

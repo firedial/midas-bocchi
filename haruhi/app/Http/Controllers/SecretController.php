@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 
 class SecretController extends Controller
 {
+    public function get()
+    {
+        $secretService = new SecretService();
+        return $secretService->getSecret();
+    }
+
     public function put(Request $request)
     {
         $secret = $request->only([

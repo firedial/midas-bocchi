@@ -18,6 +18,11 @@ class SecretService
         $this->secretDao = $secretDao ?: new SecretDaoImpl();
     }
 
+    public function getSecret(): array
+    {
+        return json_decode($this->secretDao->selectSecret()[0]->value, true);
+    }
+
     public function registerSecret(array $secret): bool
     {
         \DB::beginTransaction();
