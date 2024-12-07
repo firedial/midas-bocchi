@@ -1024,6 +1024,76 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
+  "/secret":
+    get:
+      summary: "秘匿情報取得"
+      description: "秘匿情報を取得する"
+      tags: ["secret"]
+      responses:
+        "200":
+          description: "Success operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  office_transportation:
+                    type: number
+                    description: 金額
+                    example: 100
+                  insurance:
+                    type: number
+                    description: 項目
+                    example: 1000
+                  house_rent:
+                    type: number
+                    description: 項目
+                    example: 10000
+                  net:
+                    type: number
+                    description: 項目
+                    example: 100000
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    put:
+      summary: "秘匿情報更新"
+      description: "秘匿情報を更新する"
+      tags: ["secret"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                office_transportation:
+                  type: number
+                  description: 金額
+                  example: 100
+                insurance:
+                  type: number
+                  description: 項目
+                  example: 1000
+                house_rent:
+                  type: number
+                  description: 項目
+                  example: 10000
+                net:
+                  type: number
+                  description: 項目
+                  example: 100000
+
+      responses:
+        "200":
+          $ref: "#/components/responses/Ok"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
 components:
   parameters:
     attributeName:
