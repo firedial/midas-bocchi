@@ -43,4 +43,6 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/bonus', 'App\Http\Controllers\BonusController@store');
 
     Route::post('/monthly', 'App\Http\Controllers\MonthlyController@store');
+
+    Route::put('/secret', 'App\Http\Controllers\SecretController@put');
 });
