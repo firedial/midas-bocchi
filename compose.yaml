@@ -88,6 +88,11 @@ services:
          - ./rikka:/app
         privileged: true
         tty: true
+    tamako:
+        build: ./tamako
+        volumes:
+         - ./tamako:/usr/src/myapp
+        tty: true
 volumes:
     db:
 
