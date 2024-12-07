@@ -73,14 +73,16 @@ header nav ul li a:hover {
 
 body {
     background: var(--color-base);
+    margin: 0;
 }
 
 table {
     border-collapse: collapse;
+    margin: 0 5%;
 }
 
 th {
-    background: #edddc5;
+    background: var(--color-base);
     padding: 8px;
     border-bottom: 1px solid #000000;
 }
@@ -91,29 +93,15 @@ td {
 }
 
 tr {
-    background: #fffbec;
+    background: var(--color-base);
 }
 
 table.balance {
-    width: 100%;
-}
-
-table.balance th:nth-child(1) {
-    width: 5%;
-}
-
-table.balance th:nth-child(2) {
-    width: 5%;
+    width: 90%;
 }
 
 table.balance th:nth-child(3) {
-    width: 25%;
-}
-
-table.balance th:nth-child(4),
-table.balance th:nth-child(5),
-table.balance th:nth-child(6) {
-    width: 15%;
+    width: 200px;
 }
 
 table tr:hover {
@@ -121,10 +109,15 @@ table tr:hover {
     background: #fce7db;
 }
 
+table td {
+    padding: 10px;
+}
+
 a {
     text-decoration: none;
+    color: #000000;
 }
 
 a:visited {
-    color: inherit;
+    color: #000000;
 }
