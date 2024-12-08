@@ -1,4 +1,4 @@
-module Page.Transportation exposing (Model, Msg, init, update, view)
+module Page.CheckPlaceSum exposing (Model, Msg, init, update, view)
 
 import Browser.Navigation as Navigation
 import Html
@@ -10,7 +10,7 @@ import Route
 
 
 type alias Model =
-    { date : String
+    { checkPlaeSum : StringCheckPlaceSum
     , isDisabledEditButton : Bool
     , xsrfToken : String
     , key : Navigation.Key
@@ -18,8 +18,17 @@ type alias Model =
     }
 
 
+type alias StringCheckPlaceSum =
+    { sum : String
+    , placeElementId : String
+    , date : String
+    }
+
+
 type Msg
-    = InputDate String
+    = InputSum String
+    | InputPlaceElementId String
+    | InputDate String
     | Insert
     | Cancel
     | ModifiedResult (Result Request.Error ())
@@ -28,7 +37,7 @@ type Msg
 init : String -> Navigation.Key -> ( Model, Cmd Msg )
 init xsrfToken key =
     ( Model
-        ""
+        (StringCheckPlaceSum "" "" "")
         False
         xsrfToken
         key
@@ -40,14 +49,34 @@ init xsrfToken key =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        InputDate value ->
-            ( { model | date = value }, Cmd.none )
+        InputSum sum ->
+            let
+                newCheckPlaceSum =
+                    model.checkPlaeSum
+            in
+            ( { model | checkPlaeSum = { newCheckPlaceSum | sum = sum } }, Cmd.none )
+
+        InputPlaceElementId placeElementId ->
+            let
+                newCheckPlaceSum =
+                    model.checkPlaeSum
+            in
+            ( { model | checkPlaeSum = { newCheckPlaceSum | placeElementId = placeElementId } }, Cmd.none )
+
+        InputDate date ->
+            let
+                newCheckPlaceSum =
+                    model.checkPlaeSum
+            in
+            ( { model | checkPlaeSum = { newCheckPlaceSum | date = date } }, Cmd.none )
 
         Insert ->
-            ( { model | isDisabledEditButton = True }
-            , Request.postTransportation
+            ( { model | isDisabledEditButton = True, errorMessage = Nothing }
+            , Request.postCheckPlaceSum
                 model.xsrfToken
-                model.date
+                (String.toInt model.checkPlaeSum.sum |> Maybe.withDefault 0)
+                (String.toInt model.checkPlaeSum.placeElementId |> Maybe.withDefault 0)
+                model.checkPlaeSum.date
                 ModifiedResult
             )
 
@@ -73,10 +102,14 @@ view model =
         , Html.table [ Attributes.class "balance" ]
             [ Html.tr
                 []
-                [ Html.th [] [ Html.text "日付" ]
+                [ Html.th [] [ Html.text "金額" ]
+                , Html.th [] [ Html.text "場所ID" ]
+                , Html.th [] [ Html.text "日付" ]
                 ]
             , Html.tr []
-                [ Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.date, onInput InputDate ] [] ]
+                [ Html.td [] [ Html.input [ Attributes.type_ "input", Attributes.value model.checkPlaeSum.sum, onInput InputSum ] [] ]
+                , Html.td [] [ Html.input [ Attributes.type_ "input", Attributes.value model.checkPlaeSum.placeElementId, onInput InputPlaceElementId ] [] ]
+                , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.checkPlaeSum.date, onInput InputDate ] [] ]
                 ]
             , Html.div []
                 [ Html.button [ Attributes.class "edit-button", onClick Insert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "保存" ] ]

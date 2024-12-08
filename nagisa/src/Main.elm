@@ -9,6 +9,7 @@ import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Page.BalanceId
 import Page.BalanceTable
 import Page.Bonus
+import Page.CheckPlaceSum
 import Page.ElementId
 import Page.ElementTable
 import Page.Login
@@ -49,6 +50,7 @@ type Page
     | Bonus Page.Bonus.Model
     | Monthly Page.Monthly.Model
     | Transportation Page.Transportation.Model
+    | CheckPlaceSum Page.CheckPlaceSum.Model
     | Secret Page.Secret.Model
     | Login Page.Login.Model
     | Logout Page.Logout.Model
@@ -80,6 +82,7 @@ type Msg
     | BonusMsg Page.Bonus.Msg
     | MonthlyMsg Page.Monthly.Msg
     | TransportationMsg Page.Transportation.Msg
+    | CheckPlaceSumMsg Page.CheckPlaceSum.Msg
     | SecretMsg Page.Secret.Msg
     | LoginMsg Page.Login.Msg
     | LogoutMsg Page.Logout.Msg
@@ -253,6 +256,20 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        CheckPlaceSumMsg pageMsg ->
+            case model.page of
+                CheckPlaceSum pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.CheckPlaceSum.update pageMsg pageModel
+                    in
+                    ( { model | page = CheckPlaceSum newModel }
+                    , Cmd.map CheckPlaceSumMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
         SecretMsg pageMsg ->
             case model.page of
                 Secret pageModel ->
@@ -358,6 +375,10 @@ view model =
             Transportation pageModel ->
                 Page.Transportation.view pageModel
                     |> Html.map TransportationMsg
+
+            CheckPlaceSum pageModel ->
+                Page.CheckPlaceSum.view pageModel
+                    |> Html.map CheckPlaceSumMsg
 
             Secret pageModel ->
                 Page.Secret.view pageModel
@@ -585,6 +606,15 @@ goTo maybeRoute model =
             in
             ( { model | page = Transportation newModel }
             , Cmd.map TransportationMsg newCmd
+            )
+
+        Just Route.CheckPlaceSum ->
+            let
+                ( newModel, newCmd ) =
+                    Page.CheckPlaceSum.init model.xsrfToken model.key
+            in
+            ( { model | page = CheckPlaceSum newModel }
+            , Cmd.map CheckPlaceSumMsg newCmd
             )
 
         Just Route.Secret ->
