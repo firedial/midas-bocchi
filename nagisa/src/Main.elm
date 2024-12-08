@@ -19,6 +19,7 @@ import Page.MoveTable
 import Page.Salary
 import Page.Secret
 import Page.Top
+import Page.Transportation
 import Route
 import Url
 
@@ -47,6 +48,7 @@ type Page
     | Salary Page.Salary.Model
     | Bonus Page.Bonus.Model
     | Monthly Page.Monthly.Model
+    | Transportation Page.Transportation.Model
     | Secret Page.Secret.Model
     | Login Page.Login.Model
     | Logout Page.Logout.Model
@@ -77,6 +79,7 @@ type Msg
     | SalaryMsg Page.Salary.Msg
     | BonusMsg Page.Bonus.Msg
     | MonthlyMsg Page.Monthly.Msg
+    | TransportationMsg Page.Transportation.Msg
     | SecretMsg Page.Secret.Msg
     | LoginMsg Page.Login.Msg
     | LogoutMsg Page.Logout.Msg
@@ -236,6 +239,20 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        TransportationMsg pageMsg ->
+            case model.page of
+                Transportation pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.Transportation.update pageMsg pageModel
+                    in
+                    ( { model | page = Transportation newModel }
+                    , Cmd.map TransportationMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
         SecretMsg pageMsg ->
             case model.page of
                 Secret pageModel ->
@@ -337,6 +354,10 @@ view model =
             Monthly pageModel ->
                 Page.Monthly.view pageModel
                     |> Html.map MonthlyMsg
+
+            Transportation pageModel ->
+                Page.Transportation.view pageModel
+                    |> Html.map TransportationMsg
 
             Secret pageModel ->
                 Page.Secret.view pageModel
@@ -555,6 +576,15 @@ goTo maybeRoute model =
             in
             ( { model | page = Monthly newModel }
             , Cmd.map MonthlyMsg newCmd
+            )
+
+        Just Route.Transportation ->
+            let
+                ( newModel, newCmd ) =
+                    Page.Transportation.init model.xsrfToken model.key
+            in
+            ( { model | page = Transportation newModel }
+            , Cmd.map TransportationMsg newCmd
             )
 
         Just Route.Secret ->
