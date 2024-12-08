@@ -27,6 +27,7 @@ type Route
     | Salary
     | Bonus
     | Monthly
+    | Transportation
     | Secret
     | Login
     | Logout
@@ -62,6 +63,7 @@ routes =
         , Parser.map Salary (Parser.s "salary")
         , Parser.map Bonus (Parser.s "bonus")
         , Parser.map Monthly (Parser.s "monthly")
+        , Parser.map Transportation (Parser.s "transportation")
         , Parser.map Secret (Parser.s "secret")
         , Parser.map Login (Parser.s "login")
         , Parser.map Logout (Parser.s "logout")
@@ -136,6 +138,9 @@ toPath route =
 
         Monthly ->
             "/monthly"
+
+        Transportation ->
+            "/transportation"
 
         Secret ->
             "/secret"
