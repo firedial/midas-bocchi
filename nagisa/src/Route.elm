@@ -28,6 +28,7 @@ type Route
     | Bonus
     | Monthly
     | Transportation
+    | CheckPlaceSum
     | Secret
     | Login
     | Logout
@@ -64,6 +65,7 @@ routes =
         , Parser.map Bonus (Parser.s "bonus")
         , Parser.map Monthly (Parser.s "monthly")
         , Parser.map Transportation (Parser.s "transportation")
+        , Parser.map CheckPlaceSum (Parser.s "check_place_sum")
         , Parser.map Secret (Parser.s "secret")
         , Parser.map Login (Parser.s "login")
         , Parser.map Logout (Parser.s "logout")
@@ -141,6 +143,9 @@ toPath route =
 
         Transportation ->
             "/transportation"
+
+        CheckPlaceSum ->
+            "/check_place_sum"
 
         Secret ->
             "/secret"

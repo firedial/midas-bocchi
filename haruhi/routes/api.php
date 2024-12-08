@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::post('/monthly', 'App\Http\Controllers\MonthlyController@store');
     Route::post('/transportation', 'App\Http\Controllers\TransportationController@post');
+    Route::post('/check_place_sum', 'App\Http\Controllers\CheckPlaceSumController@post');
 
     Route::get('/secret', 'App\Http\Controllers\SecretController@get');
     Route::put('/secret', 'App\Http\Controllers\SecretController@put');

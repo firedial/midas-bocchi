@@ -1048,6 +1048,38 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
+  "/check_place_sum":
+    post:
+      summary: "金額チェック登録"
+      description: "金額チェックしたことを登録する"
+      tags: ["others"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sum:
+                  type: integer
+                  description: 金額
+                  example: 134
+                placeElementId:
+                  type: integer
+                  description: 場所要素ID
+                  example: 13
+                date:
+                  type: string
+                  description: 確認日
+                  example: "2024-02-02"
+      responses:
+        "200":
+          $ref: "#/components/responses/Ok"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
   "/secret":
     get:
       summary: "秘匿情報取得"

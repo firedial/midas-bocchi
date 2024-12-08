@@ -7,7 +7,6 @@ import Html.Events exposing (onClick, onInput)
 import Maybe
 import Request.Request as Request
 import Route
-import String
 
 
 type alias Model =

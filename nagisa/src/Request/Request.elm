@@ -13,6 +13,7 @@ module Request.Request exposing
     , postAttributeElement
     , postBalance
     , postBonus
+    , postCheckPlaceSum
     , postLogin
     , postLogout
     , postMonthly
@@ -322,6 +323,19 @@ postTransportation xsrfToken date toMsg =
                 ]
     in
     BaseRequest.post xsrfToken "/api/transportation" encodedTransportation (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+postCheckPlaceSum : String -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
+postCheckPlaceSum xsrfToken sum placeElementId date toMsg =
+    let
+        encodedCheckPlaceSum =
+            E.object
+                [ ( "sum", E.string <| String.fromInt sum )
+                , ( "placeElementId", E.string <| String.fromInt placeElementId )
+                , ( "date", E.string date )
+                ]
+    in
+    BaseRequest.post xsrfToken "/api/check_place_sum" encodedCheckPlaceSum (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getSecret : (Result Error SecretEntity.Secret -> msg) -> Cmd msg
