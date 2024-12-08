@@ -1029,6 +1029,17 @@ paths:
       summary: "会社交通費登録"
       description: "会社交通費を登録する"
       tags: ["others"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  description: 支払日
+                  example: "2024-02-02"
       responses:
         "200":
           $ref: "#/components/responses/Ok"
