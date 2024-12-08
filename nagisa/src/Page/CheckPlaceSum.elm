@@ -5,12 +5,15 @@ import Html
 import Html.Attributes as Attributes
 import Html.Events exposing (onClick, onInput)
 import Maybe
+import Model.Enitity.AttributeElementEntity as AttributeElementEntity
+import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Request.Request as Request
 import Route
 
 
 type alias Model =
     { checkPlaeSum : StringCheckPlaceSum
+    , attributeElements : AttributeElementEntity.AttributeElements
     , isDisabledEditButton : Bool
     , xsrfToken : String
     , key : Navigation.Key
@@ -29,6 +32,7 @@ type Msg
     = InputSum String
     | InputPlaceElementId String
     | InputDate String
+    | GetAttributeElements (Result Request.Error AttributeElementEntity.AttributeElements)
     | Insert
     | Cancel
     | ModifiedResult (Result Request.Error ())
@@ -38,11 +42,12 @@ init : String -> Navigation.Key -> ( Model, Cmd Msg )
 init xsrfToken key =
     ( Model
         (StringCheckPlaceSum "" "" "")
+        []
         False
         xsrfToken
         key
         Nothing
-    , Cmd.none
+    , Request.getAttributeElements AttributeValueObject.Place GetAttributeElements
     )
 
 
@@ -69,6 +74,17 @@ update msg model =
                     model.checkPlaeSum
             in
             ( { model | checkPlaeSum = { newCheckPlaceSum | date = date } }, Cmd.none )
+
+        GetAttributeElements result ->
+            case result of
+                Ok response ->
+                    ( { model | attributeElements = response }, Cmd.none )
+
+                Err (Request.DecodeError message) ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
+
+                Err (Request.RequestError message) ->
+                    ( { model | errorMessage = Just message }, Cmd.none )
 
         Insert ->
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }
@@ -108,7 +124,19 @@ view model =
                 ]
             , Html.tr []
                 [ Html.td [] [ Html.input [ Attributes.type_ "input", Attributes.value model.checkPlaeSum.sum, onInput InputSum ] [] ]
-                , Html.td [] [ Html.input [ Attributes.type_ "input", Attributes.value model.checkPlaeSum.placeElementId, onInput InputPlaceElementId ] [] ]
+                , Html.td []
+                    [ Html.select [ onInput InputPlaceElementId, Attributes.value model.checkPlaeSum.placeElementId ]
+                        (List.map
+                            (\attributeElement ->
+                                Html.option
+                                    [ Attributes.value <| String.fromInt attributeElement.id
+                                    , Attributes.selected (String.fromInt attributeElement.id == model.checkPlaeSum.placeElementId)
+                                    ]
+                                    [ Html.text <| attributeElement.description ]
+                            )
+                            model.attributeElements
+                        )
+                    ]
                 , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.checkPlaeSum.date, onInput InputDate ] [] ]
                 ]
             , Html.div []
