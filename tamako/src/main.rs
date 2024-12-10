@@ -1,23 +1,35 @@
-use curl::easy::Easy;
-use rustc_serialize::json::Json;
+use reqwest::blocking::Client;
+use serde_json::json;
+use serde::Deserialize;
 
-fn main() {
-    get("http://haruhi/api/balances");
+#[derive(Deserialize)]
+struct Ip {
+    message: String,
 }
 
-fn get(url: &str) -> () {
-    let mut data = Vec::new();
-    let mut handle = Easy::new();
-    handle.url(url).unwrap();
-    {
-        let mut transfer = handle.transfer();
-        transfer.write_function(|new_data| {
-            data.extend_from_slice(new_data);
-            Ok(new_data.len())
-        }).unwrap();
-        transfer.perform().unwrap();
-    }
-    let r: String = String::from_utf8(data).unwrap();
-    println!("{}", r);
-    println!("{}", Json::from_str(&r).unwrap().find("message").unwrap());
+fn main() {
+    let client = Client::new();
+    let res = fetch_todo(client).unwrap();
+    // println!("{:?}", res.text())
+    // println!("{:?}", res.json::<Ip>())
+    let ip = res.json::<Ip>().unwrap();
+    println!("{:?}", ip.message);
+}
+
+fn fetch_todo(client: Client) -> Result<reqwest::blocking::Response, reqwest::Error> {
+    let url = "http://haruhi/api/balances/1";
+
+    client.get(url).send()
+}
+
+fn create_todo(client: Client) -> Result<reqwest::blocking::Response, reqwest::Error> {
+    let url = "http://haruhi/api/balances";
+
+    let body = json!({
+        "title": "foo",
+        "body": "bar",
+        "userId": 1
+    });
+
+    client.post(url).json(&body).send()
 }
