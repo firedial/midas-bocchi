@@ -16,6 +16,19 @@ test('収支表取得', function () {
     $response = $this->actingAs($user)->get("/api/balances/");
     $response->assertStatus(200);
     expect($response->json())->toHaveCount(199);
+
+    expect($response->json()[0])
+        ->id->toBe(1)
+        ->amount->toBe(4)
+        ->item->toBe("item2")
+        ->kind_element_id->toBe(2)
+        ->purpose_element_id->toBe(2)
+        ->place_element_id->toBe(2)
+        ->date->toBe("2021-08-12")
+        ->kind_element_description->toBe("kind_e_desc2")
+        ->purpose_element_description->toBe("purpose_e_desc2")
+        ->place_element_description->toBe("place_e_desc2");
+
 });
 
 test('収支表取得(件数指定)', function () {
