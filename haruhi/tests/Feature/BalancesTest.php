@@ -94,6 +94,7 @@ test('収支登録', function () {
     $this->seed();
     $user = User::factory()->create();
 
+    // 支出
     $response = $this->actingAs($user)->post(
         "/api/balances/",
         [
@@ -108,6 +109,17 @@ test('収支登録', function () {
     $response->assertStatus(200);
     // @todo 返り値についてのテスト
 
+    // 登録したデータの確認
+    $response = $this->actingAs($user)->get("/api/balances/?orderby=desc&limit=1");
+    expect($response->json()[0])
+        ->amount->toBe(-500)
+        ->item->toBe("うどん")
+        ->kind_element_id->toBe(2)
+        ->purpose_element_id->toBe(3)
+        ->place_element_id->toBe(4)
+        ->date->toBe("2024-10-23");
+
+    // 収入
     $response = $this->actingAs($user)->post(
         "/api/balances/",
         [
@@ -490,6 +502,7 @@ test('収支更新', function () {
     $this->seed();
     $user = User::factory()->create();
 
+    // 支出
     $response = $this->actingAs($user)->put(
         "/api/balances/10/",
         [
@@ -504,6 +517,18 @@ test('収支更新', function () {
     $response->assertStatus(200);
     // @todo 返り値についてのテスト
 
+    // 更新したデータの確認
+    // @todo コメントアウト外す
+    // $response = $this->actingAs($user)->get("/api/balances/10/");
+    // expect($response->json())
+    //     ->amount->toBe(-500)
+    //     ->item->toBe("うどん")
+    //     ->kind_element_id->toBe(2)
+    //     ->purpose_element_id->toBe(3)
+    //     ->place_element_id->toBe(4)
+    //     ->date->toBe("2024-10-23");
+
+    // 収入
     $response = $this->actingAs($user)->put(
         "/api/balances/10/",
         [
@@ -847,4 +872,39 @@ test('収支更新(日付不正)', function () {
     );
     $response->assertStatus(400);
     expect($response->json())->message->toBeString();
+});
+
+test('収支更新(存在しない)', function () {
+    $this->seed();
+    $user = User::factory()->create();
+
+    // そもそもない
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10000/",
+        [
+            "amount" => 500,
+            "item" => "収入",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo 404 にする
+    $response->assertStatus(200);
+
+    // 移動レコード
+    $response = $this->actingAs($user)->put(
+        "/api/balances/201/",
+        [
+            "amount" => 500,
+            "item" => "収入",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo コメントアウト外す
+    // $response->assertStatus(404);
 });
