@@ -8,7 +8,7 @@ use App\Exceptions\InvalidParameterException;
 
 class AttributeElementController extends Controller
 {
-    public function index(Request $request, String $attributeName)
+    public function index(Request $request, string $attributeName)
     {
         if (!in_array($attributeName, ['kind_element', 'purpose_element', 'place_element'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
@@ -20,7 +20,7 @@ class AttributeElementController extends Controller
         return $attributeElementService->getAttributeElements(['attributeName' => $attributeName, 'isOnlySelectable' => $isOnlySelectable]);
     }
 
-    public function show(String $attributeName, string $elementId)
+    public function show(string $attributeName, string $elementId)
     {
         if (!in_array($attributeName, ['kind_element', 'purpose_element', 'place_element'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
@@ -31,10 +31,10 @@ class AttributeElementController extends Controller
         }
 
         $attributeElementService = new AttributeElementService();
-        return $attributeElementService->getAttributeElementByElementId(['attributeName' => $attributeName, 'elementId' => $elementId]);
+        return $attributeElementService->getAttributeElementByElementId(['attributeName' => $attributeName, 'elementId' => $elementId])[0];
     }
 
-    public function store(Request $request, String $attributeName)
+    public function store(Request $request, string $attributeName)
     {
         if (!in_array($attributeName, ['kind_element', 'purpose_element', 'place_element'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
@@ -74,7 +74,7 @@ class AttributeElementController extends Controller
         ]);
     }
 
-    public function update(Request $request, String $attributeName, int $elementId)
+    public function update(Request $request, string $attributeName, int $elementId)
     {
         if (!in_array($attributeName, ['kind_element', 'purpose_element', 'place_element'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");

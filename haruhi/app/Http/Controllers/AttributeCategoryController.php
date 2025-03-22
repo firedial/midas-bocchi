@@ -8,7 +8,7 @@ use App\Exceptions\InvalidParameterException;
 
 class AttributeCategoryController extends Controller
 {
-    public function index(String $attributeName)
+    public function index(string $attributeName)
     {
         if (!in_array($attributeName, ['kind_category', 'purpose_category', 'place_category'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
@@ -18,7 +18,7 @@ class AttributeCategoryController extends Controller
         return $attributeCategoryService->getAttributeCategories(['attributeName' => $attributeName]);
     }
 
-    public function store(Request $request, String $attributeName)
+    public function store(Request $request, string $attributeName)
     {
         if (!in_array($attributeName, ['kind_category', 'purpose_category', 'place_category'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
@@ -44,7 +44,7 @@ class AttributeCategoryController extends Controller
         ]);
     }
 
-    public function update(Request $request, String $attributeName, int $categoryId)
+    public function update(Request $request, string $attributeName, int $categoryId)
     {
         if (!in_array($attributeName, ['kind_category', 'purpose_category', 'place_category'])) {
             throw new InvalidParameterException("Wrong attribute name {$attributeName}.");

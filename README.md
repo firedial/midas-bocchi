@@ -58,9 +58,15 @@ A challenge password []:
 An optional company name []:
 ```
 
+SAN の設定ファイル作成(san.txt として保存)
+
+```
+subjectAltName = DNS:midas.home.arpa
+```
+
 サーバ証明書の作成
 ```
-$ sudo openssl x509 -days 3650 -req -signkey server.key -in server.csr -out server.crt
+$ sudo openssl x509 -days 3650 -req -signkey server.key -in server.csr -out server.crt -extfile san.txt
 ```
 
 ### イメージの作成とコンテナ作成と起動
