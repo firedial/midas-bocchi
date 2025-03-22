@@ -692,7 +692,7 @@ test('収支更新(要素不正)', function () {
     expect($response->json())->message->toBeString();
 
     // 外部キー不正
-    $response1 = $this->actingAs($user)->put(
+    $response = $this->actingAs($user)->put(
         "/api/balances/10/",
         [
             "amount" => -500,
@@ -704,7 +704,7 @@ test('収支更新(要素不正)', function () {
         ]
     );
     // @todo 400 に変える
-    $response1->assertStatus(200);
+    $response->assertStatus(200);
     // expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(

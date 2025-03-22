@@ -603,6 +603,8 @@ paths:
                   type: number
                   description: 優先度
                   example: 10
+                  minimum: 0
+                  maximum: 100
                 category_id:
                   type: number
                   description: 親カテゴリーID
@@ -695,6 +697,8 @@ paths:
                   type: number
                   description: 優先度
                   example: 10
+                  minimum: 0
+                  maximum: 100
                 category_id:
                   type: number
                   description: 親カテゴリーID
@@ -1158,16 +1162,16 @@ components:
       in: path
       description: >
         対象の属性
-          * `kind` - 種別
-          * `purposes` - 予算
-          * `places` - 場所
+          * `kind_element` - 種別
+          * `purposes_element` - 予算
+          * `places_element` - 場所
       schema:
         type: string
         enum:
-          - kind
-          - purposes
-          - places
-        example: places
+          - kind_element
+          - purposes_element
+          - places_element
+        example: places_element
     moveAttributeName:
       name: attributeName
       required: true
@@ -1179,7 +1183,6 @@ components:
       schema:
         type: string
         enum:
-          - kind
           - purposes
           - places
         example: places

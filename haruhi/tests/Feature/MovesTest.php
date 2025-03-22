@@ -659,6 +659,7 @@ test('移動取得(存在しない)', function () {
     $response = $this->actingAs($user)->get("/api/moves/hoge/232/");
     // @todo 400 に変える
     $response->assertStatus(500);
+    expect($response->json())->message->toBeString();
 
     // そもそもレコードにない
     $response = $this->actingAs($user)->get("/api/moves/purposes/10000/");
@@ -1465,6 +1466,7 @@ test('移動削除(存在しない)', function () {
     $response = $this->actingAs($user)->delete("/api/moves/aaa/232/");
     // @todo 400 に変える
     $response->assertStatus(500);
+    expect($response->json())->message->toBeString();
 
     // そもそもない
     $response = $this->actingAs($user)->delete("/api/moves/purposes/10000/");
