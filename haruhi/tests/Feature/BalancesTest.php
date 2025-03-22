@@ -17,6 +17,7 @@ test('収支表取得', function () {
     $response->assertStatus(200);
     expect($response->json())->toHaveCount(199);
 
+    // @todo 何が1番目かどうかという保証はない
     expect($response->json()[0])
         ->id->toBe(1)
         ->amount->toBe(4)
