@@ -452,3 +452,36 @@ test('収支登録(日付不正)', function () {
     $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 });
+
+test('収支取得', function () {
+    $this->seed();
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get("/api/balances/3/");
+    $response->assertStatus(200);
+
+    expect($response->json())
+        ->id->toBe(3)
+        ->amount->toBe(16)
+        ->item->toBe("item4")
+        ->kind_element_id->toBe(4)
+        ->purpose_element_id->toBe(4)
+        ->place_element_id->toBe(4)
+        ->date->toBe("2021-08-14")
+        ->kind_element_description->toBe("kind_e_desc4")
+        ->purpose_element_description->toBe("purpose_e_desc4")
+        ->place_element_description->toBe("place_e_desc4");
+});
+
+test('収支取得(存在しない)', function () {
+    $this->seed();
+    $user = User::factory()->create();
+
+    // そもそもレコードにない
+    $response = $this->actingAs($user)->get("/api/balances/10000/");
+    $response->assertStatus(404);
+
+    // 移動レコード
+    $response = $this->actingAs($user)->get("/api/balances/201/");
+    $response->assertStatus(404);
+});
