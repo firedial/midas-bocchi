@@ -45,40 +45,6 @@ test('属性要素表取得', function () {
         ->description->toBeString()
         ->priority->toBeInt()
         ->category_id->toBeInt();
-
-    // 優先度が0
-    $response = $this->actingAs($user)->post(
-        "/api/attribute_elements/kind_element/",
-        [
-            "name" => "aaa",
-            "description" => "説明",
-            "priority" => 0,
-            "category_id" => 2,
-        ]
-    );
-    $response->assertStatus(200);
-
-    $response = $this->actingAs($user)->post(
-        "/api/attribute_elements/purpose_element/",
-        [
-            "name" => "aaa",
-            "description" => "説明",
-            "priority" => 0,
-            "category_id" => 2,
-        ]
-    );
-    $response->assertStatus(200);
-
-    $response = $this->actingAs($user)->post(
-        "/api/attribute_elements/place_element/",
-        [
-            "name" => "aaa",
-            "description" => "説明",
-            "priority" => 0,
-            "category_id" => 2,
-        ]
-    );
-    $response->assertStatus(200);
 });
 
 test('属性要素表取得(属性名不正)', function () {
@@ -154,6 +120,40 @@ test('属性要素登録', function () {
         ->description->toBe("説明")
         ->priority->toBe(100)
         ->category_id->toBe(2);
+
+    // 優先度が0
+    $response = $this->actingAs($user)->post(
+        "/api/attribute_elements/kind_element/",
+        [
+            "name" => "aaa",
+            "description" => "説明",
+            "priority" => 0,
+            "category_id" => 2,
+        ]
+    );
+    $response->assertStatus(200);
+
+    $response = $this->actingAs($user)->post(
+        "/api/attribute_elements/purpose_element/",
+        [
+            "name" => "aaa",
+            "description" => "説明",
+            "priority" => 0,
+            "category_id" => 2,
+        ]
+    );
+    $response->assertStatus(200);
+
+    $response = $this->actingAs($user)->post(
+        "/api/attribute_elements/place_element/",
+        [
+            "name" => "aaa",
+            "description" => "説明",
+            "priority" => 0,
+            "category_id" => 2,
+        ]
+    );
+    $response->assertStatus(200);
 });
 
 test('属性要素登録(名前不正)', function () {
