@@ -104,7 +104,6 @@ services:
         volumes:
             - ./yui/initdb.d/001_create_midas_user.sh:/docker-entrypoint-initdb.d/001_create_midas_user.sh
             - ./azusa/initdb.d/101_ddl.sql:/docker-entrypoint-initdb.d/101_ddl.sql
-            - ./azusa/initdb.d/102_dml.sql:/docker-entrypoint-initdb.d/102_dml.sql
 volumes:
     db:
 

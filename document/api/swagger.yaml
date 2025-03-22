@@ -827,7 +827,7 @@ paths:
             schema:
               type: object
               properties:
-                baseSalarary:
+                baseSalary:
                   type: integer
                   minimum: 1
                   description: 基本給
