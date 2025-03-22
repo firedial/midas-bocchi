@@ -90,7 +90,7 @@ test('収支表取得(並び替えパラメータ不正)', function () {
     expect($response->json())->message->toBeString();
 });
 
-test('収支表登録', function () {
+test('収支登録', function () {
     $this->seed();
     $user = User::factory()->create();
 
@@ -138,7 +138,7 @@ test('収支表登録', function () {
     // @todo 返り値についてのテスト
 });
 
-test('収支表登録(金額不正)', function () {
+test('収支登録(金額不正)', function () {
     $this->seed();
     $user = User::factory()->create();
 
@@ -187,7 +187,7 @@ test('収支表登録(金額不正)', function () {
     expect($response->json())->message->toBeString();
 });
 
-test('収支表登録(項目不正)', function () {
+test('収支登録(項目不正)', function () {
     $this->seed();
     $user = User::factory()->create();
 
@@ -222,7 +222,7 @@ test('収支表登録(項目不正)', function () {
 });
 
 
-test('収支表登録(要素不正)', function () {
+test('収支登録(要素不正)', function () {
     $this->seed();
     $user = User::factory()->create();
 
@@ -405,7 +405,7 @@ test('収支表登録(要素不正)', function () {
     expect($response->json())->message->toBeString();
 });
 
-test('収支表登録(日付不正)', function () {
+test('収支登録(日付不正)', function () {
     $this->seed();
     $user = User::factory()->create();
 
