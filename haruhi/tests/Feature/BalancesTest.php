@@ -485,3 +485,366 @@ test('収支取得(存在しない)', function () {
     $response = $this->actingAs($user)->get("/api/balances/201/");
     $response->assertStatus(404);
 });
+
+test('収支更新', function () {
+    $this->seed();
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    $response->assertStatus(200);
+    // @todo 返り値についてのテスト
+
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => 500,
+            "item" => "収入",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    $response->assertStatus(200);
+    // @todo 返り値についてのテスト
+
+    // うるう年の考慮
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => 500,
+            "item" => "収入",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-02-29",
+        ]
+    );
+    $response->assertStatus(200);
+    // @todo 返り値についてのテスト
+});
+
+test('収支更新(金額不正)', function () {
+    $this->seed();
+    $user = User::factory()->create();
+
+    // 金額が0
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => 0,
+            "item" => "収入",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+
+    // 金額がない
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "item" => "収入",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+
+    // 金額が文字
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => "aaa",
+            "item" => "収入",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+});
+
+test('収支更新(項目不正)', function () {
+    $this->seed();
+    $user = User::factory()->create();
+
+    // 項目が空文字列
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => 500,
+            "item" => "",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+
+    // 項目がない
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => 500,
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+});
+
+
+test('収支更新(要素不正)', function () {
+    $this->seed();
+    $user = User::factory()->create();
+
+    // 要素が移動id(=1)
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 1,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 1,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 1,
+            "date" => "2024-10-23",
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+
+    // 外部キー不正
+    $response1 = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 10000,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo 400 に変える
+    $response1->assertStatus(200);
+    // expect($response->json())->message->toBeString();
+
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 10000,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo 400 に変える
+    $response->assertStatus(200);
+    // expect($response->json())->message->toBeString();
+
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 10000,
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo 400 に変える
+    $response->assertStatus(200);
+    // expect($response->json())->message->toBeString();
+
+    // パラメータなし
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo 400 に変える
+    $response->assertStatus(200);
+    // expect($response->json())->message->toBeString();
+
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 2,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo 400 に変える
+    $response->assertStatus(200);
+    // expect($response->json())->message->toBeString();
+
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo 400 に変える
+    $response->assertStatus(200);
+    // expect($response->json())->message->toBeString();
+
+    // パラメータが文字列
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => "aaa",
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo 400 に変える
+    $response->assertStatus(200);
+    // expect($response->json())->message->toBeString();
+
+        $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 2,
+            "purpose_element_id" => "aaa",
+            "place_element_id" => 4,
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo 400 に変える
+    $response->assertStatus(200);
+    // expect($response->json())->message->toBeString();
+
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => -500,
+            "item" => "うどん",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => "aaa",
+            "date" => "2024-10-23",
+        ]
+    );
+    // @todo 400 に変える
+    $response->assertStatus(200);
+    // expect($response->json())->message->toBeString();
+});
+
+test('収支更新(日付不正)', function () {
+    $this->seed();
+    $user = User::factory()->create();
+
+    // 日付なし
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => 500,
+            "item" => "収入",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+
+    // 存在しない日付
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => 500,
+            "item" => "収入",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2025-06-31",
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+
+    $response = $this->actingAs($user)->put(
+        "/api/balances/10/",
+        [
+            "amount" => 500,
+            "item" => "収入",
+            "kind_element_id" => 2,
+            "purpose_element_id" => 3,
+            "place_element_id" => 4,
+            "date" => "2025-02-29",
+        ]
+    );
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
+});
