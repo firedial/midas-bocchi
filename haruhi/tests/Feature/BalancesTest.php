@@ -908,3 +908,32 @@ test('収支更新(存在しない)', function () {
     // @todo コメントアウト外す
     // $response->assertStatus(404);
 });
+
+test('収支削除', function () {
+    $this->seed();
+    $user = User::factory()->create();
+
+    // 支出
+    $response = $this->actingAs($user)->delete("/api/balances/10/");
+    $response->assertStatus(200);
+    // @todo 返り値についてのテスト
+
+    // 削除したデータの確認
+    $response = $this->actingAs($user)->get("/api/balances/10/");
+    $response->assertStatus(404);
+});
+
+test('収支削除(存在しない)', function () {
+    $this->seed();
+    $user = User::factory()->create();
+
+    // そもそもない
+    $response = $this->actingAs($user)->delete("/api/balances/10000/");
+    // @todo 404 に変える
+    $response->assertStatus(200);
+
+    // 移動レコード
+    $response = $this->actingAs($user)->get("/api/balances/201/");
+    // @todo コメントアウト外す
+    // $response->assertStatus(404);
+});
