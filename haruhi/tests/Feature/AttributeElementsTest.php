@@ -45,6 +45,19 @@ test('属性要素表取得', function () {
         ->description->toBeString()
         ->priority->toBeInt()
         ->category_id->toBeInt();
+
+    // 優先度が0を省く
+    $response = $this->actingAs($user)->get("/api/attribute_elements/kind_element/?isOnlySelectable=true");
+    $response->assertStatus(200);
+    expect($response->json())->toHaveCount(91);
+
+    $response = $this->actingAs($user)->get("/api/attribute_elements/purpose_element/?isOnlySelectable=true");
+    $response->assertStatus(200);
+    expect($response->json())->toHaveCount(91);
+
+    $response = $this->actingAs($user)->get("/api/attribute_elements/place_element/?isOnlySelectable=true");
+    $response->assertStatus(200);
+    expect($response->json())->toHaveCount(91);
 });
 
 test('属性要素表取得(属性名不正)', function () {
