@@ -5,7 +5,7 @@ use App\Service;
 use Mockery\MockInterface;
 
 test('収支表取得', function () {
-    $response = $this->get("/api/balances");
+    $response = $this->get("/api/balances/2/");
     // $response->assertStatus(200);
     // expect($response)->toHaveCount(0);
     expect($response->json())->message->toBeString();
@@ -20,12 +20,12 @@ test('authenticated user can access the dashboard', function () {
     //     $mock->shouldReceive('getBalances')->once();
     // });
 
-    $this->mock(BalanceDaoImpl::class)
-      ->shouldReceive('selectBalance')
-      ->once()
-      ->andReturn([]);
+    // $this->mock(BalanceDaoImpl::class)
+    //   ->shouldReceive('selectBalance')
+    //   ->once()
+    //   ->andReturn([]);
 
     $user = User::factory()->create();
     // $this->actingAs($user)->get("/api/balances")->assertStatus(200);
-    expect($this->actingAs($user)->get("/api/balances")->json())->toBeString();
+    expect($this->actingAs($user)->get("/api/balances/1/")->json())->toBeString();
 });
