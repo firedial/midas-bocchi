@@ -154,7 +154,16 @@ paths:
                   example: "2024-10-23"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          description: "Success operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: 収支ID
+                    example: 123
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -390,7 +399,16 @@ paths:
                   example: "2024-10-23"
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          description: "Success operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: 移動ID
+                    example: 123
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -611,7 +629,16 @@ paths:
                   example: 32
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          description: "Success operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: 属性要素ID
+                    example: 123
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -770,7 +797,16 @@ paths:
                   example: 食費
       responses:
         "200":
-          $ref: "#/components/responses/Ok"
+          description: "Success operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: 属性カテゴリーID
+                    example: 123
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
