@@ -86,12 +86,13 @@ class MoveDaoImpl implements MoveDao
             ->join('m_' . $attributeName . '_element as before_attribute_element', 'before_attribute_element.id', '=', 'before.' . $attributeName . '_element_id')
             ->join('m_' . $attributeName . '_element as after_attribute_element', 'after_attribute_element.id', '=', 'after.' . $attributeName . '_element_id')
             ->where('before.kind_element_id', KindElement::MOVE_ID)
+            ->where('before.' . $attributeName . '_element_id', '<>', 1) // @todo 反対側の属性の移動IDにする
             ->where('before.amount', '<', 0)
             ->where('before.id', $id)
             ->get()
             ->toArray();
 
-        return (array)$list[0];
+        return $list;
     }
 
     /**

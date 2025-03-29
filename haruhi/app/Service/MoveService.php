@@ -39,7 +39,7 @@ class MoveService
         return $this->moveDao->getMoves($this->attributeName);
     }
 
-    public function show(int $id): array
+    public function show(int $id)
     {
         return $this->moveDao->getMoveById($this->attributeName, $id);
     }
@@ -48,7 +48,8 @@ class MoveService
     {
         [$before, $after] = $this->getBalancesFromMove($move);
 
-        return DB::transaction(function () use ($before, $after) {
+        try {
+            DB::beginTransaction();
             $this->balanceDao->insertBalance($before);
             $beforeId = (int)DB::getPdo()->lastInsertId();
 
@@ -58,7 +59,13 @@ class MoveService
             if ($beforeId + 1 !== $afterId) {
                 throw new InternalException("Move insert wrong.");
             }
-        });
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        return $beforeId;
     }
 
     public function update(array $move, int $id)
