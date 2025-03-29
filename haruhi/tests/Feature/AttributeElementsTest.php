@@ -84,7 +84,9 @@ test('属性要素登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
+    expect($response->json())
+        ->id->toBeInt();
+
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/attribute_elements/kind_element/");
@@ -104,7 +106,8 @@ test('属性要素登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
+    expect($response->json())
+        ->id->toBeInt();
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/attribute_elements/purpose_element/");
@@ -124,7 +127,8 @@ test('属性要素登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
+    expect($response->json())
+        ->id->toBeInt();
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/attribute_elements/place_element/");
@@ -489,9 +493,8 @@ test('属性要素登録(親カテゴリ不正)', function () {
             "category_id" => 1,
         ]
     );
-    // @todo 400 にする
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
         "/api/attribute_elements/purpose_element/",
@@ -502,9 +505,8 @@ test('属性要素登録(親カテゴリ不正)', function () {
             "category_id" => 1,
         ]
     );
-    // @todo 400 にする
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
         "/api/attribute_elements/place_element/",
@@ -515,9 +517,8 @@ test('属性要素登録(親カテゴリ不正)', function () {
             "category_id" => 1,
         ]
     );
-    // @todo 400 にする
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     // 親カテゴリなし
     $response = $this->actingAs($user)->post(
@@ -598,16 +599,13 @@ test('属性要素取得(存在しない)', function () {
 
     // そもそもレコードにない
     $response = $this->actingAs($user)->get("/api/attribute_elements/kind_element/10000/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->get("/api/attribute_elements/purpose_element/10000/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->get("/api/attribute_elements/place_element/10000/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 });
 
 test('属性要素更新', function () {
@@ -625,7 +623,6 @@ test('属性要素更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/attribute_elements/kind_element/10/");
@@ -645,7 +642,6 @@ test('属性要素更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/attribute_elements/purpose_element/10/");
@@ -665,7 +661,6 @@ test('属性要素更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/attribute_elements/place_element/10/");
@@ -996,9 +991,8 @@ test('属性要素更新(親カテゴリ不正)', function () {
             "category_id" => 1,
         ]
     );
-    // @todo 400 にする
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/attribute_elements/purpose_element/10/",
@@ -1009,9 +1003,8 @@ test('属性要素更新(親カテゴリ不正)', function () {
             "category_id" => 1,
         ]
     );
-    // @todo 400 にする
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/attribute_elements/place_element/10/",
@@ -1022,9 +1015,8 @@ test('属性要素更新(親カテゴリ不正)', function () {
             "category_id" => 1,
         ]
     );
-    // @todo 400 にする
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     // 親カテゴリなし
     $response = $this->actingAs($user)->put(

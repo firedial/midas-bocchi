@@ -63,7 +63,8 @@ test('属性カテゴリー登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
+    expect($response->json())
+        ->id->toBeInt();
 
     // 登録したデータの確認
     // @todo id で取得するようにする
@@ -80,7 +81,8 @@ test('属性カテゴリー登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
+    expect($response->json())
+        ->id->toBeInt();
 
     // 登録したデータの確認
     // @todo id で取得するようにする
@@ -97,7 +99,8 @@ test('属性カテゴリー登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
+    expect($response->json())
+        ->id->toBeInt();
 
     // 登録したデータの確認
     // @todo id で取得するようにする
@@ -310,7 +313,6 @@ test('属性カテゴリー更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/attribute_categories/kind_category/");
@@ -329,7 +331,6 @@ test('属性カテゴリー更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/attribute_categories/purpose_category/");
@@ -348,7 +349,6 @@ test('属性カテゴリー更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/attribute_categories/place_category/");

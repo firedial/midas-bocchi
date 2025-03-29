@@ -51,8 +51,7 @@ test('収支表取得(属性名不正)', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get("/api/moves/aaa/");
-    // @todo 400 にする
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 });
 
@@ -72,7 +71,8 @@ test('移動登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
+    expect($response->json())
+        ->id->toBeInt();
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/moves/purposes/");
@@ -97,7 +97,8 @@ test('移動登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
+    expect($response->json())
+        ->id->toBeInt();
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/moves/places/");
@@ -122,7 +123,6 @@ test('移動登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     $response = $this->actingAs($user)->post(
         "/api/moves/places/",
@@ -135,7 +135,6 @@ test('移動登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 });
 
 test('移動登録(金額不正)', function () {
@@ -322,9 +321,8 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
         "/api/moves/places/",
@@ -336,9 +334,8 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
         "/api/moves/purposes/",
@@ -350,9 +347,8 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
         "/api/moves/places/",
@@ -364,9 +360,8 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     // 外部キー不正
     $response = $this->actingAs($user)->post(
@@ -379,8 +374,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -393,8 +387,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -407,8 +400,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -421,8 +413,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // パラメータなし
@@ -435,8 +426,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -448,8 +438,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -461,8 +450,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -474,8 +462,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // パラメータが文字列
@@ -489,8 +476,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -503,8 +489,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -517,8 +502,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -531,8 +515,7 @@ test('移動登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // 移動前後で同じの場合
@@ -657,51 +640,40 @@ test('移動取得(存在しない)', function () {
 
     // 属性名が存在しない
     $response = $this->actingAs($user)->get("/api/moves/hoge/232/");
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // そもそもレコードにない
     $response = $this->actingAs($user)->get("/api/moves/purposes/10000/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->get("/api/moves/places/10000/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 
     // 収支レコード
     $response = $this->actingAs($user)->get("/api/moves/purposes/10/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->get("/api/moves/places/10/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 
     // 前後のID
     $response = $this->actingAs($user)->get("/api/moves/purposes/233/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
     $response = $this->actingAs($user)->get("/api/moves/purposes/235/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->get("/api/moves/places/231/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
     $response = $this->actingAs($user)->get("/api/moves/places/233/");
-    // @todo 404 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 
     // 別属性の移動
     $response = $this->actingAs($user)->get("/api/moves/purposes/232/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->get("/api/moves/places/234/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 });
 
 
@@ -721,7 +693,6 @@ test('移動更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 更新したデータの確認
     $response = $this->actingAs($user)->get("/api/moves/purposes/234/");
@@ -746,7 +717,6 @@ test('移動更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/moves/places/232/");
@@ -771,7 +741,6 @@ test('移動更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     $response = $this->actingAs($user)->put(
         "/api/moves/places/232/",
@@ -784,7 +753,6 @@ test('移動更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 });
 
 test('移動更新(金額不正)', function () {
@@ -971,9 +939,8 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/moves/places/232/",
@@ -985,9 +952,8 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/moves/purposes/234/",
@@ -999,9 +965,8 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/moves/places/232/",
@@ -1013,9 +978,8 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     // 外部キー不正
     $response = $this->actingAs($user)->put(
@@ -1028,8 +992,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -1042,8 +1005,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -1056,8 +1018,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -1070,8 +1031,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // パラメータなし
@@ -1084,8 +1044,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -1097,8 +1056,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -1110,8 +1068,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -1123,8 +1080,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // パラメータが文字列
@@ -1138,8 +1094,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -1152,8 +1107,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -1166,8 +1120,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -1180,8 +1133,7 @@ test('移動更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // 移動前後で同じの場合
@@ -1285,8 +1237,7 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // そもそもレコードにない
@@ -1300,9 +1251,8 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(404);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/moves/places/10000/",
@@ -1314,9 +1264,8 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(404);
+    expect($response->json())->message->toBeString();
 
     // 収支レコード
     $response = $this->actingAs($user)->put(
@@ -1329,9 +1278,8 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(404);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/moves/places/10/",
@@ -1343,9 +1291,8 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(404);
+    expect($response->json())->message->toBeString();
 
     // 前後のID
     $response = $this->actingAs($user)->put(
@@ -1358,9 +1305,8 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(404);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/moves/purposes/235/",
@@ -1372,9 +1318,8 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 に変える
     $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/moves/places/231/",
@@ -1386,9 +1331,8 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 に変える
     $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/moves/places/233/",
@@ -1400,9 +1344,8 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 に変える
     $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    expect($response->json())->message->toBeString();
 
     // 別属性の移動
     $response = $this->actingAs($user)->put(
@@ -1415,9 +1358,8 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 に変える
     $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/moves/places/234/",
@@ -1429,9 +1371,8 @@ test('移動更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 に変える
     $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    expect($response->json())->message->toBeString();
 });
 
 test('移動削除', function () {
@@ -1441,21 +1382,17 @@ test('移動削除', function () {
     // 削除
     $response = $this->actingAs($user)->delete("/api/moves/purposes/234/");
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 削除したデータの確認
     $response = $this->actingAs($user)->get("/api/moves/purposes/234/");
-    // @todo 404 にする
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->delete("/api/moves/places/232/");
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 削除したデータの確認
     $response = $this->actingAs($user)->get("/api/moves/places/232/");
-    // @todo 404 にする
-    $response->assertStatus(500);
+    $response->assertStatus(404);
 });
 
 test('移動削除(存在しない)', function () {
@@ -1464,49 +1401,38 @@ test('移動削除(存在しない)', function () {
 
     // 属性名が存在しない
     $response = $this->actingAs($user)->delete("/api/moves/aaa/232/");
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // そもそもない
     $response = $this->actingAs($user)->delete("/api/moves/purposes/10000/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->delete("/api/moves/places/10000/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 
     // 収支レコード
     $response = $this->actingAs($user)->delete("/api/moves/purposes/10/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->delete("/api/moves/places/10/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 
     // 前後のID
     $response = $this->actingAs($user)->delete("/api/moves/purposes/233/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
     $response = $this->actingAs($user)->delete("/api/moves/purposes/235/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->delete("/api/moves/places/231/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
     $response = $this->actingAs($user)->delete("/api/moves/places/233/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 
     // 別属性の移動
     $response = $this->actingAs($user)->delete("/api/moves/purposes/232/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 
     $response = $this->actingAs($user)->delete("/api/moves/places/234/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 });

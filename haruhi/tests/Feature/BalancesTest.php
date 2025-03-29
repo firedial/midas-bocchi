@@ -17,18 +17,17 @@ test('収支表取得', function () {
     $response->assertStatus(200);
     expect($response->json())->toHaveCount(199);
 
-    // @todo 何が1番目かどうかという保証はない
     expect($response->json()[0])
-        ->id->toBe(1)
-        ->amount->toBe(4)
-        ->item->toBe("item2")
-        ->kind_element_id->toBe(2)
-        ->purpose_element_id->toBe(2)
-        ->place_element_id->toBe(2)
-        ->date->toBe("2021-08-12")
-        ->kind_element_description->toBe("kind_e_desc2")
-        ->purpose_element_description->toBe("purpose_e_desc2")
-        ->place_element_description->toBe("place_e_desc2");
+        ->id->toBeInt()
+        ->amount->toBeInt()
+        ->item->toBeString()
+        ->kind_element_id->toBeInt()
+        ->purpose_element_id->toBeInt()
+        ->place_element_id->toBeInt()
+        ->date->toBeString() // date 型でもいいかも
+        ->kind_element_description->toBeString()
+        ->purpose_element_description->toBeString()
+        ->place_element_description->toBeString();
 });
 
 test('収支表取得(件数指定)', function () {
@@ -72,14 +71,13 @@ test('収支表取得(件数指定パラメータ不正)', function () {
     $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
-    // @todo
-    // $response = $this->actingAs($user)->get("/api/balances/?limit=-1");
-    // $response->assertStatus(400);
-    // expect($response->json())->message->toBeString();
+    $response = $this->actingAs($user)->get("/api/balances/?limit=-1");
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
-    // $response = $this->actingAs($user)->get("/api/balances/?limit=0");
-    // $response->assertStatus(400);
-    // expect($response->json())->message->toBeString();
+    $response = $this->actingAs($user)->get("/api/balances/?limit=0");
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 });
 
 test('収支表取得(並び替えパラメータ不正)', function () {
@@ -108,7 +106,8 @@ test('収支登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
+    expect($response->json())
+        ->id->toBeInt();
 
     // 登録したデータの確認
     $response = $this->actingAs($user)->get("/api/balances/?orderby=desc&limit=1");
@@ -133,7 +132,8 @@ test('収支登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
+    expect($response->json())
+        ->id->toBeInt();
 
     // うるう年の考慮
     $response = $this->actingAs($user)->post(
@@ -148,7 +148,6 @@ test('収支登録', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 });
 
 test('収支登録(金額不正)', function () {
@@ -294,8 +293,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -309,8 +307,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -324,8 +321,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // パラメータなし
@@ -339,8 +335,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -353,8 +348,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
         $response = $this->actingAs($user)->post(
@@ -367,8 +361,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     // パラメータが文字列
@@ -383,8 +376,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
         $response = $this->actingAs($user)->post(
@@ -398,8 +390,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -413,8 +404,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(500);
+    $response->assertStatus(400);
     expect($response->json())->message->toBeString();
 });
 
@@ -516,18 +506,16 @@ test('収支更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 更新したデータの確認
-    // @todo コメントアウト外す
-    // $response = $this->actingAs($user)->get("/api/balances/10/");
-    // expect($response->json())
-    //     ->amount->toBe(-500)
-    //     ->item->toBe("うどん")
-    //     ->kind_element_id->toBe(2)
-    //     ->purpose_element_id->toBe(3)
-    //     ->place_element_id->toBe(4)
-    //     ->date->toBe("2024-10-23");
+    $response = $this->actingAs($user)->get("/api/balances/10/");
+    expect($response->json())
+        ->amount->toBe(-500)
+        ->item->toBe("うどん")
+        ->kind_element_id->toBe(2)
+        ->purpose_element_id->toBe(3)
+        ->place_element_id->toBe(4)
+        ->date->toBe("2024-10-23");
 
     // 収入
     $response = $this->actingAs($user)->put(
@@ -542,7 +530,6 @@ test('収支更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // うるう年の考慮
     $response = $this->actingAs($user)->put(
@@ -557,7 +544,6 @@ test('収支更新', function () {
         ]
     );
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 });
 
 test('収支更新(金額不正)', function () {
@@ -703,9 +689,8 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/balances/10/",
@@ -718,9 +703,8 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/balances/10/",
@@ -733,9 +717,8 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     // パラメータなし
     $response = $this->actingAs($user)->put(
@@ -748,9 +731,8 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/balances/10/",
@@ -762,9 +744,8 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/balances/10/",
@@ -776,9 +757,8 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     // パラメータが文字列
     $response = $this->actingAs($user)->put(
@@ -792,9 +772,8 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
         $response = $this->actingAs($user)->put(
         "/api/balances/10/",
@@ -807,9 +786,8 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
         "/api/balances/10/",
@@ -822,9 +800,8 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 400 に変える
-    $response->assertStatus(200);
-    // expect($response->json())->message->toBeString();
+    $response->assertStatus(400);
+    expect($response->json())->message->toBeString();
 });
 
 test('収支更新(日付不正)', function () {
@@ -891,8 +868,7 @@ test('収支更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo 404 にする
-    $response->assertStatus(200);
+    $response->assertStatus(400);
 
     // 移動レコード
     $response = $this->actingAs($user)->put(
@@ -906,8 +882,7 @@ test('収支更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    // @todo コメントアウト外す
-    // $response->assertStatus(404);
+    $response->assertStatus(404);
 });
 
 test('収支削除', function () {
@@ -917,7 +892,6 @@ test('収支削除', function () {
     // 支出
     $response = $this->actingAs($user)->delete("/api/balances/10/");
     $response->assertStatus(200);
-    // @todo 返り値についてのテスト
 
     // 削除したデータの確認
     $response = $this->actingAs($user)->get("/api/balances/10/");
@@ -930,11 +904,9 @@ test('収支削除(存在しない)', function () {
 
     // そもそもない
     $response = $this->actingAs($user)->delete("/api/balances/10000/");
-    // @todo 404 に変える
-    $response->assertStatus(200);
+    $response->assertStatus(404);
 
     // 移動レコード
     $response = $this->actingAs($user)->get("/api/balances/201/");
-    // @todo コメントアウト外す
-    // $response->assertStatus(404);
+    $response->assertStatus(404);
 });
