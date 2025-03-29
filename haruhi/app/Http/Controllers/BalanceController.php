@@ -19,7 +19,7 @@ class BalanceController extends Controller
         $params = [];
 
         $params['limit'] = $request->input('limit');
-        if (!is_null($params['limit']) && !is_numeric($params['limit'])) {
+        if (!is_null($params['limit']) && (!is_numeric($params['limit']) || $params['limit'] <= 0)) {
             throw new InvalidParameterException('limit is wrong');
         }
         $params['orderby'] = $request->input('orderby');
@@ -56,7 +56,9 @@ class BalanceController extends Controller
         $balanceService = new BalanceService();
         $balance = self::getBalance($request);
         self::validation($balance);
-        $balanceService->store($balance);
+
+        $id = $balanceService->store($balance);
+        return ['id' => $id];
     }
 
     public function update(Request $request, int $id)
@@ -66,7 +68,19 @@ class BalanceController extends Controller
         if (is_null($id) || !is_numeric($id)) {
             throw new InvalidParameterException('Balance id is null.');
         }
+        $balance['id'] = $id;
         self::validation($balance);
+
+        // @todo ここら辺セットしなくてもいいようにする
+        $params = [];
+        $params['limit'] = null;
+        $params['orderby'] = null;
+        $params['id'] = $id;
+        $balances = $balanceService->index($params);
+        if (count($balances) === 0) {
+            throw new NotFoundException();
+        }
+
         $balanceService->update($balance);
     }
 
@@ -76,6 +90,17 @@ class BalanceController extends Controller
         if (is_null($id) || !is_numeric($id)) {
             throw new InvalidParameterException('Balance id is null.');
         }
+
+        // @todo ここら辺セットしなくてもいいようにする
+        $params = [];
+        $params['limit'] = null;
+        $params['orderby'] = null;
+        $params['id'] = $id;
+        $balances = $balanceService->index($params);
+        if (count($balances) === 0) {
+            throw new NotFoundException();
+        }
+
         $balanceService->destroy($id);
     }
 
@@ -94,6 +119,17 @@ class BalanceController extends Controller
 
     private static function validation(array $balance): void
     {
+        // 値が入っているかどうか
+        if ($balance['kind_element_id'] === 0) {
+            throw new InvalidParameterException('Kind element id is null.');
+        }
+        if ($balance['purpose_element_id'] === 0) {
+            throw new InvalidParameterException('Purpose element id is null.');
+        }
+        if ($balance['place_element_id'] === 0) {
+            throw new InvalidParameterException('Place element id is null.');
+        }
+
         // 移動処理を表す id が入っていた場合は不正
         if ($balance['kind_element_id'] === KindElement::MOVE_ID) {
             throw new InvalidParameterException('Kind element id is move id.');

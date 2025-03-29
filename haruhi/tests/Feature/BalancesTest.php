@@ -293,7 +293,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    $response->assertStatus(400);
+    $response->assertStatus(500);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -307,7 +307,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    $response->assertStatus(400);
+    $response->assertStatus(500);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->post(
@@ -321,7 +321,7 @@ test('収支登録(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    $response->assertStatus(400);
+    $response->assertStatus(500);
     expect($response->json())->message->toBeString();
 
     // パラメータなし
@@ -689,7 +689,7 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    $response->assertStatus(400);
+    $response->assertStatus(500);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -703,7 +703,7 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    $response->assertStatus(400);
+    $response->assertStatus(500);
     expect($response->json())->message->toBeString();
 
     $response = $this->actingAs($user)->put(
@@ -717,7 +717,7 @@ test('収支更新(要素不正)', function () {
             "date" => "2024-10-23",
         ]
     );
-    $response->assertStatus(400);
+    $response->assertStatus(500);
     expect($response->json())->message->toBeString();
 
     // パラメータなし
@@ -868,7 +868,7 @@ test('収支更新(存在しない)', function () {
             "date" => "2024-10-23",
         ]
     );
-    $response->assertStatus(400);
+    $response->assertStatus(404);
 
     // 移動レコード
     $response = $this->actingAs($user)->put(

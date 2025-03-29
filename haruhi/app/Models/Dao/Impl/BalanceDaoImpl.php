@@ -46,7 +46,8 @@ class BalanceDaoImpl implements BalanceDao
 
     public function insertBalance(array $balance)
     {
-        return DB::table('m_balance')->insert($balance);
+        DB::table('m_balance')->insert($balance);
+        return DB::getPdo()->lastInsertId();
     }
 
     public function updateBalance(array $balance)

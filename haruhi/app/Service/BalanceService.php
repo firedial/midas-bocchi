@@ -28,7 +28,7 @@ class BalanceService
         return $this->balanceDao->selectBalance($params);
     }
 
-    public function store(array $balance): bool
+    public function store(array $balance): int
     {
         return $this->balanceDao->insertBalance($balance);
     }
