@@ -11,7 +11,7 @@ class CheckPlaceSumController extends Controller
 {
     public function post(Request $request)
     {
-        $data = $request->only(['sum', 'placeElementId', 'date']);
+        $data = $request->only(['placeElementId', 'date']);
 
         // 日付が正しい形式か
         if (!DateUtil::isValidDateString($data['date'])) {
@@ -20,7 +20,6 @@ class CheckPlaceSumController extends Controller
 
         $checkPlaceSumService = new CheckPlaceSumService();
         $checkPlaceSumService->registerCheckPlaceSum([
-            'sum' => $data['sum'],
             'placeElementId' => $data['placeElementId'],
             'date' => $data['date'],
         ]);

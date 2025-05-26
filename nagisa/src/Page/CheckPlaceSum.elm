@@ -29,8 +29,7 @@ type alias StringCheckPlaceSum =
 
 
 type Msg
-    = InputSum String
-    | InputPlaceElementId String
+    = InputPlaceElementId String
     | InputDate String
     | GetAttributeElements (Result Request.Error AttributeElementEntity.AttributeElements)
     | Insert
@@ -54,13 +53,6 @@ init xsrfToken key =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        InputSum sum ->
-            let
-                newCheckPlaceSum =
-                    model.checkPlaeSum
-            in
-            ( { model | checkPlaeSum = { newCheckPlaceSum | sum = sum } }, Cmd.none )
-
         InputPlaceElementId placeElementId ->
             let
                 newCheckPlaceSum =
@@ -118,13 +110,11 @@ view model =
         , Html.table [ Attributes.class "balance" ]
             [ Html.tr
                 []
-                [ Html.th [] [ Html.text "金額" ]
-                , Html.th [] [ Html.text "場所ID" ]
+                [ Html.th [] [ Html.text "場所ID" ]
                 , Html.th [] [ Html.text "日付" ]
                 ]
             , Html.tr []
-                [ Html.td [] [ Html.input [ Attributes.type_ "input", Attributes.value model.checkPlaeSum.sum, onInput InputSum ] [] ]
-                , Html.td []
+                [ Html.td []
                     [ Html.select [ onInput InputPlaceElementId, Attributes.value model.checkPlaeSum.placeElementId ]
                         (List.map
                             (\attributeElement ->

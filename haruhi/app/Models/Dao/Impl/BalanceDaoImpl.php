@@ -61,4 +61,12 @@ class BalanceDaoImpl implements BalanceDao
         return DB::table('m_balance')->where('id', '=', $id)->delete();
     }
 
+    public function getSum(int $placeId): int
+    {
+        $query = DB::table('m_balance')
+            ->selectRaw('SUM(amount) as total')
+            ->where('m_balance.place_element_id', '=', $placeId);
+
+        return (int)$query->get()->toArray()[0]->total;
+    }
 }

@@ -8,4 +8,6 @@ interface BalanceDao
     public function insertBalance(array $balance);
     public function updateBalance(array $balance);
     public function deleteBalance(int $id);
+
+    public function getSum(int $placeId);
 }
