@@ -39,7 +39,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-${{ inputs.name }}:latest
           file: ${{ inputs.name }}/DockerfileProduction
-          platforms: linux/arm/v7
+          platforms: linux/arm64
       - name: Notify Discord (success)
         if: ${{ success() }}
         run: |
