@@ -12,6 +12,14 @@ services:
         depends_on:
          - haruhi
          - eru
+    misuzu:
+        build: ./misuzu
+        restart: always
+        ports:
+         - "12123:8080"
+        tty: true
+        volumes:
+            - ./misuzu:/app
     haruhi:
         build:
             context: ./haruhi
