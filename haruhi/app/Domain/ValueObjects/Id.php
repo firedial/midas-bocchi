@@ -8,7 +8,7 @@ abstract class Id
 {
     private const EMPTY_ID = 0;
 
-    private function __construct(protected readonly int $id) {}
+    protected function __construct(protected readonly int $id) {}
 
     public static function filledId(int $id): static
     {

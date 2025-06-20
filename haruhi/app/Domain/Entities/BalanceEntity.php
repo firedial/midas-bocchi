@@ -9,6 +9,8 @@ use App\Domain\ValueObjects\KindElementId;
 use App\Domain\ValueObjects\PurposeElementId;
 use App\Domain\ValueObjects\PlaceElementId;
 use App\Domain\ValueObjects\Date;
+use App\Domain\ValueObjects\Description;
+use App\Exceptions\ValueObjectException;
 
 class BalanceEntity
 {
@@ -20,6 +22,9 @@ class BalanceEntity
         protected readonly PurposeElementId $purposeElementId,
         protected readonly PlaceElementId $placeElementId,
         protected readonly Date $date,
+        protected readonly ?Description $kindElementDescription = null,
+        protected readonly ?Description $purposeElementDescription = null,
+        protected readonly ?Description $placeElementDescription = null,
     ) {}
 
     public function balanceId(): BalanceId
@@ -55,6 +60,30 @@ class BalanceEntity
     public function date(): Date
     {
         return $this->date;
+    }
+
+    public function kindElementDescription(): Description
+    {
+        if (is_null($this->kindElementDescription)) {
+            throw new ValueObjectException("Kind element description is null.");
+        }
+        return $this->kindElementDescription;
+    }
+
+    public function purposeElementDescription(): Description
+    {
+        if (is_null($this->purposeElementDescription)) {
+            throw new ValueObjectException("Purpose element description is null.");
+        }
+        return $this->purposeElementDescription;
+    }
+
+    public function placeElementDescription(): Description
+    {
+        if (is_null($this->placeElementDescription)) {
+            throw new ValueObjectException("Place element description is null.");
+        }
+        return $this->placeElementDescription;
     }
 
     public function isMove(): bool

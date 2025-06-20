@@ -14,6 +14,7 @@ use App\Domain\ValueObjects\KindElementId;
 use App\Domain\ValueObjects\PlaceElementId;
 use App\Domain\ValueObjects\PurposeElementId;
 use App\Usecases\Balance\DeleteBalanceUsecase;
+use App\Usecases\Balance\GetBalancesUsecase;
 use App\Usecases\Balance\InsertBalanceUsecase;
 use App\Usecases\Balance\SelectBalanceUsecase;
 use App\Usecases\Balance\UpdateBalanceUsecase;
@@ -22,20 +23,34 @@ class BalanceController extends Controller
 {
     public function index(Request $request)
     {
-        $params = [];
-
-        $params['limit'] = $request->input('limit');
-        if (!is_null($params['limit']) && !is_numeric($params['limit'])) {
+        $limit = $request->input('limit');
+        if (!is_null($limit) && !is_numeric($limit)) {
             throw new InvalidParameterException('limit is wrong');
         }
-        $params['orderby'] = $request->input('orderby');
-        if (!is_null($params['orderby']) && ($params['orderby'] !== 'asc' && $params['orderby'] !== 'desc')) {
+        $orderby = $request->input('orderby');
+        if (!is_null($orderby) && $orderby !== 'desc') {
             throw new InvalidParameterException('orderby is wrong');
         }
-        $params['id'] = null;
 
-        $balanceService = new BalanceService();
-        return $balanceService->index($params);
+        $getBalancesUsecase = new GetBalancesUsecase();
+        $balances = $getBalancesUsecase->execute($limit, is_null($orderby) ? null : true);
+        return array_map(
+            function (BalanceEntity $balance) {
+                return [
+                    "id" => $balance->balanceId()->value(),
+                    "amount" => $balance->amount()->value(),
+                    "item" => $balance->item()->value(),
+                    "kind_element_id" => $balance->kindElementId()->value(),
+                    "purpose_element_id" => $balance->purposeElementId()->value(),
+                    "place_element_id" => $balance->placeElementId()->value(),
+                    "kind_element_description" => $balance->kindElementDescription()->value(),
+                    "purpose_element_description" => $balance->purposeElementDescription()->value(),
+                    "place_element_description" => $balance->placeElementDescription()->value(),
+                    "date" => $balance->date()->value(),
+                ];
+            },
+            $balances
+        );
     }
 
     public function show(int $id)
@@ -51,10 +66,9 @@ class BalanceController extends Controller
             "kind_element_id" => $balance->kindElementId()->value(),
             "purpose_element_id" => $balance->purposeElementId()->value(),
             "place_element_id" => $balance->placeElementId()->value(),
-            // @todo 後で整理する
-            "kind_element_description" => "",
-            "purpose_element_description" => "",
-            "place_element_description" => "",
+            "kind_element_description" => $balance->kindElementDescription()->value(),
+            "purpose_element_description" => $balance->purposeElementDescription()->value(),
+            "place_element_description" => $balance->placeElementDescription()->value(),
             "date" => $balance->date()->value(),
         ];
     }

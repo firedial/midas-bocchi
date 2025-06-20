@@ -6,6 +6,7 @@ use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\BalanceId;
 use App\Domain\ValueObjects\Date;
+use App\Domain\ValueObjects\Description;
 use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\KindElementId;
 use App\Domain\ValueObjects\PlaceElementId;
@@ -15,11 +16,32 @@ use App\Models\DataModels\BalanceDataModel;
 
 class BalanceRepositoryImpl implements BalanceRepositoryInterface
 {
-    // public function selectBalance(bool $isNotMoveOnly = false, bool $isMoveOnly = false, ?int $id = null, ?int $limit = null, ?string $orderBy = null): array
-    // {
-    //     // @todo ValueObject に変換する
-    //     return BalanceDataModel::selectBalance($isNotMoveOnly, $isMoveOnly, $id, $limit, $orderBy);
-    // }
+    public function getBalances(
+        ?KindElementId $notKindElementId = null,
+        ?KindElementId $kindElementId = null,
+        ?BalanceId $id = null,
+        ?int $limit = null,
+        ?bool $orderByDesc = null,
+    ): array {
+        $balances = BalanceDataModel::selectBalance($notKindElementId?->value(), $kindElementId?->value(), $id, $limit, $orderByDesc);
+        return array_map(
+            function ($balance) {
+                return new BalanceEntity(
+                    BalanceId::filledId($balance->id),
+                    new Amount($balance->amount),
+                    new Item($balance->item),
+                    KindElementId::filledId($balance->kind_element_id),
+                    PurposeElementId::filledId($balance->purpose_element_id),
+                    PlaceElementId::filledId($balance->place_element_id),
+                    new Date($balance->date),
+                    new Description($balance->kind_element_description),
+                    new Description($balance->purpose_element_description),
+                    new Description($balance->place_element_description),
+                );
+            },
+            $balances
+        );
+    }
 
     public function selectBalance(BalanceId $balanceId): ?BalanceEntity
     {
@@ -37,6 +59,9 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             PurposeElementId::filledId($balance->purpose_element_id),
             PlaceElementId::filledId($balance->place_element_id),
             new Date($balance->date),
+            new Description($balance->kind_element_description),
+            new Description($balance->purpose_element_description),
+            new Description($balance->place_element_description),
         );
     }
 
