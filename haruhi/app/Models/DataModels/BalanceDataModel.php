@@ -32,13 +32,13 @@ class BalanceDataModel
                 self::TABLE_NAME . '.' . self::C_PURPOSE_ELEMENT_ID,
                 self::TABLE_NAME . '.' . self::C_PLACE_ELEMENT_ID,
                 self::TABLE_NAME . '.' . self::C_DATE,
-                'm_kind_element.description AS kind_element_description',
-                'm_purpose_element.description AS purpose_element_description',
-                'm_place_element.description AS place_element_description'
+                KindElementDataModel::TABLE_NAME . '.' . KindElementDataModel::C_DESCRIPTION . ' AS kind_element_description',
+                PurposeElementDataModel::TABLE_NAME . '.' . PurposeElementDataModel::C_DESCRIPTION . ' AS purpose_element_description',
+                PlaceElementDataModel::TABLE_NAME . '.' . PlaceElementDataModel::C_DESCRIPTION . ' AS place_element_description',
             )
-            ->join('m_kind_element', 'm_kind_element.id', '=', self::TABLE_NAME . '.' . self::C_KIND_ELEMENT_ID)
-            ->join('m_purpose_element', 'm_purpose_element.id', '=', self::TABLE_NAME . '.' . self::C_PURPOSE_ELEMENT_ID)
-            ->join('m_place_element', 'm_place_element.id', '=', self::TABLE_NAME . '.' . self::C_PLACE_ELEMENT_ID);
+            ->join(KindElementDataModel::TABLE_NAME, KindElementDataModel::TABLE_NAME . '.' . KindElementDataModel::C_ID, '=', self::TABLE_NAME . '.' . self::C_KIND_ELEMENT_ID)
+            ->join(PurposeElementDataModel::TABLE_NAME, PurposeElementDataModel::TABLE_NAME . '.' . PurposeElementDataModel::C_ID, '=', self::TABLE_NAME . '.' . self::C_PURPOSE_ELEMENT_ID)
+            ->join(PlaceElementDataModel::TABLE_NAME, PlaceElementDataModel::TABLE_NAME . '.' . PlaceElementDataModel::C_ID, '=', self::TABLE_NAME . '.' . self::C_PLACE_ELEMENT_ID);
         if (!is_null($limit)) {
             $query->limit($limit);
         }
