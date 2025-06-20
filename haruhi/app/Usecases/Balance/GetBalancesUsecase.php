@@ -25,6 +25,7 @@ class GetBalancesUsecase
     {
         DB::beginTransaction();
         try {
+            // 移動レコードではないものを取得
             $balances = $this->balanceRepository->getBalances(notKindElementId: KindElementId::moveId(), limit: $limit, orderByDesc: $orderByDesc);
             DB::commit();
         } catch (Exception $e) {

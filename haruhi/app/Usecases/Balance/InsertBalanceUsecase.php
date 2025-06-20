@@ -21,6 +21,7 @@ class InsertBalanceUsecase
     {
         DB::beginTransaction();
         try {
+            // 挿入
             $insertId = $this->balanceRepository->insertBalance($balance);
             DB::commit();
         } catch (Exception $e) {

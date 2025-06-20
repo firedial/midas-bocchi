@@ -23,7 +23,10 @@ class SelectBalanceUsecase
     {
         DB::beginTransaction();
         try {
+            // 取得
             $balance = $this->balanceRepository->selectBalance($balanceId);
+
+            // 存在しないとき
             if (is_null($balance)) {
                 throw new NotFoundException("Not found balance.");
             }

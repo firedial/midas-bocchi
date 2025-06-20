@@ -24,13 +24,18 @@ class DeleteBalanceUsecase
         DB::beginTransaction();
         try {
             $beforeBalance = $this->balanceRepository->selectBalance($balanceId);
+
+            // 存在しないとき
             if (is_null($beforeBalance)) {
                 throw new NotFoundException("Not found balance.");
             }
 
+            // 移動レコードなら削除できない
             if ($beforeBalance->isMove()) {
-                throw new InternalException("Can not update move record.");
+                throw new InternalException("Can not delete move record.");
             }
+
+            // 削除
             $this->balanceRepository->deleteBalance($balanceId);
             DB::commit();
         } catch (Exception $e) {
