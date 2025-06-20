@@ -76,12 +76,12 @@ class BalanceController extends Controller
     {
         $balance = new BalanceEntity(
             BalanceId::emptyId(),
-            new Amount($request["amount"]),
-            new Item($request["item"]),
-            KindElementId::filledId($request["kind_element_id"]),
-            PurposeElementId::filledId($request["purpose_element_id"]),
-            PlaceElementId::filledId($request["place_element_id"]),
-            new Date($request["date"]),
+            new Amount($request->input("amount")),
+            new Item($request->input("item")),
+            KindElementId::filledId($request->input("kind_element_id")),
+            PurposeElementId::filledId($request->input("purpose_element_id")),
+            PlaceElementId::filledId($request->input("place_element_id")),
+            new Date($request->input("date")),
         );
 
         if ($balance->kindElementId()->isMoveId()) {
@@ -108,12 +108,12 @@ class BalanceController extends Controller
     {
         $balance = new BalanceEntity(
             BalanceId::filledId($id),
-            new Amount($request["amount"]),
-            new Item($request["item"]),
-            KindElementId::filledId($request["kind_element_id"]),
-            PurposeElementId::filledId($request["purpose_element_id"]),
-            PlaceElementId::filledId($request["place_element_id"]),
-            new Date($request["date"]),
+            new Amount($request->input("amount")),
+            new Item($request->input("item")),
+            KindElementId::filledId($request->input("kind_element_id")),
+            PurposeElementId::filledId($request->input("purpose_element_id")),
+            PlaceElementId::filledId($request->input("place_element_id")),
+            new Date($request->input("date")),
         );
 
         if ($balance->kindElementId()->isMoveId()) {
