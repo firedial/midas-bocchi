@@ -2,13 +2,8 @@
 
 namespace App\Usecases\Balance;
 
-use App\Domain\Entities\BalanceEntity;
-use App\Domain\ValueObjects\BalanceId;
-use App\Domain\ValueObjects\KindElementId;
-use App\Exceptions\NotFoundException;
 use App\Infrastructure\Repository\BalanceRepositoryInterface;
 use App\Infrastructure\Repository\Impl\BalanceRepositoryImpl;
-use App\Models\KindElement;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -26,7 +21,7 @@ class GetBalancesUsecase
         DB::beginTransaction();
         try {
             // 移動レコードではないものを取得
-            $balances = $this->balanceRepository->getBalances(notKindElementId: KindElementId::moveId(), limit: $limit, orderByDesc: $orderByDesc);
+            $balances = $this->balanceRepository->getBalances(limit: $limit, orderByDesc: $orderByDesc);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

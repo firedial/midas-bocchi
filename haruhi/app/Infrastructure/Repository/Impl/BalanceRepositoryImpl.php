@@ -17,13 +17,11 @@ use App\Models\DataModels\BalanceDataModel;
 class BalanceRepositoryImpl implements BalanceRepositoryInterface
 {
     public function getBalances(
-        ?KindElementId $notKindElementId = null,
-        ?KindElementId $kindElementId = null,
-        ?BalanceId $id = null,
+        ?BalanceId $balanceId = null,
         ?int $limit = null,
         ?bool $orderByDesc = null,
     ): array {
-        $balances = BalanceDataModel::selectBalance($notKindElementId?->value(), $kindElementId?->value(), $id, $limit, $orderByDesc);
+        $balances = BalanceDataModel::selectBalance(notKindElementId: KindElementId::moveId()->value(), id: $balanceId?->value(), limit: $limit, orderByDesc: $orderByDesc);
         return array_map(
             function ($balance) {
                 return new BalanceEntity(
@@ -45,24 +43,11 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
 
     public function selectBalance(BalanceId $balanceId): ?BalanceEntity
     {
-        $balances = BalanceDataModel::selectBalance(id: $balanceId->value());
+        $balances = $this->getBalances(balanceId: $balanceId);
         if (count($balances) === 0) {
             return null;
         }
-
-        $balance = $balances[0];
-        return new BalanceEntity(
-            BalanceId::filledId($balance->id),
-            new Amount($balance->amount),
-            new Item($balance->item),
-            KindElementId::filledId($balance->kind_element_id),
-            PurposeElementId::filledId($balance->purpose_element_id),
-            PlaceElementId::filledId($balance->place_element_id),
-            new Date($balance->date),
-            new Description($balance->kind_element_description),
-            new Description($balance->purpose_element_description),
-            new Description($balance->place_element_description),
-        );
+        return $balances[0];
     }
 
     public function insertBalance(BalanceEntity $balance): int
