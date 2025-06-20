@@ -12,7 +12,7 @@ class InsertBalanceUsecase
 {
     private BalanceRepositoryImpl $balanceRepository;
 
-    public function __construct(BalanceRepositoryInterface $balanceRepository = null)
+    public function __construct(?BalanceRepositoryInterface $balanceRepository = null)
     {
         $this->balanceRepository = $balanceRepository ?: new BalanceRepositoryImpl();
     }
