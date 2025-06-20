@@ -30,11 +30,6 @@ class UpdateBalanceUsecase
                 throw new NotFoundException("Not found balance.");
             }
 
-            // 移動レコードなら更新できない
-            if ($beforeBalance->isMove()) {
-                throw new InternalException("Can not update move record.");
-            }
-
             // 更新
             $this->balanceRepository->updateBalance($balance);
             DB::commit();
