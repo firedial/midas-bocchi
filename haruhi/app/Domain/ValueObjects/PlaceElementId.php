@@ -10,4 +10,9 @@ class PlaceElementId extends Id
     {
         return $this->id === self::MOVE_ID;
     }
+
+    public static function moveId(): self
+    {
+        return new self(self::MOVE_ID);
+    }
 }

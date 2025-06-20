@@ -18,7 +18,8 @@ class BalanceDataModel
 
     public static function selectBalance(
         ?int $notKindElementId = null,
-        ?int $kindElementId = null,
+        ?int $purposeElementId = null,
+        ?int $placeElementId = null,
         ?int $id = null,
         ?int $limit = null,
         ?bool $orderByDesc = null,
@@ -51,8 +52,11 @@ class BalanceDataModel
         if ($notKindElementId) {
             $query->where(self::TABLE_NAME . '.' . self::C_KIND_ELEMENT_ID, '<>', $notKindElementId);
         }
-        if ($kindElementId) {
-            $query->where(self::TABLE_NAME . '.' . self::C_KIND_ELEMENT_ID, '=', $kindElementId);
+        if ($purposeElementId) {
+            $query->where(self::TABLE_NAME . '.' . self::C_PURPOSE_ELEMENT_ID, '=', $purposeElementId);
+        }
+        if ($placeElementId) {
+            $query->where(self::TABLE_NAME . '.' . self::C_PLACE_ELEMENT_ID, '=', $placeElementId);
         }
 
         return $query->get()->toArray();
