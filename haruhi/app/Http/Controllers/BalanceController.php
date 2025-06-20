@@ -6,7 +6,6 @@ use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\BalanceId;
 use Illuminate\Http\Request;
-use App\Service\BalanceService;
 use App\Exceptions\InvalidParameterException;
 use App\Domain\ValueObjects\Date;
 use App\Domain\ValueObjects\Item;
