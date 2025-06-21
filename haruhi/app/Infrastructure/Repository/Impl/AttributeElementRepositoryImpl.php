@@ -23,6 +23,7 @@ class AttributeElementRepositoryImpl implements AttributeElementRepositoryInterf
             $attribute->isKind() => KindElementDataModel::selectAttributeElement(id: $attributeElementId?->value()),
             $attribute->isPurpose() => PurposeElementDataModel::selectAttributeElement(id: $attributeElementId?->value()),
             $attribute->isPlace() => PlaceElementDataModel::selectAttributeElement(id: $attributeElementId?->value()),
+            default => throw new InternalException('Attribute name is wrong.'),
         };
 
         return array_map(
