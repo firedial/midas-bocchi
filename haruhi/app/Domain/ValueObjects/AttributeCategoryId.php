@@ -2,7 +2,7 @@
 
 namespace App\Domain\ValueObjects;
 
-class AttributeElementId extends Id
+class AttributeCategoryId extends Id
 {
     private const MOVE_ID = 1;
 

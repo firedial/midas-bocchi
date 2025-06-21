@@ -2,9 +2,7 @@
 
 namespace App\Models\DataModels;
 
-use Illuminate\Support\Facades\DB;
-
-class PurposeElementDataModel
+class PurposeElementDataModel extends AttributeElementDataModel
 {
     public const TABLE_NAME = "m_purpose_element";
 

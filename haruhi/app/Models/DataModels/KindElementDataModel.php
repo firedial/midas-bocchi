@@ -2,9 +2,7 @@
 
 namespace App\Models\DataModels;
 
-use Illuminate\Support\Facades\DB;
-
-class KindElementDataModel
+class KindElementDataModel extends AttributeElementDataModel
 {
     public const TABLE_NAME = "m_kind_element";
 

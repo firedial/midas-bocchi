@@ -2,7 +2,7 @@
 
 namespace App\Domain\ValueObjects;
 
-class PlaceElementId extends AttributeElementId
+class PurposeCategoryId extends AttributeCategoryId
 {
     protected const MOVE_ID = 1;
 }

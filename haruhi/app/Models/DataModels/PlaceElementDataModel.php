@@ -2,9 +2,7 @@
 
 namespace App\Models\DataModels;
 
-use Illuminate\Support\Facades\DB;
-
-class PlaceElementDataModel
+class PlaceElementDataModel extends AttributeElementDataModel
 {
     public const TABLE_NAME = "m_place_element";
 

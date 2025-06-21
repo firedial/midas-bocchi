@@ -11,7 +11,7 @@ class Description
     public function __construct(private readonly string $description)
     {
         if (mb_strlen($description) === 0 || mb_strlen($description) > self::MAX_LENGTH) {
-            throw new ValueObjectException("Item length is over.");
+            throw new ValueObjectException("Description length is over.");
         }
     }
 
