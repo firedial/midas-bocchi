@@ -8,7 +8,7 @@ use App\Infrastructure\Repository\Impl\AttributeElementRepositoryImpl;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class GetAttributesElementUsecase
+class GetAttributeElementsUsecase
 {
     private AttributeElementRepositoryImpl $attributeElementRepositoryImpl;
 

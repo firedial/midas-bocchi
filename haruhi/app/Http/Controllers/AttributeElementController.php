@@ -13,14 +13,14 @@ use App\Domain\ValueObjects\Priority;
 use App\Domain\ValueObjects\PurposeCategoryId;
 use Illuminate\Http\Request;
 use App\Exceptions\InvalidParameterException;
-use App\Usecases\AttributeElement\GetAttributesElementUsecase;
+use App\Usecases\AttributeElement\GetAttributeElementsUsecase;
 use App\Usecases\AttributeElement\InsertAttributeElementUsecase;
 use App\Usecases\AttributeElement\SelectAttributeElementUsecase;
 use App\Usecases\AttributeElement\UpdateAttributeElementUsecase;
 
 class AttributeElementController extends Controller
 {
-    public function index(Request $request, string $attributeName)
+    public function index(string $attributeName)
     {
         // 属性名
         $attribute = match ($attributeName) {
@@ -30,8 +30,8 @@ class AttributeElementController extends Controller
             default => throw new InvalidParameterException('Attribute name is wrong.'),
         };
 
-        $getAttributesElementUsecase = new GetAttributesElementUsecase();
-        $attributeElements = $getAttributesElementUsecase->execute($attribute);
+        $getAttributeElementsUsecase = new GetAttributeElementsUsecase();
+        $attributeElements = $getAttributeElementsUsecase->execute($attribute);
 
         return array_map(
             function (AttributeElementEntity $attributeElement) {
