@@ -15,9 +15,9 @@ class SelectAttributeElementUsecase
 {
     private AttributeElementRepositoryImpl $attributeElementRepositoryImpl;
 
-    public function __construct(?AttributeElementRepositoryInterface $attributeEelemntRepository = null)
+    public function __construct(?AttributeElementRepositoryInterface $attributeElemntRepository = null)
     {
-        $this->attributeElementRepositoryImpl = $attributeEelemntRepository ?: new AttributeElementRepositoryImpl();
+        $this->attributeElementRepositoryImpl = $attributeElemntRepository ?: new AttributeElementRepositoryImpl();
     }
 
     public function execute(Attribute $attribute, AttributeElementId $attributeElementId): AttributeElementEntity
