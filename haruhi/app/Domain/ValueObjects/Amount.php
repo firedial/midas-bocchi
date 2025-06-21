@@ -10,4 +10,9 @@ class Amount
     {
         return $this->amount;
     }
+
+    public function inverse(): self
+    {
+        return new Amount((-1) * $this->amount);
+    }
 }

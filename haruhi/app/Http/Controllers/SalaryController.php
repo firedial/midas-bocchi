@@ -2,46 +2,63 @@
 
 namespace App\Http\Controllers;
 
-use App\Service\SalaryService;
-use App\Util\DateUtil;
+use App\Domain\Entities\SalaryEntity;
+use App\Domain\ValueObjects\Amount;
+use App\Domain\ValueObjects\Date;
 use App\Exceptions\InvalidParameterException;
+use App\Usecases\SalaryUsecase;
 use Illuminate\Http\Request;
 
 class SalaryController extends Controller
 {
     public function store(Request $request)
     {
-        $salary = $request->only([
-            'baseSalary',
-            'adjustmentSalary',
-            'transportation',
-            'holdingIncentives',
-            'healthInsurance',
-            'welfarePension',
-            'residentTax',
-            'employmentInsurance',
-            'incomeTax',
-            'holding',
-            'date',
-        ]);
+        $salary = new SalaryEntity(
+            new Amount($request->input('baseSalary')),
+            new Amount($request->input('adjustmentSalary')),
+            new Amount($request->input('transportation')),
+            new Amount($request->input('holdingIncentives')),
+            new Amount($request->input('healthInsurance')),
+            new Amount($request->input('welfarePension')),
+            new Amount($request->input('residentTax')),
+            new Amount($request->input('employmentInsurance')),
+            new Amount($request->input('incomeTax')),
+            new Amount($request->input('holding')),
+            new Date($request->input('date')),
+        );
 
-        // パラメータ数があっているかの確認
-        if (count($salary) !== 11) {
-            throw new InvalidParameterException('Parameter count is wrong.');
+        if ($salary->baseSalary()->value() < 0) {
+            throw new InvalidParameterException('Parameter has null or minus.');
         }
-
-        // 全部0以上の値が入っているかの確認
-        if (count(array_filter($salary, fn($x) => is_null($x) || $x < 0)) > 0) {
+        if ($salary->adjustmentSalary()->value() < 0) {
+            throw new InvalidParameterException('Parameter has null or minus.');
+        }
+        if ($salary->transportation()->value() < 0) {
+            throw new InvalidParameterException('Parameter has null or minus.');
+        }
+        if ($salary->holdingIncentives()->value() < 0) {
+            throw new InvalidParameterException('Parameter has null or minus.');
+        }
+        if ($salary->healthInsurance()->value() < 0) {
+            throw new InvalidParameterException('Parameter has null or minus.');
+        }
+        if ($salary->welfarePension()->value() < 0) {
+            throw new InvalidParameterException('Parameter has null or minus.');
+        }
+        if ($salary->residentTax()->value() < 0) {
+            throw new InvalidParameterException('Parameter has null or minus.');
+        }
+        if ($salary->employmentInsurance()->value() < 0) {
+            throw new InvalidParameterException('Parameter has null or minus.');
+        }
+        if ($salary->incomeTax()->value() < 0) {
+            throw new InvalidParameterException('Parameter has null or minus.');
+        }
+        if ($salary->holding()->value() < 0) {
             throw new InvalidParameterException('Parameter has null or minus.');
         }
 
-        // 日付の形式があっているかの確認
-        if (!DateUtil::isValidDateString($salary['date'])) {
-            throw new InvalidParameterException('Date is invalid.');
-        }
-
-        $salaryService = new SalaryService();
-        $salaryService->registerSalary($salary);
+        $salaryUsecase = new SalaryUsecase();
+        $salaryUsecase->execute($salary);
     }
-
 }
