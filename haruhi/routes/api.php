@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', ['as' => 'login', 'uses' => 'App\Http\Controllers\LoginController@login']);
 Route::post('/logout', 'App\Http\Controllers\LoginController@logout');
 
-Route::middleware('auth:sanctum')->group(function() {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/balances', 'App\Http\Controllers\BalanceController@index');
     Route::post('/balances', 'App\Http\Controllers\BalanceController@store');
     Route::get('/balances/{balance}', 'App\Http\Controllers\BalanceController@show');
@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::get('/attribute_categories/{attribute_name}', 'App\Http\Controllers\AttributeCategoryController@index');
     Route::post('/attribute_categories/{attribute_name}', 'App\Http\Controllers\AttributeCategoryController@store');
+    Route::get('/attribute_categories/{attribute_name}/{category_id}', 'App\Http\Controllers\AttributeCategoryController@show');
     Route::put('/attribute_categories/{attribute_name}/{category_id}', 'App\Http\Controllers\AttributeCategoryController@update');
 
     Route::post('/salary', 'App\Http\Controllers\SalaryController@store');
