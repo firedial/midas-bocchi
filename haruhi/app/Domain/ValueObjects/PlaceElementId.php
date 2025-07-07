@@ -11,6 +11,8 @@ class PlaceElementId extends AttributeElementId
     private const SKY_PLACE_ELEMENT_ID = 4;
     private const SALARY_PLACE_ELEMENT_ID = 8;
 
+    private const OFFICE_TRANSPORTATION_PLACE_ELEMENT_ID = 44;
+
     public static function withdrawalId(): self
     {
         return new self(self::WITHDRAWAL_PLACE_ELEMENT_ID);
@@ -24,5 +26,10 @@ class PlaceElementId extends AttributeElementId
     public static function salaryId(): self
     {
         return new self(self::SALARY_PLACE_ELEMENT_ID);
+    }
+
+    public static function officeTransportationId(): self
+    {
+        return new self(self::OFFICE_TRANSPORTATION_PLACE_ELEMENT_ID);
     }
 }
