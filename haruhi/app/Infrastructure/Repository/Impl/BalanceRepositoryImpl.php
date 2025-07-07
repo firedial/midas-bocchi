@@ -79,4 +79,9 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
     {
         BalanceDataModel::deleteBalance($balanceId->value());
     }
+
+    public function sum(PlaceElementId $placeElementId): int
+    {
+        return BalanceDataModel::sum($placeElementId->value());
+    }
 }

@@ -109,4 +109,12 @@ class BalanceDataModel
             ->where(self::C_ID, '=', $id)
             ->delete();
     }
+
+    public static function sum(
+        int $placeElementId,
+    ): int {
+        return DB::table(self::TABLE_NAME)
+            ->where(self::C_PLACE_ELEMENT_ID, '=', $placeElementId)
+            ->sum(self::C_AMOUNT);
+    }
 }

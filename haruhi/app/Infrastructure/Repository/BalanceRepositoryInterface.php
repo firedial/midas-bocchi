@@ -4,6 +4,7 @@ namespace App\Infrastructure\Repository;
 
 use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\BalanceId;
+use App\Domain\ValueObjects\PlaceElementId;
 
 interface BalanceRepositoryInterface
 {
@@ -12,4 +13,6 @@ interface BalanceRepositoryInterface
     public function insertBalance(BalanceEntity $balance): int;
     public function updateBalance(BalanceEntity $balance): void;
     public function deleteBalance(BalanceId $balanceId): void;
+
+    public function sum(PlaceElementId $placeElementId): int;
 }
