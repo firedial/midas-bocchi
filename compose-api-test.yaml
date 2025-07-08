@@ -1,0 +1,56 @@
+services:
+    tamako:
+        build:
+            context: ./tamako
+            dockerfile: Dockerfile
+        volumes:
+            - ./tamako:/app
+        tty: true
+    test-haruhi:
+        build:
+            context: ./haruhi
+            dockerfile: Dockerfile
+        restart: always
+        hostname: haruhi
+        # command: npm run watch
+        environment:
+            - APP_ENV=$APP_ENV
+            - APP_DEBUG=$APP_DEBUG
+            - APP_URL=$APP_URL
+            - APP_DOMAIN=$APP_DOMAIN
+            - APP_KEY=$APP_KEY
+            - DB_HOST=$DB_HOST
+            - DB_DATABASE=$DB_DATABASE
+            - DB_USERNAME=$DB_MIDAS_API_USER
+            - DB_PASSWORD=$DB_MIDAS_API_PASSWORD
+            - SANCTUM_STATEFUL_DOMAINS=$APP_DOMAIN
+            - SESSION_DOMAIN=$APP_DOMAIN
+        volumes:
+            - ./haruhi:/var/www/html
+    test-yui:
+        build:
+            context: ./yui
+            dockerfile: Dockerfile
+        restart: always
+        environment:
+            - MYSQL_ROOT_PASSWORD=$DB_ROOT_PASSWORD
+            - MYSQL_DATABASE=$DB_DATABASE
+            - MYSQL_CHARSET=$DB_DATABASE_CHARSET
+            - MYSQL_COLLATION=$DB_DATABASE_COLLATION
+            - MYSQL_USER=$DB_MIDAS_ROOT_USER
+            - MYSQL_PASSWORD=$DB_MIDAS_ROOT_PASSWORD
+            - DB_MIDAS_API_USER=$DB_MIDAS_API_USER
+            - DB_MIDAS_API_PASSWORD=$DB_MIDAS_API_PASSWORD
+            - DB_MIDAS_ANALYZE_USER=$DB_MIDAS_ANALYZE_USER
+            - DB_MIDAS_ANALYZE_PASSWORD=$DB_MIDAS_ANALYZE_PASSWORD
+            - DB_METABASE_DATABASE=$DB_METABASE_DATABASE
+            - DB_METABASE_ROOT_USER=$DB_METABASE_ROOT_USER
+            - DB_METABASE_ROOT_PASSWORD=$DB_METABASE_ROOT_PASSWORD
+            - DB_TASK_USER=$DB_TASK_USER
+            - DB_TASK_PASSWORD=$DB_TASK_PASSWORD
+        hostname: yui
+        volumes:
+            - ./yui/initdb.d:/docker-entrypoint-initdb.d
+            - db:/var/lib/mysql
+volumes:
+    db:
