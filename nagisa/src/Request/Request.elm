@@ -115,7 +115,7 @@ putBalance xsrfToken id balance toMsg =
                 , ( "date", E.string balance.date )
                 ]
     in
-    BaseRequest.put xsrfToken "/api/balances/1/" encodedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put xsrfToken ("/api/balances/" ++ String.fromInt id) encodedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 deleteBalance : String -> Int -> (Result Error () -> msg) -> Cmd msg

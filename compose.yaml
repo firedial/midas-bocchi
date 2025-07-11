@@ -100,10 +100,11 @@ services:
             - MYSQL_COLLATION=$DB_DATABASE_COLLATION
             - MYSQL_USER=midas
             - MYSQL_PASSWORD=midaspass
+            - DB_MIDAS_API_USER=$DB_MIDAS_API_USER
+            - DB_MIDAS_API_PASSWORD=$DB_MIDAS_API_PASSWORD
         hostname: azusa
         volumes:
-            - ./yui/initdb.d/001_create_midas_user.sh:/docker-entrypoint-initdb.d/001_create_midas_user.sh
-            - ./azusa/initdb.d/101_ddl.sql:/docker-entrypoint-initdb.d/101_ddl.sql
+            - ./azusa/initdb.d:/docker-entrypoint-initdb.d
 volumes:
     db:
 

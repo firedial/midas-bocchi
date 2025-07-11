@@ -2,76 +2,106 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Entities\AttributeCategoryEntity;
+use App\Domain\ValueObjects\Attribute;
+use App\Domain\ValueObjects\AttributeCategoryId;
+use App\Domain\ValueObjects\AttributeCategoryName;
+use App\Domain\ValueObjects\Description;
 use Illuminate\Http\Request;
-use App\Service\AttributeCategoryService;
 use App\Exceptions\InvalidParameterException;
+use App\Usecases\AttributeCategory\GetAttributeCategoriesUsecase;
+use App\Usecases\AttributeCategory\InsertAttributeCategoryUsecase;
+use App\Usecases\AttributeCategory\SelectAttributeCategoryUsecase;
+use App\Usecases\AttributeCategory\UpdateAttributeCategoryUsecase;
 
 class AttributeCategoryController extends Controller
 {
     public function index(string $attributeName)
     {
-        if (!in_array($attributeName, ['kind_category', 'purpose_category', 'place_category'])) {
-            throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
-        }
+        // 属性名
+        $attribute = match ($attributeName) {
+            'kind_category' => Attribute::kind(),
+            'purpose_category' => Attribute::purpose(),
+            'place_category' => Attribute::place(),
+            default => throw new InvalidParameterException('Attribute name is wrong.'),
+        };
 
-        $attributeCategoryService = new AttributeCategoryService();
-        return $attributeCategoryService->getAttributeCategories(['attributeName' => $attributeName]);
+        $getAttributeCategoriesUsecase = new GetAttributeCategoriesUsecase();
+        $attributeCategories = $getAttributeCategoriesUsecase->execute($attribute);
+
+        return array_map(
+            function (AttributeCategoryEntity $attributeCategory) {
+                return [
+                    "id" => $attributeCategory->attributeCategoryId()->value(),
+                    "name" => $attributeCategory->attributeCategoryName()->value(),
+                    "description" => $attributeCategory->description()->value(),
+                ];
+            },
+            $attributeCategories
+        );
+    }
+
+    public function show(string $attributeName, string $categoryId)
+    {
+        // 属性名
+        $attribute = match ($attributeName) {
+            'kind_category' => Attribute::kind(),
+            'purpose_category' => Attribute::purpose(),
+            'place_category' => Attribute::place(),
+            default => throw new InvalidParameterException('Attribute name is wrong.'),
+        };
+
+        $attributeCategoryId = AttributeCategoryId::filledId($categoryId);
+
+        $selectAttributeCategoryUsecase = new SelectAttributeCategoryUsecase();
+        $attributeCategory = $selectAttributeCategoryUsecase->execute($attribute, $attributeCategoryId);
+
+        return [
+            "id" => $attributeCategory->attributeCategoryId()->value(),
+            "name" => $attributeCategory->attributeCategoryName()->value(),
+            "description" => $attributeCategory->description()->value(),
+        ];
     }
 
     public function store(Request $request, string $attributeName)
     {
-        if (!in_array($attributeName, ['kind_category', 'purpose_category', 'place_category'])) {
-            throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
-        }
+        // 属性名
+        $attribute = match ($attributeName) {
+            'kind_category' => Attribute::kind(),
+            'purpose_category' => Attribute::purpose(),
+            'place_category' => Attribute::place(),
+            default => throw new InvalidParameterException('Attribute name is wrong.'),
+        };
 
-        $name = $request->input('name');
-        if (!preg_match('/^[A-Z]\w*$/', $name) || strlen($name) > 20) {
-            throw new InvalidParameterException("Wrong name {$name}.");
-        }
+        $attributeCategory = new AttributeCategoryEntity(
+            $attribute,
+            AttributeCategoryId::emptyId(),
+            new AttributeCategoryName($request->input('name')),
+            new Description($request->input('description')),
+        );
 
-        $description = $request->input('description');
-        if (empty($description) || mb_strlen($description) > 20) {
-            throw new InvalidParameterException("Wrong description {$description}.");
-        }
-
-        $attributeCategoryService = new AttributeCategoryService();
-        return $attributeCategoryService->createAttributeCategory([
-            'attributeName' => $attributeName,
-            'attributeCategory' => [
-                'name' => $name,
-                'description' => $description,
-            ],
-        ]);
+        $insertAttributeCategoryUsecase = new InsertAttributeCategoryUsecase();
+        return $insertAttributeCategoryUsecase->execute($attributeCategory);
     }
 
     public function update(Request $request, string $attributeName, int $categoryId)
     {
-        if (!in_array($attributeName, ['kind_category', 'purpose_category', 'place_category'])) {
-            throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
-        }
+        // 属性名
+        $attribute = match ($attributeName) {
+            'kind_category' => Attribute::kind(),
+            'purpose_category' => Attribute::purpose(),
+            'place_category' => Attribute::place(),
+            default => throw new InvalidParameterException('Attribute name is wrong.'),
+        };
 
-        if (empty($categoryId)) {
-            throw new InvalidParameterException("categoryId is empty.");
-        }
+        $attributeCategory = new AttributeCategoryEntity(
+            $attribute,
+            AttributeCategoryId::filledId($categoryId),
+            new AttributeCategoryName($request->input('name')),
+            new Description($request->input('description')),
+        );
 
-        $name = $request->input('name');
-        if (!preg_match('/^[A-Z]\w*$/', $name) || strlen($name) > 20) {
-            throw new InvalidParameterException("Wrong name {$name}.");
-        }
-
-        $description = $request->input('description');
-        if (empty($description) || mb_strlen($description) > 20) {
-            throw new InvalidParameterException("Wrong description {$description}.");
-        }
-
-        $attributeCategoryService = new AttributeCategoryService();
-        return $attributeCategoryService->updateAttributeCategory([
-            'attributeName' => $attributeName,
-            'attributeCategory' => [
-                'id' => $categoryId,
-                'name' => $name,
-                'description' => $description,
-            ],
-        ]);
+        $updateAttributeCategoryUsecase = new UpdateAttributeCategoryUsecase();
+        return $updateAttributeCategoryUsecase->execute($attributeCategory);
     }
 }
