@@ -13,6 +13,7 @@ import String
 type alias Model =
     { bonus : StringBonus
     , xsrfToken : String
+    , isDisabledEditButton : Bool
     , key : Navigation.Key
     , errorMessage : Maybe String
     }
@@ -45,6 +46,7 @@ init xsrfToken key =
     ( Model
         (StringBonus "" "" "" "" "" "")
         xsrfToken
+        False
         key
         Nothing
     , Cmd.none
@@ -97,7 +99,7 @@ update msg model =
             ( { model | bonus = { newBonus | date = value } }, Cmd.none )
 
         Insert ->
-            ( model
+            ( { model | isDisabledEditButton = True, errorMessage = Nothing }
             , Request.postBonus
                 model.xsrfToken
                 (String.toInt model.bonus.bonus |> Maybe.withDefault 0)
@@ -118,10 +120,10 @@ update msg model =
                     ( model, Navigation.pushUrl model.key (Route.toPath Route.Top) )
 
                 Err (Request.DecodeError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
 
                 Err (Request.RequestError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
 
 
 view : Model -> Html.Html Msg
@@ -147,7 +149,7 @@ view model =
                 , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.bonus.date, onInput InputDate ] [] ]
                 ]
             , Html.div []
-                [ Html.button [ Attributes.class "edit-button", onClick Insert ] [ Html.text "保存" ] ]
+                [ Html.button [ Attributes.class "edit-button", onClick Insert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "保存" ] ]
             , Html.div []
                 [ Html.button [ Attributes.class "cancel-button", onClick Cancel ] [ Html.text "キャンセル" ] ]
             ]

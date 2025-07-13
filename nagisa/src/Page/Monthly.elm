@@ -13,6 +13,7 @@ import String
 type alias Model =
     { monthly : StringMonthly
     , xsrfToken : String
+    , isDisabledEditButton : Bool
     , key : Navigation.Key
     , errorMessage : Maybe String
     }
@@ -53,6 +54,7 @@ init xsrfToken key =
     ( Model
         (StringMonthly "" "" "" "" "" "" "" "" "" "")
         xsrfToken
+        False
         key
         Nothing
     , Cmd.none
@@ -133,7 +135,7 @@ update msg model =
             ( { model | monthly = { newMonthly | netDate = value } }, Cmd.none )
 
         Insert ->
-            ( model
+            ( { model | isDisabledEditButton = True, errorMessage = Nothing }
             , Request.postMonthly
                 model.xsrfToken
                 (String.toInt model.monthly.houseRentAmount |> Maybe.withDefault 0)
@@ -158,10 +160,10 @@ update msg model =
                     ( model, Navigation.pushUrl model.key (Route.toPath Route.Top) )
 
                 Err (Request.DecodeError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
 
                 Err (Request.RequestError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
 
 
 view : Model -> Html.Html Msg
@@ -195,7 +197,7 @@ view model =
                 , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.monthly.netDate, onInput InputNetDate ] [] ]
                 ]
             , Html.div []
-                [ Html.button [ Attributes.class "edit-button", onClick Insert ] [ Html.text "保存" ] ]
+                [ Html.button [ Attributes.class "edit-button", onClick Insert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "保存" ] ]
             , Html.div []
                 [ Html.button [ Attributes.class "cancel-button", onClick Cancel ] [ Html.text "キャンセル" ] ]
             ]
