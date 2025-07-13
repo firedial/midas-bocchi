@@ -2,120 +2,140 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Entities\AttributeElementEntity;
+use App\Domain\ValueObjects\Attribute;
+use App\Domain\ValueObjects\AttributeElementId;
+use App\Domain\ValueObjects\AttributeElementName;
+use App\Domain\ValueObjects\Description;
+use App\Domain\ValueObjects\KindCategoryId;
+use App\Domain\ValueObjects\PlaceCategoryId;
+use App\Domain\ValueObjects\Priority;
+use App\Domain\ValueObjects\PurposeCategoryId;
 use Illuminate\Http\Request;
-use App\Service\AttributeElementService;
 use App\Exceptions\InvalidParameterException;
+use App\Usecases\AttributeElement\GetAttributeElementsUsecase;
+use App\Usecases\AttributeElement\InsertAttributeElementUsecase;
+use App\Usecases\AttributeElement\SelectAttributeElementUsecase;
+use App\Usecases\AttributeElement\UpdateAttributeElementUsecase;
 
 class AttributeElementController extends Controller
 {
-    public function index(Request $request, string $attributeName)
+    public function index(string $attributeName)
     {
-        if (!in_array($attributeName, ['kind_element', 'purpose_element', 'place_element'])) {
-            throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
-        }
+        // 属性名
+        $attribute = match ($attributeName) {
+            'kind_element' => Attribute::kind(),
+            'purpose_element' => Attribute::purpose(),
+            'place_element' => Attribute::place(),
+            default => throw new InvalidParameterException('Attribute name is wrong.'),
+        };
 
-        $isOnlySelectable = $request->input('isOnlySelectable') === 'true';
+        $getAttributeElementsUsecase = new GetAttributeElementsUsecase();
+        $attributeElements = $getAttributeElementsUsecase->execute($attribute);
 
-        $attributeElementService = new AttributeElementService();
-        return $attributeElementService->getAttributeElements(['attributeName' => $attributeName, 'isOnlySelectable' => $isOnlySelectable]);
+        return array_map(
+            function (AttributeElementEntity $attributeElement) {
+                return [
+                    "id" => $attributeElement->attributeElementId()->value(),
+                    "name" => $attributeElement->attributeElementName()->value(),
+                    "description" => $attributeElement->description()->value(),
+                    "priority" => $attributeElement->priority()->value(),
+                    "category_id" => $attributeElement->attributeCategoryId()->value(),
+                ];
+            },
+            $attributeElements
+        );
     }
 
     public function show(string $attributeName, string $elementId)
     {
-        if (!in_array($attributeName, ['kind_element', 'purpose_element', 'place_element'])) {
-            throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
-        }
+        // 属性名
+        $attribute = match ($attributeName) {
+            'kind_element' => Attribute::kind(),
+            'purpose_element' => Attribute::purpose(),
+            'place_element' => Attribute::place(),
+            default => throw new InvalidParameterException('Attribute name is wrong.'),
+        };
 
-        if (empty($elementId)) {
-            throw new InvalidParameterException("Element is empty.");
-        }
+        $attributeElementId = AttributeElementId::filledId($elementId);
 
-        $attributeElementService = new AttributeElementService();
-        return $attributeElementService->getAttributeElementByElementId(['attributeName' => $attributeName, 'elementId' => $elementId])[0];
+        $selectAttributeElementUsecase = new SelectAttributeElementUsecase();
+        $attributeElement = $selectAttributeElementUsecase->execute($attribute, $attributeElementId);
+
+        return [
+            "id" => $attributeElement->attributeElementId()->value(),
+            "name" => $attributeElement->attributeElementName()->value(),
+            "description" => $attributeElement->description()->value(),
+            "priority" => $attributeElement->priority()->value(),
+            "category_id" => $attributeElement->attributeCategoryId()->value(),
+        ];
     }
 
     public function store(Request $request, string $attributeName)
     {
-        if (!in_array($attributeName, ['kind_element', 'purpose_element', 'place_element'])) {
-            throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
+        // 属性名
+        $attribute = match ($attributeName) {
+            'kind_element' => Attribute::kind(),
+            'purpose_element' => Attribute::purpose(),
+            'place_element' => Attribute::place(),
+            default => throw new InvalidParameterException('Attribute name is wrong.'),
+        };
+
+        $attributeCategoryId = match (true) {
+            $attribute->isKind() => KindCategoryId::filledId($request->input('category_id')),
+            $attribute->isPurpose() => PurposeCategoryId::filledId($request->input('category_id')),
+            $attribute->isPlace() => PlaceCategoryId::filledId($request->input('category_id')),
+            default => throw new InvalidParameterException('Attribute name is wrong.'),
+        };
+
+        if ($attributeCategoryId->isMoveId()) {
+            throw new InvalidParameterException('Attribute category id is move id.');
         }
 
-        $name = $request->input('name');
-        if (!preg_match('/^[a-z]\w*$/', $name) || strlen($name) > 20) {
-            throw new InvalidParameterException("Wrong name {$name}.");
-        }
+        $attributeElement = new AttributeElementEntity(
+            $attribute,
+            AttributeElementId::emptyId(),
+            new AttributeElementName($request->input('name')),
+            new Description($request->input('description')),
+            new Priority($request->input('priority')),
+            $attributeCategoryId,
+        );
 
-        $description = $request->input('description');
-        if (empty($description) || mb_strlen($description) > 20) {
-            throw new InvalidParameterException("Wrong description {$description}.");
-        }
-
-        $priority = (int)$request->input('priority');
-        if (!(0 <= $priority && $priority <= 100)) {
-            throw new InvalidParameterException("Wrong priority {$priority}.");
-        }
-
-        $categoryId = $request->input('category_id');
-        if (empty($categoryId)) {
-            throw new InvalidParameterException("Wrong category id.");
-        }
-
-        // @todo 移動カテゴリが選べないようにする
-
-        $attributeElementService = new AttributeElementService();
-        return $attributeElementService->createAttributeElement([
-            'attributeName' => $attributeName,
-            'attributeElement' => [
-                'name' => $name,
-                'description' => $description,
-                'priority' => $priority,
-                'categoryId' => $categoryId,
-            ],
-        ]);
+        $insertAttributeElementUsecase = new InsertAttributeElementUsecase();
+        return $insertAttributeElementUsecase->execute($attributeElement);
     }
 
     public function update(Request $request, string $attributeName, int $elementId)
     {
-        if (!in_array($attributeName, ['kind_element', 'purpose_element', 'place_element'])) {
-            throw new InvalidParameterException("Wrong attribute name {$attributeName}.");
+        // 属性名
+        $attribute = match ($attributeName) {
+            'kind_element' => Attribute::kind(),
+            'purpose_element' => Attribute::purpose(),
+            'place_element' => Attribute::place(),
+            default => throw new InvalidParameterException('Attribute name is wrong.'),
+        };
+
+        $attributeCategoryId = match (true) {
+            $attribute->isKind() => KindCategoryId::filledId($request->input('category_id')),
+            $attribute->isPurpose() => PurposeCategoryId::filledId($request->input('category_id')),
+            $attribute->isPlace() => PlaceCategoryId::filledId($request->input('category_id')),
+            default => throw new InvalidParameterException('Attribute name is wrong.'),
+        };
+
+        if ($attributeCategoryId->isMoveId()) {
+            throw new InvalidParameterException('Attribute category id is move id.');
         }
 
-        if (empty($elementId)) {
-            throw new InvalidParameterException("Element is empty.");
-        }
+        $attributeElement = new AttributeElementEntity(
+            $attribute,
+            AttributeElementId::filledId($elementId),
+            new AttributeElementName($request->input('name')),
+            new Description($request->input('description')),
+            new Priority($request->input('priority')),
+            $attributeCategoryId,
+        );
 
-        $name = $request->input('name');
-        if (!preg_match('/^[a-z]\w*$/', $name) || strlen($name) > 20) {
-            throw new InvalidParameterException("Wrong name {$name}.");
-        }
-
-        $description = $request->input('description');
-        if (empty($description) || mb_strlen($description) > 20) {
-            throw new InvalidParameterException("Wrong description {$description}.");
-        }
-
-        $priority = (int)$request->input('priority');
-        if (!(0 <= $priority && $priority <= 100)) {
-            throw new InvalidParameterException("Wrong priority {$priority}.");
-        }
-
-        $categoryId = $request->input('category_id');
-        if (empty($categoryId)) {
-            throw new InvalidParameterException("Wrong category id.");
-        }
-
-        // @todo 移動カテゴリが選べないようにする
-
-        $attributeElementService = new AttributeElementService();
-        return $attributeElementService->updateAttributeElement([
-            'attributeName' => $attributeName,
-            'attributeElement' => [
-                'id' => $elementId,
-                'name' => $name,
-                'description' => $description,
-                'priority' => $priority,
-                'categoryId' => $categoryId,
-            ],
-        ]);
+        $updateAttributeElementUsecase = new UpdateAttributeElementUsecase();
+        return $updateAttributeElementUsecase->execute($attributeElement);
     }
 }

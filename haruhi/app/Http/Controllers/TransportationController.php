@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Service\TransportationService;
-use App\Exceptions\InvalidParameterException;
-use App\Util\DateUtil;
+use App\Domain\ValueObjects\Date;
+use App\Usecases\TransportationUsecase;
 use Illuminate\Http\Request;
 
 class TransportationController extends Controller
 {
     public function post(Request $request)
     {
-        $data = $request->only(['date']);
-        // 日付が正しい形式か
-        if (!DateUtil::isValidDateString($data['date'])) {
-            throw new InvalidParameterException('Date is invalid.');
-        }
+        $date = new Date($request->input("date"));
 
-        $transportationService = new TransportationService();
-        $transportationService->registerTransportation($data['date']);
+        $transportationUsecate = new TransportationUsecase();
+        $transportationUsecate->execute($date);
     }
-
 }
