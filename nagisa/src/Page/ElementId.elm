@@ -16,6 +16,7 @@ import String
 type alias Model =
     { attributeElement : StringAttributeElement
     , attributeCategories : AttributeCategoryEntity.AttributeCategories
+    , isDisabledEditButton : Bool
     , xsrfToken : String
     , attributeName : AttributeValueObject.Attribute
     , id : Maybe Int
@@ -49,6 +50,7 @@ init xsrfToken key attributeValueObject id =
     ( Model
         (StringAttributeElement "" "" "" "")
         []
+        False
         xsrfToken
         attributeValueObject
         id
@@ -152,7 +154,7 @@ update msg model =
                         Just id ->
                             Request.putAttributeElement model.xsrfToken model.attributeName id newAttributeElement ModifiedResult
             in
-            ( model, cmd )
+            ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
         Cancel ->
             let
@@ -187,10 +189,10 @@ update msg model =
                     ( model, Navigation.pushUrl model.key redirectRouting )
 
                 Err (Request.DecodeError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
 
                 Err (Request.RequestError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
 
 
 view : Model -> Html.Html Msg
@@ -238,10 +240,10 @@ view model =
         , Html.div []
             (case model.id of
                 Nothing ->
-                    [ Html.button [ Attributes.class "edit-button", onClick Upsert ] [ Html.text "作成" ] ]
+                    [ Html.button [ Attributes.class "edit-button", onClick Upsert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "作成" ] ]
 
                 Just _ ->
-                    [ Html.button [ Attributes.class "edit-button",onClick Upsert ] [ Html.text "保存" ] ]
+                    [ Html.button [ Attributes.class "edit-button", onClick Upsert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "保存" ] ]
             )
         , Html.div []
             [ Html.button [ Attributes.class "cancel-button", onClick Cancel ] [ Html.text "キャンセル" ] ]

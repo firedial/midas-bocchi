@@ -22,6 +22,7 @@ type alias Model =
     , id : Maybe Int
     , enableInputDeleteString : Bool
     , deleteString : String
+    , isDisabledEditButton : Bool
     , key : Navigation.Key
     , errorMessage : Maybe String
     }
@@ -70,6 +71,7 @@ init xsrfToken key moveAttributeValueObject id =
         id
         False
         ""
+        False
         key
         Nothing
     , Cmd.batch
@@ -182,7 +184,7 @@ update msg model =
                         Just id ->
                             Request.putMove model.xsrfToken model.moveAttributeName id newMove ModifiedResult
             in
-            ( model, cmd )
+            ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
         Cancel ->
             let
@@ -221,10 +223,10 @@ update msg model =
                     ( model, Navigation.pushUrl model.key redirectRouting )
 
                 Err (Request.DecodeError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
 
                 Err (Request.RequestError message) ->
-                    ( { model | errorMessage = Just message }, Cmd.none )
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
 
 
 view : Model -> Html.Html Msg
@@ -286,10 +288,10 @@ view model =
         , Html.div []
             (case model.id of
                 Nothing ->
-                    [ Html.button [ Attributes.class "edit-button", onClick Upsert ] [ Html.text "作成" ] ]
+                    [ Html.button [ Attributes.class "edit-button", onClick Upsert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "作成" ] ]
 
                 Just moveId ->
-                    [ Html.button [ Attributes.class "edit-button", onClick Upsert ] [ Html.text "保存" ]
+                    [ Html.button [ Attributes.class "edit-button", onClick Upsert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "保存" ]
                     , Html.button [ Attributes.class "delete-button", onClick (Delete moveId) ] [ Html.text "削除" ]
                     , Html.input [ Attributes.type_ "text", Attributes.value model.deleteString, onInput InputDeleteString, Attributes.hidden (not model.enableInputDeleteString) ] []
                     ]
