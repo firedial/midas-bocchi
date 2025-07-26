@@ -36,7 +36,7 @@ class TransportationUsecase
         try {
             $secret = $this->secretRepository->getSecret();
             // @todo ValueObject 型にする
-            $amount = new Amount(json_decode($secret[0]->value, true)["officeTransportation"]);
+            $amount = new Amount((-1) * json_decode($secret[0]->value, true)["officeTransportation"]);
 
             $transportation = new BalanceEntity(
                 BalanceId::emptyId(),
