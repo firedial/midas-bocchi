@@ -74,7 +74,7 @@ class MonthlyUsecase
             new Item("電気代"),
             KindElementId::electId(),
             PurposeElementId::utilCostId(),
-            PlaceElementId::withdrawalId(),
+            PlaceElementId::payCardId(),
             $elect->date(),
         ) : null;
 
