@@ -1020,6 +1020,20 @@ paths:
                       type: string
                       description: 支払日
                       example: "2024-02-01"
+                insurance:
+                  type: object
+                  nullable: true
+                  description: 保険料
+                  properties:
+                    amount:
+                      type: integer
+                      minimum: 1
+                      description: 金額
+                      example: 6000
+                    date:
+                      type: string
+                      description: 支払日
+                      example: "2024-02-01"
       responses:
         "200":
           $ref: "#/components/responses/Ok"

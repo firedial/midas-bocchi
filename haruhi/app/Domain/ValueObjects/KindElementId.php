@@ -11,6 +11,7 @@ class KindElementId extends AttributeElementId
     private const WATER_KIND_ELEMENT_ID = 10;
     private const ELECT_KIND_ELEMENT_ID = 11;
     private const NET_KIND_ELEMENT_ID = 12;
+    private const INSURANCE_KIND_ELEMENT_ID = 72;
 
     private const SALARY_KIND_ELEMENT_ID = 14;
     private const TRANSPORTATION_KIND_ELEMENT_ID = 17;
@@ -43,6 +44,11 @@ class KindElementId extends AttributeElementId
     public static function netId(): self
     {
         return new self(self::NET_KIND_ELEMENT_ID);
+    }
+
+    public static function insuranceId(): self
+    {
+        return new self(self::INSURANCE_KIND_ELEMENT_ID);
     }
 
     public static function salaryId(): self

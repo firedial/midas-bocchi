@@ -30,6 +30,8 @@ type alias StringMonthly =
     , electDate : String
     , netAmount : String
     , netDate : String
+    , insuranceAmount : String
+    , insuranceDate : String
     }
 
 
@@ -44,6 +46,8 @@ type Msg
     | InputElectDate String
     | InputNetAmount String
     | InputNetDate String
+    | InputInsuranceAmount String
+    | InputInsuranceDate String
     | Insert
     | Cancel
     | ModifiedResult (Result Request.Error ())
@@ -52,7 +56,7 @@ type Msg
 init : String -> Navigation.Key -> ( Model, Cmd Msg )
 init xsrfToken key =
     ( Model
-        (StringMonthly "" "" "" "" "" "" "" "" "" "")
+        (StringMonthly "" "" "" "" "" "" "" "" "" "" "" "")
         xsrfToken
         False
         key
@@ -134,6 +138,20 @@ update msg model =
             in
             ( { model | monthly = { newMonthly | netDate = value } }, Cmd.none )
 
+        InputInsuranceAmount value ->
+            let
+                newMonthly =
+                    model.monthly
+            in
+            ( { model | monthly = { newMonthly | insuranceAmount = value } }, Cmd.none )
+
+        InputInsuranceDate value ->
+            let
+                newMonthly =
+                    model.monthly
+            in
+            ( { model | monthly = { newMonthly | insuranceDate = value } }, Cmd.none )
+
         Insert ->
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }
             , Request.postMonthly
@@ -148,6 +166,8 @@ update msg model =
                 model.monthly.electDate
                 (String.toInt model.monthly.netAmount |> Maybe.withDefault 0)
                 model.monthly.netDate
+                (String.toInt model.monthly.insuranceAmount |> Maybe.withDefault 0)
+                model.monthly.insuranceDate
                 ModifiedResult
             )
 
@@ -183,6 +203,8 @@ view model =
                 , Html.th [] [ Html.text "電気代日付" ]
                 , Html.th [] [ Html.text "ネット代" ]
                 , Html.th [] [ Html.text "ネット日付" ]
+                , Html.th [] [ Html.text "保険料代" ]
+                , Html.th [] [ Html.text "保険料付" ]
                 ]
             , Html.tr []
                 [ Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.monthly.houseRentAmount, onInput InputHouseRentAmount ] [] ]
@@ -195,6 +217,8 @@ view model =
                 , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.monthly.electDate, onInput InputElectDate ] [] ]
                 , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.monthly.netAmount, onInput InputNetAmount ] [] ]
                 , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.monthly.netDate, onInput InputNetDate ] [] ]
+                , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.monthly.insuranceAmount, onInput InputInsuranceAmount ] [] ]
+                , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.monthly.insuranceDate, onInput InputInsuranceDate ] [] ]
                 ]
             , Html.div []
                 [ Html.button [ Attributes.class "edit-button", onClick Insert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "保存" ] ]
