@@ -17,6 +17,7 @@ class MonthlyController extends Controller
             new MonthlyPaymentEntity($request->input('water')),
             new MonthlyPaymentEntity($request->input('elect')),
             new MonthlyPaymentEntity($request->input('net')),
+            new MonthlyPaymentEntity($request->input('insurance')),
         );
     }
 }

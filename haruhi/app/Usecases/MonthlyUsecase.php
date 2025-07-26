@@ -30,6 +30,7 @@ class MonthlyUsecase
         MonthlyPaymentEntity $water,
         MonthlyPaymentEntity $elect,
         MonthlyPaymentEntity $net,
+        MonthlyPaymentEntity $insurance,
     ): void {
         $saveBalances = [];
 
@@ -86,6 +87,17 @@ class MonthlyUsecase
             PurposeElementId::utilCostId(),
             PlaceElementId::withdrawalId(),
             $net->date(),
+        ) : null;
+
+        // 保険料
+        $saveBalances[] = $insurance->shouldSave() ? new BalanceEntity(
+            BalanceId::emptyId(),
+            $insurance->amount()->inverse(),
+            new Item("保険料"),
+            KindElementId::insuranceId(),
+            PurposeElementId::utilCostId(),
+            PlaceElementId::withdrawalId(),
+            $insurance->date(),
         ) : null;
 
         DB::beginTransaction();

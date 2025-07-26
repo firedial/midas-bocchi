@@ -299,8 +299,8 @@ postBonus xsrfToken bonus healthInsurance welfarePension employmentInsurance inc
     BaseRequest.post xsrfToken "/api/bonus" encodedBonus (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-postMonthly : String -> Int -> String -> Int -> String -> Int -> String -> Int -> String -> Int -> String -> (Result Error () -> msg) -> Cmd msg
-postMonthly xsrfToken houseRentAmount houseRentDate gasAmount gasDate waterAmount waterDate electAmount electDate netAmount netDate toMsg =
+postMonthly : String -> Int -> String -> Int -> String -> Int -> String -> Int -> String -> Int -> String -> Int -> String -> (Result Error () -> msg) -> Cmd msg
+postMonthly xsrfToken houseRentAmount houseRentDate gasAmount gasDate waterAmount waterDate electAmount electDate netAmount netDate insuranceAmount insuranceDate toMsg =
     let
         encodedMonthly =
             E.object
@@ -309,6 +309,7 @@ postMonthly xsrfToken houseRentAmount houseRentDate gasAmount gasDate waterAmoun
                 , ( "water", E.object [ ( "amount", E.int waterAmount ), ( "date", E.string waterDate ) ] )
                 , ( "elect", E.object [ ( "amount", E.int electAmount ), ( "date", E.string electDate ) ] )
                 , ( "net", E.object [ ( "amount", E.int netAmount ), ( "date", E.string netDate ) ] )
+                , ( "insurance", E.object [ ( "amount", E.int insuranceAmount ), ( "date", E.string insuranceDate ) ] )
                 ]
     in
     BaseRequest.post xsrfToken "/api/monthly" encodedMonthly (D.succeed ()) (toMsg << Result.mapError mapError)
