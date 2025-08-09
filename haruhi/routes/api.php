@@ -50,7 +50,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@show');
     Route::put('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@update');
     Route::delete('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@destroy');
-
-    Route::get('/secret', 'App\Http\Controllers\SecretController@get');
-    Route::put('/secret', 'App\Http\Controllers\SecretController@put');
 });

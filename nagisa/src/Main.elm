@@ -19,7 +19,6 @@ import Page.Logout
 import Page.MoveId
 import Page.MoveTable
 import Page.Salary
-import Page.Secret
 import Page.Top
 import Route
 import Url
@@ -51,7 +50,6 @@ type Page
     | Salary Page.Salary.Model
     | Bonus Page.Bonus.Model
     | CheckPlaceSum Page.CheckPlaceSum.Model
-    | Secret Page.Secret.Model
     | Login Page.Login.Model
     | Logout Page.Logout.Model
 
@@ -83,7 +81,6 @@ type Msg
     | SalaryMsg Page.Salary.Msg
     | BonusMsg Page.Bonus.Msg
     | CheckPlaceSumMsg Page.CheckPlaceSum.Msg
-    | SecretMsg Page.Secret.Msg
     | LoginMsg Page.Login.Msg
     | LogoutMsg Page.Logout.Msg
 
@@ -270,20 +267,6 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        SecretMsg pageMsg ->
-            case model.page of
-                Secret pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.Secret.update pageMsg pageModel
-                    in
-                    ( { model | page = Secret newModel }
-                    , Cmd.map SecretMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
         LoginMsg pageMsg ->
             case model.page of
                 Login pageModel ->
@@ -379,10 +362,6 @@ view model =
             CheckPlaceSum pageModel ->
                 Page.CheckPlaceSum.view pageModel
                     |> Html.map CheckPlaceSumMsg
-
-            Secret pageModel ->
-                Page.Secret.view pageModel
-                    |> Html.map SecretMsg
 
             Login pageModel ->
                 Page.Login.view pageModel
@@ -624,15 +603,6 @@ goTo maybeRoute model =
             in
             ( { model | page = CheckPlaceSum newModel }
             , Cmd.map CheckPlaceSumMsg newCmd
-            )
-
-        Just Route.Secret ->
-            let
-                ( newModel, newCmd ) =
-                    Page.Secret.init model.xsrfToken model.key
-            in
-            ( { model | page = Secret newModel }
-            , Cmd.map SecretMsg newCmd
             )
 
         Just Route.Login ->
