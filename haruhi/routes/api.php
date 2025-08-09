@@ -47,6 +47,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/transportation', 'App\Http\Controllers\TransportationController@post');
     Route::post('/check_place_sum', 'App\Http\Controllers\CheckPlaceSumController@post');
 
+    Route::get('/fixed_balances', 'App\Http\Controllers\FixedBalanceController@index');
+    Route::post('/fixed_balances', 'App\Http\Controllers\FixedBalanceController@store');
+    Route::get('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@show');
+    Route::put('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@update');
+    Route::delete('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@destroy');
+
     Route::get('/secret', 'App\Http\Controllers\SecretController@get');
     Route::put('/secret', 'App\Http\Controllers\SecretController@put');
 });
