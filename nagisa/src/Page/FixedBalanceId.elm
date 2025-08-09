@@ -192,7 +192,7 @@ update msg model =
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
         Cancel ->
-            ( model, Navigation.pushUrl model.key (Route.toPath Route.BalanceTable) )
+            ( model, Navigation.pushUrl model.key (Route.toPath Route.FixedBalance) )
 
         Delete id ->
             if model.deleteString == "delete" then
