@@ -29,7 +29,6 @@ type Route
     | PlaceElementId Int
     | Salary
     | Bonus
-    | Monthly
     | CheckPlaceSum
     | Secret
     | Login
@@ -68,7 +67,6 @@ routes =
         , Parser.map PlaceElementId (Parser.s "place" </> Parser.s "elements" </> Parser.int)
         , Parser.map Salary (Parser.s "salary")
         , Parser.map Bonus (Parser.s "bonus")
-        , Parser.map Monthly (Parser.s "monthly")
         , Parser.map CheckPlaceSum (Parser.s "check_place_sum")
         , Parser.map Secret (Parser.s "secret")
         , Parser.map Login (Parser.s "login")
@@ -150,9 +148,6 @@ toPath route =
 
         Bonus ->
             "/bonus"
-
-        Monthly ->
-            "/monthly"
 
         CheckPlaceSum ->
             "/check_place_sum"

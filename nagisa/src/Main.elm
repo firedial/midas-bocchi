@@ -16,7 +16,6 @@ import Page.FixedBalance
 import Page.FixedBalanceId
 import Page.Login
 import Page.Logout
-import Page.Monthly
 import Page.MoveId
 import Page.MoveTable
 import Page.Salary
@@ -51,7 +50,6 @@ type Page
     | ElementId Page.ElementId.Model
     | Salary Page.Salary.Model
     | Bonus Page.Bonus.Model
-    | Monthly Page.Monthly.Model
     | CheckPlaceSum Page.CheckPlaceSum.Model
     | Secret Page.Secret.Model
     | Login Page.Login.Model
@@ -84,7 +82,6 @@ type Msg
     | ElementIdMsg Page.ElementId.Msg
     | SalaryMsg Page.Salary.Msg
     | BonusMsg Page.Bonus.Msg
-    | MonthlyMsg Page.Monthly.Msg
     | CheckPlaceSumMsg Page.CheckPlaceSum.Msg
     | SecretMsg Page.Secret.Msg
     | LoginMsg Page.Login.Msg
@@ -259,20 +256,6 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        MonthlyMsg pageMsg ->
-            case model.page of
-                Monthly pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.Monthly.update pageMsg pageModel
-                    in
-                    ( { model | page = Monthly newModel }
-                    , Cmd.map MonthlyMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
         CheckPlaceSumMsg pageMsg ->
             case model.page of
                 CheckPlaceSum pageModel ->
@@ -392,10 +375,6 @@ view model =
             Bonus pageModel ->
                 Page.Bonus.view pageModel
                     |> Html.map BonusMsg
-
-            Monthly pageModel ->
-                Page.Monthly.view pageModel
-                    |> Html.map MonthlyMsg
 
             CheckPlaceSum pageModel ->
                 Page.CheckPlaceSum.view pageModel
@@ -636,15 +615,6 @@ goTo maybeRoute model =
             in
             ( { model | page = Bonus newModel }
             , Cmd.map BonusMsg newCmd
-            )
-
-        Just Route.Monthly ->
-            let
-                ( newModel, newCmd ) =
-                    Page.Monthly.init model.xsrfToken model.key
-            in
-            ( { model | page = Monthly newModel }
-            , Cmd.map MonthlyMsg newCmd
             )
 
         Just Route.CheckPlaceSum ->

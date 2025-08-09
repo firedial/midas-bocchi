@@ -43,7 +43,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/salary', 'App\Http\Controllers\SalaryController@store');
     Route::post('/bonus', 'App\Http\Controllers\BonusController@store');
 
-    Route::post('/monthly', 'App\Http\Controllers\MonthlyController@store');
     Route::post('/check_place_sum', 'App\Http\Controllers\CheckPlaceSumController@post');
 
     Route::get('/fixed_balances', 'App\Http\Controllers\FixedBalanceController@index');

@@ -6,21 +6,8 @@ class PlaceElementId extends AttributeElementId
 {
     protected const MOVE_ID = 1;
 
-    private const WITHDRAWAL_PLACE_ELEMENT_ID = 9;
-    private const PAY_CARD_PLACE_ELEMENT_ID = 48;
-
     private const SKY_PLACE_ELEMENT_ID = 4;
     private const SALARY_PLACE_ELEMENT_ID = 8;
-
-    public static function withdrawalId(): self
-    {
-        return new self(self::WITHDRAWAL_PLACE_ELEMENT_ID);
-    }
-
-    public static function payCardId(): self
-    {
-        return new self(self::PAY_CARD_PLACE_ELEMENT_ID);
-    }
 
     public static function skyId(): self
     {
