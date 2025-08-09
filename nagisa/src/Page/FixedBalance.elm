@@ -58,8 +58,7 @@ view model =
                 ]
                 :: Html.tr
                     []
-                    -- todo リンク先を変える
-                    [ Html.td [] [ Html.a [ Attributes.href (Route.toPath Route.BalanceCreate) ] [ Html.text "+" ] ]
+                    [ Html.td [] [ Html.a [ Attributes.href (Route.toPath Route.FixedBalanceCreate) ] [ Html.text "+" ] ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
@@ -69,8 +68,7 @@ view model =
                 :: List.map
                     (\fixedBalance ->
                         Html.tr []
-                            -- todo リンク先を変える
-                            [ Html.td [] [ Html.a [ Attributes.href <| Route.toPath (Route.BalanceId fixedBalance.fixedBalanceId) ] [ Html.text <| String.fromInt fixedBalance.fixedBalanceId ] ]
+                            [ Html.td [] [ Html.a [ Attributes.href <| Route.toPath (Route.FixedBalanceId fixedBalance.fixedBalanceId) ] [ Html.text <| String.fromInt fixedBalance.fixedBalanceId ] ]
                             , Html.td [] [ Html.text <| String.fromInt fixedBalance.amount ]
                             , Html.td [] [ Html.text fixedBalance.item ]
                             , Html.td [] [ Html.text fixedBalance.kindElementDescription ]

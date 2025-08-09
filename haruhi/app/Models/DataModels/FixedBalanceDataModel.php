@@ -26,6 +26,9 @@ class FixedBalanceDataModel
                 self::TABLE_NAME . '.' . self::C_KIND_ELEMENT_ID,
                 self::TABLE_NAME . '.' . self::C_PURPOSE_ELEMENT_ID,
                 self::TABLE_NAME . '.' . self::C_PLACE_ELEMENT_ID,
+                KindElementDataModel::TABLE_NAME . '.' . KindElementDataModel::C_DESCRIPTION . ' AS kind_element_description',
+                PurposeElementDataModel::TABLE_NAME . '.' . PurposeElementDataModel::C_DESCRIPTION . ' AS purpose_element_description',
+                PlaceElementDataModel::TABLE_NAME . '.' . PlaceElementDataModel::C_DESCRIPTION . ' AS place_element_description',
             )
             ->join(KindElementDataModel::TABLE_NAME, KindElementDataModel::TABLE_NAME . '.' . KindElementDataModel::C_ID, '=', self::TABLE_NAME . '.' . self::C_KIND_ELEMENT_ID)
             ->join(PurposeElementDataModel::TABLE_NAME, PurposeElementDataModel::TABLE_NAME . '.' . PurposeElementDataModel::C_ID, '=', self::TABLE_NAME . '.' . self::C_PURPOSE_ELEMENT_ID)
