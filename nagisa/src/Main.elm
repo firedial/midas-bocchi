@@ -16,13 +16,10 @@ import Page.FixedBalance
 import Page.FixedBalanceId
 import Page.Login
 import Page.Logout
-import Page.Monthly
 import Page.MoveId
 import Page.MoveTable
 import Page.Salary
-import Page.Secret
 import Page.Top
-import Page.Transportation
 import Route
 import Url
 
@@ -52,10 +49,7 @@ type Page
     | ElementId Page.ElementId.Model
     | Salary Page.Salary.Model
     | Bonus Page.Bonus.Model
-    | Monthly Page.Monthly.Model
-    | Transportation Page.Transportation.Model
     | CheckPlaceSum Page.CheckPlaceSum.Model
-    | Secret Page.Secret.Model
     | Login Page.Login.Model
     | Logout Page.Logout.Model
 
@@ -86,10 +80,7 @@ type Msg
     | ElementIdMsg Page.ElementId.Msg
     | SalaryMsg Page.Salary.Msg
     | BonusMsg Page.Bonus.Msg
-    | MonthlyMsg Page.Monthly.Msg
-    | TransportationMsg Page.Transportation.Msg
     | CheckPlaceSumMsg Page.CheckPlaceSum.Msg
-    | SecretMsg Page.Secret.Msg
     | LoginMsg Page.Login.Msg
     | LogoutMsg Page.Logout.Msg
 
@@ -262,34 +253,6 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        MonthlyMsg pageMsg ->
-            case model.page of
-                Monthly pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.Monthly.update pageMsg pageModel
-                    in
-                    ( { model | page = Monthly newModel }
-                    , Cmd.map MonthlyMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
-        TransportationMsg pageMsg ->
-            case model.page of
-                Transportation pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.Transportation.update pageMsg pageModel
-                    in
-                    ( { model | page = Transportation newModel }
-                    , Cmd.map TransportationMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
         CheckPlaceSumMsg pageMsg ->
             case model.page of
                 CheckPlaceSum pageModel ->
@@ -299,20 +262,6 @@ update msg model =
                     in
                     ( { model | page = CheckPlaceSum newModel }
                     , Cmd.map CheckPlaceSumMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
-        SecretMsg pageMsg ->
-            case model.page of
-                Secret pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.Secret.update pageMsg pageModel
-                    in
-                    ( { model | page = Secret newModel }
-                    , Cmd.map SecretMsg newCmd
                     )
 
                 _ ->
@@ -410,21 +359,9 @@ view model =
                 Page.Bonus.view pageModel
                     |> Html.map BonusMsg
 
-            Monthly pageModel ->
-                Page.Monthly.view pageModel
-                    |> Html.map MonthlyMsg
-
-            Transportation pageModel ->
-                Page.Transportation.view pageModel
-                    |> Html.map TransportationMsg
-
             CheckPlaceSum pageModel ->
                 Page.CheckPlaceSum.view pageModel
                     |> Html.map CheckPlaceSumMsg
-
-            Secret pageModel ->
-                Page.Secret.view pageModel
-                    |> Html.map SecretMsg
 
             Login pageModel ->
                 Page.Login.view pageModel
@@ -659,24 +596,6 @@ goTo maybeRoute model =
             , Cmd.map BonusMsg newCmd
             )
 
-        Just Route.Monthly ->
-            let
-                ( newModel, newCmd ) =
-                    Page.Monthly.init model.xsrfToken model.key
-            in
-            ( { model | page = Monthly newModel }
-            , Cmd.map MonthlyMsg newCmd
-            )
-
-        Just Route.Transportation ->
-            let
-                ( newModel, newCmd ) =
-                    Page.Transportation.init model.xsrfToken model.key
-            in
-            ( { model | page = Transportation newModel }
-            , Cmd.map TransportationMsg newCmd
-            )
-
         Just Route.CheckPlaceSum ->
             let
                 ( newModel, newCmd ) =
@@ -684,15 +603,6 @@ goTo maybeRoute model =
             in
             ( { model | page = CheckPlaceSum newModel }
             , Cmd.map CheckPlaceSumMsg newCmd
-            )
-
-        Just Route.Secret ->
-            let
-                ( newModel, newCmd ) =
-                    Page.Secret.init model.xsrfToken model.key
-            in
-            ( { model | page = Secret newModel }
-            , Cmd.map SecretMsg newCmd
             )
 
         Just Route.Login ->

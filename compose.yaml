@@ -18,7 +18,6 @@ services:
             dockerfile: Dockerfile
         restart: always
         hostname: haruhi
-        # command: npm run watch
         environment:
             - APP_ENV=$APP_ENV
             - APP_DEBUG=$APP_DEBUG

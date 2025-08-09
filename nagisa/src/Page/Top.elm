@@ -38,11 +38,8 @@ view _ =
             , getItem Route.PlaceElementTable "場所" "image/layout-sidebar.svg"
             , getItem Route.Salary "給料入力" "image/cash.svg"
             , getItem Route.Bonus "賞与入力" "image/cash-coin.svg"
-            , getItem Route.Monthly "月々の支払入力" "image/calendar3.svg"
             , getItem Route.FixedBalance "固定入力" "image/calendar3.svg"
-            , getItem Route.Transportation "交通費登録" "image/train-front.svg"
             , getItem Route.CheckPlaceSum "金額チェック" "image/check-circle.svg"
-            , getItem Route.Secret "秘匿情報" "image/key.svg"
             , getItem Route.Logout "ログアウト" "image/door-closed.svg"
             ]
         ]
