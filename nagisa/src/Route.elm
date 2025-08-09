@@ -9,6 +9,7 @@ type Route
     | BalanceTable
     | BalanceCreate
     | BalanceId Int
+    | FixedBalance
     | PurposeMoveTable
     | PlaceMoveTable
     | PurposeMoveCreate
@@ -46,6 +47,7 @@ routes =
         , Parser.map BalanceTable (Parser.s "balances")
         , Parser.map BalanceCreate (Parser.s "balances" </> Parser.s "create")
         , Parser.map BalanceId (Parser.s "balances" </> Parser.int)
+        , Parser.map FixedBalance (Parser.s "fixed_balances")
         , Parser.map PurposeMoveTable (Parser.s "purpose" </> Parser.s "moves")
         , Parser.map PlaceMoveTable (Parser.s "place" </> Parser.s "moves")
         , Parser.map PurposeMoveCreate (Parser.s "purpose" </> Parser.s "moves" </> Parser.s "create")
@@ -86,6 +88,9 @@ toPath route =
 
         BalanceId id ->
             "/balances/" ++ String.fromInt id
+
+        FixedBalance ->
+            "/fixed_balances"
 
         PurposeMoveTable ->
             "/purpose/moves"

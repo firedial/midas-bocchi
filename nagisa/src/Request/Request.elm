@@ -7,6 +7,7 @@ module Request.Request exposing
     , getAttributeElements
     , getBalance
     , getBalances
+    , getFixedBalances
     , getMove
     , getMoves
     , getSecret
@@ -31,6 +32,7 @@ import Json.Encode as E
 import Model.Enitity.AttributeCategoryEntity as AttributeCategoryEntity
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.BalanceEntity as BalanceEntity
+import Model.Enitity.FixedBalanceEntity as FixedBalanceEntity
 import Model.Enitity.MoveEntity as MoveEntity
 import Model.Enitity.SecretEntity as SecretEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
@@ -121,6 +123,27 @@ putBalance xsrfToken id balance toMsg =
 deleteBalance : String -> Int -> (Result Error () -> msg) -> Cmd msg
 deleteBalance xsrfToken balanceId toMsg =
     BaseRequest.delete xsrfToken ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+getFixedBalances : (Result Error FixedBalanceEntity.FixedBalances -> msg) -> Cmd msg
+getFixedBalances toMsg =
+    let
+        decodeFixedBalance =
+            D.succeed FixedBalanceEntity.FixedBalance
+                |> required "id" D.int
+                |> required "amount" D.int
+                |> required "item" D.string
+                |> required "kind_element_id" D.int
+                |> required "purpose_element_id" D.int
+                |> required "place_element_id" D.int
+                |> required "kind_element_description" D.string
+                |> required "purpose_element_description" D.string
+                |> required "place_element_description" D.string
+
+        decodeFixedBalances =
+            D.list decodeFixedBalance
+    in
+    BaseRequest.get "/api/fixed_balances" decodeFixedBalances (toMsg << Result.mapError mapError)
 
 
 getMove : MoveAttributeValueObject.Attribute -> Int -> (Result Error MoveEntity.Move -> msg) -> Cmd msg
