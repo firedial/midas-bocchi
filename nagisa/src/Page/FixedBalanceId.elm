@@ -3,7 +3,7 @@ module Page.FixedBalanceId exposing (Model, Msg, init, update, view)
 import Browser.Navigation as Navigation
 import Html
 import Html.Attributes as Attributes
-import Html.Events exposing (onCheck, onClick, onInput)
+import Html.Events exposing (onClick, onInput)
 import List
 import Maybe
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
