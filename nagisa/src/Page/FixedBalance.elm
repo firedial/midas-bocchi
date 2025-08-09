@@ -2,9 +2,10 @@ module Page.FixedBalance exposing (Model, Msg, init, update, view)
 
 import Html
 import Html.Attributes as Attributes
-import Html.Events exposing (onInput)
+import Html.Events exposing (onClick, onInput)
 import List
 import Maybe
+import Model.Enitity.BalanceEntity as BalanceEntity
 import Model.Enitity.FixedBalanceEntity as FixedBalanceEntity
 import Request.Request as Request
 import Route
@@ -13,6 +14,8 @@ import String
 
 type alias Model =
     { stringBalances : List StringBalance
+    , isDisabledEditButton : Bool
+    , xsrfToken : String
     , errorMessage : Maybe String
     }
 
@@ -35,11 +38,13 @@ type Msg
     = GetFixedBalances (Result Request.Error FixedBalanceEntity.FixedBalances)
     | InputAmount String String
     | InputDate String String
+    | Insert String
+    | ModifiedResult (Result Request.Error ())
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( Model [] Nothing
+init : String -> ( Model, Cmd Msg )
+init xsrfToken =
+    ( Model [] False xsrfToken Nothing
     , Request.getFixedBalances GetFixedBalances
     )
 
@@ -106,6 +111,44 @@ update msg model =
             in
             ( { model | stringBalances = newStringBalances }, Cmd.none )
 
+        Insert fixedBalanceId ->
+            let
+                targetBalance =
+                    List.filter
+                        (\stringBalance -> stringBalance.fixedBalanceId == fixedBalanceId)
+                        model.stringBalances
+                        |> List.head
+            in
+            case targetBalance of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just targetBalance_ ->
+                    let
+                        newBalance =
+                            BalanceEntity.NewBalance
+                                (targetBalance_.amount |> String.toInt |> Maybe.withDefault 0)
+                                targetBalance_.item
+                                (targetBalance_.kindElementId |> String.toInt |> Maybe.withDefault 0)
+                                (targetBalance_.purposeElementId |> String.toInt |> Maybe.withDefault 0)
+                                (targetBalance_.placeElementId |> String.toInt |> Maybe.withDefault 0)
+                                targetBalance_.date
+                    in
+                    ( { model | isDisabledEditButton = True, errorMessage = Nothing }
+                    , Request.postBalance model.xsrfToken newBalance ModifiedResult
+                    )
+
+        ModifiedResult result ->
+            case result of
+                Ok _ ->
+                    ( { model | errorMessage = Just "OK", isDisabledEditButton = False }, Cmd.none )
+
+                Err (Request.DecodeError message) ->
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
+
+                Err (Request.RequestError message) ->
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
+
 
 view : Model -> Html.Html Msg
 view model =
@@ -121,10 +164,12 @@ view model =
                 , Html.th [] [ Html.text "場所" ]
                 , Html.th [] [ Html.text "金額" ]
                 , Html.th [] [ Html.text "日付" ]
+                , Html.th [] [ Html.text "登録" ]
                 ]
                 :: Html.tr
                     []
                     [ Html.td [] [ Html.a [ Attributes.href (Route.toPath Route.FixedBalanceCreate) ] [ Html.text "+" ] ]
+                    , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
@@ -142,6 +187,7 @@ view model =
                             , Html.td [] [ Html.text stringBalance.placeElementDescription ]
                             , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value stringBalance.amount, onInput (InputAmount stringBalance.fixedBalanceId) ] [] ]
                             , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value stringBalance.date, onInput (InputDate stringBalance.fixedBalanceId) ] [] ]
+                            , Html.td [] [ Html.button [ Attributes.class "edit-button", onClick (Insert stringBalance.fixedBalanceId), Attributes.disabled model.isDisabledEditButton ] [ Html.text "登録" ] ]
                             ]
                     )
                     model.stringBalances

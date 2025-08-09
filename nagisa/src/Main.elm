@@ -482,7 +482,7 @@ goTo maybeRoute model =
         Just Route.FixedBalance ->
             let
                 ( newModel, newCmd ) =
-                    Page.FixedBalance.init
+                    Page.FixedBalance.init model.xsrfToken
             in
             ( { model | page = FixedBalance newModel }
             , Cmd.map FixedBalanceMsg newCmd
