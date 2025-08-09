@@ -23,7 +23,6 @@ module Request.Request exposing
     , postMonthly
     , postMove
     , postSalary
-    , postTransportation
     , putAttributeElement
     , putBalance
     , putFixedBalance
@@ -394,17 +393,6 @@ postMonthly xsrfToken houseRentAmount houseRentDate gasAmount gasDate waterAmoun
                 ]
     in
     BaseRequest.post xsrfToken "/api/monthly" encodedMonthly (D.succeed ()) (toMsg << Result.mapError mapError)
-
-
-postTransportation : String -> String -> (Result Error () -> msg) -> Cmd msg
-postTransportation xsrfToken date toMsg =
-    let
-        encodedTransportation =
-            E.object
-                [ ( "date", E.string date )
-                ]
-    in
-    BaseRequest.post xsrfToken "/api/transportation" encodedTransportation (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 postCheckPlaceSum : String -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg

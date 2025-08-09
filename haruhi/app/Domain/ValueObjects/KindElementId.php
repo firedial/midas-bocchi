@@ -19,8 +19,6 @@ class KindElementId extends AttributeElementId
     private const DEDUCTION_KIND_ELEMENT_ID = 16;
     private const SHARE_HELD_KIND_ELEMENT_ID = 19;
 
-    private const OFFICE_TRANSPORTATION_KIND_ELEMENT_ID = 20;
-
     public static function houseId(): self
     {
         return new self(self::HOUSE_RENT_KIND_ELEMENT_ID);
@@ -74,10 +72,5 @@ class KindElementId extends AttributeElementId
     public static function shareHeldId(): self
     {
         return new self(self::SHARE_HELD_KIND_ELEMENT_ID);
-    }
-
-    public static function officeTransportationId(): self
-    {
-        return new self(self::OFFICE_TRANSPORTATION_KIND_ELEMENT_ID);
     }
 }
