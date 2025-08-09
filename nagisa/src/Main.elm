@@ -12,6 +12,8 @@ import Page.Bonus
 import Page.CheckPlaceSum
 import Page.ElementId
 import Page.ElementTable
+import Page.FixedBalance
+import Page.FixedBalanceId
 import Page.Login
 import Page.Logout
 import Page.Monthly
@@ -42,6 +44,8 @@ type Page
     | Top Page.Top.Model
     | BalanceTable Page.BalanceTable.Model
     | BalanceId Page.BalanceId.Model
+    | FixedBalance Page.FixedBalance.Model
+    | FixedBalanceId Page.FixedBalanceId.Model
     | MoveTable Page.MoveTable.Model
     | MoveId Page.MoveId.Model
     | ElementTable Page.ElementTable.Model
@@ -74,6 +78,8 @@ type Msg
     | TopMsg Page.Top.Msg
     | BalanceTableMsg Page.BalanceTable.Msg
     | BalanceIdMsg Page.BalanceId.Msg
+    | FixedBalanceMsg Page.FixedBalance.Msg
+    | FixedBalanceIdMsg Page.FixedBalanceId.Msg
     | MoveTableMsg Page.MoveTable.Msg
     | MoveIdMsg Page.MoveId.Msg
     | ElementTableMsg Page.ElementTable.Msg
@@ -139,6 +145,34 @@ update msg model =
                     in
                     ( { model | page = BalanceId newModel }
                     , Cmd.map BalanceIdMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        FixedBalanceMsg pageMsg ->
+            case model.page of
+                FixedBalance pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.FixedBalance.update pageMsg pageModel
+                    in
+                    ( { model | page = FixedBalance newModel }
+                    , Cmd.map FixedBalanceMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        FixedBalanceIdMsg pageMsg ->
+            case model.page of
+                FixedBalanceId pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.FixedBalanceId.update pageMsg pageModel
+                    in
+                    ( { model | page = FixedBalanceId newModel }
+                    , Cmd.map FixedBalanceIdMsg newCmd
                     )
 
                 _ ->
@@ -344,6 +378,14 @@ view model =
                 Page.BalanceId.view pageModel
                     |> Html.map BalanceIdMsg
 
+            FixedBalance pageModel ->
+                Page.FixedBalance.view pageModel
+                    |> Html.map FixedBalanceMsg
+
+            FixedBalanceId pageModel ->
+                Page.FixedBalanceId.view pageModel
+                    |> Html.map FixedBalanceIdMsg
+
             MoveTable pageModel ->
                 Page.MoveTable.view pageModel
                     |> Html.map MoveTableMsg
@@ -435,6 +477,33 @@ goTo maybeRoute model =
             in
             ( { model | page = BalanceId newModel }
             , Cmd.map BalanceIdMsg newCmd
+            )
+
+        Just Route.FixedBalance ->
+            let
+                ( newModel, newCmd ) =
+                    Page.FixedBalance.init model.xsrfToken
+            in
+            ( { model | page = FixedBalance newModel }
+            , Cmd.map FixedBalanceMsg newCmd
+            )
+
+        Just Route.FixedBalanceCreate ->
+            let
+                ( newModel, newCmd ) =
+                    Page.FixedBalanceId.init model.xsrfToken model.key Nothing
+            in
+            ( { model | page = FixedBalanceId newModel }
+            , Cmd.map FixedBalanceIdMsg newCmd
+            )
+
+        Just (Route.FixedBalanceId id) ->
+            let
+                ( newModel, newCmd ) =
+                    Page.FixedBalanceId.init model.xsrfToken model.key (Just id)
+            in
+            ( { model | page = FixedBalanceId newModel }
+            , Cmd.map FixedBalanceIdMsg newCmd
             )
 
         Just Route.PurposeMoveTable ->

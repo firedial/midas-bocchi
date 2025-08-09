@@ -301,6 +301,233 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
+  "/fixed_balances":
+    get:
+      summary: "固定収支表取得"
+      description: "固定収支表を取得する"
+      tags: ["fixed_balances"]
+      responses:
+        "200":
+          description: "Success operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      description: 固定収支ID
+                      example: 123
+                    amount:
+                      type: number
+                      description: 金額
+                      example: -500
+                    item:
+                      type: string
+                      description: 項目
+                      example: うどん
+                    kind_element_id:
+                      type: number
+                      description: 種別ID
+                      example: 2
+                    purpose_element_id:
+                      type: number
+                      description: 予算ID
+                      example: 5
+                    place_element_id:
+                      type: number
+                      description: 場所ID
+                      example: 6
+                    kind_element_description:
+                      type: string
+                      description: 種別名
+                      example: 昼食
+                    purpose_element_description:
+                      type: string
+                      description: 予算名
+                      example: 食費
+                    place_element_description:
+                      type: string
+                      description: 場所名
+                      example: 財布
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: "固定収支登録"
+      description: "固定収支を登録する"
+      tags: ["fixed_balances"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  description: 金額
+                  example: -500
+                item:
+                  type: string
+                  description: 項目
+                  example: うどん
+                kind_element_id:
+                  type: number
+                  description: 種別ID
+                  example: 2
+                purpose_element_id:
+                  type: number
+                  description: 予算ID
+                  example: 5
+                place_element_id:
+                  type: number
+                  description: 場所ID
+                  example: 6
+      responses:
+        "200":
+          $ref: "#/components/responses/Ok"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  "/fixed_balances/{balanceId}":
+    get:
+      summary: "固定収支取得"
+      description: "固定収支を取得する"
+      tags: ["fixed_balances"]
+      parameters:
+        - name: balanceId
+          required: true
+          in: path
+          description: 固定収支ID
+          schema:
+            type: number
+            example: 123
+      responses:
+        "200":
+          description: "Success operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: 固定収支ID
+                    example: 123
+                  amount:
+                    type: number
+                    description: 金額
+                    example: -500
+                  item:
+                    type: string
+                    description: 項目
+                    example: うどん
+                  kind_element_id:
+                    type: number
+                    description: 種別ID
+                    example: 2
+                  purpose_element_id:
+                    type: number
+                    description: 予算ID
+                    example: 5
+                  place_element_id:
+                    type: number
+                    description: 場所ID
+                    example: 6
+                  kind_element_description:
+                    type: string
+                    description: 種別名
+                    example: 昼食
+                  purpose_element_description:
+                    type: string
+                    description: 予算名
+                    example: 食費
+                  place_element_description:
+                    type: string
+                    description: 場所名
+                    example: 財布
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: "固定収支更新"
+      description: "固定収支を更新する"
+      tags: ["fixed_balances"]
+      parameters:
+        - name: balanceId
+          required: true
+          in: path
+          description: 固定収支ID
+          schema:
+            type: number
+            example: 123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  description: 金額
+                  example: -500
+                item:
+                  type: string
+                  description: 項目
+                  example: うどん
+                kind_element_id:
+                  type: number
+                  description: 種別ID
+                  example: 2
+                purpose_element_id:
+                  type: number
+                  description: 予算ID
+                  example: 5
+                place_element_id:
+                  type: number
+                  description: 場所ID
+                  example: 6
+      responses:
+        "200":
+          $ref: "#/components/responses/Ok"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      summary: "固定収支削除"
+      description: "固定収支を削除する"
+      tags: ["fixed_balances"]
+      parameters:
+        - name: balanceId
+          required: true
+          in: path
+          description: 固定収支ID
+          schema:
+            type: number
+            example: 123
+      responses:
+        "200":
+          $ref: "#/components/responses/Ok"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
   "/moves/{attributeName}":
     get:
       summary: "移動表取得"

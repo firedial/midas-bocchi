@@ -1,12 +1,15 @@
 module Request.Request exposing
     ( Error(..)
     , deleteBalance
+    , deleteFixedBalance
     , deleteMove
     , getAttributeCategories
     , getAttributeElement
     , getAttributeElements
     , getBalance
     , getBalances
+    , getFixedBalance
+    , getFixedBalances
     , getMove
     , getMoves
     , getSecret
@@ -14,6 +17,7 @@ module Request.Request exposing
     , postBalance
     , postBonus
     , postCheckPlaceSum
+    , postFixedBalance
     , postLogin
     , postLogout
     , postMonthly
@@ -22,6 +26,7 @@ module Request.Request exposing
     , postTransportation
     , putAttributeElement
     , putBalance
+    , putFixedBalance
     , putMove
     , putSecret
     )
@@ -31,6 +36,7 @@ import Json.Encode as E
 import Model.Enitity.AttributeCategoryEntity as AttributeCategoryEntity
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.BalanceEntity as BalanceEntity
+import Model.Enitity.FixedBalanceEntity as FixedBalanceEntity
 import Model.Enitity.MoveEntity as MoveEntity
 import Model.Enitity.SecretEntity as SecretEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
@@ -121,6 +127,81 @@ putBalance xsrfToken id balance toMsg =
 deleteBalance : String -> Int -> (Result Error () -> msg) -> Cmd msg
 deleteBalance xsrfToken balanceId toMsg =
     BaseRequest.delete xsrfToken ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+getFixedBalance : Int -> (Result Error FixedBalanceEntity.FixedBalance -> msg) -> Cmd msg
+getFixedBalance id toMsg =
+    let
+        decodeFixedBalance =
+            D.succeed FixedBalanceEntity.FixedBalance
+                |> required "id" D.int
+                |> required "amount" D.int
+                |> required "item" D.string
+                |> required "kind_element_id" D.int
+                |> required "purpose_element_id" D.int
+                |> required "place_element_id" D.int
+                |> required "kind_element_description" D.string
+                |> required "purpose_element_description" D.string
+                |> required "place_element_description" D.string
+    in
+    BaseRequest.get ("/api/fixed_balances/" ++ String.fromInt id) decodeFixedBalance (toMsg << Result.mapError mapError)
+
+
+getFixedBalances : (Result Error FixedBalanceEntity.FixedBalances -> msg) -> Cmd msg
+getFixedBalances toMsg =
+    let
+        decodeFixedBalance =
+            D.succeed FixedBalanceEntity.FixedBalance
+                |> required "id" D.int
+                |> required "amount" D.int
+                |> required "item" D.string
+                |> required "kind_element_id" D.int
+                |> required "purpose_element_id" D.int
+                |> required "place_element_id" D.int
+                |> required "kind_element_description" D.string
+                |> required "purpose_element_description" D.string
+                |> required "place_element_description" D.string
+
+        decodeFixedBalances =
+            D.list decodeFixedBalance
+    in
+    BaseRequest.get "/api/fixed_balances" decodeFixedBalances (toMsg << Result.mapError mapError)
+
+
+postFixedBalance : String -> FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
+postFixedBalance xsrfToken newFixedBalance toMsg =
+    let
+        encodedNewFixedBalance =
+            E.object
+                [ ( "amount", E.int newFixedBalance.amount )
+                , ( "item", E.string newFixedBalance.item )
+                , ( "kind_element_id", E.int newFixedBalance.kindElementId )
+                , ( "purpose_element_id", E.int newFixedBalance.purposeElementId )
+                , ( "place_element_id", E.int newFixedBalance.placeElementId )
+                ]
+    in
+    BaseRequest.post xsrfToken "/api/fixed_balances" encodedNewFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+putFixedBalance : String -> Int -> FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
+putFixedBalance xsrfToken id fixedBalance toMsg =
+    let
+        encodedFixedBalance =
+            E.object
+                [ ( "id", E.int id )
+                , ( "amount", E.int fixedBalance.amount )
+                , ( "item", E.string fixedBalance.item )
+                , ( "kind_element_id", E.int fixedBalance.kindElementId )
+                , ( "purpose_element_id", E.int fixedBalance.purposeElementId )
+                , ( "place_element_id", E.int fixedBalance.placeElementId )
+                ]
+    in
+    BaseRequest.put xsrfToken ("/api/fixed_balances/" ++ String.fromInt id) encodedFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+deleteFixedBalance : String -> Int -> (Result Error () -> msg) -> Cmd msg
+deleteFixedBalance xsrfToken fixedBalanceId toMsg =
+    BaseRequest.delete xsrfToken ("/api/fixed_balances/" ++ String.fromInt fixedBalanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getMove : MoveAttributeValueObject.Attribute -> Int -> (Result Error MoveEntity.Move -> msg) -> Cmd msg
