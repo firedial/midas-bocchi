@@ -11,6 +11,7 @@ $noSessionRequest = new Request();
 $response = $noSessionRequest->post('/login', $params);
 
 $request = new Request($response->getSessionKey());
-$response = $request->get('/balances');
+// $response = $request->get('/balances');
+$response = $request->get('/attribute_elements/kind_element');
 
-var_dump($response->status());
+var_dump($response->jsonBody());

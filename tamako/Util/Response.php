@@ -35,6 +35,11 @@ readonly class Response
         return $headers;
     }
 
+    public function jsonBody(): array
+    {
+        return json_decode($this->rawBody, true);
+    }
+
     public function getSessionKey(): string
     {
         $headers = $this->headers();
