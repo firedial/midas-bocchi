@@ -15,17 +15,11 @@ services:
         restart: always
         hostname: haruhi
         environment:
-            - APP_ENV=$APP_ENV
-            - APP_DEBUG=$APP_DEBUG
-            - APP_URL=$APP_URL
-            - APP_DOMAIN=$APP_DOMAIN
             - APP_KEY=$APP_KEY
             - DB_HOST=azusa
             - DB_DATABASE=$DB_DATABASE
             - DB_USERNAME=$DB_MIDAS_API_USER
             - DB_PASSWORD=$DB_MIDAS_API_PASSWORD
-            - SANCTUM_STATEFUL_DOMAINS=$APP_DOMAIN
-            - SESSION_DOMAIN=$APP_DOMAIN
         volumes:
             - ./haruhi:/var/www/html
     azusa:
