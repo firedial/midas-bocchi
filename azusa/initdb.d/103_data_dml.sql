@@ -1,3 +1,6 @@
+-- initial user
+INSERT INTO users (name, email, password) VALUES ("midas_application", "midas_application@example.com", "$2y$10$GX.Uzcl1moPjYrQZ7DjxsOB3HkHFLK.WwUA/tVIQ1BgA4LDTBQFtu");
+
 INSERT INTO m_kind_category (id, name, description) VALUES
 (2,"Kind_category_2","kind_cat_desc_2")
 ,(3,"Kind_category_3","kind_cat_desc_3")
