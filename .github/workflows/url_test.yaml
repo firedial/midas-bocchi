@@ -9,6 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: docker compose -f compose_test.yaml up -d --wait
-      - run: docker compose -f compose_test.yaml exec -T haruhi ls /var/www/html/storage/framework/sessions/
+      - run: docker compose -f compose_test.yaml exec -T haruhi chmod -R 777 /var/www/html/storage
       - run: docker compose -f compose_test.yaml exec -T tamako php /app/main.php
       - run: docker compose -f compose_test.yaml exec -T haruhi ls /var/www/html/storage/framework/sessions/
