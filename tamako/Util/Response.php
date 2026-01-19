@@ -10,9 +10,9 @@ readonly class Response
         return explode("\n", str_replace("/r", '', $this->rawHeader))[0];
     }
 
-    public function status(): string
+    public function status(): int
     {
-        return explode(' ', $this->statusLine())[1];
+        return (int)explode(' ', $this->statusLine())[1];
     }
 
     public function headers(): array
@@ -35,9 +35,13 @@ readonly class Response
         return $headers;
     }
 
-    public function jsonBody(): array
+    public function jsonBody(): mixed
     {
-        return json_decode($this->rawBody, true);
+        if (is_array($this->rawBody)) {
+            return json_decode($this->rawBody, true);
+        } else {
+            return $this->rawBody;
+        }
     }
 
     public function getSessionKey(): string
