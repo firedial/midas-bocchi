@@ -4,12 +4,13 @@ require_once 'Response.php';
 
 class Request
 {
-    private const DOMAIN = 'http://haruhi/api';
-
     private $ch;
+    private string $appUrl;
 
     public function __construct(?string $session = null)
     {
+        $this->appUrl = getenv('APP_URL');
+
         $this->ch = curl_init();
         curl_setopt($this->ch, CURLOPT_HEADER, true);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
@@ -35,7 +36,7 @@ class Request
     public function get(string $url): Response
     {
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($this->ch, CURLOPT_URL, self::DOMAIN . $url);
+        curl_setopt($this->ch, CURLOPT_URL, $this->appUrl . $url);
         $r = curl_exec($this->ch);
 
         $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
@@ -48,7 +49,7 @@ class Request
     public function post(string $url, array $params): Response
     {
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($this->ch, CURLOPT_URL, self::DOMAIN . $url);
+        curl_setopt($this->ch, CURLOPT_URL, $this->appUrl . $url);
         curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($params));
         $r = curl_exec($this->ch);
 
@@ -62,7 +63,7 @@ class Request
     public function put(string $url, array $params): Response
     {
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_setopt($this->ch, CURLOPT_URL, self::DOMAIN . $url);
+        curl_setopt($this->ch, CURLOPT_URL, $this->appUrl . $url);
         curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($params));
         $r = curl_exec($this->ch);
 
@@ -76,7 +77,7 @@ class Request
     public function delete(string $url): Response
     {
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-        curl_setopt($this->ch, CURLOPT_URL, self::DOMAIN . $url);
+        curl_setopt($this->ch, CURLOPT_URL, $this->appUrl . $url);
         $r = curl_exec($this->ch);
 
         $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);

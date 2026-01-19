@@ -5,6 +5,8 @@ services:
             dockerfile: Dockerfile
         hostname: tamako
         restart: always
+        environment:
+            - APP_URL=http://haruhi/api
         volumes:
             - ./tamako:/app
         tty: true
@@ -15,11 +17,11 @@ services:
         restart: always
         hostname: haruhi
         environment:
-            - APP_KEY=$APP_KEY
+            - APP_KEY=base64:uoetQyNQclJ6qf6HllK6gWiClrzwjwxCqCPr9pPwKPM=
             - DB_HOST=azusa
-            - DB_DATABASE=$DB_DATABASE
-            - DB_USERNAME=$DB_MIDAS_API_USER
-            - DB_PASSWORD=$DB_MIDAS_API_PASSWORD
+            - DB_DATABASE=midas
+            - DB_USERNAME=midas_api
+            - DB_PASSWORD=midaspass
         volumes:
             - ./haruhi:/var/www/html
     azusa:
@@ -30,12 +32,10 @@ services:
         environment:
             - MYSQL_ROOT_PASSWORD=rootpass
             - MYSQL_DATABASE=midas
-            - MYSQL_CHARSET=$DB_DATABASE_CHARSET
-            - MYSQL_COLLATION=$DB_DATABASE_COLLATION
-            - MYSQL_USER=midas
+            - MYSQL_CHARSET=utf8mb4
+            - MYSQL_COLLATION=utf8mb4_bin
+            - MYSQL_USER=midas_api
             - MYSQL_PASSWORD=midaspass
-            - DB_MIDAS_API_USER=$DB_MIDAS_API_USER
-            - DB_MIDAS_API_PASSWORD=$DB_MIDAS_API_PASSWORD
         hostname: azusa
         volumes:
             - ./azusa/initdb.d:/docker-entrypoint-initdb.d
