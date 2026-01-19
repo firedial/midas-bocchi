@@ -1,0 +1,10 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  docker-compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: docker compose -f compose_test.yaml up -d --wait
+      - run: docker compose exec -T tamako php /app/main.php
