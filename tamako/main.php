@@ -16,5 +16,3 @@ $response = $request->get('/attribute_elements/kind_element');
 
 // var_dump($response->jsonBody());
 echo $response->status();
-
-exit(1);
