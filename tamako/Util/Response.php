@@ -22,6 +22,7 @@ readonly class Response
 
         $headers = [];
         foreach ($records as $record) {
+            echo $record;
             $data = explode(': ', $record);
             $key = trim($data[0]);
             if ($key == '') {
