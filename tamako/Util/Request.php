@@ -58,4 +58,31 @@ class Request
 
         return new Response($header, $body);
     }
+
+    public function put(string $url, array $params): Response
+    {
+        curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($this->ch, CURLOPT_URL, self::DOMAIN . $url);
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($params));
+        $r = curl_exec($this->ch);
+
+        $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+        $header = substr($r, 0, $headerSize);
+        $body = substr($r, $headerSize);
+
+        return new Response($header, $body);
+    }
+
+    public function delete(string $url): Response
+    {
+        curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($this->ch, CURLOPT_URL, self::DOMAIN . $url);
+        $r = curl_exec($this->ch);
+
+        $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+        $header = substr($r, 0, $headerSize);
+        $body = substr($r, $headerSize);
+
+        return new Response($header, $body);
+    }
 }
