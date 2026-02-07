@@ -90,7 +90,6 @@ class SalaryUsecase
                 + $salary->residentTax()->value()
                 + $salary->employmentInsurance()->value()
                 + $salary->incomeTax()->value()
-                + $salary->holding()->value()
         );
 
         $deductionMove = new MoveEntity(
@@ -152,22 +151,30 @@ class SalaryUsecase
             $salary->date(),
         );
 
-        $holding = new BalanceEntity(
-            BalanceId::emptyId(),
-            $salary->holding()->inverse(),
-            new Item("持株"),
-            KindElementId::shareHeldId(),
-            PurposeElementId::deductionId(),
-            PlaceElementId::skyId(),
-            $salary->date(),
-        );
-
         $takeSalary = new Amount(
             $salary->baseSalary()->value()
                 + $salary->adjustmentSalary()->value()
                 + $salary->transportation()->value()
                 + $salary->holdingIncentives()->value()
                 - $deductionAmount->value()
+        );
+
+        $holdingMove = new MoveEntity(
+            MoveId::emptyId(),
+            new Amount($salary->holding()->value() - $salary->holdingIncentives()->value()),
+            new Item("積立"),
+            PlaceElementId::skyId(),
+            PlaceElementId::holdingId(),
+            $salary->date(),
+        );
+
+        $holdingIncentivesMove = new MoveEntity(
+            MoveId::emptyId(),
+            $salary->holdingIncentives(),
+            new Item("奨励金積立"),
+            PlaceElementId::skyId(),
+            PlaceElementId::holdingId(),
+            $salary->date(),
         );
 
         $mainMove = new MoveEntity(
@@ -194,7 +201,9 @@ class SalaryUsecase
             $this->balanceRepository->insertBalance($residentTax);
             $this->balanceRepository->insertBalance($employmentInsurance);
             $this->balanceRepository->insertBalance($incomeTax);
-            $this->balanceRepository->insertBalance($holding);
+
+            $this->moveRepository->insertMove(Attribute::place(), $holdingMove);
+            $this->moveRepository->insertMove(Attribute::place(), $holdingIncentivesMove);
 
             $this->moveRepository->insertMove(Attribute::place(), $mainMove);
             DB::commit();

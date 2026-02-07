@@ -158,6 +158,10 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
 
     public function insertMove(Attribute $attribute, MoveEntity $move): int
     {
+        if ($move->amount()->value() < 0) {
+            throw new InternalException('Move amount needs positive amount.');
+        }
+
         $beforePurposeElementId = match (true) {
             $attribute->isPurpose() => $move->beforeId(),
             $attribute->isPlace() => PlaceElementId::moveId(),
@@ -210,6 +214,10 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
 
     public function updateMove(Attribute $attribute, MoveEntity $move): void
     {
+        if ($move->amount()->value() < 0) {
+            throw new InternalException('Move amount needs positive amount.');
+        }
+
         $beforePurposeElementId = match (true) {
             $attribute->isPurpose() => $move->beforeId(),
             $attribute->isPlace() => PlaceElementId::moveId(),
