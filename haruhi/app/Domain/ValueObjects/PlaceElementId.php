@@ -7,7 +7,7 @@ class PlaceElementId extends AttributeElementId
     protected const MOVE_ID = 1;
 
     private const SKY_PLACE_ELEMENT_ID = 4;
-    private const SALARY_PLACE_ELEMENT_ID = 8;
+    private const SALARY_PLACE_ELEMENT_ID = 52;
 
     public static function skyId(): self
     {
