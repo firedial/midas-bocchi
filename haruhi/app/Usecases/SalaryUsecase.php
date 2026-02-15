@@ -155,7 +155,6 @@ class SalaryUsecase
             $salary->baseSalary()->value()
                 + $salary->adjustmentSalary()->value()
                 + $salary->transportation()->value()
-                + $salary->holdingIncentives()->value()
                 - $deductionAmount->value()
         );
 
