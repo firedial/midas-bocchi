@@ -11,23 +11,6 @@ jobs:
       - run: docker compose -f compose_test.yaml up -d --wait
       - run: chmod -R 777 ./haruhi/storage
       - run: docker compose -f compose_test.yaml exec -T haruhi composer install
-      - run: docker compose -f compose_test.yaml exec -T haruhi ls -al /var/www/html/storage
-      - run: docker compose -f compose_test.yaml exec -T haruhi chmod -R 777 /var/www/html/storage
-      - run: docker compose -f compose_test.yaml exec -T haruhi chown -R www-data:www-data /var/www/html/storage
-      - run: docker compose -f compose_test.yaml exec -T haruhi touch /var/www/html/storage/framework/sessions/test
-      - run: docker compose -f compose_test.yaml exec -T haruhi ls -al /var/www/html/storage
+      # - run: docker compose -f compose_test.yaml exec -T haruhi chmod -R 777 /var/www/html/storage
+      # - run: docker compose -f compose_test.yaml exec -T haruhi chown -R www-data:www-data /var/www/html/storage
       - run: docker compose -f compose_test.yaml exec -T tamako php /app/main.php
-      - run: docker compose -f compose_test.yaml exec -T haruhi ls -al /var/www/html/storage/framework/sessions
-      - run: docker compose -f compose_test.yaml exec -T haruhi ls /var/www/html/storage/framework/sessions/
-      - run: docker compose -f compose_test.yaml exec -T haruhi php -r "\$result = file_put_contents('/var/www/html/storage/framework/sessions/test2', 'hello'); var_dump(\$result); var_dump(error_get_last());"
-      - run: docker compose -f compose_test.yaml exec -T haruhi php -r "echo posix_getpwuid(posix_geteuid())['name'];"
-      - run: docker compose -f compose_test.yaml exec -T haruhi php -i | grep open_basedir
-      - run: docker compose -f compose_test.yaml exec -T haruhi sh -c "php -r \"file_put_contents('/var/www/html/storage/framework/sessions/test2', 'hello');\" ls -la /var/www/html/storage/framework/sessions/ "
-      - run: docker compose -f compose_test.yaml exec -T haruhi ls -al /var/www/html/storage/framework/sessions
-      - run: >
-          docker compose -f compose_test.yaml exec -T haruhi php artisan tinker
-          --execute="echo 'driver: ' . config('session.driver') . PHP_EOL;
-          echo 'secure: ' . var_export(config('session.secure'), true) . PHP_EOL;
-          echo 'same_site: ' . config('session.same_site') . PHP_EOL;
-          echo 'domain: ' . config('session.domain') . PHP_EOL;
-          echo 'app_env: ' . config('app.env') . PHP_EOL;"
