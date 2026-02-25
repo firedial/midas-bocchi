@@ -9,6 +9,7 @@ $params = [
 
 $noSessionRequest = new Request();
 $response = $noSessionRequest->post('/login', $params);
+var_dump($response->getSessionKey());
 
 $response = $noSessionRequest->get('/attribute_elements/kind_element');
 var_dump($response->jsonBody());
