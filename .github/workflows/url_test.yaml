@@ -17,3 +17,6 @@ jobs:
       - run: docker compose -f compose_test.yaml exec -T tamako php /app/main.php
       - run: docker compose -f compose_test.yaml exec -T haruhi ls -al /var/www/html/storage/framework/sessions
       - run: docker compose -f compose_test.yaml exec -T haruhi ls /var/www/html/storage/framework/sessions/
+      - run: docker compose -f compose_test.yaml exec -T haruhi php -r "\$result = file_put_contents('/var/www/html/storage/framework/sessions/test2', 'hello'); var_dump(\$result); var_dump(error_get_last());"
+      - run: docker compose -f compose_test.yaml exec -T haruhi php -r "echo posix_getpwuid(posix_geteuid())['name'];"
+      - run: docker compose -f compose_test.yaml exec -T haruhi php -i | grep open_basedir
