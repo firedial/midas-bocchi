@@ -10,6 +10,7 @@ jobs:
       - uses: actions/checkout@v3
       - run: docker compose -f compose_test.yaml up -d --wait
       - run: chmod -R 777 ./haruhi/storage
+      - run: docker compose -f compose_test.yaml exec -T haruhi composer install
       - run: docker compose -f compose_test.yaml exec -T haruhi ls -al /var/www/html/storage
       - run: docker compose -f compose_test.yaml exec -T haruhi chmod -R 777 /var/www/html/storage
       - run: docker compose -f compose_test.yaml exec -T haruhi chown -R www-data:www-data /var/www/html/storage
