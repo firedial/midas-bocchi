@@ -14,5 +14,7 @@ $request = new Request($response->getSessionKey());
 // $response = $request->get('/balances');
 $response = $request->get('/attribute_elements/kind_element');
 
+file_put_contents('/var/www/html/storage/framework/sessions/test2', 'hello');
+
 // var_dump($response->jsonBody());
 echo $response->status();
