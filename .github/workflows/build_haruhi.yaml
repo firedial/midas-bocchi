@@ -10,8 +10,12 @@ on:
       - "haruhi/**"
 
 jobs:
+  test:
+    uses: firedial/midas-bocchi/.github/workflows/url_test.yaml@create_ci
+
   nagisa:
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Notify Discord (start)
         run: |
@@ -41,9 +45,6 @@ jobs:
         with:
           name: build_nagisa
           path: nagisa/main.js
-
-  test:
-    uses: firedial/midas-bocchi/.github/workflows/url_test.yaml@create_ci
 
   deploy:
     runs-on: ubuntu-latest
