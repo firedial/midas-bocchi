@@ -53,5 +53,3 @@ var_dump($response->status());
 $response = $request->delete('/balances/' . $id);
 var_dump($response->jsonBody());
 var_dump($response->status());
-
-exit(1);
