@@ -43,7 +43,7 @@ jobs:
           path: nagisa/main.js
 
   test:
-    uses: firedial/midas-bocchi/.github/workflows/url_test.yaml@main
+    uses: firedial/midas-bocchi/.github/workflows/url_test.yaml@create_ci
 
   deploy:
     runs-on: ubuntu-latest
