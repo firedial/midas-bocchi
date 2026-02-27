@@ -22,6 +22,9 @@ services:
             - DB_DATABASE=midas
             - DB_USERNAME=midas_api
             - DB_PASSWORD=midaspass
+            - APP_DOMAIN=haruhi
+            - SANCTUM_STATEFUL_DOMAINS=haruhi
+            - SESSION_DOMAIN=haruhi
         volumes:
             - ./haruhi:/var/www/html
     azusa:
