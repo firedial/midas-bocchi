@@ -21,6 +21,7 @@ class LoginTest extends TestCase
     {
         $assert = new Assert();
 
+        // パスワードが違うパターン
         $noSessionRequest = new Request();
         $response = $noSessionRequest->post('/login', [
             'email' => 'midas_application@example.com',
@@ -61,14 +62,21 @@ class LoginTest extends TestCase
     {
         $assert = new Assert();
 
+        // 認証通っているかの確認
         $request = $this->getAuthenticatedRequest();
         $response = $request->get('/balances');
         $assert->isStatusCode200($response->statusCode());
 
+        // ログアウト
         $response = $request->post('/logout');
         $assert->isStatusCode200($response->statusCode());
 
+        // 認証通らないことの確認
         $response = $request->get('/balances');
         $assert->isStatusCode401($response->statusCode());
+
+        // ログアウト状態でのログアウト処理
+        $response = $request->post('/logout');
+        $assert->isStatusCode200($response->statusCode());
     }
 }
