@@ -17,8 +17,6 @@ class LoginTest extends TestCase
 
     public function testLoginNg(): void
     {
-        $assert = new Assert();
-
         // パスワードが違うパターン
         $noSessionRequest = new Request();
         $response = $noSessionRequest->post('/login', [
@@ -31,8 +29,6 @@ class LoginTest extends TestCase
 
     public function testLoginInvalidParam(): void
     {
-        $assert = new Assert();
-
         // パスワードがない
         $noSessionRequest = new Request();
         $response = $noSessionRequest->post('/login', [
@@ -58,8 +54,6 @@ class LoginTest extends TestCase
 
     public function testLogoutOk(): void
     {
-        $assert = new Assert();
-
         // 認証通っているかの確認
         $request = $this->getAuthenticatedRequest();
         $response = $request->get('/balances');
