@@ -254,20 +254,6 @@ CREATE TABLE `r_check_place_sum` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `s_secret`
---
-
-DROP TABLE IF EXISTS `s_secret`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `s_secret` (
-  `id` tinyint(4) NOT NULL,
-  `value` longtext DEFAULT NULL CHECK (json_valid(`value`)),
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `users`
 --
 
