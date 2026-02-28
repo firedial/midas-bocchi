@@ -6,15 +6,13 @@ class LoginTest extends TestCase
 {
     public function testLoginOk(): void
     {
-        $assert = new Assert();
-
         $noSessionRequest = new Request();
         $response = $noSessionRequest->post('/login', [
             'email' => 'midas_application@example.com',
             'password' => 'pass',
         ]);
 
-        $assert->isStatusCode200($response->statusCode());
+        Assert::assertStatusCode200($response->statusCode());
     }
 
     public function testLoginNg(): void
@@ -28,7 +26,7 @@ class LoginTest extends TestCase
             'password' => 'pass1111',
         ]);
 
-        $assert->isStatusCode401($response->statusCode());
+        Assert::assertStatusCode401($response->statusCode());
     }
 
     public function testLoginInvalidParam(): void
@@ -40,14 +38,14 @@ class LoginTest extends TestCase
         $response = $noSessionRequest->post('/login', [
             'email' => 'midas_application@example.com',
         ]);
-        $assert->isStatusCode400($response->statusCode());
+        Assert::assertStatusCode400($response->statusCode());
 
         // Eメールがない
         $noSessionRequest = new Request();
         $response = $noSessionRequest->post('/login', [
             'password' => 'pass',
         ]);
-        $assert->isStatusCode400($response->statusCode());
+        Assert::assertStatusCode400($response->statusCode());
 
         // Eメールの形式ではない
         $noSessionRequest = new Request();
@@ -55,7 +53,7 @@ class LoginTest extends TestCase
             'email' => 'midas_application_example.com',
             'password' => 'pass',
         ]);
-        $assert->isStatusCode400($response->statusCode());
+        Assert::assertStatusCode400($response->statusCode());
     }
 
     public function testLogoutOk(): void
@@ -65,18 +63,18 @@ class LoginTest extends TestCase
         // 認証通っているかの確認
         $request = $this->getAuthenticatedRequest();
         $response = $request->get('/balances');
-        $assert->isStatusCode200($response->statusCode());
+        Assert::assertStatusCode200($response->statusCode());
 
         // ログアウト
         $response = $request->post('/logout');
-        $assert->isStatusCode200($response->statusCode());
+        Assert::assertStatusCode200($response->statusCode());
 
         // 認証通らないことの確認
         $response = $request->get('/balances');
-        $assert->isStatusCode401($response->statusCode());
+        Assert::assertStatusCode401($response->statusCode());
 
         // ログアウト状態でのログアウト処理
         $response = $request->post('/logout');
-        $assert->isStatusCode200($response->statusCode());
+        Assert::assertStatusCode200($response->statusCode());
     }
 }

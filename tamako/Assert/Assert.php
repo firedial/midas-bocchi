@@ -2,22 +2,22 @@
 
 class Assert
 {
-    public function isStatusCode200(int $status)
+    public static function assertStatusCode200(int $status)
     {
-        $this->isStatusCode($status, 200);
+        self::assertStatusCode($status, 200);
     }
 
-    public function isStatusCode400(int $status)
+    public static function assertStatusCode400(int $status)
     {
-        $this->isStatusCode($status, 400);
+        self::assertStatusCode($status, 400);
     }
 
-    public function isStatusCode401(int $status)
+    public static function assertStatusCode401(int $status)
     {
-        $this->isStatusCode($status, 401);
+        self::assertStatusCode($status, 401);
     }
 
-    private function isStatusCode(int $status, int $code)
+    private static function assertStatusCode(int $status, int $code)
     {
         if ($status !== $code) {
             throw new Exception("not {$code} but {$status}");
