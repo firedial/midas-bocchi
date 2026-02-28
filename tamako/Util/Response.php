@@ -37,11 +37,7 @@ readonly class Response
 
     public function jsonBody(): mixed
     {
-        if (is_array($this->rawBody)) {
-            return json_decode($this->rawBody, true);
-        } else {
-            return $this->rawBody;
-        }
+        return json_decode($this->rawBody, true);
     }
 
     public function getSessionKey(): string
