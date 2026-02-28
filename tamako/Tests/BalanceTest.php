@@ -11,6 +11,17 @@ class BalanceTest extends TestCase
     {
         $response = $this->request->get('/balances');
         Assert::assertStatusCode200($response->statusCode());
+        $balances = $response->jsonBody();
+        $beforeBalanceCount = count($balances);
+
+        $response = $this->request->post('/balances', $this->validBalance());
+        Assert::assertStatusCode200($response->statusCode());
+
+        // レコードが 1 つ増えていることの確認
+        $response = $this->request->get('/balances');
+        Assert::assertStatusCode200($response->statusCode());
+        $balances = $response->jsonBody();
+        Assert::assertSame($beforeBalanceCount + 1, count($balances), '収支登録後のカウント');
     }
 
     /**
@@ -75,11 +86,82 @@ class BalanceTest extends TestCase
     }
 
     /**
-     * 存在しない収支取得テスト
+     * 収支CRUDテスト
+     */
+    public function testBalanceLeapDay(): void
+    {
+        // 正常系
+
+        // うるう年
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'テスト収支',
+            'date' => '2024-02-29',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode200($response->statusCode());
+        $id = $response->jsonBody();
+
+        // 個別取得
+        $response = $this->request->get('/balances/' . $id);
+        Assert::assertStatusCode200($response->statusCode());
+        $balance = $response->jsonBody();
+        Assert::assertSame('2024-02-29', $balance['date'], '閏日の登録');
+
+        // 更新
+        $response = $this->request->put('/balances/' . $id, [
+            'amount' => -1000,
+            'item' => 'テスト収支更新後',
+            'date' => '2020-02-29',
+            'kind_element_id' => 12,
+            'purpose_element_id' => 13,
+            'place_element_id' => 14,
+        ]);
+        Assert::assertStatusCode200($response->statusCode());
+
+        // 更新後の値を確認
+        $response = $this->request->get('/balances/' . $id);
+        Assert::assertStatusCode200($response->statusCode());
+        $balance = $response->jsonBody();
+        Assert::assertSame('2020-02-29', $balance['date'], '閏日の更新');
+
+        // 異常系
+
+        // うるう年
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'テスト収支',
+            'date' => '2023-02-29',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // 更新
+        $response = $this->request->put('/balances/' . $id, [
+            'amount' => -1000,
+            'item' => 'テスト収支更新後',
+            'date' => '2022-02-29',
+            'kind_element_id' => 12,
+            'purpose_element_id' => 13,
+            'place_element_id' => 14,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 存在しない収支テスト
      */
     public function testBalanceShowNotFound(): void
     {
         $response = $this->request->get('/balances/999999');
+        Assert::assertStatusCode404($response->statusCode());
+        $response = $this->request->put('/balances/999999', $this->validBalance());
+        Assert::assertStatusCode404($response->statusCode());
+        $response = $this->request->delete('/balances/999999');
         Assert::assertStatusCode404($response->statusCode());
     }
 
@@ -190,11 +272,23 @@ class BalanceTest extends TestCase
         Assert::assertStatusCode401($response->statusCode());
         $response = $noSessionRequest->get('/balances/10');
         Assert::assertStatusCode401($response->statusCode());
-        $response = $noSessionRequest->post('/balances');
+        $response = $noSessionRequest->post('/balances', $this->validBalance());
         Assert::assertStatusCode401($response->statusCode());
-        $response = $noSessionRequest->put('/balances/10');
+        $response = $noSessionRequest->put('/balances/10', $this->validBalance());
         Assert::assertStatusCode401($response->statusCode());
         $response = $noSessionRequest->delete('/balances/10');
         Assert::assertStatusCode401($response->statusCode());
+    }
+
+    private function validBalance(): array
+    {
+        return [
+            'amount' => -500,
+            'item' => 'テスト収支',
+            'date' => '2021-05-01',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ];
     }
 }
