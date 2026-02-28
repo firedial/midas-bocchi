@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Exceptions\InvalidParameterException;
 
 class LoginController extends Controller
 {
@@ -15,10 +16,14 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        try {
+            $credentials = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
+        } catch (Exception $e) {
+            throw new InvalidParameterException($e->getMessage());
+        }
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();

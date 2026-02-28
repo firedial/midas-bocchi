@@ -14,7 +14,7 @@ class Date
     {
         $d = explode('-', $date);
         if (count($d) !== 3) {
-            return false;
+            throw new ValueObjectException("Date is wrong.");
         }
 
         $this->day = (int)$d[2];

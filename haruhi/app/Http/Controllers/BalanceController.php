@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\BalanceId;
@@ -74,15 +75,19 @@ class BalanceController extends Controller
 
     public function store(Request $request)
     {
-        $balance = new BalanceEntity(
-            BalanceId::emptyId(),
-            new Amount($request->input("amount")),
-            new Item($request->input("item")),
-            KindElementId::filledId($request->input("kind_element_id")),
-            PurposeElementId::filledId($request->input("purpose_element_id")),
-            PlaceElementId::filledId($request->input("place_element_id")),
-            new Date($request->input("date")),
-        );
+        try {
+            $balance = new BalanceEntity(
+                BalanceId::emptyId(),
+                new Amount($request->input("amount")),
+                new Item($request->input("item")),
+                KindElementId::filledId($request->input("kind_element_id")),
+                PurposeElementId::filledId($request->input("purpose_element_id")),
+                PlaceElementId::filledId($request->input("place_element_id")),
+                new Date($request->input("date")),
+            );
+        } catch (Exception $e) {
+            throw new InvalidParameterException($e->getMessage());
+        }
 
         if ($balance->kindElementId()->isMoveId()) {
             throw new InvalidParameterException('Kind element id is move id.');
@@ -106,15 +111,19 @@ class BalanceController extends Controller
 
     public function update(Request $request, int $id)
     {
-        $balance = new BalanceEntity(
-            BalanceId::filledId($id),
-            new Amount($request->input("amount")),
-            new Item($request->input("item")),
-            KindElementId::filledId($request->input("kind_element_id")),
-            PurposeElementId::filledId($request->input("purpose_element_id")),
-            PlaceElementId::filledId($request->input("place_element_id")),
-            new Date($request->input("date")),
-        );
+        try {
+            $balance = new BalanceEntity(
+                BalanceId::filledId($id),
+                new Amount($request->input("amount")),
+                new Item($request->input("item")),
+                KindElementId::filledId($request->input("kind_element_id")),
+                PurposeElementId::filledId($request->input("purpose_element_id")),
+                PlaceElementId::filledId($request->input("place_element_id")),
+                new Date($request->input("date")),
+            );
+        } catch (Exception $e) {
+            throw new InvalidParameterException($e->getMessage());
+        }
 
         if ($balance->kindElementId()->isMoveId()) {
             throw new InvalidParameterException('Kind element id is move id.');

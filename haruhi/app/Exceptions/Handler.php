@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Throwable;
 use App\Exceptions\InvalidParameterException;
@@ -48,6 +49,10 @@ class Handler extends ExceptionHandler
                 ], 400);
             } else if ($e instanceof NotFoundException) {
                 return response()->make("", 404);
+            } else if ($e instanceof AuthenticationException) {
+                return response()->json([
+                    'message' => $e->getMessage()
+                ], 401);
             } else {
                 return response()->json([
                     'message' => $e->getMessage()
