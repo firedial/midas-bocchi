@@ -14,7 +14,7 @@ class LoginTest extends TestCase
             'password' => 'pass',
         ]);
 
-        $assert->is200($response->status());
+        $assert->isStatus200($response->status());
     }
 
     public function testLoginNg(): void
@@ -27,6 +27,6 @@ class LoginTest extends TestCase
             'password' => 'pass1111',
         ]);
 
-        $assert->is401($response->status());
+        $assert->isStatus401($response->status());
     }
 }
