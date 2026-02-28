@@ -10,6 +10,6 @@ class BalanceTest extends TestCase
         $request = $this->getAuthenticatedRequest();
 
         $response = $request->get('/balances');
-        $assert->isStatus200($response->status());
+        $assert->isStatusCode200($response->statusCode());
     }
 }

@@ -2,17 +2,25 @@
 
 class Assert
 {
-    public function isStatus200(int $status)
+    public function isStatusCode200(int $status)
     {
-        if ($status !== 200) {
-            throw new Exception('not 200');
-        }
+        $this->isStatusCode($status, 200);
     }
 
-    public function isStatus401(int $status)
+    public function isStatusCode400(int $status)
     {
-        if ($status !== 401) {
-            throw new Exception('not 401');
+        $this->isStatusCode($status, 400);
+    }
+
+    public function isStatusCode401(int $status)
+    {
+        $this->isStatusCode($status, 401);
+    }
+
+    private function isStatusCode(int $status, int $code)
+    {
+        if ($status !== $code) {
+            throw new Exception("not {$code} but {$status}");
         }
     }
 }

@@ -10,7 +10,7 @@ readonly class Response
         return explode("\n", str_replace("/r", '', $this->rawHeader))[0];
     }
 
-    public function status(): int
+    public function statusCode(): int
     {
         return (int)explode(' ', $this->statusLine())[1];
     }
