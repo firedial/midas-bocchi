@@ -63,12 +63,8 @@ jobs:
     needs: build-haruhi
     uses: firedial/midas-bocchi/.github/workflows/url_test.yaml@main
 
-  manual-test:
-    needs: [build-konata, build-haruhi, build-eru, build-rikka, build-yui]
-    uses: firedial/midas-bocchi/.github/workflows/url_test.yaml@main
-
   notify-success:
-    needs: [url-test, manual-test]
+    needs: [url-test]
     if: ${{ success() }}
     uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
     with:
@@ -77,7 +73,7 @@ jobs:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
   notify-failure:
-    needs: [url-test, manual-test]
+    needs: [url-test]
     if: ${{ failure() }}
     uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
     with:
