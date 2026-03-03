@@ -25,6 +25,63 @@ class BalanceTest extends TestCase
     }
 
     /**
+     * 収支表取得(件数指定)
+     */
+    public function testBalanceGetWithLimit(): void
+    {
+        $response = $this->request->get('/balances?limit=20');
+        Assert::assertStatusCode200($response->statusCode());
+        $balances = $response->jsonBody();
+        Assert::assertSame(20, count($balances), '件数指定のカウント');
+    }
+
+    /**
+     * 収支表取得(並び替え)
+     */
+    public function testBalanceGetWithOrderBy(): void
+    {
+        $response = $this->request->get('/balances?orderby=desc');
+        Assert::assertStatusCode200($response->statusCode());
+        $descFirst = $response->jsonBody()[0];
+
+        $response = $this->request->get('/balances?orderby=asc');
+        Assert::assertStatusCode200($response->statusCode());
+        $ascFirst = $response->jsonBody()[0];
+
+        // desc の先頭 ID が asc の先頭 ID より大きいこと
+        Assert::assertSame(true, $descFirst['id'] > $ascFirst['id'], '降順の先頭IDが昇順の先頭IDより大きいこと');
+    }
+
+    /**
+     * 収支表取得(件数指定と並び替え)
+     */
+    public function testBalanceGetWithLimitAndOrderBy(): void
+    {
+        $response = $this->request->get('/balances?orderby=desc&limit=20');
+        Assert::assertStatusCode200($response->statusCode());
+        $balances = $response->jsonBody();
+        Assert::assertSame(20, count($balances), '件数指定と並び替えのカウント');
+    }
+
+    /**
+     * 収支表取得(件数指定パラメータ不正)
+     */
+    public function testBalanceGetWithInvalidLimit(): void
+    {
+        $response = $this->request->get('/balances?limit=aaa');
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支表取得(並び替えパラメータ不正)
+     */
+    public function testBalanceGetWithInvalidOrderBy(): void
+    {
+        $response = $this->request->get('/balances?orderby=aaa');
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
      * 収支CRUDテスト
      */
     public function testBalanceCRUD(): void
@@ -86,7 +143,23 @@ class BalanceTest extends TestCase
     }
 
     /**
-     * 収支CRUDテスト
+     * 収支登録(収入)
+     */
+    public function testBalancePostIncome(): void
+    {
+        $response = $this->request->post('/balances', [
+            'amount' => 500,
+            'item' => '収入',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode200($response->statusCode());
+    }
+
+    /**
+     * うるう年テスト
      */
     public function testBalanceLeapDay(): void
     {
@@ -129,7 +202,7 @@ class BalanceTest extends TestCase
 
         // 異常系
 
-        // うるう年
+        // うるう年でない年の2/29
         $response = $this->request->post('/balances', [
             'amount' => -500,
             'item' => 'テスト収支',
@@ -182,6 +255,37 @@ class BalanceTest extends TestCase
     }
 
     /**
+     * 収支登録バリデーションエラーテスト（amount がない）
+     */
+    public function testBalancePostAmountMissing(): void
+    {
+        $response = $this->request->post('/balances', [
+            'item' => '収入',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支登録バリデーションエラーテスト（amount が文字）
+     */
+    public function testBalancePostAmountString(): void
+    {
+        $response = $this->request->post('/balances', [
+            'amount' => 'aaa',
+            'item' => '収入',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
      * 収支登録バリデーションエラーテスト（item が空）
      */
     public function testBalancePostItemEmpty(): void
@@ -198,6 +302,21 @@ class BalanceTest extends TestCase
     }
 
     /**
+     * 収支登録バリデーションエラーテスト（item がない）
+     */
+    public function testBalancePostItemMissing(): void
+    {
+        $response = $this->request->post('/balances', [
+            'amount' => 500,
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
      * 収支登録バリデーションエラーテスト（date が不正）
      */
     public function testBalancePostDateInvalid(): void
@@ -209,6 +328,37 @@ class BalanceTest extends TestCase
             'kind_element_id' => 2,
             'purpose_element_id' => 2,
             'place_element_id' => 2,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支登録バリデーションエラーテスト（date がない）
+     */
+    public function testBalancePostDateMissing(): void
+    {
+        $response = $this->request->post('/balances', [
+            'amount' => 500,
+            'item' => '収入',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支登録バリデーションエラーテスト（存在しない日付）
+     */
+    public function testBalancePostDateNotExist(): void
+    {
+        $response = $this->request->post('/balances', [
+            'amount' => 500,
+            'item' => '収入',
+            'date' => '2025-06-31',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
         ]);
         Assert::assertStatusCode400($response->statusCode());
     }
@@ -259,6 +409,441 @@ class BalanceTest extends TestCase
             'place_element_id' => 1,
         ]);
         Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支登録バリデーションエラーテスト（外部キー不正）
+     */
+    public function testBalancePostForeignKeyInvalid(): void
+    {
+        // kind_element_id が存在しない
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 10000,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // purpose_element_id が存在しない
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 10000,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // place_element_id が存在しない
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 10000,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支登録バリデーションエラーテスト（要素パラメータなし）
+     */
+    public function testBalancePostElementMissing(): void
+    {
+        // kind_element_id なし
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // purpose_element_id なし
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // place_element_id なし
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支登録バリデーションエラーテスト（要素パラメータが文字列）
+     */
+    public function testBalancePostElementString(): void
+    {
+        // kind_element_id が文字列
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 'aaa',
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // purpose_element_id が文字列
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 'aaa',
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // place_element_id が文字列
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 'aaa',
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支更新バリデーションエラーテスト（金額不正）
+     */
+    public function testBalancePutAmountInvalid(): void
+    {
+        // 金額が0
+        $response = $this->request->put('/balances/10', [
+            'amount' => 0,
+            'item' => '収入',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // 金額がない
+        $response = $this->request->put('/balances/10', [
+            'item' => '収入',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // 金額が文字
+        $response = $this->request->put('/balances/10', [
+            'amount' => 'aaa',
+            'item' => '収入',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支更新バリデーションエラーテスト（項目不正）
+     */
+    public function testBalancePutItemInvalid(): void
+    {
+        // 項目が空文字列
+        $response = $this->request->put('/balances/10', [
+            'amount' => 500,
+            'item' => '',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // 項目がない
+        $response = $this->request->put('/balances/10', [
+            'amount' => 500,
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支更新バリデーションエラーテスト（要素が移動ID）
+     */
+    public function testBalancePutElementIsMoveId(): void
+    {
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 1,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 1,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 1,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支更新バリデーションエラーテスト（外部キー不正）
+     */
+    public function testBalancePutForeignKeyInvalid(): void
+    {
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 10000,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 10000,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 10000,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支更新バリデーションエラーテスト（要素パラメータなし）
+     */
+    public function testBalancePutElementMissing(): void
+    {
+        // kind_element_id なし
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // purpose_element_id なし
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // place_element_id なし
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支更新バリデーションエラーテスト（要素パラメータが文字列）
+     */
+    public function testBalancePutElementString(): void
+    {
+        // kind_element_id が文字列
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 'aaa',
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // purpose_element_id が文字列
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 'aaa',
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // place_element_id が文字列
+        $response = $this->request->put('/balances/10', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 'aaa',
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支更新バリデーションエラーテスト（日付不正）
+     */
+    public function testBalancePutDateInvalid(): void
+    {
+        // 日付なし
+        $response = $this->request->put('/balances/10', [
+            'amount' => 500,
+            'item' => '収入',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // 存在しない日付
+        $response = $this->request->put('/balances/10', [
+            'amount' => 500,
+            'item' => '収入',
+            'date' => '2025-06-31',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // うるう年でない年の2/29
+        $response = $this->request->put('/balances/10', [
+            'amount' => 500,
+            'item' => '収入',
+            'date' => '2025-02-29',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+    }
+
+    /**
+     * 収支更新(存在しない)
+     */
+    public function testBalancePutNotFound(): void
+    {
+        // そもそもない
+        $response = $this->request->put('/balances/10000', [
+            'amount' => 500,
+            'item' => '収入',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode404($response->statusCode());
+
+        // 移動レコード
+        $response = $this->request->put('/balances/201', [
+            'amount' => 500,
+            'item' => '収入',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode404($response->statusCode());
+    }
+
+    /**
+     * 収支削除テスト
+     */
+    public function testBalanceDelete(): void
+    {
+        // 登録
+        $response = $this->request->post('/balances', $this->validBalance());
+        Assert::assertStatusCode200($response->statusCode());
+        $id = $response->jsonBody();
+
+        // 削除
+        $response = $this->request->delete('/balances/' . $id);
+        Assert::assertStatusCode200($response->statusCode());
+
+        // 削除後に取得すると 404 になること
+        $response = $this->request->get('/balances/' . $id);
+        Assert::assertStatusCode404($response->statusCode());
+    }
+
+    /**
+     * 収支削除(存在しない)
+     */
+    public function testBalanceDeleteNotFound(): void
+    {
+        // そもそもない
+        $response = $this->request->delete('/balances/10000');
+        Assert::assertStatusCode404($response->statusCode());
+
+        // 移動レコード
+        $response = $this->request->delete('/balances/201');
+        Assert::assertStatusCode404($response->statusCode());
+    }
+
+    /**
+     * 収支取得(存在しない)
+     */
+    public function testBalanceShowNotFoundMoveRecord(): void
+    {
+        // 移動レコード
+        $response = $this->request->get('/balances/201');
+        Assert::assertStatusCode404($response->statusCode());
     }
 
     /**
