@@ -70,7 +70,7 @@ jobs:
   notify-success:
     needs: [url-test, manual-test]
     if: ${{ success() }}
-    uses: firedial/midas-bocchi/.github/workflows/nortify.yaml@main
+    uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
     with:
       message: "build successed"
     secrets:
@@ -79,7 +79,7 @@ jobs:
   notify-failure:
     needs: [url-test, manual-test]
     if: ${{ failure() }}
-    uses: firedial/midas-bocchi/.github/workflows/nortify.yaml@main
+    uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
     with:
       message: "build failed"
     secrets:
