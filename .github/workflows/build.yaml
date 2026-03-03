@@ -23,7 +23,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  build-haruh:
+  build-haruhi:
     needs: notify-start
     uses: firedial/midas-bocchi/.github/workflows/docker_build.yaml@main
     with:
