@@ -8,7 +8,7 @@ on:
 
 jobs:
   notify-start:
-    uses: firedial/midas-bocchi/.github/workflows/nortify.yaml@main
+    uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
     with:
       message: "build start"
     secrets:
