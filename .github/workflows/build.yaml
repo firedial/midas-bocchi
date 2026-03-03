@@ -1,0 +1,86 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify-start:
+    uses: firedial/midas-bocchi/.github/workflows/nortify.yaml@main
+    with:
+      message: "build start"
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  build-konata:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/docker_build.yaml@main
+    with:
+      name: konata
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  build-haruh:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/docker_build.yaml@main
+    with:
+      name: haruhi
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  build-eru:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/docker_build.yaml@main
+    with:
+      name: eru
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  build-rikka:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/docker_build.yaml@main
+    with:
+      name: rikka
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  build-yui:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/docker_build.yaml@main
+    with:
+      name: yui
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  url-test:
+    needs: build-haruhi
+    uses: firedial/midas-bocchi/.github/workflows/url_test.yaml@main
+
+  manual-test:
+    needs: [build-konata, build-haruhi, build-eru, build-rikka, build-yui]
+    uses: firedial/midas-bocchi/.github/workflows/url_test.yaml@main
+
+  notify-success:
+    needs: [url-test, manual-test]
+    if: ${{ success() }}
+    uses: firedial/midas-bocchi/.github/workflows/nortify.yaml@main
+    with:
+      message: "build successed"
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  notify-failure:
+    needs: [url-test, manual-test]
+    if: ${{ failure() }}
+    uses: firedial/midas-bocchi/.github/workflows/nortify.yaml@main
+    with:
+      message: "build failed"
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}

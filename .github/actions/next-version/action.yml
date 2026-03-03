@@ -1,0 +1,41 @@
+name: Get Next Version
+description: Get the next version by bumping the latest git tag for a specific image
+
+inputs:
+  image_name:
+    description: "Image name prefix for git tags (e.g. api, frontend)"
+    required: true
+
+outputs:
+  version:
+    description: "Next version number (e.g. 1.2.0)"
+    value: ${{ steps.calc.outputs.version }}
+  current_version:
+    description: "Current version number (e.g. 1.2.0)"
+    value: ${{ steps.calc.outputs.current_version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Calculate next version
+      id: calc
+      shell: bash
+      run: |
+        IMAGE_NAME="${{ inputs.image_name }}"
+
+        git fetch --tags
+        LATEST=$(git tag | grep "^${IMAGE_NAME}-v" | sed "s/^${IMAGE_NAME}-v//" | sort -V | tail -1)
+
+        if [ -z "$LATEST" ]; then
+          MAJOR=1; MINOR=1; PATCH=0
+          CURRENT_VERSION="1.0.0"
+        else
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$LATEST"
+          MINOR=$((MINOR + 1)); PATCH=0 ;;
+          CURRENT_VERSION="$LATEST"
+        fi
+
+        VERSION="${MAJOR}.${MINOR}.${PATCH}"
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+        echo ${VERSION}

@@ -1,0 +1,22 @@
+on:
+  workflow_call:
+    inputs:
+      message:
+        required: true
+        type: string
+    secrets:
+      DISCORD_WEBHOOK_URL:
+        required: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{
+            "content": "${{ inputs.message }}"
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
