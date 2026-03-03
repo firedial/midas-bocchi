@@ -28,7 +28,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     needs: detect
-    if: need.detect.outputs.is_changed == 'true'
+    if: needs.detect.outputs.is_changed == 'true'
     steps:
       - name: Get version
         id: version
