@@ -22,6 +22,7 @@ class BalanceController extends Controller
 {
     public function index(Request $request)
     {
+        // 取得件数
         $limit = $request->input('limit');
         if (!is_null($limit) && !is_numeric($limit)) {
             throw new InvalidParameterException('limit is wrong');

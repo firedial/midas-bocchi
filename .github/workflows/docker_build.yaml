@@ -30,6 +30,9 @@ jobs:
     needs: detect
     if: needs.detect.outputs.is_changed == 'true'
     steps:
+      - name: Chekcout code
+        uses: actions/checkout@v4
+
       - name: Get version
         id: version
         uses: ./.github/actions/next-version
