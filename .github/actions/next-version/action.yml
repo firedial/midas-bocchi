@@ -31,7 +31,7 @@ runs:
           CURRENT_VERSION="1.0.0"
         else
           IFS='.' read -r MAJOR MINOR PATCH <<< "$LATEST"
-          MINOR=$((MINOR + 1)); PATCH=0 ;;
+          MINOR=$((MINOR + 1)); PATCH=0
           CURRENT_VERSION="$LATEST"
         fi
 
