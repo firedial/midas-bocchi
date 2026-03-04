@@ -24,7 +24,7 @@ runs:
         IMAGE_NAME="${{ inputs.image_name }}"
 
         git fetch --tags
-        LATEST=$(git tag | grep "^${IMAGE_NAME}-v" | sed "s/^${IMAGE_NAME}-v//" | sort -V | tail -1)
+        LATEST=$(git tag | grep "^${IMAGE_NAME}-v" | sed "s/^${IMAGE_NAME}-v//" | sort -V | tail -1 || true)
 
         if [ -z "$LATEST" ]; then
           MAJOR=1; MINOR=1; PATCH=0
