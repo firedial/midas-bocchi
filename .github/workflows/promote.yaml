@@ -64,8 +64,6 @@ jobs:
     permissions:
       pages: write
       id-token: write
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   notify-success:
     needs:
