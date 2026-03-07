@@ -7,9 +7,9 @@ inputs:
     required: true
 
 outputs:
-  version:
+  next_version:
     description: "Next version number (e.g. 1.2.0)"
-    value: ${{ steps.calc.outputs.version }}
+    value: ${{ steps.calc.outputs.next_version }}
   current_version:
     description: "Current version number (e.g. 1.2.0)"
     value: ${{ steps.calc.outputs.current_version }}
@@ -35,7 +35,7 @@ runs:
           CURRENT_VERSION="$LATEST"
         fi
 
-        VERSION="${MAJOR}.${MINOR}.${PATCH}"
-        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+        echo "next_version=${NEXT_VERSION}" >> $GITHUB_OUTPUT
         echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
-        echo ${VERSION}
+        echo "current versin: ${CURRENT_VERSION} / next version: ${NEXT_VERSION}"
