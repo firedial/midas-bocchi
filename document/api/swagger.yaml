@@ -4,6 +4,7 @@ info:
   title: "Midas API"
   version: "1.0.0"
 
+# api
 paths:
   "/login":
     post:
