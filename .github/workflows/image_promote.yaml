@@ -42,7 +42,7 @@ jobs:
         id: check
         run: |
           CHANGED=$(git diff --name-only HEAD~1)
-          echo "is_changed=$(echo "$CHANGED" | grep -q '^${{ inputs.change }}/' && echo true || echo false)" >> $GITHUB_OUTPUT
+          echo "is_changed=$(echo "$CHANGED" | grep -q -E '^${{ inputs.change }}/' && echo true || echo false)" >> $GITHUB_OUTPUT
       - name: Get version
         id: version
         uses: ./.github/actions/next-version
