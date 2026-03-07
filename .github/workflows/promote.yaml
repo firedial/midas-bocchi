@@ -13,7 +13,7 @@ jobs:
     secrets:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
-  build-konata:
+  promote-konata:
     needs: notify-start
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
@@ -22,7 +22,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  build-haruhi:
+  promote-haruhi:
     needs: notify-start
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
@@ -31,7 +31,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  build-eru:
+  promote-eru:
     needs: notify-start
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
@@ -40,7 +40,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  build-rikka:
+  promote-rikka:
     needs: notify-start
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
@@ -49,7 +49,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  build-yui:
+  promote-yui:
     needs: notify-start
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
@@ -58,8 +58,22 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
+  deploy-swagger:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/deploy_swagger.yaml@main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   notify-success:
-    needs: [build-haruhi, build-eru, build-konata, build-rikka, build-yui]
+    needs:
+      [
+        promote-haruhi,
+        promote-eru,
+        promote-konata,
+        promote-rikka,
+        promote-yui,
+        deploy-swagger,
+      ]
     if: ${{ success() }}
     uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
     with:
@@ -74,7 +88,15 @@ jobs:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
   notify-failure:
-    needs: [build-eru, build-konata, build-rikka, build-yui]
+    needs:
+      [
+        promote-haruhi,
+        promote-eru,
+        promote-konata,
+        promote-rikka,
+        promote-yui,
+        deploy-swagger,
+      ]
     if: ${{ failure() }}
     uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
     with:
