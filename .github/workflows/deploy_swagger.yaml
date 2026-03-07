@@ -29,8 +29,6 @@ jobs:
     steps:
       - name: Chekcout code
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install swagger-cli
         run: npm install -g swagger-cli
       - name: Generate Swagger UI
@@ -38,6 +36,7 @@ jobs:
         with:
           output: swagger-ui
           spec-file: document/api/swagger.yaml
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Documents
         uses: actions/upload-pages-artifact@v3
         with:
