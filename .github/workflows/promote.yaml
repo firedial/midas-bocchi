@@ -74,6 +74,7 @@ jobs:
     permissions:
       pages: write
       id-token: write
+    secrets: inherit
 
   notify-success:
     needs:
