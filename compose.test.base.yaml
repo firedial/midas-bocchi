@@ -11,10 +11,6 @@ services:
             - ./tamako:/app
         tty: true
     haruhi:
-        # build:
-        #     context: ./haruhi
-        #     dockerfile: Dockerfile
-        image: firedial/midas-bocchi-haruhi
         restart: always
         hostname: haruhi
         environment:
@@ -29,10 +25,6 @@ services:
         volumes:
             - ./haruhi:/var/www/html
     azusa:
-        # build:
-        #     context: ./yui
-        #     dockerfile: Dockerfile
-        image: firedial/midas-bocchi-yui
         restart: always
         environment:
             - MYSQL_ROOT_PASSWORD=rootpass
