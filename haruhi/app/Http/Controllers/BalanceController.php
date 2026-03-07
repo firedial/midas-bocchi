@@ -27,6 +27,7 @@ class BalanceController extends Controller
         if (!is_null($limit) && !is_numeric($limit)) {
             throw new InvalidParameterException('limit is wrong');
         }
+
         // 並び順
         $orderby = $request->input('orderby');
         if (!is_null($orderby) && $orderby !== 'desc') {
