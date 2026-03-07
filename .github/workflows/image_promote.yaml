@@ -1,0 +1,77 @@
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+    outputs:
+      next_version:
+        description: "Next version number (e.g. 1.2.0)"
+        value: ${{ jobs.detect.outputs.next_version }}
+      current_version:
+        description: "Current version number (e.g. 1.2.0)"
+        value: ${{ jobs.detect.outputs.current_version }}
+      is_changed:
+        description: "Is changed source code"
+        value: ${{ jobs.detect.outputs.is_changed }}
+      display:
+        description: "Display version"
+        value: ${{ jobs.detect.outputs.display }}
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      current_version: ${{ steps.version.outputs.current_version }}
+      next_version: ${{ steps.version.outputs.next_version }}
+      is_changed: ${{ steps.check.outputs.is_changed }}
+      display: ${{ steps.display.outputs.display }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check changed paths
+        id: check
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1)
+          echo "is_changed=$(echo "$CHANGED" | grep -q '^${{ inputs.name }}/' && echo true || echo false)" >> $GITHUB_OUTPUT
+      - name: Get version
+        id: version
+        uses: ./.github/actions/next-version
+        with:
+          image_name: ${{ inputs.name }}
+      - name: Display version message
+        id: display
+        run: |
+          IS_CHANGED="${{ steps.check.outputs.is_changed }}"
+          CURRENT="${{ steps.version.outputs.current_version }}"
+          NEXT="${{ steps.version.outputs.next_version }}"
+          if [ "$IS_CHANGED" = "true" ]; then
+            echo "display=${CURRENT} -> ${NEXT}" >> $GITHUB_OUTPUT
+          else
+            echo "display=${CURRENT}" >> $GITHUB_OUTPUT
+          fi
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: detect
+    if: needs.detect.outputs.is_changed == 'true'
+    steps:
+      - name: Pull staging image
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-${{ inputs.name }}:stag-v${{ needs.detect.outputs.next_version }}
+      - name: Tag as prod
+        run: |
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-${{ inputs.name }}
+          docker tag ${IMAGE}:stag-v${{ needs.detect.outputs.next_version }} ${IMAGE}:prod-v${{ needs.detect.outputs.next_version }}
+          docker tag ${IMAGE}:stag-v${{ needs.detect.outputs.next_version }} ${IMAGE}:prod-latest
+          docker push ${IMAGE}:prod-v${{ needs.detect.outputs.next_version }}
+          docker push ${IMAGE}:prod-latest
+      - name: Push git tag
+        run: |
+          git tag ${{ inputs.name }}-v${{ needs.detect.outputs.next_version }}
+          git push origin ${{ inputs.name }}-v${{ needs.detect.outputs.next_version }}

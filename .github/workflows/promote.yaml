@@ -1,0 +1,83 @@
+name: promote
+
+on:
+  workflow_dispatch:
+
+jobs:
+  notify-start:
+    uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
+    with:
+      message: |
+        promote start
+        ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  build-konata:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
+    with:
+      name: konata
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  build-haruhi:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
+    with:
+      name: haruhi
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  build-eru:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
+    with:
+      name: eru
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  build-rikka:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
+    with:
+      name: rikka
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  build-yui:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
+    with:
+      name: yui
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  notify-success:
+    needs: [build-haruhi, build-eru, build-konata, build-rikka, build-yui]
+    if: ${{ success() }}
+    uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
+    with:
+      message: |
+        promote successed
+        konata: ${{ needs.build-konata.outputs.display }}
+        haruhi: ${{ needs.build-haruhi.outputs.display }}
+        eru: ${{ needs.build-eru.outputs.display }}
+        rikka: ${{ needs.build-rikka.outputs.display }}
+        yui: ${{ needs.build-yui.outputs.display }}
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  notify-failure:
+    needs: [build-eru, build-konata, build-rikka, build-yui]
+    if: ${{ failure() }}
+    uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
+    with:
+      message: "promote failed"
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
