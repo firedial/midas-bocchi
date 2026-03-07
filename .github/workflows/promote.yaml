@@ -64,8 +64,6 @@ jobs:
   deploy-swagger:
     needs: notify-start
     uses: firedial/midas-bocchi/.github/workflows/deploy_swagger.yaml@main
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   notify-success:
     needs:

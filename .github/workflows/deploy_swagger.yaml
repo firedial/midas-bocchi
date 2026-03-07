@@ -2,9 +2,6 @@ name: deploy swagger
 
 on:
   workflow_call:
-    secrets:
-      GITHUB_TOKEN:
-        required: true
     outputs:
       is_changed:
         description: "Is changed source code"
@@ -39,7 +36,6 @@ jobs:
         with:
           output: swagger-ui
           spec-file: document/api/swagger.yaml
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Documents
         uses: actions/upload-pages-artifact@v3
         with:
