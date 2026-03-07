@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: Notify Discord
         run: |
+          echo ${{ input.message }}
           curl -H "Content-Type: application/json" \
           -X POST \
           -d '{
