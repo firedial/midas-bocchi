@@ -72,7 +72,7 @@ jobs:
     with:
       message: |
         build successed
-        konata: ${{ needs.build-konata.outputs.current_version }}
+        konata: ${{ needs.build-konata.outputs.display }}
     secrets:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 

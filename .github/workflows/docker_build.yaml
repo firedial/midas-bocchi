@@ -19,6 +19,9 @@ on:
       is_changed:
         description: "Is changed source code"
         value: ${{ jobs.detect.outputs.is_changed }}
+      display:
+        description: "Display version"
+        value: ${{ jobs.detect.outputs.display }}
 
 jobs:
   detect:
@@ -27,6 +30,7 @@ jobs:
       current_version: ${{ steps.version.outputs.current_version }}
       next_version: ${{ steps.version.outputs.next_version }}
       is_changed: ${{ steps.check.outputs.is_changed }}
+      display: ${{ steps.display.outputs.display }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,6 +45,17 @@ jobs:
         uses: ./.github/actions/next-version
         with:
           image_name: ${{ inputs.name }}
+      - name: Display version message
+        id: display
+        run: |
+          IS_CHANGED="${{ steps.check.outputs.is_changed }}"
+          CURRENT="${{ steps.version.outputs.current_version }}"
+          NEXT="${{ steps.version.outputs.next_version }}"
+          if [ "$IS_CHANGED" = "true" ]; then
+            echo "display=${CURRENT} -> ${NEXT}" >> $GITHUB_OUTPUT
+          else
+            echo "display=${CURRENT}" >> $GITHUB_OUTPUT
+          fi
 
   docker:
     runs-on: ubuntu-latest
