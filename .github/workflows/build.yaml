@@ -73,6 +73,10 @@ jobs:
       message: |
         build successed
         konata: ${{ needs.build-konata.outputs.display }}
+        haruhi: ${{ needs.build-haruhi.outputs.display }}
+        eru: ${{ needs.build-eru.outputs.display }}
+        rikka: ${{ needs.build-rikka.outputs.display }}
+        yui: ${{ needs.build-yui.outputs.display }}
     secrets:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
