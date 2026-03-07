@@ -17,7 +17,5 @@ jobs:
           MESSAGE=$(echo '${{ inputs.message }}' | jq -Rs .)
           curl -H "Content-Type: application/json" \
           -X POST \
-          -d '{
-            "content": "${MESSAGE}"
-          }' \
+          -d "{\"content\": ${MESSAGE}}" \
           ${{ secrets.DISCORD_WEBHOOK_URL }}
