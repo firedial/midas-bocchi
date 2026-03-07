@@ -64,6 +64,9 @@ jobs:
   deploy-swagger:
     needs: notify-start
     uses: firedial/midas-bocchi/.github/workflows/deploy_swagger.yaml@main
+    permissions:
+      pages: write
+      id-token: write
 
   notify-success:
     needs:
