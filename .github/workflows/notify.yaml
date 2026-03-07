@@ -14,10 +14,10 @@ jobs:
     steps:
       - name: Notify Discord
         run: |
-          echo "${{ inputs.message }}"
+          MESSAGE=$(echo '${{ inputs.message }}' | jq -Rs .)
           curl -H "Content-Type: application/json" \
           -X POST \
           -d '{
-            "content": "${{ inputs.message }}"
+            "content": "${MESSAGE}"
           }' \
           ${{ secrets.DISCORD_WEBHOOK_URL }}
