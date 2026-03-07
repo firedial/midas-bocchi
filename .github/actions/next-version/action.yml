@@ -38,4 +38,4 @@ runs:
         NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
         echo "next_version=${NEXT_VERSION}" >> $GITHUB_OUTPUT
         echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
-        echo "current versin: ${CURRENT_VERSION} / next version: ${NEXT_VERSION}"
+        echo "current version: ${CURRENT_VERSION} / next version: ${NEXT_VERSION}"

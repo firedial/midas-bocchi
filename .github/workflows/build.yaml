@@ -11,8 +11,8 @@ jobs:
     uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
     with:
       message: |
-        "build start"
-        "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        build start
+        ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     secrets:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
@@ -71,8 +71,8 @@ jobs:
     uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
     with:
       message: |
-        "build successed"
-        "konata: ${{ needs.build-konata.output.current_version }}"
+        build successed
+        konata: ${{ needs.build-konata.outputs.current_version }}
     secrets:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
