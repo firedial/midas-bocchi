@@ -34,9 +34,7 @@ jobs:
 
   build-haruhi:
     needs: build-haruhi-base
-    uses: firedial/midas-bocchi/.github/workflows/docker_build.yaml@main
-    with:
-      name: haruhi
+    uses: firedial/midas-bocchi/.github/workflows/docker_build_haruhi.yaml@main
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
