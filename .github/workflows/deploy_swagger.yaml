@@ -24,7 +24,7 @@ jobs:
           echo "is_changed=$(echo "$CHANGED" | grep -q '^document/api/' && echo true || echo false)" >> $GITHUB_OUTPUT
 
   build:
-    if: needs.detect.outputs.is_changed == 'true'
+    # if: needs.detect.outputs.is_changed == 'true'
     runs-on: ubuntu-latest
     needs: detect
     steps:
