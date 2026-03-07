@@ -80,11 +80,11 @@ jobs:
     with:
       message: |
         promote successed
-        konata: ${{ needs.build-konata.outputs.display }}
-        haruhi: ${{ needs.build-haruhi.outputs.display }}
-        eru: ${{ needs.build-eru.outputs.display }}
-        rikka: ${{ needs.build-rikka.outputs.display }}
-        yui: ${{ needs.build-yui.outputs.display }}
+        konata: ${{ needs.promote-konata.outputs.display }}
+        haruhi: ${{ needs.promote-haruhi.outputs.display }}
+        eru: ${{ needs.promote-eru.outputs.display }}
+        rikka: ${{ needs.promote-rikka.outputs.display }}
+        yui: ${{ needs.promote-yui.outputs.display }}
     secrets:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
