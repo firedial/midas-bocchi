@@ -82,7 +82,7 @@ jobs:
   deploy:
     if: needs.detect.outputs.is_changed == 'true'
     runs-on: ubuntu-latest
-    needs: nagisa
+    needs: [detect, nagisa]
     steps:
       - uses: actions/checkout@v4
         with:
