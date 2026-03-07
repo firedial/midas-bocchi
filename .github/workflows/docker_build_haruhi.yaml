@@ -35,9 +35,7 @@ jobs:
         id: check
         run: |
           CHANGED=$(git diff --name-only HEAD~1)
-          IS_CHANGED_HARUHI=$(echo "$CHANGED" | grep -q '^haruhi/' && echo true || echo false)
-          IS_CHANGED_NAGISA=$(echo "$CHANGED" | grep -q '^nagisa/' && echo true || echo false)
-          echo "is_changed=$([[ "$IS_CHANGED_HARUHI" == "true" && "$IS_CHANGED_NAGISA" == "true" ]] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
+          echo "is_changed=$(echo "$CHANGED" | grep -q '^(haruhi|nagisa)/' && echo true || echo false)" >> $GITHUB_OUTPUT
       - name: Get version
         id: version
         uses: ./.github/actions/next-version
@@ -56,6 +54,7 @@ jobs:
           fi
 
   nagisa:
+    if: needs.detect.outputs.is_changed == 'true'
     runs-on: ubuntu-latest
     needs: detect
     steps:
@@ -81,6 +80,7 @@ jobs:
           path: nagisa/main.js
 
   deploy:
+    if: needs.detect.outputs.is_changed == 'true'
     runs-on: ubuntu-latest
     needs: nagisa
     steps:

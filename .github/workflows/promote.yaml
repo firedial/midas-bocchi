@@ -20,6 +20,7 @@ jobs:
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: konata
+      change: konata
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -31,6 +32,7 @@ jobs:
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: haruhi
+      change: haruhi|nagisa
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -42,6 +44,7 @@ jobs:
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: eru
+      change: eru
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -53,6 +56,7 @@ jobs:
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: rikka
+      change: rikka
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -64,6 +68,7 @@ jobs:
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: yui
+      change: yui
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
