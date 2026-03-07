@@ -2,6 +2,9 @@ name: deploy swagger
 
 on:
   workflow_call:
+    secrets:
+      GITHUB_TOKEN:
+        required: true
     outputs:
       is_changed:
         description: "Is changed source code"
