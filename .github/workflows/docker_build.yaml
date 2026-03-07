@@ -24,6 +24,7 @@ jobs:
   detect:
     runs-on: ubuntu-latest
     outputs:
+      current_version: ${{ steps.version.outputs.current_version }}
       next_version: ${{ steps.version.outputs.next_version }}
       is_changed: ${{ steps.check.outputs.is_changed }}
     steps:
