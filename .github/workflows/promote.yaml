@@ -15,6 +15,8 @@ jobs:
 
   promote-konata:
     needs: notify-start
+    permissions:
+      contents: write
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: konata
@@ -24,6 +26,8 @@ jobs:
 
   promote-haruhi:
     needs: notify-start
+    permissions:
+      contents: write
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: haruhi
@@ -33,6 +37,8 @@ jobs:
 
   promote-eru:
     needs: notify-start
+    permissions:
+      contents: write
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: eru
@@ -42,6 +48,8 @@ jobs:
 
   promote-rikka:
     needs: notify-start
+    permissions:
+      contents: write
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: rikka
@@ -51,6 +59,8 @@ jobs:
 
   promote-yui:
     needs: notify-start
+    permissions:
+      contents: write
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: yui
