@@ -12,13 +12,13 @@ on:
     outputs:
       next_version:
         description: "Next version number (e.g. 1.2.0)"
-        value: ${{ steps.version.outputs.next_version }}
+        value: ${{ jobs.detect.outputs.next_version }}
       current_version:
         description: "Current version number (e.g. 1.2.0)"
-        value: ${{ steps.version.outputs.current_version }}
+        value: ${{ jobs.detect.outputs.current_version }}
       is_changed:
         description: "Is changed source code"
-        value: ${{ steps.check.outputs.is_changed }}
+        value: ${{ jobs.detect.outputs.is_changed }}
 
 jobs:
   detect:
