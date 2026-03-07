@@ -19,7 +19,7 @@ jobs:
         id: check
         run: |
           CHANGED=$(git diff --name-only HEAD~1)
-          echo "is_changed=$(echo "$CHANGED" | grep -q '^haruhi/DockerProductionBase' && echo true || echo false)" >> $GITHUB_OUTPUT
+          echo "is_changed=$(echo "$CHANGED" | grep -q '^haruhi/DockerfileProductionBase' && echo true || echo false)" >> $GITHUB_OUTPUT
 
   docker:
     runs-on: ubuntu-latest

@@ -63,7 +63,7 @@ jobs:
     if: needs.detect.outputs.is_changed == 'true'
     steps:
       - name: Pull staging image
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-${{ inputs.name }}:stag-v${{ needs.detect.outputs.next_version }}
+        run: docker pull --platform linux/arm64 ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-${{ inputs.name }}:stag-v${{ needs.detect.outputs.next_version }}
       - name: Tag as prod
         run: |
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-${{ inputs.name }}

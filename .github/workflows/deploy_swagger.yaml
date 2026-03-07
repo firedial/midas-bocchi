@@ -20,7 +20,7 @@ jobs:
         id: check
         run: |
           CHANGED=$(git diff --name-only HEAD~1)
-          echo "is_changed=$(echo "$CHANGED" | grep -q '^${{ inputs.name }}/' && echo true || echo false)" >> $GITHUB_OUTPUT
+          echo "is_changed=$(echo "$CHANGED" | grep -q '^document/api/' && echo true || echo false)" >> $GITHUB_OUTPUT
 
   build:
     if: needs.detect.outputs.is_changed == 'true'

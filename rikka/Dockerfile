@@ -11,4 +11,3 @@ RUN apk add mariadb-dev && \
     apk add openssl
 
 RUN mkdir /mnt/nas
-
