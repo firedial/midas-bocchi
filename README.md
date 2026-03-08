@@ -32,42 +32,17 @@ $ cd konata/ssl
 秘密鍵の作成
 
 ```
-$ sudo openssl genrsa -out server.key 2048
+$ openssl genpkey -algorithm ED25519 -out server.key
 ```
 
-証明書署名要求の作成
+証明書署名要求とサーバ証明書の作成
+
 
 ```
-$ sudo openssl req -new -key server.key -out server.csr
+$ DOMAIN=midas.home.arpa openssl req -new -x509 -key server.key -out server.crt -days 365 -config openssl.cnf -extensions v3_req
 ```
 
-証明書署名要求の設定例
-
-```
-Country Name (2 letter code) [AU]:JP
-State or Province Name (full name) [Some-State]:Tokyo
-Locality Name (eg, city) []:
-Organization Name (eg, company) [Internet Widgits Pty Ltd]:
-Organizational Unit Name (eg, section) []:
-Common Name (e.g. server FQDN or YOUR name) []:midas.home.arpa
-Email Address []:
-
-Please enter the following 'extra' attributes
-to be sent with your certificate request
-A challenge password []:
-An optional company name []:
-```
-
-SAN の設定ファイル作成(san.txt として保存)
-
-```
-subjectAltName = DNS:midas.home.arpa
-```
-
-サーバ証明書の作成
-```
-$ sudo openssl x509 -days 3650 -req -signkey server.key -in server.csr -out server.crt -extfile san.txt
-```
+( `openssl.cnf` は `document/ssl/openssl.cnf` を使う)
 
 ### イメージの作成とコンテナ作成と起動
 
