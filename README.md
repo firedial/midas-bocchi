@@ -32,7 +32,7 @@ $ cd konata/ssl
 秘密鍵の作成
 
 ```
-$ openssl genpkey -algorithm ED25519 -out server.key
+$ openssl ecparam -genkey -name prime256v1 -noout -out server.key
 ```
 
 証明書署名要求とサーバ証明書の作成
