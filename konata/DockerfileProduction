@@ -1,3 +1,3 @@
 FROM nginx
 
-COPY ./konata/conf.d/ /etc/nginx/templates/
+COPY ./konata/conf.d/revese_proxy.conf /etc/nginx/templates/revese_proxy.conf.templates
