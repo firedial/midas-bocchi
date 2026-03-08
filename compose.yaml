@@ -5,10 +5,11 @@ services:
         ports:
             - "443:443"
         volumes:
-            - ./konata/conf.d/:/etc/nginx/conf.d
+            - ./konata/conf.d/:/etc/nginx/templates/default.conf.template
             - ./konata/ssl/:/etc/nginx/ssl
         environment:
             - APP_DOMAIN=$APP_DOMAIN
+            - ANALYZE_DOMAIN=$ANALYZE_DOMAIN
         depends_on:
             - haruhi
             - eru
