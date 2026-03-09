@@ -42,7 +42,7 @@ $ openssl ecparam -genkey -name prime256v1 -noout -out server.key
 $ DOMAIN=midas.home.arpa openssl req -new -x509 -key server.key -out server.crt -days 365 -config openssl.cnf -extensions v3_req
 ```
 
-( `openssl.cnf` は `document/ssl/openssl.cnf` を使う)
+( `openssl.cnf` は `konat/ssl/openssl.cnf` を使う)
 
 ### イメージの作成とコンテナ作成と起動
 
