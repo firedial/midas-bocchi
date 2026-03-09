@@ -5,9 +5,11 @@ services:
         ports:
             - "443:443"
         volumes:
-            - ./konata/conf.d/:/etc/nginx/templates/default.conf.template
+            - ./konata/conf.d/reverse_proxy.conf:/etc/nginx/templates/default.conf.template
+            - ./konata/public:/usr/share/nginx/html
             - ./konata/ssl/:/etc/nginx/ssl
         environment:
+            - APP_ENV=$APP_ENV
             - APP_DOMAIN=$APP_DOMAIN
             - ANALYZE_DOMAIN=$ANALYZE_DOMAIN
         depends_on:
