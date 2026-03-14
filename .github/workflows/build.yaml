@@ -64,7 +64,7 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   url-test:
-    needs: build-haruhi
+    needs: [build-haruhi, build-yui]
     uses: firedial/midas-bocchi/.github/workflows/url_test.yaml@main
 
   notify-success:
