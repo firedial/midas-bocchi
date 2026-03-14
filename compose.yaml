@@ -70,7 +70,7 @@ services:
             - DB_TASK_PASSWORD=$DB_TASK_PASSWORD
         hostname: yui
         volumes:
-            - ./yui/initdb.d:/docker-entrypoint-initdb.d
+            - ./yui/first-run.d:/scripts/first-run.d
             - db:/var/lib/mysql
     rikka:
         build: ./rikka

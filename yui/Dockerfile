@@ -1,1 +1,1 @@
-FROM yobasystems/alpine-mariadb:10.11.2
+FROM yobasystems/alpine-mariadb:11.4.9
