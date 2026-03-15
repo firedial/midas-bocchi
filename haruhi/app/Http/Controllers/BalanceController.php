@@ -23,10 +23,13 @@ class BalanceController extends Controller
 {
     public function index(Request $request)
     {
+        // 取得件数
         $limit = $request->input('limit');
         if (!is_null($limit) && !is_numeric($limit)) {
             throw new InvalidParameterException('limit is wrong');
         }
+
+        // 並び順
         $orderby = $request->input('orderby');
         if (!is_null($orderby) && $orderby !== 'desc') {
             throw new InvalidParameterException('orderby is wrong');

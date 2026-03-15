@@ -1,4 +1,4 @@
-FROM alpine:3.13.2
+FROM alpine:3.23.3
 
 RUN apk --update add tzdata && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \

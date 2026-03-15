@@ -5,10 +5,13 @@ services:
         ports:
             - "443:443"
         volumes:
-            - ./konata/conf.d/:/etc/nginx/conf.d
+            - ./konata/conf.d/reverse_proxy.conf:/etc/nginx/templates/default.conf.template
+            - ./konata/public:/usr/share/nginx/html
             - ./konata/ssl/:/etc/nginx/ssl
         environment:
+            - APP_ENV=$APP_ENV
             - APP_DOMAIN=$APP_DOMAIN
+            - ANALYZE_DOMAIN=$ANALYZE_DOMAIN
         depends_on:
             - haruhi
             - eru
@@ -67,7 +70,7 @@ services:
             - DB_TASK_PASSWORD=$DB_TASK_PASSWORD
         hostname: yui
         volumes:
-            - ./yui/initdb.d:/docker-entrypoint-initdb.d
+            - ./yui/first-run.d:/scripts/first-run.d
             - db:/var/lib/mysql
     rikka:
         build: ./rikka

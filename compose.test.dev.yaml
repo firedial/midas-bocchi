@@ -1,0 +1,9 @@
+services:
+    haruhi:
+        build:
+            context: ./haruhi
+            dockerfile: Dockerfile
+    azusa:
+        build:
+            context: ./yui
+            dockerfile: Dockerfile

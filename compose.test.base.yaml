@@ -11,9 +11,6 @@ services:
             - ./tamako:/app
         tty: true
     haruhi:
-        build:
-            context: ./haruhi
-            dockerfile: Dockerfile
         restart: always
         hostname: haruhi
         environment:
@@ -28,9 +25,6 @@ services:
         volumes:
             - ./haruhi:/var/www/html
     azusa:
-        build:
-            context: ./yui
-            dockerfile: Dockerfile
         restart: always
         environment:
             - MYSQL_ROOT_PASSWORD=rootpass

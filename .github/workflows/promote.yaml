@@ -1,0 +1,122 @@
+name: promote
+
+on:
+  workflow_dispatch:
+
+jobs:
+  notify-start:
+    uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
+    with:
+      message: |
+        promote start
+        ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  promote-konata:
+    needs: notify-start
+    permissions:
+      contents: write
+    uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
+    with:
+      name: konata
+      change: konata
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  promote-haruhi:
+    needs: notify-start
+    permissions:
+      contents: write
+    uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
+    with:
+      name: haruhi
+      change: haruhi|nagisa
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  promote-eru:
+    needs: notify-start
+    permissions:
+      contents: write
+    uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
+    with:
+      name: eru
+      change: eru
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  promote-rikka:
+    needs: notify-start
+    permissions:
+      contents: write
+    uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
+    with:
+      name: rikka
+      change: rikka
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  promote-yui:
+    needs: notify-start
+    permissions:
+      contents: write
+    uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
+    with:
+      name: yui
+      change: yui
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  deploy-swagger:
+    needs: notify-start
+    uses: firedial/midas-bocchi/.github/workflows/deploy_swagger.yaml@main
+    permissions:
+      pages: write
+      id-token: write
+    secrets: inherit
+
+  notify-success:
+    needs:
+      [
+        promote-haruhi,
+        promote-eru,
+        promote-konata,
+        promote-rikka,
+        promote-yui,
+        deploy-swagger,
+      ]
+    if: ${{ success() }}
+    uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
+    with:
+      message: |
+        promote successed
+        konata: ${{ needs.promote-konata.outputs.display }}
+        haruhi: ${{ needs.promote-haruhi.outputs.display }}
+        eru: ${{ needs.promote-eru.outputs.display }}
+        rikka: ${{ needs.promote-rikka.outputs.display }}
+        yui: ${{ needs.promote-yui.outputs.display }}
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  notify-failure:
+    needs:
+      [
+        promote-haruhi,
+        promote-eru,
+        promote-konata,
+        promote-rikka,
+        promote-yui,
+        deploy-swagger,
+      ]
+    if: ${{ failure() }}
+    uses: firedial/midas-bocchi/.github/workflows/notify.yaml@main
+    with:
+      message: "promote failed"
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}

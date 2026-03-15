@@ -6,10 +6,12 @@ on:
 
 jobs:
   url:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
+    env:
+      COMPOSE_FILE: compose.test.base.yaml:compose.test.ci.yaml
     steps:
-      - uses: actions/checkout@v3
-      - run: docker compose -f compose_test.yaml up -d --wait
+      - uses: actions/checkout@v5
+      - run: docker compose up -d --wait
       - run: chmod -R 777 ./haruhi/storage
-      - run: docker compose -f compose_test.yaml exec -T haruhi composer install
-      - run: docker compose -f compose_test.yaml exec -T tamako php /app/main.php
+      - run: docker compose exec -T haruhi composer install
+      - run: docker compose exec -T tamako php /app/main.php

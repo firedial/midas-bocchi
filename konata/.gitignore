@@ -1,1 +1,3 @@
-/ssl
+/ssl/server.key
+/ssl/server.crt
+/public/main.js

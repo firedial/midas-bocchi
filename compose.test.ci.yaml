@@ -1,0 +1,5 @@
+services:
+    haruhi:
+        image: firedial/midas-bocchi-haruhi:stag-latest
+    azusa:
+        image: firedial/midas-bocchi-yui:stag-latest
