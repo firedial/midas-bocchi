@@ -12,13 +12,13 @@ jobs:
     outputs:
       is_changed: ${{ steps.check.outputs.is_changed }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       - name: Check changed paths
         id: check
         run: |
-          CHANGED=$(git diff --name-only HEAD~1)
+          CHANGED=$(git diff --name-only origin/main...HEAD)
           echo "is_changed=$(echo "$CHANGED" | grep -q '^haruhi/DockerfileProductionBase' && echo true || echo false)" >> $GITHUB_OUTPUT
 
   docker:
@@ -26,7 +26,7 @@ jobs:
     needs: detect
     if: needs.detect.outputs.is_changed == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx

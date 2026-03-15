@@ -1,1 +1,1 @@
-FROM yobasystems/alpine-mariadb:11.4.9
+FROM mariadb:12.3.1-noble-rc
