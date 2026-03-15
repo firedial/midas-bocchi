@@ -3,7 +3,7 @@
 BACKUP_FILE_NAME="backup.dump"
 BACKUP_DIR="/mnt/nas/bocchi/metabase"
 
-/usr/bin/mysqldump --no-tablespaces --single-transaction -u ${DB_TASK_USER} -p${DB_TASK_PASS} -h ${DB_HOST} ${DB_METABASE_DATABASE_NAME} > /tmp/${BACKUP_FILE_NAME}
+/usr/bin/mariadb-dump --no-tablespaces --single-transaction -u ${DB_TASK_USER} -p${DB_TASK_PASS} -h ${DB_HOST} ${DB_METABASE_DATABASE_NAME} > /tmp/${BACKUP_FILE_NAME}
 gzip /tmp/${BACKUP_FILE_NAME}
 BACKUP_GZIP_FILE_NAME=${BACKUP_FILE_NAME}.gz
 
