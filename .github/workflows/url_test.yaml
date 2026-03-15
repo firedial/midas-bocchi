@@ -10,7 +10,7 @@ jobs:
     env:
       COMPOSE_FILE: compose.test.base.yaml:compose.test.ci.yaml
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
       - run: docker compose up -d --wait
       - run: chmod -R 777 ./haruhi/storage
       - run: docker compose exec -T haruhi composer install

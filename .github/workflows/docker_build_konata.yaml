@@ -28,7 +28,7 @@ jobs:
       is_changed: ${{ steps.check.outputs.is_changed }}
       display: ${{ steps.display.outputs.display }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Check changed paths
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: detect
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: elm download
         run: |
           curl -L -o elm.gz https://github.com/elm/compiler/releases/download/0.19.1/binary-for-linux-64-bit.gz
@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [detect, nagisa]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: main
       - name: download nagisa build
