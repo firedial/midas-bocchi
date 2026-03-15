@@ -1,1 +1,1 @@
-FROM mariadb:12.3.1-noble-rc
+FROM mariadb:11.4.10-noble
