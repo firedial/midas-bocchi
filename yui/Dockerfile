@@ -1,1 +1,1 @@
-FROM yobasystems/alpine-mariadb:11.4.9
+FROM mysql:9.6.0
