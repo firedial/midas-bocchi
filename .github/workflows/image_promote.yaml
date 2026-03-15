@@ -41,7 +41,7 @@ jobs:
       - name: Check changed paths
         id: check
         run: |
-          CHANGED=$(git diff --name-only origin/main...HEAD)
+          CHANGED=$(git diff --name-only HEAD~1)
           echo "is_changed=$(echo "$CHANGED" | grep -q -E '^${{ inputs.change }}/' && echo true || echo false)" >> $GITHUB_OUTPUT
       - name: Get version
         id: version
