@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Exceptions\InvalidParameterException;
+use Exception;
 
 class LoginController extends Controller
 {
