@@ -11,7 +11,7 @@ services:
             - ./tamako:/app
         tty: true
         depends_on:
-            haruhi:
+            azusa:
                 condition: service_healthy
     haruhi:
         restart: always
