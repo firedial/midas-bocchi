@@ -17,7 +17,10 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        InvalidParameterException::class,
+        NotFoundException::class,
+        ValueObjectException::class,
+        \Illuminate\Validation\ValidationException::class,
     ];
 
     /**

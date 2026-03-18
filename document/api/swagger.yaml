@@ -54,12 +54,10 @@ paths:
           in: query
           description: >
             収支IDによる並び替え:
-              * `asc` - 昇順
               * `desc` - 降順
           schema:
             type: string
             enum:
-              - asc
               - desc
               - null
             example: desc

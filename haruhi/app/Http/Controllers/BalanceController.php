@@ -6,6 +6,7 @@ use Exception;
 use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\BalanceId;
+use App\Rules\StrictInteger;
 use Illuminate\Http\Request;
 use App\Exceptions\InvalidParameterException;
 use App\Domain\ValueObjects\Date;
@@ -25,7 +26,7 @@ class BalanceController extends Controller
     {
         // 取得件数
         $limit = $request->input('limit');
-        if (!is_null($limit) && !is_numeric($limit)) {
+        if (!is_null($limit) && (!is_numeric($limit) || $limit <= 0)) {
             throw new InvalidParameterException('limit is wrong');
         }
 
@@ -79,6 +80,15 @@ class BalanceController extends Controller
     public function store(Request $request)
     {
         try {
+            $request->validate([
+                'amount' => ['required', new StrictInteger],
+                'kind_element_id' => ['required', new StrictInteger],
+                'purpose_element_id' => ['required', new StrictInteger],
+                'place_element_id' => ['required', new StrictInteger],
+                'item' => 'required|string',
+                'date' => 'required|string',
+            ]);
+
             $balance = new BalanceEntity(
                 BalanceId::emptyId(),
                 new Amount($request->input("amount")),
