@@ -25,25 +25,35 @@ class BalanceController extends Controller
 {
     public function index(Request $request)
     {
-        // 取得件数
-        $limit = $request->input('limit');
-        if (!is_null($limit)) {
-            if (!is_numeric($limit)) {
-                throw new AppException(ErrorCode::INVALID_TYPE, 'limit is wrong');
-            }
-            if ($limit <= 0) {
-                throw new AppException(ErrorCode::INVALID_VALUE, 'limit is need plus');
-            }
-        }
+        try {
+            $validated = $request->validate([
+                'limit' => ['int', 'min:1'],
+                'orderby' => ['string', 'in:desc'],
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
 
-        // 並び順
-        $orderby = $request->input('orderby');
-        if (!is_null($orderby) && $orderby !== 'desc') {
-            throw new AppException(ErrorCode::INVALID_VALUE, 'orderby is wrong');
+            foreach ($failed as $field => $rules) {
+                // StrictInteger はクラス名で入る
+                if (isset($rules[StrictInteger::class])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
+                }
+                if (isset($rules['Min'])) {
+                    throw new AppException(ErrorCode::INVALID_RANGE, "{$field} must be at least 1");
+                }
+                if (isset($rules['String'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
+                }
+                if (isset($rules['In'])) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "{$field} is not a valid value");
+                }
+            }
+
+            throw $e;
         }
 
         $getBalancesUsecase = new GetBalancesUsecase();
-        $balances = $getBalancesUsecase->execute($limit, is_null($orderby) ? null : true);
+        $balances = $getBalancesUsecase->execute($validated['limit'] ?? null, !array_key_exists('orderby', $validated) ? null : true);
         return array_map(
             function (BalanceEntity $balance) {
                 return [
