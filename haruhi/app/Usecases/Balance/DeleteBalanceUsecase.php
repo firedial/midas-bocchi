@@ -3,8 +3,8 @@
 namespace App\Usecases\Balance;
 
 use App\Domain\ValueObjects\BalanceId;
-use App\Exceptions\InternalException;
-use App\Exceptions\NotFoundException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 use App\Infrastructure\Repository\BalanceRepositoryInterface;
 use App\Infrastructure\Repository\Impl\BalanceRepositoryImpl;
 use Exception;
@@ -27,7 +27,7 @@ class DeleteBalanceUsecase
 
             // 存在しないとき
             if (is_null($beforeBalance)) {
-                throw new NotFoundException("Not found balance.");
+                throw new AppException(ErrorCode::RECORD_NOT_FOUND, "Not found balance.");
             }
 
             // 削除

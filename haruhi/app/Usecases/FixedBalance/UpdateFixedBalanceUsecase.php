@@ -3,7 +3,8 @@
 namespace App\Usecases\FixedBalance;
 
 use App\Domain\Entities\FixedBalanceEntity;
-use App\Exceptions\NotFoundException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 use App\Infrastructure\Repository\FixedBalanceRepositoryInterface;
 use App\Infrastructure\Repository\Impl\FixedBalanceRepositoryImpl;
 use Exception;
@@ -26,7 +27,7 @@ class UpdateFixedBalanceUsecase
 
             // 存在しないとき
             if (is_null($beforeFixedBalance)) {
-                throw new NotFoundException("Not found fixed balance.");
+                throw new AppException(ErrorCode::RECORD_NOT_FOUND, "Not found fixed balance.");
             }
 
             // 更新

@@ -5,11 +5,12 @@ namespace App\Usecases\AttributeCategory;
 use App\Domain\Entities\AttributeCategoryEntity;
 use App\Domain\ValueObjects\Attribute;
 use App\Domain\ValueObjects\AttributeCategoryId;
-use App\Exceptions\NotFoundException;
 use App\Infrastructure\Repository\AttributeCategoryRepositoryInterface;
 use App\Infrastructure\Repository\Impl\AttributeCategoryRepositoryImpl;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class SelectAttributeCategoryUsecase
 {
@@ -29,7 +30,7 @@ class SelectAttributeCategoryUsecase
 
             // 存在しないとき
             if (is_null($attributeCategory)) {
-                throw new NotFoundException("Not found attribute category.");
+                throw new AppException(ErrorCode::RECORD_NOT_FOUND, "Not found attribute category.");
             }
             DB::commit();
         } catch (Exception $e) {
