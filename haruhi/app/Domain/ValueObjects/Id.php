@@ -2,7 +2,8 @@
 
 namespace App\Domain\ValueObjects;
 
-use App\Exceptions\ValueObjectException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 abstract class Id
 {
@@ -13,7 +14,7 @@ abstract class Id
     public static function filledId(int $id): static
     {
         if ($id === self::EMPTY_ID) {
-            throw new ValueObjectException("Empty id is used.");
+            throw new AppException(ErrorCode::INVALID_VALUE, "Empty id is used.");
         }
         return new static($id);
     }

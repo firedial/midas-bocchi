@@ -2,7 +2,8 @@
 
 namespace App\Domain\ValueObjects;
 
-use App\Exceptions\ValueObjectException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class Date
 {
@@ -22,7 +23,7 @@ class Date
         $this->year = (int)$d[0];
 
         if (!checkdate($this->month, $this->day, $this->year)) {
-            throw new ValueObjectException("Date is wrong.");
+            throw new AppException(ErrorCode::INVALID_FORMAT, "Date is wrong.");
         }
     }
 

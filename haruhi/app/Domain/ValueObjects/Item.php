@@ -2,7 +2,8 @@
 
 namespace App\Domain\ValueObjects;
 
-use App\Exceptions\ValueObjectException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class Item
 {
@@ -10,8 +11,11 @@ class Item
 
     public function __construct(private readonly string $item)
     {
-        if (mb_strlen($item) === 0 || mb_strlen($item) > self::MAX_LENGTH) {
-            throw new ValueObjectException("Item length is over.");
+        if (mb_strlen($item) === 0) {
+            throw new AppException(ErrorCode::INVALID_EMPTY, "Item length is empty.");
+        }
+        if (mb_strlen($item) > self::MAX_LENGTH) {
+            throw new AppException(ErrorCode::INVALID_LENGTH, "Item length is over.");
         }
     }
 
