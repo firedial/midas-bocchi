@@ -2,6 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BalanceController;
+use App\Http\Controllers\FixedBalanceController;
+use App\Http\Controllers\MoveController;
+use App\Http\Controllers\AttributeElementController;
+use App\Http\Controllers\AttributeCategoryController;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
 
@@ -20,38 +25,44 @@ Route::post('/login', ['as' => 'login', 'uses' => 'App\Http\Controllers\LoginCon
 Route::post('/logout', 'App\Http\Controllers\LoginController@logout');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/balances', 'App\Http\Controllers\BalanceController@index');
-    Route::post('/balances', 'App\Http\Controllers\BalanceController@store');
-    Route::get('/balances/{balance}', 'App\Http\Controllers\BalanceController@show');
-    Route::put('/balances/{balance}', 'App\Http\Controllers\BalanceController@update');
-    Route::delete('/balances/{balance}', 'App\Http\Controllers\BalanceController@destroy');
+    Route::apiResource('/balances', BalanceController::class);
+    Route::apiResource('/fixed_balances', FixedBalanceController::class);
 
-    Route::get('/moves/{attribute_name}', 'App\Http\Controllers\MoveController@index');
-    Route::post('/moves/{attribute_name}', 'App\Http\Controllers\MoveController@store');
-    Route::get('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@show');
-    Route::put('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@update');
-    Route::delete('/moves/{attribute_name}/{move_id}', 'App\Http\Controllers\MoveController@destroy');
+    Route::prefix('/moves/{attribute_name}')
+        ->whereIn('attribute_name', ['purposes', 'places'])
+        ->controller(MoveController::class)
+        ->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', 'store');
+            Route::get('/{move_id}', 'show');
+            Route::put('/{move_id}', 'update');
+            Route::delete('/{move_id}', 'destroy');
+        });
 
-    Route::get('/attribute_elements/{attribute_name}', 'App\Http\Controllers\AttributeElementController@index');
-    Route::post('/attribute_elements/{attribute_name}', 'App\Http\Controllers\AttributeElementController@store');
-    Route::get('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@show');
-    Route::put('/attribute_elements/{attribute_name}/{element_id}', 'App\Http\Controllers\AttributeElementController@update');
+    Route::prefix('/attribute_elements/{attribute_name}')
+        ->whereIn('attribute_name', ['kind_element', 'purpose_element', 'place_element'])
+        ->controller(AttributeElementController::class)
+        ->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', 'store');
+            Route::get('/{element_id}', 'show');
+            Route::put('/{element_id}', 'update');
+        });
 
-    Route::get('/attribute_categories/{attribute_name}', 'App\Http\Controllers\AttributeCategoryController@index');
-    Route::post('/attribute_categories/{attribute_name}', 'App\Http\Controllers\AttributeCategoryController@store');
-    Route::get('/attribute_categories/{attribute_name}/{category_id}', 'App\Http\Controllers\AttributeCategoryController@show');
-    Route::put('/attribute_categories/{attribute_name}/{category_id}', 'App\Http\Controllers\AttributeCategoryController@update');
+    Route::prefix('/attribute_categories/{attribute_name}')
+        ->whereIn('attribute_name', ['kind_category', 'purpose_category', 'place_category'])
+        ->controller(AttributeCategoryController::class)
+        ->group(function () {
+            Route::get('/', 'index');
+            Route::post('/', 'store');
+            Route::get('/{category_id}', 'show');
+            Route::put('/{category_id}', 'update');
+        });
 
     Route::post('/salary', 'App\Http\Controllers\SalaryController@store');
     Route::post('/bonus', 'App\Http\Controllers\BonusController@store');
 
     Route::post('/check_place_sum', 'App\Http\Controllers\CheckPlaceSumController@post');
-
-    Route::get('/fixed_balances', 'App\Http\Controllers\FixedBalanceController@index');
-    Route::post('/fixed_balances', 'App\Http\Controllers\FixedBalanceController@store');
-    Route::get('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@show');
-    Route::put('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@update');
-    Route::delete('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@destroy');
 });
 
 Route::fallback(function () {
