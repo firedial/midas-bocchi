@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,4 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@show');
     Route::put('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@update');
     Route::delete('/fixed_balances/{balance}', 'App\Http\Controllers\FixedBalanceController@destroy');
+});
+
+Route::fallback(function () {
+    throw new AppException(ErrorCode::PAGE_NOT_FOUND, 'Page not found.');
 });

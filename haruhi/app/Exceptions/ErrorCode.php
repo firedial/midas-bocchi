@@ -20,6 +20,7 @@ enum ErrorCode: string
     case PARENT_RECORD_NOT_FOUND = 'E302';
     case CHILD_RECORD_EXISTS = 'E303';
     case DUPLICATE_ENTRY = 'E304';
+    case PAGE_NOT_FOUND = 'E305';
 
     case UNEXPECTED_ATTRIBUTE_NAME = 'E901';
     case UNEXPECTED_AMOUNT = 'E902';
@@ -30,6 +31,8 @@ enum ErrorCode: string
     {
         return match ($this) {
             self::UNAUTHORIZED => 401,
+            self::PAGE_NOT_FOUND => 404,
+            self::RECORD_NOT_FOUND => 404,
             self::UNEXPECTED_ATTRIBUTE_NAME => 500,
             self::UNEXPECTED_AMOUNT => 500,
             self::UNEXPECTED_DIFFERENCE_ID_MOVE => 500,
