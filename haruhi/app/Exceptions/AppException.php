@@ -8,6 +8,6 @@ class AppException extends \RuntimeException
         public readonly ErrorCode $errorCode,
         ?string $detail = null,
     ) {
-        parent::__construct($detail ?? $errorCode->value);
+        parent::__construct($detail ?? $errorCode->message());
     }
 }
