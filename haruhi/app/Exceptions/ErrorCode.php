@@ -12,6 +12,7 @@ enum ErrorCode: string
     case INVALID_VALUE = 'E106';
     case MOVE_SAME_ID = 'E107';
     case USING_MOVE_ID = 'E108';
+    case MISSING_REQUIRED = 'E109';
 
     case UNAUTHORIZED = 'E201';
 

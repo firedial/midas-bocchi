@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -16,10 +17,26 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        try {
+            $credentials = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            if (isset($failed['email']['Required'])) {
+                throw new AppException(ErrorCode::MISSING_REQUIRED, 'email is required');
+            }
+            if (isset($failed['email']['Email'])) {
+                throw new AppException(ErrorCode::INVALID_FORMAT, 'email format is invalid');
+            }
+            if (isset($failed['password']['Required'])) {
+                throw new AppException(ErrorCode::MISSING_REQUIRED, 'password is required');
+            }
+
+            throw $e;
+        }
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
