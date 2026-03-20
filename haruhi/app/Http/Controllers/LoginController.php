@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class LoginController extends Controller
 {
@@ -25,8 +27,9 @@ class LoginController extends Controller
 
             Auth::login($user, $remember = true);
             return response()->json([], 200);
+        } else {
+            throw new AppException(ErrorCode::UNAUTHORIZED, 'Unauthorized');
         }
-        return response()->json([], 401);
     }
 
     /**

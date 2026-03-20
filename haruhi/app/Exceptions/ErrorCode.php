@@ -13,6 +13,8 @@ enum ErrorCode: string
     case MOVE_SAME_ID = 'E107';
     case USING_MOVE_ID = 'E108';
 
+    case UNAUTHORIZED = 'E201';
+
     case RECORD_NOT_FOUND = 'E301';
     case PARENT_RECORD_NOT_FOUND = 'E302';
     case CHILD_RECORD_EXISTS = 'E303';
@@ -26,6 +28,7 @@ enum ErrorCode: string
     public function httpStatus(): int
     {
         return match ($this) {
+            self::UNAUTHORIZED => 401,
             self::UNEXPECTED_ATTRIBUTE_NAME => 500,
             self::UNEXPECTED_AMOUNT => 500,
             self::UNEXPECTED_DIFFERENCE_ID_MOVE => 500,
