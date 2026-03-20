@@ -18,6 +18,8 @@ use App\Usecases\Balance\SelectBalanceUsecase;
 use App\Usecases\Balance\UpdateBalanceUsecase;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
+use App\Rules\StrictInteger;
+use Illuminate\Validation\ValidationException;
 
 class BalanceController extends Controller
 {
@@ -25,8 +27,13 @@ class BalanceController extends Controller
     {
         // 取得件数
         $limit = $request->input('limit');
-        if (!is_null($limit) && !is_numeric($limit)) {
-            throw new AppException(ErrorCode::INVALID_TYPE, 'limit is wrong');
+        if (!is_null($limit)) {
+            if (!is_numeric($limit)) {
+                throw new AppException(ErrorCode::INVALID_TYPE, 'limit is wrong');
+            }
+            if ($limit <= 0) {
+                throw new AppException(ErrorCode::INVALID_VALUE, 'limit is need plus');
+            }
         }
 
         // 並び順
@@ -78,14 +85,42 @@ class BalanceController extends Controller
 
     public function store(Request $request)
     {
+        try {
+            $validated = $request->validate([
+                'amount' => ['required', new StrictInteger],
+                'kind_element_id' => ['required', new StrictInteger],
+                'purpose_element_id' => ['required', new StrictInteger],
+                'place_element_id' => ['required', new StrictInteger],
+                'item' => 'required|string',
+                'date' => 'required|string',
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            foreach ($failed as $field => $rules) {
+                if (isset($rules['Required'])) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
+                }
+                // StrictInteger はクラス名で入る
+                if (isset($rules[StrictInteger::class])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
+                }
+                if (isset($rules['String'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
+                }
+            }
+
+            throw $e;
+        }
+
         $balance = new BalanceEntity(
             BalanceId::emptyId(),
-            new Amount($request->input("amount")),
-            new Item($request->input("item")),
-            KindElementId::filledId($request->input("kind_element_id")),
-            PurposeElementId::filledId($request->input("purpose_element_id")),
-            PlaceElementId::filledId($request->input("place_element_id")),
-            new Date($request->input("date")),
+            new Amount($validated['amount']),
+            new Item($validated['item']),
+            KindElementId::filledId($validated['kind_element_id']),
+            PurposeElementId::filledId($validated['purpose_element_id']),
+            PlaceElementId::filledId($validated['place_element_id']),
+            new Date($validated['date']),
         );
 
         if ($balance->kindElementId()->isMoveId()) {
@@ -110,14 +145,41 @@ class BalanceController extends Controller
 
     public function update(Request $request, int $id)
     {
+        try {
+            $validated = $request->validate([
+                'amount' => ['required', new StrictInteger],
+                'kind_element_id' => ['required', new StrictInteger],
+                'purpose_element_id' => ['required', new StrictInteger],
+                'place_element_id' => ['required', new StrictInteger],
+                'item' => 'required|string',
+                'date' => 'required|string',
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            foreach ($failed as $field => $rules) {
+                if (isset($rules['Required'])) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
+                }
+                if (isset($rules[StrictInteger::class])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
+                }
+                if (isset($rules['String'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
+                }
+            }
+
+            throw $e;
+        }
+
         $balance = new BalanceEntity(
             BalanceId::filledId($id),
-            new Amount($request->input("amount")),
-            new Item($request->input("item")),
-            KindElementId::filledId($request->input("kind_element_id")),
-            PurposeElementId::filledId($request->input("purpose_element_id")),
-            PlaceElementId::filledId($request->input("place_element_id")),
-            new Date($request->input("date")),
+            new Amount($validated['amount']),
+            new Item($validated['item']),
+            KindElementId::filledId($validated['kind_element_id']),
+            PurposeElementId::filledId($validated['purpose_element_id']),
+            PlaceElementId::filledId($validated['place_element_id']),
+            new Date($validated['date']),
         );
 
         if ($balance->kindElementId()->isMoveId()) {
