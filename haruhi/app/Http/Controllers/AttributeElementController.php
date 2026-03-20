@@ -12,11 +12,12 @@ use App\Domain\ValueObjects\PlaceCategoryId;
 use App\Domain\ValueObjects\Priority;
 use App\Domain\ValueObjects\PurposeCategoryId;
 use Illuminate\Http\Request;
-use App\Exceptions\InvalidParameterException;
 use App\Usecases\AttributeElement\GetAttributeElementsUsecase;
 use App\Usecases\AttributeElement\InsertAttributeElementUsecase;
 use App\Usecases\AttributeElement\SelectAttributeElementUsecase;
 use App\Usecases\AttributeElement\UpdateAttributeElementUsecase;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class AttributeElementController extends Controller
 {
@@ -27,7 +28,7 @@ class AttributeElementController extends Controller
             'kind_element' => Attribute::kind(),
             'purpose_element' => Attribute::purpose(),
             'place_element' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $getAttributeElementsUsecase = new GetAttributeElementsUsecase();
@@ -54,7 +55,7 @@ class AttributeElementController extends Controller
             'kind_element' => Attribute::kind(),
             'purpose_element' => Attribute::purpose(),
             'place_element' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $attributeElementId = AttributeElementId::filledId($elementId);
@@ -78,18 +79,18 @@ class AttributeElementController extends Controller
             'kind_element' => Attribute::kind(),
             'purpose_element' => Attribute::purpose(),
             'place_element' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $attributeCategoryId = match (true) {
             $attribute->isKind() => KindCategoryId::filledId($request->input('category_id')),
             $attribute->isPurpose() => PurposeCategoryId::filledId($request->input('category_id')),
             $attribute->isPlace() => PlaceCategoryId::filledId($request->input('category_id')),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         if ($attributeCategoryId->isMoveId()) {
-            throw new InvalidParameterException('Attribute category id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Attribute category id is move id.');
         }
 
         $attributeElement = new AttributeElementEntity(
@@ -112,18 +113,18 @@ class AttributeElementController extends Controller
             'kind_element' => Attribute::kind(),
             'purpose_element' => Attribute::purpose(),
             'place_element' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $attributeCategoryId = match (true) {
             $attribute->isKind() => KindCategoryId::filledId($request->input('category_id')),
             $attribute->isPurpose() => PurposeCategoryId::filledId($request->input('category_id')),
             $attribute->isPlace() => PlaceCategoryId::filledId($request->input('category_id')),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         if ($attributeCategoryId->isMoveId()) {
-            throw new InvalidParameterException('Attribute category id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Attribute category id is move id.');
         }
 
         $attributeElement = new AttributeElementEntity(

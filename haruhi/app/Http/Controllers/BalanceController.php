@@ -6,7 +6,6 @@ use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\BalanceId;
 use Illuminate\Http\Request;
-use App\Exceptions\InvalidParameterException;
 use App\Domain\ValueObjects\Date;
 use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\KindElementId;
@@ -17,6 +16,8 @@ use App\Usecases\Balance\GetBalancesUsecase;
 use App\Usecases\Balance\InsertBalanceUsecase;
 use App\Usecases\Balance\SelectBalanceUsecase;
 use App\Usecases\Balance\UpdateBalanceUsecase;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class BalanceController extends Controller
 {
@@ -25,13 +26,13 @@ class BalanceController extends Controller
         // 取得件数
         $limit = $request->input('limit');
         if (!is_null($limit) && !is_numeric($limit)) {
-            throw new InvalidParameterException('limit is wrong');
+            throw new AppException(ErrorCode::INVALID_TYPE, 'limit is wrong');
         }
 
         // 並び順
         $orderby = $request->input('orderby');
         if (!is_null($orderby) && $orderby !== 'desc') {
-            throw new InvalidParameterException('orderby is wrong');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'orderby is wrong');
         }
 
         $getBalancesUsecase = new GetBalancesUsecase();
@@ -88,19 +89,19 @@ class BalanceController extends Controller
         );
 
         if ($balance->kindElementId()->isMoveId()) {
-            throw new InvalidParameterException('Kind element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Kind element id is move id.');
         }
 
         if ($balance->purposeElementId()->isMoveId()) {
-            throw new InvalidParameterException('Purpose element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Purpose element id is move id.');
         }
 
         if ($balance->placeElementId()->isMoveId()) {
-            throw new InvalidParameterException('Place element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Place element id is move id.');
         }
 
         if ($balance->amount()->value() === 0) {
-            throw new InvalidParameterException('Amount is zero.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Amount is zero.');
         }
 
         $insertBalanceUsecase = new InsertBalanceUsecase();
@@ -120,19 +121,19 @@ class BalanceController extends Controller
         );
 
         if ($balance->kindElementId()->isMoveId()) {
-            throw new InvalidParameterException('Kind element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Kind element id is move id.');
         }
 
         if ($balance->purposeElementId()->isMoveId()) {
-            throw new InvalidParameterException('Purpose element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Purpose element id is move id.');
         }
 
         if ($balance->placeElementId()->isMoveId()) {
-            throw new InvalidParameterException('Place element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Place element id is move id.');
         }
 
         if ($balance->amount()->value() === 0) {
-            throw new InvalidParameterException('Amount is zero.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Amount is zero.');
         }
 
         $updateBalanceUsecase = new UpdateBalanceUsecase();

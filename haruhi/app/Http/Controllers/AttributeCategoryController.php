@@ -8,11 +8,12 @@ use App\Domain\ValueObjects\AttributeCategoryId;
 use App\Domain\ValueObjects\AttributeCategoryName;
 use App\Domain\ValueObjects\Description;
 use Illuminate\Http\Request;
-use App\Exceptions\InvalidParameterException;
 use App\Usecases\AttributeCategory\GetAttributeCategoriesUsecase;
 use App\Usecases\AttributeCategory\InsertAttributeCategoryUsecase;
 use App\Usecases\AttributeCategory\SelectAttributeCategoryUsecase;
 use App\Usecases\AttributeCategory\UpdateAttributeCategoryUsecase;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class AttributeCategoryController extends Controller
 {
@@ -23,7 +24,7 @@ class AttributeCategoryController extends Controller
             'kind_category' => Attribute::kind(),
             'purpose_category' => Attribute::purpose(),
             'place_category' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $getAttributeCategoriesUsecase = new GetAttributeCategoriesUsecase();
@@ -48,7 +49,7 @@ class AttributeCategoryController extends Controller
             'kind_category' => Attribute::kind(),
             'purpose_category' => Attribute::purpose(),
             'place_category' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $attributeCategoryId = AttributeCategoryId::filledId($categoryId);
@@ -70,7 +71,7 @@ class AttributeCategoryController extends Controller
             'kind_category' => Attribute::kind(),
             'purpose_category' => Attribute::purpose(),
             'place_category' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $attributeCategory = new AttributeCategoryEntity(
@@ -91,7 +92,7 @@ class AttributeCategoryController extends Controller
             'kind_category' => Attribute::kind(),
             'purpose_category' => Attribute::purpose(),
             'place_category' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $attributeCategory = new AttributeCategoryEntity(

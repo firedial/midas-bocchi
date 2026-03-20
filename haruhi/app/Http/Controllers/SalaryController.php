@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Domain\Entities\SalaryEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\Date;
-use App\Exceptions\InvalidParameterException;
 use App\Usecases\SalaryUsecase;
 use Illuminate\Http\Request;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class SalaryController extends Controller
 {
@@ -28,34 +29,34 @@ class SalaryController extends Controller
         );
 
         if ($salary->baseSalary()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($salary->adjustmentSalary()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($salary->transportation()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($salary->holdingIncentives()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($salary->healthInsurance()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($salary->welfarePension()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($salary->residentTax()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($salary->employmentInsurance()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($salary->incomeTax()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($salary->holding()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
 
         $salaryUsecase = new SalaryUsecase();
