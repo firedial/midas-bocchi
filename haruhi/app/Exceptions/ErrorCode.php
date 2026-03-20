@@ -19,13 +19,17 @@ enum ErrorCode: string
     case DUPLICATE_ENTRY = 'E304';
 
     case UNEXPECTED_ATTRIBUTE_NAME = 'E901';
-    case OTHER_ERROR = 'E999';
+    case UNEXPECTED_AMOUNT = 'E902';
+    case UNEXPECTED_DIFFERENCE_ID_MOVE = 'E903';
+    case UNEXPECTED = 'E999';
 
     public function httpStatus(): int
     {
         return match ($this) {
             self::UNEXPECTED_ATTRIBUTE_NAME => 500,
-            self::OTHER_ERROR => 500,
+            self::UNEXPECTED_AMOUNT => 500,
+            self::UNEXPECTED_DIFFERENCE_ID_MOVE => 500,
+            self::UNEXPECTED => 500,
             default => 400,
         };
     }

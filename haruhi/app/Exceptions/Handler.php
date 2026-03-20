@@ -47,7 +47,7 @@ class Handler extends ExceptionHandler
                 ], $e->errorCode->httpStatus());
             } else {
                 return response()->json([
-                    'code' => ErrorCode::OTHER_ERROR,
+                    'code' => ErrorCode::UNEXPECTED,
                     'message' => $e->getMessage(),
                 ], 500);
             }

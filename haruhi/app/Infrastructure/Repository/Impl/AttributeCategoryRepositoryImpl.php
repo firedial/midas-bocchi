@@ -9,11 +9,12 @@ use App\Domain\ValueObjects\Attribute;
 use App\Domain\ValueObjects\AttributeCategoryId;
 use App\Domain\ValueObjects\AttributeCategoryName;
 use App\Domain\ValueObjects\Description;
-use App\Exceptions\InternalException;
 use App\Infrastructure\Repository\AttributeCategoryRepositoryInterface;
 use App\Models\DataModels\KindCategoryDataModel;
 use App\Models\DataModels\PlaceCategoryDataModel;
 use App\Models\DataModels\PurposeCategoryDataModel;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInterface
 {
@@ -25,7 +26,7 @@ class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInte
             $attribute->isKind() => KindCategoryDataModel::selectAttributeCategory(id: $attributeCategoryId?->value()),
             $attribute->isPurpose() => PurposeCategoryDataModel::selectAttributeCategory(id: $attributeCategoryId?->value()),
             $attribute->isPlace() => PlaceCategoryDataModel::selectAttributeCategory(id: $attributeCategoryId?->value()),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         return array_map(
@@ -66,7 +67,7 @@ class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInte
                     $attributeCategory->attributeCategoryName()->value(),
                     $attributeCategory->description()->value(),
                 ),
-                default => throw new InternalException('Attribute name is wrong.'),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             };
         } catch (QueryException $e) {
             self::handleQueryException($e, "Insert {$attributeCategory->attributeCategoryName()->value()} category error.");
@@ -92,7 +93,7 @@ class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInte
                     $attributeCategory->attributeCategoryName()->value(),
                     $attributeCategory->description()->value(),
                 ),
-                default => throw new InternalException('Attribute name is wrong.'),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             };
         } catch (QueryException $e) {
             self::handleQueryException($e, "Update {$attributeCategory->attributeCategoryName()->value()} category error.");

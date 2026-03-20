@@ -11,11 +11,12 @@ use App\Domain\ValueObjects\AttributeElementId;
 use App\Domain\ValueObjects\AttributeElementName;
 use App\Domain\ValueObjects\Description;
 use App\Domain\ValueObjects\Priority;
-use App\Exceptions\InternalException;
 use App\Infrastructure\Repository\AttributeElementRepositoryInterface;
 use App\Models\DataModels\KindElementDataModel;
 use App\Models\DataModels\PlaceElementDataModel;
 use App\Models\DataModels\PurposeElementDataModel;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class AttributeElementRepositoryImpl implements AttributeElementRepositoryInterface
 {
@@ -27,7 +28,7 @@ class AttributeElementRepositoryImpl implements AttributeElementRepositoryInterf
             $attribute->isKind() => KindElementDataModel::selectAttributeElement(id: $attributeElementId?->value()),
             $attribute->isPurpose() => PurposeElementDataModel::selectAttributeElement(id: $attributeElementId?->value()),
             $attribute->isPlace() => PlaceElementDataModel::selectAttributeElement(id: $attributeElementId?->value()),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         return array_map(
@@ -76,7 +77,7 @@ class AttributeElementRepositoryImpl implements AttributeElementRepositoryInterf
                     $attributeElement->priority()->value(),
                     $attributeElement->attributeCategoryId()->value(),
                 ),
-                default => throw new InternalException('Attribute name is wrong.'),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             };
         } catch (QueryException $e) {
             self::handleQueryException($e, "Insert {$attributeElement->attributeElementName()->value()} element error.");
@@ -108,7 +109,7 @@ class AttributeElementRepositoryImpl implements AttributeElementRepositoryInterf
                     $attributeElement->priority()->value(),
                     $attributeElement->attributeCategoryId()->value(),
                 ),
-                default => throw new InternalException('Attribute name is wrong.'),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             };
         } catch (QueryException $e) {
             self::handleQueryException($e, "Update {$attributeElement->attributeElementName()->value()} element error.");

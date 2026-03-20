@@ -15,9 +15,10 @@ use App\Domain\ValueObjects\KindElementId;
 use App\Domain\ValueObjects\MoveId;
 use App\Domain\ValueObjects\PlaceElementId;
 use App\Domain\ValueObjects\PurposeElementId;
-use App\Exceptions\InternalException;
 use App\Infrastructure\Repository\MoveRepositoryInterface;
 use App\Models\DataModels\BalanceDataModel;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class MoveRepositoryImpl implements MoveRepositoryInterface
 {
@@ -30,13 +31,13 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
         $purposeElementId = match (true) {
             $attribute->isPurpose() => null,
             $attribute->isPlace() => PlaceElementId::moveId(),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $placeElementId = match (true) {
             $attribute->isPurpose() => PurposeElementId::moveId(),
             $attribute->isPlace() => null,
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $balances = BalanceDataModel::selectBalance(
@@ -54,25 +55,25 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             $beforeElementId = match (true) {
                 $attribute->isPurpose() => AttributeElementId::filledId($before->purpose_element_id),
                 $attribute->isPlace() => AttributeElementId::filledId($before->place_element_id),
-                default => throw new InternalException('Attribute name is wrong.'),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             };
 
             $afterElementId = match (true) {
                 $attribute->isPurpose() => AttributeElementId::filledId($after->purpose_element_id),
                 $attribute->isPlace() => AttributeElementId::filledId($after->place_element_id),
-                default => throw new InternalException('Attribute name is wrong.'),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             };
 
             $beforeElementDescription = match (true) {
                 $attribute->isPurpose() => new Description($before->purpose_element_description),
                 $attribute->isPlace() => new Description($before->place_element_description),
-                default => throw new InternalException('Attribute name is wrong.'),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             };
 
             $afterElementDescription = match (true) {
                 $attribute->isPurpose() => new Description($after->purpose_element_description),
                 $attribute->isPlace() => new Description($after->place_element_description),
-                default => throw new InternalException('Attribute name is wrong.'),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             };
 
             $moves[] = new MoveEntity(
@@ -95,13 +96,13 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
         $purposeElementId = match (true) {
             $attribute->isPurpose() => null,
             $attribute->isPlace() => PlaceElementId::moveId(),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $placeElementId = match (true) {
             $attribute->isPurpose() => PurposeElementId::moveId(),
             $attribute->isPlace() => null,
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $befores = BalanceDataModel::selectBalance(
@@ -125,25 +126,25 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
         $beforeElementId = match (true) {
             $attribute->isPurpose() => AttributeElementId::filledId($before->purpose_element_id),
             $attribute->isPlace() => AttributeElementId::filledId($before->place_element_id),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $afterElementId = match (true) {
             $attribute->isPurpose() => AttributeElementId::filledId($after->purpose_element_id),
             $attribute->isPlace() => AttributeElementId::filledId($after->place_element_id),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $beforeElementDescription = match (true) {
             $attribute->isPurpose() => new Description($before->purpose_element_description),
             $attribute->isPlace() => new Description($before->place_element_description),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $afterElementDescription = match (true) {
             $attribute->isPurpose() => new Description($after->purpose_element_description),
             $attribute->isPlace() => new Description($after->place_element_description),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         return new MoveEntity(
@@ -161,31 +162,31 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
     public function insertMove(Attribute $attribute, MoveEntity $move): int
     {
         if ($move->amount()->value() < 0) {
-            throw new InternalException('Move amount needs positive amount.');
+            throw new AppException(ErrorCode::UNEXPECTED_AMOUNT, 'Move amount needs positive amount.');
         }
 
         $beforePurposeElementId = match (true) {
             $attribute->isPurpose() => $move->beforeId(),
             $attribute->isPlace() => PlaceElementId::moveId(),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $afterPurposeElementId = match (true) {
             $attribute->isPurpose() => $move->afterId(),
             $attribute->isPlace() => PlaceElementId::moveId(),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $beforePlaceElementId = match (true) {
             $attribute->isPurpose() => PurposeElementId::moveId(),
             $attribute->isPlace() => $move->beforeId(),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $afterPlaceElementId = match (true) {
             $attribute->isPurpose() => PurposeElementId::moveId(),
             $attribute->isPlace() => $move->afterId(),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         try {
@@ -212,7 +213,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
 
         // 1違いでなければ例外
         if ($afterId !== $beforeId + 1) {
-            throw new InternalException('After id is wrong.');
+            throw new AppException(ErrorCode::UNEXPECTED_DIFFERENCE_ID_MOVE, 'After id is wrong.');
         }
 
         return $beforeId;
@@ -221,31 +222,31 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
     public function updateMove(Attribute $attribute, MoveEntity $move): void
     {
         if ($move->amount()->value() < 0) {
-            throw new InternalException('Move amount needs positive amount.');
+            throw new AppException(ErrorCode::UNEXPECTED_AMOUNT, 'Move amount needs positive amount.');
         }
 
         $beforePurposeElementId = match (true) {
             $attribute->isPurpose() => $move->beforeId(),
             $attribute->isPlace() => PlaceElementId::moveId(),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $afterPurposeElementId = match (true) {
             $attribute->isPurpose() => $move->afterId(),
             $attribute->isPlace() => PlaceElementId::moveId(),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $beforePlaceElementId = match (true) {
             $attribute->isPurpose() => PurposeElementId::moveId(),
             $attribute->isPlace() => $move->beforeId(),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $afterPlaceElementId = match (true) {
             $attribute->isPurpose() => PurposeElementId::moveId(),
             $attribute->isPlace() => $move->afterId(),
-            default => throw new InternalException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         try {
