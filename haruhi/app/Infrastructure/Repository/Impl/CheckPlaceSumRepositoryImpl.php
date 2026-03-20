@@ -18,7 +18,7 @@ class CheckPlaceSumRepositoryImpl implements CheckPlaceSumRepositoryInterface
         try {
             return CheckPlaceSumDataModel::insert($sum, $placeElementId->value(), $date->value());
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, 'Insert place sum error.');
         }
     }
 }

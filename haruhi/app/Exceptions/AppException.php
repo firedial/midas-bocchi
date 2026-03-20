@@ -6,8 +6,8 @@ class AppException extends \RuntimeException
 {
     public function __construct(
         public readonly ErrorCode $errorCode,
-        ?string $detail = null,
+        string $detail,
     ) {
-        parent::__construct($detail ?? $errorCode->message());
+        parent::__construct($detail);
     }
 }

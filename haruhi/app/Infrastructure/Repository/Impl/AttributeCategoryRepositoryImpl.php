@@ -69,7 +69,7 @@ class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInte
                 default => throw new InternalException('Attribute name is wrong.'),
             };
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, "Insert {$attributeCategory->attributeCategoryName()->value()} category error.");
         }
     }
 
@@ -95,7 +95,7 @@ class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInte
                 default => throw new InternalException('Attribute name is wrong.'),
             };
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, "Update {$attributeCategory->attributeCategoryName()->value()} category error.");
         }
     }
 }

@@ -43,12 +43,12 @@ class Handler extends ExceptionHandler
             if ($e instanceof AppException) {
                 return response()->json([
                     'code' => $e->errorCode->value,
-                    'message' => $e->errorCode->message(),
+                    'message' => $e->getMessage(),
                 ], $e->errorCode->httpStatus());
             } else {
                 return response()->json([
                     'code' => ErrorCode::OTHER_ERROR,
-                    'message' => ErrorCode::OTHER_ERROR->message() . "[" . $e->getMessage() . "]",
+                    'message' => $e->getMessage(),
                 ], 500);
             }
         });

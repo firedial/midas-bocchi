@@ -207,7 +207,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $move->date()->value(),
             );
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, 'Insert move error.');
         }
 
         // 1違いでなければ例外
@@ -269,7 +269,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $move->date()->value(),
             );
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, 'Update move error.');
         }
     }
 
@@ -279,7 +279,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             BalanceDataModel::deleteBalance($moveId->value());
             BalanceDataModel::deleteBalance($moveId->value() + 1);
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, 'Delete move error.');
         }
     }
 }

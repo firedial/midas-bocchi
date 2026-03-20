@@ -61,7 +61,7 @@ class FixedBalanceRepositoryImpl implements FixedBalanceRepositoryInterface
                 $fixedBalance->placeElementId()->value(),
             );
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, 'Insert fixed balance error.');
         }
     }
 
@@ -77,7 +77,7 @@ class FixedBalanceRepositoryImpl implements FixedBalanceRepositoryInterface
                 $fixedBalance->placeElementId()->value(),
             );
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, 'Update fixed balance error.');
         }
     }
 
@@ -86,7 +86,7 @@ class FixedBalanceRepositoryImpl implements FixedBalanceRepositoryInterface
         try {
             FixedBalanceDataModel::deleteFixedBalance($fixedBalanceId->value());
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, 'Delete fixed balance error.');
         }
     }
 }

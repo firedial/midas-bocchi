@@ -66,7 +66,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
                 $balance->date()->value(),
             );
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, 'Insert balance error.');
         }
     }
 
@@ -83,7 +83,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
                 $balance->date()->value(),
             );
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, 'Update balance error.');
         }
     }
 
@@ -92,7 +92,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
         try {
             BalanceDataModel::deleteBalance($balanceId->value());
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, 'Delete balance error.');
         }
     }
 

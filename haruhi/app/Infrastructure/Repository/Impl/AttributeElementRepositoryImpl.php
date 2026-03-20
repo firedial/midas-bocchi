@@ -79,7 +79,7 @@ class AttributeElementRepositoryImpl implements AttributeElementRepositoryInterf
                 default => throw new InternalException('Attribute name is wrong.'),
             };
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, "Insert {$attributeElement->attributeElementName()->value()} element error.");
         }
     }
 
@@ -111,7 +111,7 @@ class AttributeElementRepositoryImpl implements AttributeElementRepositoryInterf
                 default => throw new InternalException('Attribute name is wrong.'),
             };
         } catch (QueryException $e) {
-            self::handleQueryException($e);
+            self::handleQueryException($e, "Update {$attributeElement->attributeElementName()->value()} element error.");
         }
     }
 }
