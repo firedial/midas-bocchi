@@ -2,6 +2,8 @@
 
 namespace App\Infrastructure\Repository\Impl;
 
+use Illuminate\Database\QueryException;
+use App\Infrastructure\Repository\Concerns\HandlesQueryException;
 use App\Domain\Entities\AttributeCategoryEntity;
 use App\Domain\ValueObjects\Attribute;
 use App\Domain\ValueObjects\AttributeCategoryId;
@@ -15,6 +17,8 @@ use App\Models\DataModels\PurposeCategoryDataModel;
 
 class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInterface
 {
+    use HandlesQueryException;
+
     public function getAttributeCategories(Attribute $attribute, ?AttributeCategoryId $attributeCategoryId = null): array
     {
         $attributeCategories = match (true) {
@@ -48,42 +52,50 @@ class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInte
 
     public function insertAttributeCategory(AttributeCategoryEntity $attributeCategory): int
     {
-        return match (true) {
-            $attributeCategory->attribute()->isKind() => KindCategoryDataModel::insertAttributeCategory(
-                $attributeCategory->attributeCategoryName()->value(),
-                $attributeCategory->description()->value(),
-            ),
-            $attributeCategory->attribute()->isPurpose() => PurposeCategoryDataModel::insertAttributeCategory(
-                $attributeCategory->attributeCategoryName()->value(),
-                $attributeCategory->description()->value(),
-            ),
-            $attributeCategory->attribute()->isPlace() => PlaceCategoryDataModel::insertAttributeCategory(
-                $attributeCategory->attributeCategoryName()->value(),
-                $attributeCategory->description()->value(),
-            ),
-            default => throw new InternalException('Attribute name is wrong.'),
-        };
+        try {
+            return match (true) {
+                $attributeCategory->attribute()->isKind() => KindCategoryDataModel::insertAttributeCategory(
+                    $attributeCategory->attributeCategoryName()->value(),
+                    $attributeCategory->description()->value(),
+                ),
+                $attributeCategory->attribute()->isPurpose() => PurposeCategoryDataModel::insertAttributeCategory(
+                    $attributeCategory->attributeCategoryName()->value(),
+                    $attributeCategory->description()->value(),
+                ),
+                $attributeCategory->attribute()->isPlace() => PlaceCategoryDataModel::insertAttributeCategory(
+                    $attributeCategory->attributeCategoryName()->value(),
+                    $attributeCategory->description()->value(),
+                ),
+                default => throw new InternalException('Attribute name is wrong.'),
+            };
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
     }
 
     public function updateAttributeCategory(AttributeCategoryEntity $attributeCategory): void
     {
-        match (true) {
-            $attributeCategory->attribute()->isKind() => KindCategoryDataModel::updateAttributeCategory(
-                $attributeCategory->attributeCategoryId()->value(),
-                $attributeCategory->attributeCategoryName()->value(),
-                $attributeCategory->description()->value(),
-            ),
-            $attributeCategory->attribute()->isPurpose() => PurposeCategoryDataModel::updateAttributeCategory(
-                $attributeCategory->attributeCategoryId()->value(),
-                $attributeCategory->attributeCategoryName()->value(),
-                $attributeCategory->description()->value(),
-            ),
-            $attributeCategory->attribute()->isPlace() => PlaceCategoryDataModel::updateAttributeCategory(
-                $attributeCategory->attributeCategoryId()->value(),
-                $attributeCategory->attributeCategoryName()->value(),
-                $attributeCategory->description()->value(),
-            ),
-            default => throw new InternalException('Attribute name is wrong.'),
-        };
+        try {
+            match (true) {
+                $attributeCategory->attribute()->isKind() => KindCategoryDataModel::updateAttributeCategory(
+                    $attributeCategory->attributeCategoryId()->value(),
+                    $attributeCategory->attributeCategoryName()->value(),
+                    $attributeCategory->description()->value(),
+                ),
+                $attributeCategory->attribute()->isPurpose() => PurposeCategoryDataModel::updateAttributeCategory(
+                    $attributeCategory->attributeCategoryId()->value(),
+                    $attributeCategory->attributeCategoryName()->value(),
+                    $attributeCategory->description()->value(),
+                ),
+                $attributeCategory->attribute()->isPlace() => PlaceCategoryDataModel::updateAttributeCategory(
+                    $attributeCategory->attributeCategoryId()->value(),
+                    $attributeCategory->attributeCategoryName()->value(),
+                    $attributeCategory->description()->value(),
+                ),
+                default => throw new InternalException('Attribute name is wrong.'),
+            };
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
     }
 }

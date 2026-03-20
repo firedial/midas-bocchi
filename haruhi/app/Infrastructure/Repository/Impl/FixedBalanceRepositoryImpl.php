@@ -2,6 +2,8 @@
 
 namespace App\Infrastructure\Repository\Impl;
 
+use Illuminate\Database\QueryException;
+use App\Infrastructure\Repository\Concerns\HandlesQueryException;
 use App\Domain\Entities\FixedBalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\FixedBalanceId;
@@ -15,6 +17,8 @@ use App\Models\DataModels\FixedBalanceDataModel;
 
 class FixedBalanceRepositoryImpl implements FixedBalanceRepositoryInterface
 {
+    use HandlesQueryException;
+
     public function getFixedBalances(
         ?FixedBalanceId $fixedBalanceId = null,
     ): array {
@@ -48,29 +52,41 @@ class FixedBalanceRepositoryImpl implements FixedBalanceRepositoryInterface
 
     public function insertFixedBalance(FixedBalanceEntity $fixedBalance): int
     {
-        return FixedBalanceDataModel::insertFixedBalance(
-            $fixedBalance->amount()->value(),
-            $fixedBalance->item()->value(),
-            $fixedBalance->kindElementId()->value(),
-            $fixedBalance->purposeElementId()->value(),
-            $fixedBalance->placeElementId()->value(),
-        );
+        try {
+            return FixedBalanceDataModel::insertFixedBalance(
+                $fixedBalance->amount()->value(),
+                $fixedBalance->item()->value(),
+                $fixedBalance->kindElementId()->value(),
+                $fixedBalance->purposeElementId()->value(),
+                $fixedBalance->placeElementId()->value(),
+            );
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
     }
 
     public function updateFixedBalance(FixedBalanceEntity $fixedBalance): void
     {
-        FixedBalanceDataModel::updateFixedBalance(
-            $fixedBalance->fixedBalanceId()->value(),
-            $fixedBalance->amount()->value(),
-            $fixedBalance->item()->value(),
-            $fixedBalance->kindElementId()->value(),
-            $fixedBalance->purposeElementId()->value(),
-            $fixedBalance->placeElementId()->value(),
-        );
+        try {
+            FixedBalanceDataModel::updateFixedBalance(
+                $fixedBalance->fixedBalanceId()->value(),
+                $fixedBalance->amount()->value(),
+                $fixedBalance->item()->value(),
+                $fixedBalance->kindElementId()->value(),
+                $fixedBalance->purposeElementId()->value(),
+                $fixedBalance->placeElementId()->value(),
+            );
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
     }
 
     public function deleteFixedBalance(FixedBalanceId $fixedBalanceId): void
     {
-        FixedBalanceDataModel::deleteFixedBalance($fixedBalanceId->value());
+        try {
+            FixedBalanceDataModel::deleteFixedBalance($fixedBalanceId->value());
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Infrastructure\Repository\Impl;
 
+use Illuminate\Database\QueryException;
+use App\Infrastructure\Repository\Concerns\HandlesQueryException;
 use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\BalanceId;
@@ -16,6 +18,8 @@ use App\Models\DataModels\BalanceDataModel;
 
 class BalanceRepositoryImpl implements BalanceRepositoryInterface
 {
+    use HandlesQueryException;
+
     public function getBalances(
         ?BalanceId $balanceId = null,
         ?int $limit = null,
@@ -52,32 +56,44 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
 
     public function insertBalance(BalanceEntity $balance): int
     {
-        return BalanceDataModel::insertBalance(
-            $balance->amount()->value(),
-            $balance->item()->value(),
-            $balance->kindElementId()->value(),
-            $balance->purposeElementId()->value(),
-            $balance->placeElementId()->value(),
-            $balance->date()->value(),
-        );
+        try {
+            return BalanceDataModel::insertBalance(
+                $balance->amount()->value(),
+                $balance->item()->value(),
+                $balance->kindElementId()->value(),
+                $balance->purposeElementId()->value(),
+                $balance->placeElementId()->value(),
+                $balance->date()->value(),
+            );
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
     }
 
     public function updateBalance(BalanceEntity $balance): void
     {
-        BalanceDataModel::updateBalance(
-            $balance->balanceId()->value(),
-            $balance->amount()->value(),
-            $balance->item()->value(),
-            $balance->kindElementId()->value(),
-            $balance->purposeElementId()->value(),
-            $balance->placeElementId()->value(),
-            $balance->date()->value(),
-        );
+        try {
+            BalanceDataModel::updateBalance(
+                $balance->balanceId()->value(),
+                $balance->amount()->value(),
+                $balance->item()->value(),
+                $balance->kindElementId()->value(),
+                $balance->purposeElementId()->value(),
+                $balance->placeElementId()->value(),
+                $balance->date()->value(),
+            );
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
     }
 
     public function deleteBalance(BalanceId $balanceId): void
     {
-        BalanceDataModel::deleteBalance($balanceId->value());
+        try {
+            BalanceDataModel::deleteBalance($balanceId->value());
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
     }
 
     public function sum(PlaceElementId $placeElementId): int

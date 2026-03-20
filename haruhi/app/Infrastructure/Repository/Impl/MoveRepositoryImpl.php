@@ -2,12 +2,12 @@
 
 namespace App\Infrastructure\Repository\Impl;
 
-use App\Domain\Entities\BalanceEntity;
+use Illuminate\Database\QueryException;
+use App\Infrastructure\Repository\Concerns\HandlesQueryException;
 use App\Domain\Entities\MoveEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\Attribute;
 use App\Domain\ValueObjects\AttributeElementId;
-use App\Domain\ValueObjects\BalanceId;
 use App\Domain\ValueObjects\Date;
 use App\Domain\ValueObjects\Description;
 use App\Domain\ValueObjects\Item;
@@ -21,6 +21,8 @@ use App\Models\DataModels\BalanceDataModel;
 
 class MoveRepositoryImpl implements MoveRepositoryInterface
 {
+    use HandlesQueryException;
+
     public function getMoves(
         Attribute $attribute,
         ?int $limit = null,
@@ -186,23 +188,27 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             default => throw new InternalException('Attribute name is wrong.'),
         };
 
-        $beforeId = BalanceDataModel::insertBalance(
-            (-1) * $move->amount()->value(),
-            $move->item()->value(),
-            KindElementId::moveId()->value(),
-            $beforePurposeElementId->value(),
-            $beforePlaceElementId->value(),
-            $move->date()->value(),
-        );
+        try {
+            $beforeId = BalanceDataModel::insertBalance(
+                (-1) * $move->amount()->value(),
+                $move->item()->value(),
+                KindElementId::moveId()->value(),
+                $beforePurposeElementId->value(),
+                $beforePlaceElementId->value(),
+                $move->date()->value(),
+            );
 
-        $afterId = BalanceDataModel::insertBalance(
-            $move->amount()->value(),
-            $move->item()->value(),
-            KindElementId::moveId()->value(),
-            $afterPurposeElementId->value(),
-            $afterPlaceElementId->value(),
-            $move->date()->value(),
-        );
+            $afterId = BalanceDataModel::insertBalance(
+                $move->amount()->value(),
+                $move->item()->value(),
+                KindElementId::moveId()->value(),
+                $afterPurposeElementId->value(),
+                $afterPlaceElementId->value(),
+                $move->date()->value(),
+            );
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
 
         // 1違いでなければ例外
         if ($afterId !== $beforeId + 1) {
@@ -242,30 +248,38 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             default => throw new InternalException('Attribute name is wrong.'),
         };
 
-        BalanceDataModel::updateBalance(
-            $move->moveId()->value(),
-            (-1) * $move->amount()->value(),
-            $move->item()->value(),
-            KindElementId::moveId()->value(),
-            $beforePurposeElementId->value(),
-            $beforePlaceElementId->value(),
-            $move->date()->value(),
-        );
+        try {
+            BalanceDataModel::updateBalance(
+                $move->moveId()->value(),
+                (-1) * $move->amount()->value(),
+                $move->item()->value(),
+                KindElementId::moveId()->value(),
+                $beforePurposeElementId->value(),
+                $beforePlaceElementId->value(),
+                $move->date()->value(),
+            );
 
-        BalanceDataModel::updateBalance(
-            $move->moveId()->value() + 1,
-            $move->amount()->value(),
-            $move->item()->value(),
-            KindElementId::moveId()->value(),
-            $afterPurposeElementId->value(),
-            $afterPlaceElementId->value(),
-            $move->date()->value(),
-        );
+            BalanceDataModel::updateBalance(
+                $move->moveId()->value() + 1,
+                $move->amount()->value(),
+                $move->item()->value(),
+                KindElementId::moveId()->value(),
+                $afterPurposeElementId->value(),
+                $afterPlaceElementId->value(),
+                $move->date()->value(),
+            );
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
     }
 
     public function deleteMove(MoveId $moveId): void
     {
-        BalanceDataModel::deleteBalance($moveId->value());
-        BalanceDataModel::deleteBalance($moveId->value() + 1);
+        try {
+            BalanceDataModel::deleteBalance($moveId->value());
+            BalanceDataModel::deleteBalance($moveId->value() + 1);
+        } catch (QueryException $e) {
+            self::handleQueryException($e);
+        }
     }
 }
