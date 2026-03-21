@@ -10,7 +10,7 @@ readonly class Response
         return explode("\n", str_replace("/r", '', $this->rawHeader))[0];
     }
 
-    public function status(): int
+    public function statusCode(): int
     {
         return (int)explode(' ', $this->statusLine())[1];
     }
@@ -37,11 +37,7 @@ readonly class Response
 
     public function jsonBody(): mixed
     {
-        if (is_array($this->rawBody)) {
-            return json_decode($this->rawBody, true);
-        } else {
-            return $this->rawBody;
-        }
+        return json_decode($this->rawBody, true);
     }
 
     public function getSessionKey(): string

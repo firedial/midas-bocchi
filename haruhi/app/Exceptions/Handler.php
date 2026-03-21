@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Throwable;
@@ -40,7 +41,12 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (Throwable $e, Request $request) {
-            if ($e instanceof AppException) {
+            if ($e instanceof AuthenticationException) {
+                return response()->json([
+                    'code' => ErrorCode::UNAUTHORIZED,
+                    'message' => 'Unauthrorized',
+                ], 401);
+            } else if ($e instanceof AppException) {
                 return response()->json([
                     'code' => $e->errorCode->value,
                     'message' => $e->getMessage(),
