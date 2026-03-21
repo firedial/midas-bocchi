@@ -9,6 +9,14 @@ class Assert
         }
     }
 
+    public static function assertLT(int $a, int $b, string $message)
+    {
+        if ($a >= $b) {
+            throw new Exception("[{$message}] Not {$a} < {$b}");
+        }
+    }
+
+
     public static function assertStatusCode200(int $status)
     {
         self::assertStatusCode($status, 200);
