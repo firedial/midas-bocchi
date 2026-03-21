@@ -2,7 +2,8 @@
 
 namespace App\Domain\ValueObjects;
 
-use App\Exceptions\ValueObjectException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class Description
 {
@@ -10,8 +11,11 @@ class Description
 
     public function __construct(private readonly string $description)
     {
-        if (mb_strlen($description) === 0 || mb_strlen($description) > self::MAX_LENGTH) {
-            throw new ValueObjectException("Description length is over.");
+        if (mb_strlen($description) === 0) {
+            throw new AppException(ErrorCode::INVALID_EMPTY, "Description length is empty.");
+        }
+        if (mb_strlen($description) > self::MAX_LENGTH) {
+            throw new AppException(ErrorCode::INVALID_LENGTH, "Description length is over.");
         }
     }
 

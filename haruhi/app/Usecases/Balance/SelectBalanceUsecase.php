@@ -4,7 +4,8 @@ namespace App\Usecases\Balance;
 
 use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\BalanceId;
-use App\Exceptions\NotFoundException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 use App\Infrastructure\Repository\BalanceRepositoryInterface;
 use App\Infrastructure\Repository\Impl\BalanceRepositoryImpl;
 use Exception;
@@ -28,7 +29,7 @@ class SelectBalanceUsecase
 
             // 存在しないとき
             if (is_null($balance)) {
-                throw new NotFoundException("Not found balance.");
+                throw new AppException(ErrorCode::RECORD_NOT_FOUND, "Not found balance.");
             }
             DB::commit();
         } catch (Exception $e) {

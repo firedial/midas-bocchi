@@ -5,8 +5,6 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Throwable;
-use App\Exceptions\InvalidParameterException;
-use App\Exceptions\NotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -42,15 +40,15 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (Throwable $e, Request $request) {
-            if ($e instanceof InvalidParameterException) {
+            if ($e instanceof AppException) {
                 return response()->json([
-                    'message' => $e->getMessage()
-                ], 400);
-            } else if ($e instanceof NotFoundException) {
-                return response()->make("", 404);
+                    'code' => $e->errorCode->value,
+                    'message' => $e->getMessage(),
+                ], $e->errorCode->httpStatus());
             } else {
                 return response()->json([
-                    'message' => $e->getMessage()
+                    'code' => ErrorCode::UNEXPECTED,
+                    'message' => $e->getMessage(),
                 ], 500);
             }
         });

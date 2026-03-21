@@ -12,12 +12,15 @@ use App\Domain\ValueObjects\MoveId;
 use App\Domain\ValueObjects\PlaceElementId;
 use App\Domain\ValueObjects\PurposeElementId;
 use Illuminate\Http\Request;
-use App\Exceptions\InvalidParameterException;
 use App\Usecases\Move\DeleteMoveUsecase;
 use App\Usecases\Move\GetMovesUsecase;
 use App\Usecases\Move\InsertMoveUsecase;
 use App\Usecases\Move\SelectMoveUsecase;
 use App\Usecases\Move\UpdateMoveUsecase;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
+use App\Rules\StrictInteger;
+use Illuminate\Validation\ValidationException;
 
 class MoveController extends Controller
 {
@@ -26,14 +29,14 @@ class MoveController extends Controller
     {
         $limit = $request->input('limit');
         if (!is_null($limit) && !is_numeric($limit)) {
-            throw new InvalidParameterException('limit is wrong');
+            throw new AppException(ErrorCode::INVALID_TYPE, 'limit is wrong');
         }
 
         // 属性名
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
         };
 
         $getMovesUsecase = new GetMovesUsecase();
@@ -59,14 +62,14 @@ class MoveController extends Controller
     public function show(string $attributeName, int $id)
     {
         if (is_null($id) || !is_numeric($id)) {
-            throw new InvalidParameterException('Move id is null.');
+            throw new AppException(ErrorCode::INVALID_TYPE, 'Move id is null.');
         }
 
         // 属性名
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
         };
 
         $SelectMoveUsecase = new SelectMoveUsecase();
@@ -86,43 +89,66 @@ class MoveController extends Controller
 
     public function store(Request $request, string $attributeName)
     {
+        try {
+            $validated = $request->validate([
+                'amount' => ['required', new StrictInteger, 'min:1'],
+                'item' => 'required|string',
+                'before_id' => ['required', new StrictInteger],
+                'after_id' => ['required', new StrictInteger],
+                'date' => 'required|string',
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            foreach ($failed as $field => $rules) {
+                if (isset($rules[StrictInteger::class])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
+                }
+                if (isset($rules['Required'])) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
+                }
+                if (isset($rules['Min'])) {
+                    throw new AppException(ErrorCode::INVALID_RANGE, "{$field} must be at least 1");
+                }
+                if (isset($rules['String'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
+                }
+            }
+
+            throw $e;
+        }
+
         // 属性名
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
         };
 
-        // 金額は正である必要がある
-        $amount = new Amount($request->input('amount'));
-        if ($amount->value() <= 0) {
-            throw new InvalidParameterException('Amount is zero or minus.');
-        }
-
         // 移動前後で同じIDではないこと
-        $beforeId = AttributeElementId::filledId($request->input('before_id'));
-        $afterId = AttributeElementId::filledId($request->input('after_id'));
+        $beforeId = AttributeElementId::filledId($validated['before_id']);
+        $afterId = AttributeElementId::filledId($validated['after_id']);
         if ($beforeId->value() === $afterId->value()) {
-            throw new InvalidParameterException('Before id and after id is the same.');
+            throw new AppException(ErrorCode::MOVE_SAME_ID, 'Before id and after id is the same.');
         }
 
         // 移動IDではないこと
         $moveId = match (true) {
             $attribute->isPurpose() => PurposeElementId::moveId(),
             $attribute->isPlace() => PlaceElementId::moveId(),
-            default => throw new InvalidParameterException('Attribute is wrong.'),
+            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute is wrong.'),
         };
         if ($beforeId->value() === $moveId->value() || $afterId->value() === $moveId->value()) {
-            throw new InvalidParameterException('Before id or after id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Before id or after id is move id.');
         }
 
         $move = new MoveEntity(
             MoveId::emptyId(),
-            $amount,
-            new Item($request->input('item')),
+            new Amount($validated['amount']),
+            new Item($validated['item']),
             $beforeId,
             $afterId,
-            new Date($request->input('date')),
+            new Date($validated['date']),
         );
 
         $insertMoveUsecase = new InsertMoveUsecase();
@@ -131,43 +157,66 @@ class MoveController extends Controller
 
     public function update(Request $request, string $attributeName, int $id)
     {
+        try {
+            $validated = $request->validate([
+                'amount' => ['required', new StrictInteger, 'min:1'],
+                'item' => 'required|string',
+                'before_id' => ['required', new StrictInteger],
+                'after_id' => ['required', new StrictInteger],
+                'date' => 'required|string',
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            foreach ($failed as $field => $rules) {
+                if (isset($rules[StrictInteger::class])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
+                }
+                if (isset($rules['Required'])) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
+                }
+                if (isset($rules['Min'])) {
+                    throw new AppException(ErrorCode::INVALID_RANGE, "{$field} must be at least 1");
+                }
+                if (isset($rules['String'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
+                }
+            }
+
+            throw $e;
+        }
+
         // 属性名
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
         };
-
-        // 金額は正である必要がある
-        $amount = new Amount($request->input('amount'));
-        if ($amount->value() <= 0) {
-            throw new InvalidParameterException('Amount is zero or minus.');
-        }
 
         // 移動前後で同じIDではないこと
         $beforeId = AttributeElementId::filledId($request->input('before_id'));
         $afterId = AttributeElementId::filledId($request->input('after_id'));
         if ($beforeId->value() === $afterId->value()) {
-            throw new InvalidParameterException('Before id and after id is the same.');
+            throw new AppException(ErrorCode::MOVE_SAME_ID, 'Before id and after id is the same.');
         }
 
         // 移動IDではないこと
         $moveId = match (true) {
             $attribute->isPurpose() => PurposeElementId::moveId(),
             $attribute->isPlace() => PlaceElementId::moveId(),
-            default => throw new InvalidParameterException('Attribute is wrong.'),
+            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute is wrong.'),
         };
         if ($beforeId->value() === $moveId->value() || $afterId->value() === $moveId->value()) {
-            throw new InvalidParameterException('Before id or after id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Before id or after id is move id.');
         }
 
         $move = new MoveEntity(
             MoveId::filledId($id),
-            $amount,
-            new Item($request->input('item')),
+            new Amount($validated['amount']),
+            new Item($validated['item']),
             $beforeId,
             $afterId,
-            new Date($request->input('date')),
+            new Date($validated['date']),
         );
 
         $updateMoveUsecase = new UpdateMoveUsecase();
@@ -180,7 +229,7 @@ class MoveController extends Controller
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new InvalidParameterException('Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
         };
 
         $deleteMoveUsecase = new DeleteMoveUsecase();
