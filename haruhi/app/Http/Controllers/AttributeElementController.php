@@ -123,6 +123,10 @@ class AttributeElementController extends Controller
             default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
+        if (AttributeElementId::filledId($elementId)->isMoveId()) {
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Can not update element move id.');
+        }
+
         if ($attributeCategoryId->isMoveId()) {
             throw new AppException(ErrorCode::USING_MOVE_ID, 'Attribute category id is move id.');
         }

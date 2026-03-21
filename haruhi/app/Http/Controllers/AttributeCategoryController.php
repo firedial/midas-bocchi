@@ -95,6 +95,10 @@ class AttributeCategoryController extends Controller
             default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
+        if (AttributeCategoryId::filledId($categoryId)->isMoveId()) {
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Can not update category move id.');
+        }
+
         $attributeCategory = new AttributeCategoryEntity(
             $attribute,
             AttributeCategoryId::filledId($categoryId),
