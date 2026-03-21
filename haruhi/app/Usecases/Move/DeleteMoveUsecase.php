@@ -2,6 +2,7 @@
 
 namespace App\Usecases\Move;
 
+use App\Domain\Entities\MoveEntity;
 use App\Domain\ValueObjects\Attribute;
 use App\Domain\ValueObjects\MoveId;
 use App\Exceptions\AppException;
@@ -20,7 +21,7 @@ class DeleteMoveUsecase
         $this->moveRepository = $moveRepository ?: new MoveRepositoryImpl();
     }
 
-    public function execute(Attribute $attribute, MoveId $moveId): void
+    public function execute(Attribute $attribute, MoveId $moveId): MoveEntity
     {
         DB::beginTransaction();
         try {
@@ -32,11 +33,13 @@ class DeleteMoveUsecase
             }
 
             // 削除
-            $this->moveRepository->deleteMove($moveId);
+            $result = $this->moveRepository->deleteMove($attribute, $moveId);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
+
+        return $result;
     }
 }

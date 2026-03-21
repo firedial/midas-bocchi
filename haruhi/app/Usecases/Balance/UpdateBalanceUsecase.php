@@ -19,7 +19,7 @@ class UpdateBalanceUsecase
         $this->balanceRepository = $balanceRepository ?: new BalanceRepositoryImpl();
     }
 
-    public function execute(BalanceEntity $balance): void
+    public function execute(BalanceEntity $balance): BalanceEntity
     {
         DB::beginTransaction();
         try {
@@ -31,11 +31,13 @@ class UpdateBalanceUsecase
             }
 
             // 更新
-            $this->balanceRepository->updateBalance($balance);
+            $result = $this->balanceRepository->updateBalance($balance);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
+
+        return $result;
     }
 }

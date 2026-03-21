@@ -17,18 +17,18 @@ class InsertBalanceUsecase
         $this->balanceRepository = $balanceRepository ?: new BalanceRepositoryImpl();
     }
 
-    public function execute(BalanceEntity $balance): int
+    public function execute(BalanceEntity $balance): BalanceEntity
     {
         DB::beginTransaction();
         try {
             // 挿入
-            $insertId = $this->balanceRepository->insertBalance($balance);
+            $result = $this->balanceRepository->insertBalance($balance);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
 
-        return $insertId;
+        return $result;
     }
 }

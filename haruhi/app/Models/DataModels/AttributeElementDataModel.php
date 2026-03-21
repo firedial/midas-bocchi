@@ -3,6 +3,7 @@
 namespace App\Models\DataModels;
 
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 abstract class AttributeElementDataModel
 {
@@ -39,14 +40,16 @@ abstract class AttributeElementDataModel
         string $description,
         int $priority,
         int $categoryId,
-    ): int {
-        return DB::table(static::TABLE_NAME)
-            ->insertGetId([
-                static::C_NAME => $name,
-                static::C_DESCRIPTION => $description,
-                static::C_PRIORITY => $priority,
-                static::C_CATEGORY_ID => $categoryId,
-            ]);
+    ): stdClass {
+        return DB::selectOne(
+            'INSERT INTO ' . static::TABLE_NAME . ' (' .
+                static::C_NAME . ', ' .
+                static::C_DESCRIPTION . ', ' .
+                static::C_PRIORITY . ', ' .
+                static::C_CATEGORY_ID .
+                ') VALUES (?, ?, ?, ?) RETURNING *',
+            [$name, $description, $priority, $categoryId]
+        );
     }
 
     public static function updateAttributeElement(
@@ -55,7 +58,7 @@ abstract class AttributeElementDataModel
         string $description,
         int $priority,
         int $categoryId,
-    ): void {
+    ): stdClass {
         DB::table(static::TABLE_NAME)
             ->where(static::C_ID, '=', $id)
             ->update([
@@ -64,5 +67,10 @@ abstract class AttributeElementDataModel
                 static::C_PRIORITY => $priority,
                 static::C_CATEGORY_ID => $categoryId,
             ]);
+
+        return DB::selectOne(
+            'SELECT * FROM ' . static::TABLE_NAME . ' WHERE ' . static::C_ID . ' = ?',
+            [$id]
+        );
     }
 }

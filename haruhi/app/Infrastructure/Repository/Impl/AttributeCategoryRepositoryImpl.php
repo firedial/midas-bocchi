@@ -51,10 +51,10 @@ class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInte
         return $attributeCategories[0];
     }
 
-    public function insertAttributeCategory(AttributeCategoryEntity $attributeCategory): int
+    public function insertAttributeCategory(AttributeCategoryEntity $attributeCategory): AttributeCategoryEntity
     {
         try {
-            return match (true) {
+            $result = match (true) {
                 $attributeCategory->attribute()->isKind() => KindCategoryDataModel::insertAttributeCategory(
                     $attributeCategory->attributeCategoryName()->value(),
                     $attributeCategory->description()->value(),
@@ -72,12 +72,19 @@ class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInte
         } catch (QueryException $e) {
             self::handleQueryException($e, "Insert {$attributeCategory->attributeCategoryName()->value()} category error.");
         }
+
+        return new AttributeCategoryEntity(
+            $attributeCategory->attribute(),
+            AttributeCategoryId::filledId($result->id),
+            new AttributeCategoryName($result->name),
+            new Description($result->description),
+        );
     }
 
-    public function updateAttributeCategory(AttributeCategoryEntity $attributeCategory): void
+    public function updateAttributeCategory(AttributeCategoryEntity $attributeCategory): AttributeCategoryEntity
     {
         try {
-            match (true) {
+            $result = match (true) {
                 $attributeCategory->attribute()->isKind() => KindCategoryDataModel::updateAttributeCategory(
                     $attributeCategory->attributeCategoryId()->value(),
                     $attributeCategory->attributeCategoryName()->value(),
@@ -98,5 +105,12 @@ class AttributeCategoryRepositoryImpl implements AttributeCategoryRepositoryInte
         } catch (QueryException $e) {
             self::handleQueryException($e, "Update {$attributeCategory->attributeCategoryName()->value()} category error.");
         }
+
+        return new AttributeCategoryEntity(
+            $attributeCategory->attribute(),
+            AttributeCategoryId::filledId($result->id),
+            new AttributeCategoryName($result->name),
+            new Description($result->description),
+        );
     }
 }

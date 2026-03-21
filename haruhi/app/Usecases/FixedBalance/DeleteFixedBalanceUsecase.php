@@ -2,6 +2,7 @@
 
 namespace App\Usecases\FixedBalance;
 
+use App\Domain\Entities\FixedBalanceEntity;
 use App\Domain\ValueObjects\FixedBalanceId;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
@@ -19,7 +20,7 @@ class DeleteFixedBalanceUsecase
         $this->fixedBalanceRepository = $fixedBalanceRepository ?: new FixedBalanceRepositoryImpl();
     }
 
-    public function execute(FixedBalanceId $fixedBalanceId): void
+    public function execute(FixedBalanceId $fixedBalanceId): FixedBalanceEntity
     {
         DB::beginTransaction();
         try {
@@ -31,11 +32,13 @@ class DeleteFixedBalanceUsecase
             }
 
             // 削除
-            $this->fixedBalanceRepository->deleteFixedBalance($fixedBalanceId);
+            $result = $this->fixedBalanceRepository->deleteFixedBalance($fixedBalanceId);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
+
+        return $result;
     }
 }

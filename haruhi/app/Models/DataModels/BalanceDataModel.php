@@ -3,6 +3,7 @@
 namespace App\Models\DataModels;
 
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class BalanceDataModel
 {
@@ -69,16 +70,18 @@ class BalanceDataModel
         int $purposeElementId,
         int $placeElementId,
         string $date,
-    ): int {
-        return DB::table(self::TABLE_NAME)
-            ->insertGetId([
-                self::C_AMOUNT => $amount,
-                self::C_ITEM => $item,
-                self::C_KIND_ELEMENT_ID => $kindElementId,
-                self::C_PURPOSE_ELEMENT_ID => $purposeElementId,
-                self::C_PLACE_ELEMENT_ID => $placeElementId,
-                self::C_DATE => $date,
-            ]);
+    ): stdClass {
+        return DB::selectOne(
+            'INSERT INTO ' . self::TABLE_NAME . ' (' .
+                self::C_AMOUNT . ', ' .
+                self::C_ITEM . ', ' .
+                self::C_KIND_ELEMENT_ID . ', ' .
+                self::C_PURPOSE_ELEMENT_ID . ', ' .
+                self::C_PLACE_ELEMENT_ID . ', ' .
+                self::C_DATE .
+                ') VALUES (?, ?, ?, ?, ?, ?) RETURNING *',
+            [$amount, $item, $kindElementId, $purposeElementId, $placeElementId, $date]
+        );
     }
 
     public static function updateBalance(
@@ -89,7 +92,7 @@ class BalanceDataModel
         int $purposeElementId,
         int $placeElementId,
         string $date,
-    ): void {
+    ): stdClass {
         DB::table(self::TABLE_NAME)
             ->where(self::C_ID, '=', $id)
             ->update([
@@ -100,14 +103,20 @@ class BalanceDataModel
                 self::C_PLACE_ELEMENT_ID => $placeElementId,
                 self::C_DATE => $date,
             ]);
+
+        return DB::selectOne(
+            'SELECT * FROM ' . self::TABLE_NAME . ' WHERE ' . self::C_ID . ' = ?',
+            [$id]
+        );
     }
 
     public static function deleteBalance(
         int $id,
-    ): void {
-        DB::table(self::TABLE_NAME)
-            ->where(self::C_ID, '=', $id)
-            ->delete();
+    ): stdClass {
+        return DB::selectOne(
+            'DELETE FROM ' . self::TABLE_NAME . ' WHERE ' . self::C_ID . ' = ? RETURNING *',
+            [$id]
+        );
     }
 
     public static function sum(

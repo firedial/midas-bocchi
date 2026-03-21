@@ -18,18 +18,18 @@ class InsertMoveUsecase
         $this->moveRepository = $moveRepository ?: new MoveRepositoryImpl();
     }
 
-    public function execute(Attribute $attribute, MoveEntity $move): int
+    public function execute(Attribute $attribute, MoveEntity $move): MoveEntity
     {
         DB::beginTransaction();
         try {
             // 挿入
-            $insertId = $this->moveRepository->insertMove($attribute, $move);
+            $result = $this->moveRepository->insertMove($attribute, $move);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
 
-        return $insertId;
+        return $result;
     }
 }

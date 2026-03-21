@@ -3,6 +3,7 @@
 namespace App\Models\DataModels;
 
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 abstract class AttributeCategoryDataModel
 {
@@ -32,24 +33,31 @@ abstract class AttributeCategoryDataModel
     public static function insertAttributeCategory(
         string $name,
         string $description,
-    ): int {
-        return DB::table(static::TABLE_NAME)
-            ->insertGetId([
-                static::C_NAME => $name,
-                static::C_DESCRIPTION => $description,
-            ]);
+    ): stdClass {
+        return DB::selectOne(
+            'INSERT INTO ' . static::TABLE_NAME . ' (' .
+                static::C_NAME . ', ' .
+                static::C_DESCRIPTION .
+                ') VALUES (?, ?) RETURNING *',
+            [$name, $description]
+        );
     }
 
     public static function updateAttributeCategory(
         int $id,
         string $name,
         string $description,
-    ): void {
+    ): stdClass {
         DB::table(static::TABLE_NAME)
             ->where(static::C_ID, '=', $id)
             ->update([
                 static::C_NAME => $name,
                 static::C_DESCRIPTION => $description,
             ]);
+
+        return DB::selectOne(
+            'SELECT * FROM ' . static::TABLE_NAME . ' WHERE ' . static::C_ID . ' = ?',
+            [$id]
+        );
     }
 }

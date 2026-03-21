@@ -15,6 +15,6 @@ class CheckPlaceSumController extends Controller
         $date = new Date($request->input("date"));
 
         $checkPlaceSumUsecase = new CheckPlaceSumUsecase();
-        $checkPlaceSumUsecase->execute($placeElementId, $date);
+        return $checkPlaceSumUsecase->execute($placeElementId, $date);
     }
 }
