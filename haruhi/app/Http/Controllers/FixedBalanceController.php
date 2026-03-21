@@ -85,7 +85,16 @@ class FixedBalanceController extends Controller
         }
 
         $insertFixedBalanceUsecase = new InsertFixedBalanceUsecase();
-        return $insertFixedBalanceUsecase->execute($fixedBalance);
+        $result = $insertFixedBalanceUsecase->execute($fixedBalance);
+
+        return [
+            "id" => $result->fixedBalanceId()->value(),
+            "amount" => $result->amount()->value(),
+            "item" => $result->item()->value(),
+            "kind_element_id" => $result->kindElementId()->value(),
+            "purpose_element_id" => $result->purposeElementId()->value(),
+            "place_element_id" => $result->placeElementId()->value(),
+        ];
     }
 
     public function update(Request $request, int $id)
@@ -112,7 +121,16 @@ class FixedBalanceController extends Controller
         }
 
         $updateFixedBalanceUsecase = new UpdateFixedBalanceUsecase();
-        $updateFixedBalanceUsecase->execute($fixedBalance);
+        $result = $updateFixedBalanceUsecase->execute($fixedBalance);
+
+        return [
+            "id" => $result->fixedBalanceId()->value(),
+            "amount" => $result->amount()->value(),
+            "item" => $result->item()->value(),
+            "kind_element_id" => $result->kindElementId()->value(),
+            "purpose_element_id" => $result->purposeElementId()->value(),
+            "place_element_id" => $result->placeElementId()->value(),
+        ];
     }
 
     public function destroy(int $id)
@@ -120,6 +138,15 @@ class FixedBalanceController extends Controller
         $fixedBalanceId = FixedBalanceId::filledId($id);
 
         $deleteFixedBalanceUsecase = new DeleteFixedBalanceUsecase();
-        $deleteFixedBalanceUsecase->execute($fixedBalanceId);
+        $result = $deleteFixedBalanceUsecase->execute($fixedBalanceId);
+
+        return [
+            "id" => $result->fixedBalanceId()->value(),
+            "amount" => $result->amount()->value(),
+            "item" => $result->item()->value(),
+            "kind_element_id" => $result->kindElementId()->value(),
+            "purpose_element_id" => $result->purposeElementId()->value(),
+            "place_element_id" => $result->placeElementId()->value(),
+        ];
     }
 }

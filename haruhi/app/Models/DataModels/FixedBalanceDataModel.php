@@ -3,6 +3,7 @@
 namespace App\Models\DataModels;
 
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class FixedBalanceDataModel
 {
@@ -46,15 +47,17 @@ class FixedBalanceDataModel
         int $kindElementId,
         int $purposeElementId,
         int $placeElementId,
-    ): int {
-        return DB::table(self::TABLE_NAME)
-            ->insertGetId([
-                self::C_AMOUNT => $amount,
-                self::C_ITEM => $item,
-                self::C_KIND_ELEMENT_ID => $kindElementId,
-                self::C_PURPOSE_ELEMENT_ID => $purposeElementId,
-                self::C_PLACE_ELEMENT_ID => $placeElementId,
-            ]);
+    ): stdClass {
+        return DB::selectOne(
+            'INSERT INTO ' . self::TABLE_NAME . ' (' .
+                self::C_AMOUNT . ', ' .
+                self::C_ITEM . ', ' .
+                self::C_KIND_ELEMENT_ID . ', ' .
+                self::C_PURPOSE_ELEMENT_ID . ', ' .
+                self::C_PLACE_ELEMENT_ID .
+                ') VALUES (?, ?, ?, ?, ?) RETURNING *',
+            [$amount, $item, $kindElementId, $purposeElementId, $placeElementId]
+        );
     }
 
     public static function updateFixedBalance(
@@ -64,7 +67,7 @@ class FixedBalanceDataModel
         int $kindElementId,
         int $purposeElementId,
         int $placeElementId,
-    ): void {
+    ): stdClass {
         DB::table(self::TABLE_NAME)
             ->where(self::C_ID, '=', $id)
             ->update([
@@ -74,13 +77,19 @@ class FixedBalanceDataModel
                 self::C_PURPOSE_ELEMENT_ID => $purposeElementId,
                 self::C_PLACE_ELEMENT_ID => $placeElementId,
             ]);
+
+        return DB::selectOne(
+            'SELECT * FROM ' . self::TABLE_NAME . ' WHERE ' . self::C_ID . ' = ?',
+            [$id]
+        );
     }
 
     public static function deleteFixedBalance(
         int $id,
-    ): void {
-        DB::table(self::TABLE_NAME)
-            ->where(self::C_ID, '=', $id)
-            ->delete();
+    ): stdClass {
+        return DB::selectOne(
+            'DELETE FROM ' . self::TABLE_NAME . ' WHERE ' . self::C_ID . ' = ? RETURNING *',
+            [$id]
+        );
     }
 }
