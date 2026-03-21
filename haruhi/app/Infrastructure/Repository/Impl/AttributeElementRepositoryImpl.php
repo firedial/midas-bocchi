@@ -55,10 +55,10 @@ class AttributeElementRepositoryImpl implements AttributeElementRepositoryInterf
         return $attributeElements[0];
     }
 
-    public function insertAttributeElement(AttributeElementEntity $attributeElement): int
+    public function insertAttributeElement(AttributeElementEntity $attributeElement): AttributeElementEntity
     {
         try {
-            return match (true) {
+            $result = match (true) {
                 $attributeElement->attribute()->isKind() => KindElementDataModel::insertAttributeElement(
                     $attributeElement->attributeElementName()->value(),
                     $attributeElement->description()->value(),
@@ -82,12 +82,21 @@ class AttributeElementRepositoryImpl implements AttributeElementRepositoryInterf
         } catch (QueryException $e) {
             self::handleQueryException($e, "Insert {$attributeElement->attributeElementName()->value()} element error.");
         }
+
+        return new AttributeElementEntity(
+            $attributeElement->attribute(),
+            AttributeElementId::filledId($result->id),
+            new AttributeElementName($result->name),
+            new Description($result->description),
+            new Priority($result->priority),
+            AttributeCategoryId::filledId($result->category_id),
+        );
     }
 
-    public function updateAttributeElement(AttributeElementEntity $attributeElement): void
+    public function updateAttributeElement(AttributeElementEntity $attributeElement): AttributeElementEntity
     {
         try {
-            match (true) {
+            $result = match (true) {
                 $attributeElement->attribute()->isKind() => KindElementDataModel::updateAttributeElement(
                     $attributeElement->attributeElementId()->value(),
                     $attributeElement->attributeElementName()->value(),
@@ -114,5 +123,14 @@ class AttributeElementRepositoryImpl implements AttributeElementRepositoryInterf
         } catch (QueryException $e) {
             self::handleQueryException($e, "Update {$attributeElement->attributeElementName()->value()} element error.");
         }
+
+        return new AttributeElementEntity(
+            $attributeElement->attribute(),
+            AttributeElementId::filledId($result->id),
+            new AttributeElementName($result->name),
+            new Description($result->description),
+            new Priority($result->priority),
+            AttributeCategoryId::filledId($result->category_id),
+        );
     }
 }

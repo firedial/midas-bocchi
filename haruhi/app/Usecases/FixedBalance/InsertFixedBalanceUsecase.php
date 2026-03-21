@@ -17,18 +17,18 @@ class InsertFixedBalanceUsecase
         $this->fixedBalanceRepository = $fixedBalanceRepository ?: new FixedBalanceRepositoryImpl();
     }
 
-    public function execute(FixedBalanceEntity $fixedBalance): int
+    public function execute(FixedBalanceEntity $fixedBalance): FixedBalanceEntity
     {
         DB::beginTransaction();
         try {
             // 挿入
-            $insertId = $this->fixedBalanceRepository->insertFixedBalance($fixedBalance);
+            $result = $this->fixedBalanceRepository->insertFixedBalance($fixedBalance);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
 
-        return $insertId;
+        return $result;
     }
 }

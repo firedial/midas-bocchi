@@ -150,7 +150,16 @@ class BalanceController extends Controller
         }
 
         $insertBalanceUsecase = new InsertBalanceUsecase();
-        return $insertBalanceUsecase->execute($balance);
+        $result = $insertBalanceUsecase->execute($balance);
+        return [
+            "id" => $result->balanceId()->value(),
+            "amount" => $result->amount()->value(),
+            "item" => $result->item()->value(),
+            "kind_element_id" => $result->kindElementId()->value(),
+            "purpose_element_id" => $result->purposeElementId()->value(),
+            "place_element_id" => $result->placeElementId()->value(),
+            "date" => $result->date()->value(),
+        ];
     }
 
     public function update(Request $request, int $id)
@@ -209,7 +218,17 @@ class BalanceController extends Controller
         }
 
         $updateBalanceUsecase = new UpdateBalanceUsecase();
-        $updateBalanceUsecase->execute($balance);
+        $result = $updateBalanceUsecase->execute($balance);
+
+        return [
+            "id" => $result->balanceId()->value(),
+            "amount" => $result->amount()->value(),
+            "item" => $result->item()->value(),
+            "kind_element_id" => $result->kindElementId()->value(),
+            "purpose_element_id" => $result->purposeElementId()->value(),
+            "place_element_id" => $result->placeElementId()->value(),
+            "date" => $result->date()->value(),
+        ];
     }
 
     public function destroy(int $id)
@@ -217,6 +236,16 @@ class BalanceController extends Controller
         $balanceId = BalanceId::filledId($id);
 
         $deleteBalanceUsecase = new DeleteBalanceUsecase();
-        $deleteBalanceUsecase->execute($balanceId);
+        $result = $deleteBalanceUsecase->execute($balanceId);
+
+        return [
+            "id" => $result->balanceId()->value(),
+            "amount" => $result->amount()->value(),
+            "item" => $result->item()->value(),
+            "kind_element_id" => $result->kindElementId()->value(),
+            "purpose_element_id" => $result->purposeElementId()->value(),
+            "place_element_id" => $result->placeElementId()->value(),
+            "date" => $result->date()->value(),
+        ];
     }
 }

@@ -159,7 +159,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
         );
     }
 
-    public function insertMove(Attribute $attribute, MoveEntity $move): int
+    public function insertMove(Attribute $attribute, MoveEntity $move): MoveEntity
     {
         if ($move->amount()->value() < 0) {
             throw new AppException(ErrorCode::UNEXPECTED_AMOUNT, 'Move amount needs positive amount.');
@@ -190,7 +190,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
         };
 
         try {
-            $beforeId = BalanceDataModel::insertBalance(
+            $beforeBalance = BalanceDataModel::insertBalance(
                 (-1) * $move->amount()->value(),
                 $move->item()->value(),
                 KindElementId::moveId()->value(),
@@ -199,7 +199,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $move->date()->value(),
             );
 
-            $afterId = BalanceDataModel::insertBalance(
+            $afterBalance = BalanceDataModel::insertBalance(
                 $move->amount()->value(),
                 $move->item()->value(),
                 KindElementId::moveId()->value(),
@@ -212,14 +212,29 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
         }
 
         // 1違いでなければ例外
-        if ($afterId !== $beforeId + 1) {
+        if ($afterBalance->id !== $beforeBalance->id + 1) {
             throw new AppException(ErrorCode::UNEXPECTED_DIFFERENCE_ID_MOVE, 'After id is wrong.');
         }
 
-        return $beforeId;
+        return new MoveEntity(
+            MoveId::filledId($beforeBalance->id),
+            new Amount($afterBalance->amount),
+            new Item($beforeBalance->item),
+            match (true) {
+                $attribute->isPurpose() => PurposeElementId::filledId($beforeBalance->purpose_element_id),
+                $attribute->isPlace() => PlaceElementId::filledId($beforeBalance->place_element_id),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
+            },
+            match (true) {
+                $attribute->isPurpose() => PurposeElementId::filledId($afterBalance->purpose_element_id),
+                $attribute->isPlace() => PlaceElementId::filledId($afterBalance->place_element_id),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
+            },
+            new Date($beforeBalance->date),
+        );
     }
 
-    public function updateMove(Attribute $attribute, MoveEntity $move): void
+    public function updateMove(Attribute $attribute, MoveEntity $move): MoveEntity
     {
         if ($move->amount()->value() < 0) {
             throw new AppException(ErrorCode::UNEXPECTED_AMOUNT, 'Move amount needs positive amount.');
@@ -250,7 +265,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
         };
 
         try {
-            BalanceDataModel::updateBalance(
+            $beforeBalance = BalanceDataModel::updateBalance(
                 $move->moveId()->value(),
                 (-1) * $move->amount()->value(),
                 $move->item()->value(),
@@ -260,7 +275,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $move->date()->value(),
             );
 
-            BalanceDataModel::updateBalance(
+            $afterBalance = BalanceDataModel::updateBalance(
                 $move->moveId()->value() + 1,
                 $move->amount()->value(),
                 $move->item()->value(),
@@ -272,15 +287,49 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Update move error.');
         }
+
+        return new MoveEntity(
+            MoveId::filledId($beforeBalance->id),
+            new Amount($afterBalance->amount),
+            new Item($beforeBalance->item),
+            match (true) {
+                $attribute->isPurpose() => PurposeElementId::filledId($beforeBalance->purpose_element_id),
+                $attribute->isPlace() => PlaceElementId::filledId($beforeBalance->place_element_id),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
+            },
+            match (true) {
+                $attribute->isPurpose() => PurposeElementId::filledId($afterBalance->purpose_element_id),
+                $attribute->isPlace() => PlaceElementId::filledId($afterBalance->place_element_id),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
+            },
+            new Date($beforeBalance->date),
+        );
     }
 
-    public function deleteMove(MoveId $moveId): void
+    public function deleteMove(Attribute $attribute, MoveId $moveId): MoveEntity
     {
         try {
-            BalanceDataModel::deleteBalance($moveId->value());
-            BalanceDataModel::deleteBalance($moveId->value() + 1);
+            $beforeBalance = BalanceDataModel::deleteBalance($moveId->value());
+            $afterBalance = BalanceDataModel::deleteBalance($moveId->value() + 1);
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Delete move error.');
         }
+
+        return new MoveEntity(
+            MoveId::filledId($beforeBalance->id),
+            new Amount($afterBalance->amount),
+            new Item($beforeBalance->item),
+            match (true) {
+                $attribute->isPurpose() => PurposeElementId::filledId($beforeBalance->purpose_element_id),
+                $attribute->isPlace() => PlaceElementId::filledId($beforeBalance->place_element_id),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
+            },
+            match (true) {
+                $attribute->isPurpose() => PurposeElementId::filledId($afterBalance->purpose_element_id),
+                $attribute->isPlace() => PlaceElementId::filledId($afterBalance->place_element_id),
+                default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
+            },
+            new Date($beforeBalance->date),
+        );
     }
 }

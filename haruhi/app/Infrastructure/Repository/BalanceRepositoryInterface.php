@@ -10,9 +10,9 @@ interface BalanceRepositoryInterface
 {
     public function getBalances(?BalanceId $balanceId, ?int $limit, ?bool $orderByDesc): array;
     public function selectBalance(BalanceId $balanceId): ?BalanceEntity;
-    public function insertBalance(BalanceEntity $balance): int;
-    public function updateBalance(BalanceEntity $balance): void;
-    public function deleteBalance(BalanceId $balanceId): void;
+    public function insertBalance(BalanceEntity $balance): BalanceEntity;
+    public function updateBalance(BalanceEntity $balance): BalanceEntity;
+    public function deleteBalance(BalanceId $balanceId): BalanceEntity;
 
     public function sum(PlaceElementId $placeElementId): int;
 }

@@ -9,7 +9,7 @@ interface FixedBalanceRepositoryInterface
 {
     public function getFixedBalances(?FixedBalanceId $fixedBalanceId): array;
     public function selectFixedBalance(FixedBalanceId $fixedBalanceId): ?FixedBalanceEntity;
-    public function insertFixedBalance(FixedBalanceEntity $fixedBalance): int;
-    public function updateFixedBalance(FixedBalanceEntity $fixedBalance): void;
-    public function deleteFixedBalance(FixedBalanceId $fixedBalanceId): void;
+    public function insertFixedBalance(FixedBalanceEntity $fixedBalance): FixedBalanceEntity;
+    public function updateFixedBalance(FixedBalanceEntity $fixedBalance): FixedBalanceEntity;
+    public function deleteFixedBalance(FixedBalanceId $fixedBalanceId): FixedBalanceEntity;
 }

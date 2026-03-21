@@ -24,7 +24,7 @@ class CheckPlaceSumUsecase
         $this->checkPlaceSumRepository = $checkPlaceSumRepository ?: new CheckPlaceSumRepositoryImpl();
     }
 
-    public function execute(PlaceElementId $placeElementId, Date $date): void
+    public function execute(PlaceElementId $placeElementId, Date $date): array
     {
         DB::beginTransaction();
         try {
@@ -40,5 +40,11 @@ class CheckPlaceSumUsecase
             DB::rollBack();
             throw $e;
         }
+
+        return [
+            'sum' => $sum,
+            'placeElementId' => $placeElementId->value(),
+            'date' => $date->value(),
+        ];
     }
 }

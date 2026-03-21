@@ -152,7 +152,16 @@ class MoveController extends Controller
         );
 
         $insertMoveUsecase = new InsertMoveUsecase();
-        return $insertMoveUsecase->execute($attribute, $move);
+        $result = $insertMoveUsecase->execute($attribute, $move);
+
+        return [
+            "id" => $result->moveId()->value(),
+            "amount" => $result->amount()->value(),
+            "item" => $result->item()->value(),
+            "before_id" => $result->beforeId()->value(),
+            "after_id" => $result->afterId()->value(),
+            "date" => $result->date()->value(),
+        ];
     }
 
     public function update(Request $request, string $attributeName, int $id)
@@ -220,7 +229,16 @@ class MoveController extends Controller
         );
 
         $updateMoveUsecase = new UpdateMoveUsecase();
-        return $updateMoveUsecase->execute($attribute, $move);
+        $result = $updateMoveUsecase->execute($attribute, $move);
+
+        return [
+            "id" => $result->moveId()->value(),
+            "amount" => $result->amount()->value(),
+            "item" => $result->item()->value(),
+            "before_id" => $result->beforeId()->value(),
+            "after_id" => $result->afterId()->value(),
+            "date" => $result->date()->value(),
+        ];
     }
 
     public function destroy(string $attributeName, int $id)
@@ -233,6 +251,15 @@ class MoveController extends Controller
         };
 
         $deleteMoveUsecase = new DeleteMoveUsecase();
-        return $deleteMoveUsecase->execute($attribute, MoveId::filledId($id));
+        $result = $deleteMoveUsecase->execute($attribute, MoveId::filledId($id));
+
+        return [
+            "id" => $result->moveId()->value(),
+            "amount" => $result->amount()->value(),
+            "item" => $result->item()->value(),
+            "before_id" => $result->beforeId()->value(),
+            "after_id" => $result->afterId()->value(),
+            "date" => $result->date()->value(),
+        ];
     }
 }

@@ -20,7 +20,7 @@ class UpdateMoveUsecase
         $this->moveRepository = $moveRepository ?: new MoveRepositoryImpl();
     }
 
-    public function execute(Attribute $attribute, MoveEntity $move): void
+    public function execute(Attribute $attribute, MoveEntity $move): MoveEntity
     {
         DB::beginTransaction();
         try {
@@ -32,11 +32,13 @@ class UpdateMoveUsecase
             }
 
             // 更新
-            $this->moveRepository->updateMove($attribute, $move);
+            $result = $this->moveRepository->updateMove($attribute, $move);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
+
+        return $result;
     }
 }

@@ -82,7 +82,12 @@ class AttributeCategoryController extends Controller
         );
 
         $insertAttributeCategoryUsecase = new InsertAttributeCategoryUsecase();
-        return $insertAttributeCategoryUsecase->execute($attributeCategory);
+        $result = $insertAttributeCategoryUsecase->execute($attributeCategory);
+        return [
+            "id" => $result->attributeCategoryId()->value(),
+            "name" => $result->attributeCategoryName()->value(),
+            "description" => $result->description()->value(),
+        ];
     }
 
     public function update(Request $request, string $attributeName, int $categoryId)
@@ -91,7 +96,7 @@ class AttributeCategoryController extends Controller
         $attribute = match ($attributeName) {
             'kind_category' => Attribute::kind(),
             'purpose_category' => Attribute::purpose(),
-            'place_category' => Attribute::place(),
+            'place_element' => Attribute::place(),
             default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
@@ -107,6 +112,11 @@ class AttributeCategoryController extends Controller
         );
 
         $updateAttributeCategoryUsecase = new UpdateAttributeCategoryUsecase();
-        return $updateAttributeCategoryUsecase->execute($attributeCategory);
+        $result = $updateAttributeCategoryUsecase->execute($attributeCategory);
+        return [
+            "id" => $result->attributeCategoryId()->value(),
+            "name" => $result->attributeCategoryName()->value(),
+            "description" => $result->description()->value(),
+        ];
     }
 }

@@ -19,7 +19,7 @@ class UpdateAttributeElementUsecase
         $this->attributeElementRepositoryImpl = $attributeElemntRepository ?: new AttributeElementRepositoryImpl();
     }
 
-    public function execute(AttributeElementEntity $attributeElement): void
+    public function execute(AttributeElementEntity $attributeElement): AttributeElementEntity
     {
         DB::beginTransaction();
         try {
@@ -31,11 +31,13 @@ class UpdateAttributeElementUsecase
             }
 
             // 更新
-            $this->attributeElementRepositoryImpl->updateAttributeElement($attributeElement);
+            $result = $this->attributeElementRepositoryImpl->updateAttributeElement($attributeElement);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
+
+        return $result;
     }
 }

@@ -19,7 +19,7 @@ class UpdateFixedBalanceUsecase
         $this->fixedBalanceRepository = $fixedBalanceRepository ?: new FixedBalanceRepositoryImpl();
     }
 
-    public function execute(FixedBalanceEntity $fixedBalance): void
+    public function execute(FixedBalanceEntity $fixedBalance): FixedBalanceEntity
     {
         DB::beginTransaction();
         try {
@@ -31,11 +31,13 @@ class UpdateFixedBalanceUsecase
             }
 
             // 更新
-            $this->fixedBalanceRepository->updateFixedBalance($fixedBalance);
+            $result = $this->fixedBalanceRepository->updateFixedBalance($fixedBalance);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
+
+        return $result;
     }
 }

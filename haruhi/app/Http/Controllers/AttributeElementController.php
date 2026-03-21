@@ -103,7 +103,14 @@ class AttributeElementController extends Controller
         );
 
         $insertAttributeElementUsecase = new InsertAttributeElementUsecase();
-        return $insertAttributeElementUsecase->execute($attributeElement);
+        $result = $insertAttributeElementUsecase->execute($attributeElement);
+        return [
+            "id" => $result->attributeElementId()->value(),
+            "name" => $result->attributeElementName()->value(),
+            "description" => $result->description()->value(),
+            "priority" => $result->priority()->value(),
+            "category_id" => $result->attributeCategoryId()->value(),
+        ];
     }
 
     public function update(Request $request, string $attributeName, int $elementId)
@@ -141,6 +148,13 @@ class AttributeElementController extends Controller
         );
 
         $updateAttributeElementUsecase = new UpdateAttributeElementUsecase();
-        return $updateAttributeElementUsecase->execute($attributeElement);
+        $result = $updateAttributeElementUsecase->execute($attributeElement);
+        return [
+            "id" => $result->attributeElementId()->value(),
+            "name" => $result->attributeElementName()->value(),
+            "description" => $result->description()->value(),
+            "priority" => $result->priority()->value(),
+            "category_id" => $result->attributeCategoryId()->value(),
+        ];
     }
 }

@@ -17,18 +17,18 @@ class InsertAttributeElementUsecase
         $this->attributeElementRepositoryImpl = $attributeElemntRepository ?: new AttributeElementRepositoryImpl();
     }
 
-    public function execute(AttributeElementEntity $attributeElement): int
+    public function execute(AttributeElementEntity $attributeElement): AttributeElementEntity
     {
         DB::beginTransaction();
         try {
             // 挿入
-            $insertId = $this->attributeElementRepositoryImpl->insertAttributeElement($attributeElement);
+            $result = $this->attributeElementRepositoryImpl->insertAttributeElement($attributeElement);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
 
-        return $insertId;
+        return $result;
     }
 }
