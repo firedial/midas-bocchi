@@ -25,6 +25,7 @@ class LoginTest extends TestCase
         ]);
 
         Assert::assertStatusCode401($response->statusCode());
+        Assert::assertSame('E201', $response->jsonBody()['code'], 'パスワード相違');
     }
 
     public function testLoginInvalidParam(): void
@@ -35,6 +36,7 @@ class LoginTest extends TestCase
             'email' => 'midas_application@example.com',
         ]);
         Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E109', $response->jsonBody()['code'], 'パスワードなし');
 
         // Eメールがない
         $noSessionRequest = new Request();
@@ -42,6 +44,7 @@ class LoginTest extends TestCase
             'password' => 'pass',
         ]);
         Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E109', $response->jsonBody()['code'], 'Eメールなし');
 
         // Eメールの形式ではない
         $noSessionRequest = new Request();
@@ -50,6 +53,7 @@ class LoginTest extends TestCase
             'password' => 'pass',
         ]);
         Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E103', $response->jsonBody()['code'], 'Eメール形式異常');
     }
 
     public function testLogoutOk(): void
@@ -66,6 +70,7 @@ class LoginTest extends TestCase
         // 認証通らないことの確認
         $response = $request->get('/balances');
         Assert::assertStatusCode401($response->statusCode());
+        Assert::assertSame('E201', $response->jsonBody()['code'], '認証情報なし');
 
         // ログアウト状態でのログアウト処理
         $response = $request->post('/logout');
