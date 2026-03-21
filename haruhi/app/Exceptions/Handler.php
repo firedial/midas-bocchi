@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Throwable;
 
@@ -14,12 +13,7 @@ class Handler extends ExceptionHandler
      *
      * @var array
      */
-    protected $dontReport = [
-        InvalidParameterException::class,
-        NotFoundException::class,
-        ValueObjectException::class,
-        \Illuminate\Validation\ValidationException::class,
-    ];
+    protected $dontReport = [];
 
     /**
      * A list of the inputs that are never flashed for validation exceptions.

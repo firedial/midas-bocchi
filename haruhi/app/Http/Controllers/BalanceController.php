@@ -6,7 +6,6 @@ use Exception;
 use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\BalanceId;
-use App\Rules\StrictInteger;
 use Illuminate\Http\Request;
 use App\Domain\ValueObjects\Date;
 use App\Domain\ValueObjects\Item;
