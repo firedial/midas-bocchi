@@ -8,7 +8,8 @@ use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\Date;
 use App\Domain\ValueObjects\Description;
 use App\Domain\ValueObjects\MoveId;
-use App\Exceptions\ValueObjectException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class MoveEntity
 {
@@ -56,7 +57,7 @@ class MoveEntity
     public function beforeDescription(): Description
     {
         if (is_null($this->beforeDescription)) {
-            throw new ValueObjectException("Before description is null.");
+            throw new AppException(ErrorCode::INVALID_EMPTY, "Before description is null.");
         }
         return $this->beforeDescription;
     }
@@ -64,7 +65,7 @@ class MoveEntity
     public function afterDescription(): Description
     {
         if (is_null($this->afterDescription)) {
-            throw new ValueObjectException("After description is null.");
+            throw new AppException(ErrorCode::INVALID_EMPTY, "After description is null.");
         }
         return $this->afterDescription;
     }

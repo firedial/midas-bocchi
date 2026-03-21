@@ -6,7 +6,6 @@ use App\Domain\Entities\FixedBalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\FixedBalanceId;
 use Illuminate\Http\Request;
-use App\Exceptions\InvalidParameterException;
 use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\KindElementId;
 use App\Domain\ValueObjects\PlaceElementId;
@@ -16,6 +15,8 @@ use App\Usecases\FixedBalance\GetFixedBalancesUsecase;
 use App\Usecases\FixedBalance\InsertFixedBalanceUsecase;
 use App\Usecases\FixedBalance\SelectFixedBalanceUsecase;
 use App\Usecases\FixedBalance\UpdateFixedBalanceUsecase;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class FixedBalanceController extends Controller
 {
@@ -72,15 +73,15 @@ class FixedBalanceController extends Controller
         );
 
         if ($fixedBalance->kindElementId()->isMoveId()) {
-            throw new InvalidParameterException('Kind element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Kind element id is move id.');
         }
 
         if ($fixedBalance->purposeElementId()->isMoveId()) {
-            throw new InvalidParameterException('Purpose element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Purpose element id is move id.');
         }
 
         if ($fixedBalance->placeElementId()->isMoveId()) {
-            throw new InvalidParameterException('Place element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Place element id is move id.');
         }
 
         $insertFixedBalanceUsecase = new InsertFixedBalanceUsecase();
@@ -99,15 +100,15 @@ class FixedBalanceController extends Controller
         );
 
         if ($fixedBalance->kindElementId()->isMoveId()) {
-            throw new InvalidParameterException('Kind element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Kind element id is move id.');
         }
 
         if ($fixedBalance->purposeElementId()->isMoveId()) {
-            throw new InvalidParameterException('Purpose element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Purpose element id is move id.');
         }
 
         if ($fixedBalance->placeElementId()->isMoveId()) {
-            throw new InvalidParameterException('Place element id is move id.');
+            throw new AppException(ErrorCode::USING_MOVE_ID, 'Place element id is move id.');
         }
 
         $updateFixedBalanceUsecase = new UpdateFixedBalanceUsecase();

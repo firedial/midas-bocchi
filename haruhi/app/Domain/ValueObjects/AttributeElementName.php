@@ -2,7 +2,8 @@
 
 namespace App\Domain\ValueObjects;
 
-use App\Exceptions\ValueObjectException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class AttributeElementName
 {
@@ -10,11 +11,14 @@ class AttributeElementName
 
     public function __construct(private readonly string $name)
     {
-        if (mb_strlen($name) === 0 || mb_strlen($name) > self::MAX_LENGTH) {
-            throw new ValueObjectException("Name length is over.");
+        if (mb_strlen($name) === 0) {
+            throw new AppException(ErrorCode::INVALID_EMPTY, "Name length is empty.");
+        }
+        if (mb_strlen($name) > self::MAX_LENGTH) {
+            throw new AppException(ErrorCode::INVALID_LENGTH, "Name length is over.");
         }
         if (!preg_match('/^[a-z]\w*$/', $name)) {
-            throw new ValueObjectException("Name contains invalid characters.");
+            throw new AppException(ErrorCode::INVALID_FORMAT, "Name contains invalid characters.");
         }
     }
 

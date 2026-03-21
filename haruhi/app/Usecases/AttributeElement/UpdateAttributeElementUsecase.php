@@ -3,7 +3,8 @@
 namespace App\Usecases\AttributeElement;
 
 use App\Domain\Entities\AttributeElementEntity;
-use App\Exceptions\NotFoundException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 use App\Infrastructure\Repository\AttributeElementRepositoryInterface;
 use App\Infrastructure\Repository\Impl\AttributeElementRepositoryImpl;
 use Exception;
@@ -26,7 +27,7 @@ class UpdateAttributeElementUsecase
 
             // 存在しないとき
             if (is_null($beforeAttributeElement)) {
-                throw new NotFoundException("Not found attribute element.");
+                throw new AppException(ErrorCode::RECORD_NOT_FOUND, "Not found attribute element.");
             }
 
             // 更新

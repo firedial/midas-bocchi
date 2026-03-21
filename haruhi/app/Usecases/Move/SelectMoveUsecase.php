@@ -5,7 +5,8 @@ namespace App\Usecases\Move;
 use App\Domain\Entities\MoveEntity;
 use App\Domain\ValueObjects\Attribute;
 use App\Domain\ValueObjects\MoveId;
-use App\Exceptions\NotFoundException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 use App\Infrastructure\Repository\Impl\MoveRepositoryImpl;
 use App\Infrastructure\Repository\MoveRepositoryInterface;
 use Exception;
@@ -29,7 +30,7 @@ class SelectMoveUsecase
 
             // 存在しないとき
             if (is_null($move)) {
-                throw new NotFoundException("Not found move.");
+                throw new AppException(ErrorCode::RECORD_NOT_FOUND, "Not found move.");
             }
             DB::commit();
         } catch (Exception $e) {

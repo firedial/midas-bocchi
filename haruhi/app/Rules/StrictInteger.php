@@ -1,6 +1,5 @@
 <?php
 
-// app/Rules/StrictInteger.php
 namespace App\Rules;
 
 use Closure;

@@ -6,8 +6,9 @@ use App\Domain\Entities\BonusEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\Date;
 use Illuminate\Http\Request;
-use App\Exceptions\InvalidParameterException;
 use App\Usecases\BonusUsecase;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class BonusController extends Controller
 {
@@ -23,19 +24,19 @@ class BonusController extends Controller
         );
 
         if ($bonus->bonus()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($bonus->healthInsurance()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($bonus->welfarePension()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($bonus->employmentInsurance()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
         if ($bonus->incomeTax()->value() < 0) {
-            throw new InvalidParameterException('Parameter has null or minus.');
+            throw new AppException(ErrorCode::INVALID_VALUE, 'Parameter has null or minus.');
         }
 
         $bonusUsecase = new BonusUsecase();

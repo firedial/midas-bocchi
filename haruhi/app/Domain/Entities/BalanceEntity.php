@@ -10,7 +10,8 @@ use App\Domain\ValueObjects\PurposeElementId;
 use App\Domain\ValueObjects\PlaceElementId;
 use App\Domain\ValueObjects\Date;
 use App\Domain\ValueObjects\Description;
-use App\Exceptions\ValueObjectException;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 
 class BalanceEntity
 {
@@ -65,7 +66,7 @@ class BalanceEntity
     public function kindElementDescription(): Description
     {
         if (is_null($this->kindElementDescription)) {
-            throw new ValueObjectException("Kind element description is null.");
+            throw new AppException(ErrorCode::INVALID_EMPTY, "Kind element description is null.");
         }
         return $this->kindElementDescription;
     }
@@ -73,7 +74,7 @@ class BalanceEntity
     public function purposeElementDescription(): Description
     {
         if (is_null($this->purposeElementDescription)) {
-            throw new ValueObjectException("Purpose element description is null.");
+            throw new AppException(ErrorCode::INVALID_EMPTY, "Purpose element description is null.");
         }
         return $this->purposeElementDescription;
     }
@@ -81,7 +82,7 @@ class BalanceEntity
     public function placeElementDescription(): Description
     {
         if (is_null($this->placeElementDescription)) {
-            throw new ValueObjectException("Place element description is null.");
+            throw new AppException(ErrorCode::INVALID_EMPTY, "Place element description is null.");
         }
         return $this->placeElementDescription;
     }
