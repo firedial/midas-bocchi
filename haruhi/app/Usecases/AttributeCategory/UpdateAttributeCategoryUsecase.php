@@ -19,7 +19,7 @@ class UpdateAttributeCategoryUsecase
         $this->attributeCategoryRepositoryImpl = $attributeCategoryRepository ?: new AttributeCategoryRepositoryImpl();
     }
 
-    public function execute(AttributeCategoryEntity $attributeCategory): void
+    public function execute(AttributeCategoryEntity $attributeCategory): AttributeCategoryEntity
     {
         DB::beginTransaction();
         try {
@@ -31,11 +31,13 @@ class UpdateAttributeCategoryUsecase
             }
 
             // 更新
-            $this->attributeCategoryRepositoryImpl->updateAttributeCategory($attributeCategory);
+            $result = $this->attributeCategoryRepositoryImpl->updateAttributeCategory($attributeCategory);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
+
+        return $result;
     }
 }

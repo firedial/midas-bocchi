@@ -17,18 +17,18 @@ class InsertAttributeCategoryUsecase
         $this->attributeCategoryRepositoryImpl = $attributeCategoryRepository ?: new AttributeCategoryRepositoryImpl();
     }
 
-    public function execute(AttributeCategoryEntity $attributeCategory): int
+    public function execute(AttributeCategoryEntity $attributeCategory): AttributeCategoryEntity
     {
         DB::beginTransaction();
         try {
             // 挿入
-            $insertId = $this->attributeCategoryRepositoryImpl->insertAttributeCategory($attributeCategory);
+            $result = $this->attributeCategoryRepositoryImpl->insertAttributeCategory($attributeCategory);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
 
-        return $insertId;
+        return $result;
     }
 }
