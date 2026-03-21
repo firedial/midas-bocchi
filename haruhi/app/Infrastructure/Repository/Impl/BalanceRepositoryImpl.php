@@ -15,6 +15,7 @@ use App\Domain\ValueObjects\PlaceElementId;
 use App\Domain\ValueObjects\PurposeElementId;
 use App\Infrastructure\Repository\BalanceRepositoryInterface;
 use App\Models\DataModels\BalanceDataModel;
+use stdClass;
 
 class BalanceRepositoryImpl implements BalanceRepositoryInterface
 {
@@ -54,10 +55,10 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
         return $balances[0];
     }
 
-    public function insertBalance(BalanceEntity $balance): int
+    public function insertBalance(BalanceEntity $balance): BalanceEntity
     {
         try {
-            return BalanceDataModel::insertBalance(
+            $result = BalanceDataModel::insertBalance(
                 $balance->amount()->value(),
                 $balance->item()->value(),
                 $balance->kindElementId()->value(),
@@ -68,12 +69,22 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Insert balance error.');
         }
+
+        return new BalanceEntity(
+            BalanceId::filledId($result->id),
+            new Amount($result->amount),
+            new Item($result->item),
+            KindElementId::filledId($result->kind_element_id),
+            PurposeElementId::filledId($result->purpose_element_id),
+            PlaceElementId::filledId($result->place_element_id),
+            new Date($result->date),
+        );
     }
 
-    public function updateBalance(BalanceEntity $balance): void
+    public function updateBalance(BalanceEntity $balance): BalanceEntity
     {
         try {
-            BalanceDataModel::updateBalance(
+            $result = BalanceDataModel::updateBalance(
                 $balance->balanceId()->value(),
                 $balance->amount()->value(),
                 $balance->item()->value(),
@@ -85,15 +96,35 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Update balance error.');
         }
+
+        return new BalanceEntity(
+            BalanceId::filledId($result->id),
+            new Amount($result->amount),
+            new Item($result->item),
+            KindElementId::filledId($result->kind_element_id),
+            PurposeElementId::filledId($result->purpose_element_id),
+            PlaceElementId::filledId($result->place_element_id),
+            new Date($result->date),
+        );
     }
 
-    public function deleteBalance(BalanceId $balanceId): void
+    public function deleteBalance(BalanceId $balanceId): BalanceEntity
     {
         try {
-            BalanceDataModel::deleteBalance($balanceId->value());
+            $result = BalanceDataModel::deleteBalance($balanceId->value());
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Delete balance error.');
         }
+
+        return new BalanceEntity(
+            BalanceId::filledId($result->id),
+            new Amount($result->amount),
+            new Item($result->item),
+            KindElementId::filledId($result->kind_element_id),
+            PurposeElementId::filledId($result->purpose_element_id),
+            PlaceElementId::filledId($result->place_element_id),
+            new Date($result->date),
+        );
     }
 
     public function sum(PlaceElementId $placeElementId): int

@@ -2,6 +2,7 @@
 
 namespace App\Usecases\Balance;
 
+use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\BalanceId;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
@@ -19,7 +20,7 @@ class DeleteBalanceUsecase
         $this->balanceRepository = $balanceRepository ?: new BalanceRepositoryImpl();
     }
 
-    public function execute(BalanceId $balanceId): void
+    public function execute(BalanceId $balanceId): BalanceEntity
     {
         DB::beginTransaction();
         try {
@@ -31,11 +32,13 @@ class DeleteBalanceUsecase
             }
 
             // 削除
-            $this->balanceRepository->deleteBalance($balanceId);
+            $result = $this->balanceRepository->deleteBalance($balanceId);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
+
+        return $result;
     }
 }
