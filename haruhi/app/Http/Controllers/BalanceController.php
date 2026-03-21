@@ -44,6 +44,9 @@ class BalanceController extends Controller
                 if (isset($rules['String'])) {
                     throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
                 }
+                if (isset($rules['Integer'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a int type");
+                }
                 if (isset($rules['In'])) {
                     throw new AppException(ErrorCode::INVALID_VALUE, "{$field} is not a valid value");
                 }

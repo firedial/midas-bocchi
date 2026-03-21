@@ -104,7 +104,7 @@ class BalanceTest extends TestCase
             'place_element_id' => 4,
         ]);
         Assert::assertStatusCode200($response->statusCode());
-        $id = $response->jsonBody();
+        $id = $response->jsonBody()['id'];
 
         // 個別取得
         $response = $this->request->get('/balances/' . $id);
@@ -167,7 +167,7 @@ class BalanceTest extends TestCase
             'place_element_id' => 4,
         ]);
         Assert::assertStatusCode200($response->statusCode());
-        $id = $response->jsonBody();
+        $id = $response->jsonBody()['id'];
 
         // 個別取得
         $response = $this->request->get('/balances/' . $id);
@@ -758,7 +758,7 @@ class BalanceTest extends TestCase
         // 登録
         $response = $this->request->post('/balances', $this->validBalance());
         Assert::assertStatusCode200($response->statusCode());
-        $id = $response->jsonBody();
+        $id = $response->jsonBody()['id'];
 
         // 削除
         $response = $this->request->delete('/balances/' . $id);
