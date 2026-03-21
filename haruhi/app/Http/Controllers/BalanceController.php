@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
 use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\BalanceId;
