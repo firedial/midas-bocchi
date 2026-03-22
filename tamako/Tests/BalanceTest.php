@@ -756,6 +756,92 @@ class BalanceTest extends TestCase
         Assert::assertSame('E201', $response->jsonBody()['code'], '認証無し削除');
     }
 
+    /**
+     * 移動レコードの操作
+     */
+    public function testBalanceMove(): void
+    {
+        // purpose
+        // 移動レコード登録
+        $response = $this->request->post('/moves/purposes', [
+            'amount' => 500,
+            'item' => 'テスト',
+            'before_id' => 2,
+            'after_id' => 5,
+            'date' => '2025-03-06',
+        ]);
+        $move = $response->jsonBody();
+        Assert::assertStatusCode200($response->statusCode());
+
+        $beforeRecordId = $move['id'];
+        $afterRecordId = $beforeRecordId + 1;
+
+        // 取得
+        $response = $this->request->get('/balances/' . $beforeRecordId);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+        $response = $this->request->get('/balances/' . $afterRecordId);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+
+        // 更新
+        $balance = $this->validBalance();
+        $response = $this->request->put('/balances/' . $beforeRecordId, $balance);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+        $response = $this->request->put('/balances/' . $afterRecordId, $balance);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+
+        // 削除
+        $response = $this->request->delete('/balances/' . $beforeRecordId, $balance);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+        $response = $this->request->delete('/balances/' . $afterRecordId, $balance);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+
+        // place
+        // 移動レコード登録
+        $response = $this->request->post('/moves/places', [
+            'amount' => 500,
+            'item' => 'テスト',
+            'before_id' => 2,
+            'after_id' => 5,
+            'date' => '2025-03-06',
+        ]);
+        $move = $response->jsonBody();
+        Assert::assertStatusCode200($response->statusCode());
+
+        $beforeRecordId = $move['id'];
+        $afterRecordId = $beforeRecordId + 1;
+
+        // 取得
+        $response = $this->request->get('/balances/' . $beforeRecordId);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+        $response = $this->request->get('/balances/' . $afterRecordId);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+
+        // 更新
+        $balance = $this->validBalance();
+        $response = $this->request->put('/balances/' . $beforeRecordId, $balance);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+        $response = $this->request->put('/balances/' . $afterRecordId, $balance);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+
+        // 削除
+        $response = $this->request->delete('/balances/' . $beforeRecordId, $balance);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+        $response = $this->request->delete('/balances/' . $afterRecordId, $balance);
+        Assert::assertStatusCode404($response->statusCode());
+        Assert::assertSame('E301', $response->jsonBody()['code'], '移動レコードは存在しない扱い');
+    }
+
     private function validBalance(): array
     {
         return [
