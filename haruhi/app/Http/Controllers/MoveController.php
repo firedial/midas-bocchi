@@ -27,9 +27,23 @@ class MoveController extends Controller
 
     public function index(Request $request, string $attributeName)
     {
-        $limit = $request->input('limit');
-        if (!is_null($limit) && !is_numeric($limit)) {
-            throw new AppException(ErrorCode::INVALID_TYPE, 'limit is wrong');
+        try {
+            $validated = $request->validate([
+                'limit' => ['int', 'min:1'],
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            foreach ($failed as $field => $rules) {
+                if (isset($rules['Min'])) {
+                    throw new AppException(ErrorCode::INVALID_RANGE, "{$field} must be at least 1");
+                }
+                if (isset($rules['Integer'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a int type");
+                }
+            }
+
+            throw $e;
         }
 
         // 属性名
@@ -40,7 +54,7 @@ class MoveController extends Controller
         };
 
         $getMovesUsecase = new GetMovesUsecase();
-        $moves = $getMovesUsecase->execute($attribute, $limit);
+        $moves = $getMovesUsecase->execute($attribute, $validated['limit'] ?? null);
 
         return array_map(
             function (MoveEntity $move) {
@@ -91,7 +105,7 @@ class MoveController extends Controller
     {
         try {
             $validated = $request->validate([
-                'amount' => ['required', new StrictInteger, 'min:1'],
+                'amount' => ['required', new StrictInteger, 'integer', 'min:1'],
                 'item' => 'required|string',
                 'before_id' => ['required', new StrictInteger],
                 'after_id' => ['required', new StrictInteger],
@@ -168,7 +182,7 @@ class MoveController extends Controller
     {
         try {
             $validated = $request->validate([
-                'amount' => ['required', new StrictInteger, 'min:1'],
+                'amount' => ['required', new StrictInteger, 'integer', 'min:1'],
                 'item' => 'required|string',
                 'before_id' => ['required', new StrictInteger],
                 'after_id' => ['required', new StrictInteger],
