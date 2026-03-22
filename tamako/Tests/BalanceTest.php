@@ -339,6 +339,25 @@ class BalanceTest extends TestCase
     }
 
     /**
+     * 収支登録バリデーションエラーテスト（item の長さ）
+     */
+    public function testBalancePostItemLength(): void
+    {
+        // 50文字
+        $balance = $this->validBalance();
+        $balance['item'] = 'あいうえおかきくけこさしすせそたちつてとなにぬねのあいうえおかきくけこさしすせそたちつてとなにぬねの';
+        $response = $this->request->post('/balances', $balance);
+        Assert::assertStatusCode200($response->statusCode());
+
+        // 51文字
+        $balance = $this->validBalance();
+        $balance['item'] = 'あいうえおかきくけこさしすせそたちつてとなにぬねのあいうえおかきくけこさしすせそたちつてとなにぬねのあ';
+        $response = $this->request->post('/balances', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E105', $response->jsonBody()['code'], 'item長い');
+    }
+
+    /**
      * 収支登録バリデーションエラーテスト（date が不正）
      */
     public function testBalancePostDateInvalid(): void
