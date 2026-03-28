@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeElementTest extends TestCase
 {
-    private int $nameCounter = 600;
+    private int $nameCounter = 800;
 
     /**
      * 属性要素一覧取得テスト
@@ -62,18 +62,42 @@ class AttributeElementTest extends TestCase
     }
 
     /**
-     * 属性要素登録テスト（優先度が0）
+     * 属性要素登録テスト（優先度）
      */
-    public function testAttributeElementPostPriorityZero(): void
+    public function testAttributeElementPostPriority(): void
     {
         $attributes = ['kind_element', 'purpose_element', 'place_element'];
 
         foreach ($attributes as $attribute) {
+            // 0
             $element = $this->uniqueValidAttributeElement();
             $element['priority'] = 0;
 
             $response = $this->request->post('/attribute_elements/' . $attribute, $element);
             Assert::assertStatusCode200($response->statusCode());
+
+            // 100
+            $element = $this->uniqueValidAttributeElement();
+            $element['priority'] = 100;
+
+            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // -1 は登録できない
+            $element = $this->uniqueValidAttributeElement();
+            $element['priority'] = -1;
+
+            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E102', $response->jsonBody()['code'], $attribute . ' priorityが-1');
+
+            // 101 は登録できない
+            $element = $this->uniqueValidAttributeElement();
+            $element['priority'] = 101;
+
+            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E102', $response->jsonBody()['code'], $attribute . ' priorityが101');
         }
     }
 
@@ -176,40 +200,6 @@ class AttributeElementTest extends TestCase
             $response = $this->request->post('/attribute_elements/' . $attribute, $element);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' descriptionがない');
-        }
-    }
-
-    /**
-     * 属性要素登録バリデーションエラーテスト（優先度が負）
-     */
-    public function testAttributeElementPostPriorityNegative(): void
-    {
-        $attributes = ['kind_element', 'purpose_element', 'place_element'];
-
-        foreach ($attributes as $attribute) {
-            $element = $this->validAttributeElement();
-            $element['priority'] = -1;
-
-            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E102', $response->jsonBody()['code'], $attribute . ' priorityが負');
-        }
-    }
-
-    /**
-     * 属性要素登録バリデーションエラーテスト（優先度が101以上）
-     */
-    public function testAttributeElementPostPriorityOver100(): void
-    {
-        $attributes = ['kind_element', 'purpose_element', 'place_element'];
-
-        foreach ($attributes as $attribute) {
-            $element = $this->validAttributeElement();
-            $element['priority'] = 101;
-
-            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E102', $response->jsonBody()['code'], $attribute . ' priorityが101以上');
         }
     }
 
@@ -357,7 +347,7 @@ class AttributeElementTest extends TestCase
     }
 
     /**
-     * 属性要素更新バリデーションエラーテスト（優先度が負）
+     * 属性要素更新バリデーションエラーテスト（優先度）
      */
     public function testAttributeElementPutPriorityNegative(): void
     {
@@ -368,28 +358,30 @@ class AttributeElementTest extends TestCase
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
 
-            $element = $this->validAttributeElement();
+            // 0
+            $element = $this->uniqueValidAttributeElement();
+            $element['priority'] = 0;
+
+            $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 100
+            $element = $this->uniqueValidAttributeElement();
+            $element['priority'] = 100;
+
+            $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // -1
+            $element = $this->uniqueValidAttributeElement();
             $element['priority'] = -1;
 
             $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E102', $response->jsonBody()['code'], $attribute . ' priorityが負');
-        }
-    }
 
-    /**
-     * 属性要素更新バリデーションエラーテスト（優先度が101以上）
-     */
-    public function testAttributeElementPutPriorityOver100(): void
-    {
-        $attributes = ['kind_element', 'purpose_element', 'place_element'];
-
-        foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_elements/' . $attribute, $this->uniqueValidAttributeElement());
-            Assert::assertStatusCode200($response->statusCode());
-            $id = $response->jsonBody()['id'];
-
-            $element = $this->validAttributeElement();
+            // 101
+            $element = $this->uniqueValidAttributeElement();
             $element['priority'] = 101;
 
             $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
