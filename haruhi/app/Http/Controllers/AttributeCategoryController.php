@@ -14,6 +14,7 @@ use App\Usecases\AttributeCategory\SelectAttributeCategoryUsecase;
 use App\Usecases\AttributeCategory\UpdateAttributeCategoryUsecase;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
+use Illuminate\Validation\ValidationException;
 
 class AttributeCategoryController extends Controller
 {
@@ -66,6 +67,26 @@ class AttributeCategoryController extends Controller
 
     public function store(Request $request, string $attributeName)
     {
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string',
+                'description' => 'required|string',
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            foreach ($failed as $field => $rules) {
+                if (isset($rules['Required'])) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
+                }
+                if (isset($rules['String'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
+                }
+            }
+
+            throw $e;
+        }
+
         // 属性名
         $attribute = match ($attributeName) {
             'kind_category' => Attribute::kind(),
@@ -77,8 +98,8 @@ class AttributeCategoryController extends Controller
         $attributeCategory = new AttributeCategoryEntity(
             $attribute,
             AttributeCategoryId::emptyId(),
-            new AttributeCategoryName($request->input('name')),
-            new Description($request->input('description')),
+            new AttributeCategoryName($validated['name']),
+            new Description($validated['description']),
         );
 
         $insertAttributeCategoryUsecase = new InsertAttributeCategoryUsecase();
@@ -92,11 +113,31 @@ class AttributeCategoryController extends Controller
 
     public function update(Request $request, string $attributeName, int $categoryId)
     {
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string',
+                'description' => 'required|string',
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            foreach ($failed as $field => $rules) {
+                if (isset($rules['Required'])) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
+                }
+                if (isset($rules['String'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
+                }
+            }
+
+            throw $e;
+        }
+
         // 属性名
         $attribute = match ($attributeName) {
             'kind_category' => Attribute::kind(),
             'purpose_category' => Attribute::purpose(),
-            'place_element' => Attribute::place(),
+            'place_category' => Attribute::place(),
             default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
@@ -107,8 +148,8 @@ class AttributeCategoryController extends Controller
         $attributeCategory = new AttributeCategoryEntity(
             $attribute,
             AttributeCategoryId::filledId($categoryId),
-            new AttributeCategoryName($request->input('name')),
-            new Description($request->input('description')),
+            new AttributeCategoryName($validated['name']),
+            new Description($validated['description']),
         );
 
         $updateAttributeCategoryUsecase = new UpdateAttributeCategoryUsecase();

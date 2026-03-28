@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Response.php';
+require_once __DIR__ . '/Response.php';
 
 class Request
 {
@@ -51,7 +51,7 @@ class Request
         return new Response($header, $body);
     }
 
-    public function post(string $url, array $params): Response
+    public function post(string $url, array $params = []): Response
     {
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($this->ch, CURLOPT_URL, $this->appUrl . $url);
@@ -65,7 +65,7 @@ class Request
         return new Response($header, $body);
     }
 
-    public function put(string $url, array $params): Response
+    public function put(string $url, array $params = []): Response
     {
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, "PUT");
         curl_setopt($this->ch, CURLOPT_URL, $this->appUrl . $url);

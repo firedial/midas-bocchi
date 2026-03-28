@@ -31,8 +31,11 @@ enum ErrorCode: string
     {
         return match ($this) {
             self::UNAUTHORIZED => 401,
-            self::PAGE_NOT_FOUND => 404,
             self::RECORD_NOT_FOUND => 404,
+            self::PARENT_RECORD_NOT_FOUND => 409,
+            self::CHILD_RECORD_EXISTS => 409,
+            self::DUPLICATE_ENTRY => 409,
+            self::PAGE_NOT_FOUND => 404,
             self::UNEXPECTED_ATTRIBUTE_NAME => 500,
             self::UNEXPECTED_AMOUNT => 500,
             self::UNEXPECTED_DIFFERENCE_ID_MOVE => 500,
