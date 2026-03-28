@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeCategoryTest extends TestCase
 {
-    private int $suffix = 1100;
+    private int $suffix = 1200;
 
     /**
      * 属性カテゴリー一覧取得テスト
@@ -185,6 +185,29 @@ class AttributeCategoryTest extends TestCase
     }
 
     /**
+     * 属性カテゴリー登録バリデーションエラーテスト（説明が長い）
+     */
+    public function testAttributeCategoryPostDescriptionLength(): void
+    {
+        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+
+        foreach ($attributes as $attribute) {
+            // 20文字
+            $category = $this->validAttributeCategory();
+            $category['description'] = 'あいうえおかきくけこさしすせそたちつてと';
+            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 21文字
+            $category = $this->validAttributeCategory();
+            $category['description'] = 'あいうえおかきくけこさしすせそたちつてとな';
+            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E105', $response->jsonBody()['code'], $attribute . ' descriptionが長い');
+        }
+    }
+
+    /**
      * 属性カテゴリー更新バリデーションエラーテスト（名前が空）
      */
     public function testAttributeCategoryPutNameEmpty(): void
@@ -334,6 +357,33 @@ class AttributeCategoryTest extends TestCase
             $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' descriptionがない');
+        }
+    }
+
+    /**
+     * 属性カテゴリー更新バリデーションエラーテスト（説明が長い）
+     */
+    public function testAttributeCategoryPutDescriptionLength(): void
+    {
+        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+
+        foreach ($attributes as $attribute) {
+            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
+            Assert::assertStatusCode200($response->statusCode());
+            $id = $response->jsonBody()['id'];
+
+            // 20文字
+            $category = $this->validAttributeCategory();
+            $category['description'] = 'あいうえおかきくけこさしすせそたちつてと';
+            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 21文字
+            $category = $this->validAttributeCategory();
+            $category['description'] = 'あいうえおかきくけこさしすせそたちつてとな';
+            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E105', $response->jsonBody()['code'], $attribute . ' descriptionが長い');
         }
     }
 
