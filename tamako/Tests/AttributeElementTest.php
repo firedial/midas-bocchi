@@ -354,6 +354,31 @@ class AttributeElementTest extends TestCase
     }
 
     /**
+     * 属性要素登録バリデーションエラーテスト（名前が重複）
+     */
+    public function testAttributeElementPostNameDuplicate(): void
+    {
+        $attributes = ['kind_element', 'purpose_element', 'place_element'];
+
+        foreach ($attributes as $attribute) {
+            $name = 'dup_post' . $this->suffix;
+
+            $element = $this->validAttributeElement();
+            $element['name'] = $name;
+
+            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
+            Assert::assertStatusCode200($response->statusCode());
+
+            $element = $this->validAttributeElement();
+            $element['name'] = $name;
+
+            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
+            Assert::assertStatusCode409($response->statusCode());
+            Assert::assertSame('E304', $response->jsonBody()['code'], $attribute . ' name が重複');
+        }
+    }
+
+    /**
      * 属性要素更新バリデーションエラーテスト（優先度が空）
      */
     public function testAttributeElementPutPriorityEmpty(): void
@@ -717,6 +742,37 @@ class AttributeElementTest extends TestCase
             $response = $this->request->put('/attribute_elements/' . $attribute . '/1', $element);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E108', $response->jsonBody()['code'], $attribute . ' 移動IDの更新');
+        }
+    }
+
+    /**
+     * 属性要素更新バリデーションエラーテスト（名前が重複）
+     */
+    public function testAttributeElementPutNameDuplicate(): void
+    {
+        $attributes = ['kind_element', 'purpose_element', 'place_element'];
+
+        foreach ($attributes as $attribute) {
+            // 重複させるレコード
+            $name = 'dup_put' . $this->suffix;
+            $element = $this->validAttributeElement();
+            $element['name'] = $name;
+
+            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 更新するレコードの作成
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
+            Assert::assertStatusCode200($response->statusCode());
+            $id = $response->jsonBody()['id'];
+
+            // 更新
+            $element = $this->validAttributeElement();
+            $element['name'] = $name;
+
+            $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
+            Assert::assertStatusCode409($response->statusCode());
+            Assert::assertSame('E304', $response->jsonBody()['code'], $attribute . ' name が重複');
         }
     }
 
