@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeElementTest extends TestCase
 {
-    private int $suffix = 1000;
+    private int $suffix = 1600;
 
     /**
      * 属性要素一覧取得テスト
@@ -255,6 +255,31 @@ class AttributeElementTest extends TestCase
     }
 
     /**
+     * 属性要素登録バリデーションエラーテスト（説明長さ）
+     */
+    public function testAttributeElementPostDescriptionLength(): void
+    {
+        $attributes = ['kind_element', 'purpose_element', 'place_element'];
+
+        foreach ($attributes as $attribute) {
+            // 20文字
+            $element = $this->validAttributeElement();
+            $element['description'] = 'あいうえおかきくけこさしすせそたちつてと';
+
+            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 21文字
+            $element = $this->validAttributeElement();
+            $element['description'] = 'あいうえおかきくけこさしすせそたちつてとな';
+
+            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E105', $response->jsonBody()['code'], $attribute . ' descriptionが長い');
+        }
+    }
+
+    /**
      * 属性要素登録バリデーションエラーテスト（親カテゴリなし）
      */
     public function testAttributeElementPostCategoryIdMissing(): void
@@ -457,6 +482,35 @@ class AttributeElementTest extends TestCase
             $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' descriptionがない');
+        }
+    }
+
+    /**
+     * 属性要素更新バリデーションエラーテスト（説明長さ）
+     */
+    public function testAttributeElementPutDescriptionLength(): void
+    {
+        $attributes = ['kind_element', 'purpose_element', 'place_element'];
+
+        foreach ($attributes as $attribute) {
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
+            Assert::assertStatusCode200($response->statusCode());
+            $id = $response->jsonBody()['id'];
+
+            // 20文字
+            $element = $this->validAttributeElement();
+            $element['description'] = 'あいうえおかきくけこさしすせそたちつてと';
+
+            $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 21文字
+            $element = $this->validAttributeElement();
+            $element['description'] = 'あいうえおかきくけこさしすせそたちつてとな';
+
+            $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E105', $response->jsonBody()['code'], $attribute . ' descriptionが長い');
         }
     }
 
