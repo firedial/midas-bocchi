@@ -305,6 +305,13 @@ class BalanceTest extends TestCase
     public function testBalancePostAmountString(): void
     {
         $balance = $this->validBalance();
+        $balance['amount'] = 'aaa';
+
+        $response = $this->request->post('/balances', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'amountが文字列');
+
+        $balance = $this->validBalance();
         $balance['amount'] = '1';
 
         $response = $this->request->post('/balances', $balance);
@@ -510,6 +517,7 @@ class BalanceTest extends TestCase
             'place_element_id' => 4,
         ]);
         Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'kind idが文字列');
 
         // purpose_element_id が文字列
         $response = $this->request->post('/balances', [
@@ -521,6 +529,7 @@ class BalanceTest extends TestCase
             'place_element_id' => 4,
         ]);
         Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purpose idが文字列');
 
         // place_element_id が文字列
         $response = $this->request->post('/balances', [
@@ -532,6 +541,7 @@ class BalanceTest extends TestCase
             'place_element_id' => 'aaa',
         ]);
         Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'place idが文字列');
 
         // kind_element_id が文字列数字
         $response = $this->request->post('/balances', [
@@ -543,6 +553,7 @@ class BalanceTest extends TestCase
             'place_element_id' => 4,
         ]);
         Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'kind idが文字列数字');
 
         // purpose_element_id が文字列数字
         $response = $this->request->post('/balances', [
@@ -554,6 +565,7 @@ class BalanceTest extends TestCase
             'place_element_id' => 4,
         ]);
         Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purpose idが文字列数字');
 
         // place_element_id が文字列数字
         $response = $this->request->post('/balances', [
@@ -565,6 +577,7 @@ class BalanceTest extends TestCase
             'place_element_id' => '4',
         ]);
         Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'place idが文字列数字');
     }
 
     /**
@@ -712,6 +725,24 @@ class BalanceTest extends TestCase
 
         $balance = $this->validBalance();
         $balance['place_element_id'] = 'aaa';
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'place idが空');
+
+        $balance = $this->validBalance();
+        $balance['kind_element_id'] = '2';
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'kind idが空');
+
+        $balance = $this->validBalance();
+        $balance['purpose_element_id'] = '3';
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purpose idが空');
+
+        $balance = $this->validBalance();
+        $balance['place_element_id'] = '4';
         $response = $this->request->put('/balances/10', $balance);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E101', $response->jsonBody()['code'], 'place idが空');
