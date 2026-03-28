@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeElementTest extends TestCase
 {
-    private int $suffix = 6000;
+    private int $suffix = 8000;
 
     /**
      * 属性要素一覧取得テスト
@@ -702,6 +702,21 @@ class AttributeElementTest extends TestCase
             $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E108', $response->jsonBody()['code'], $attribute . ' category_idが移動ID');
+        }
+    }
+
+    /**
+     * 属性要素更新バリデーションエラーテスト（移動IDレコードの更新）
+     */
+    public function testAttributeElementPutMove(): void
+    {
+        $attributes = ['kind_element', 'purpose_element', 'place_element'];
+
+        foreach ($attributes as $attribute) {
+            $element = $this->validAttributeElement();
+            $response = $this->request->put('/attribute_elements/' . $attribute . '/1', $element);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E108', $response->jsonBody()['code'], $attribute . ' 移動IDの更新');
         }
     }
 
