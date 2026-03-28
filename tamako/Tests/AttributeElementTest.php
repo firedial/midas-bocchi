@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeElementTest extends TestCase
 {
-    private int $suffix = 1600;
+    private int $suffix = 4000;
 
     /**
      * 属性要素一覧取得テスト
@@ -217,6 +217,29 @@ class AttributeElementTest extends TestCase
             $response = $this->request->post('/attribute_elements/' . $attribute, $element);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E103', $response->jsonBody()['code'], $attribute . ' nameがマルチバイト');
+        }
+    }
+
+    /**
+     * 属性要素登録バリデーションエラーテスト（名前の長さ）
+     */
+    public function testAttributeElementPostNameLength(): void
+    {
+        $attributes = ['kind_element', 'purpose_element', 'place_element'];
+
+        foreach ($attributes as $attribute) {
+            // 20文字は登録できる
+            $element = $this->validAttributeElement();
+            $element['name'] = 'abcd_abAB_efgt_' . str_pad((string)$this->suffix, 5, '0', STR_PAD_LEFT);
+            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 21文字は登録できない
+            $element = $this->validAttributeElement();
+            $element['name'] = 'abcd_abAB_efgt_a' . str_pad((string)$this->suffix, 5, '0', STR_PAD_LEFT);
+            $response = $this->request->post('/attribute_elements/' . $attribute, $element);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E105', $response->jsonBody()['code'], $attribute . ' nameが長い');
         }
     }
 
@@ -440,6 +463,33 @@ class AttributeElementTest extends TestCase
             $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E103', $response->jsonBody()['code'], $attribute . ' nameがマルチバイト');
+        }
+    }
+
+    /**
+     * 属性要素更新バリデーションエラーテスト（名前の長さ）
+     */
+    public function testAttributeElementPutNameLength(): void
+    {
+        $attributes = ['kind_element', 'purpose_element', 'place_element'];
+
+        foreach ($attributes as $attribute) {
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
+            Assert::assertStatusCode200($response->statusCode());
+            $id = $response->jsonBody()['id'];
+
+            // 20文字は登録できる
+            $element = $this->validAttributeElement();
+            $element['name'] = 'aput_abAB_efgt_' . str_pad((string)$this->suffix, 5, '0', STR_PAD_LEFT);
+            $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 21文字は登録できない
+            $element = $this->validAttributeElement();
+            $element['name'] = 'aput_abAB_efgt_a' . str_pad((string)$this->suffix, 5, '0', STR_PAD_LEFT);
+            $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E105', $response->jsonBody()['code'], $attribute . ' nameが長い');
         }
     }
 
