@@ -386,6 +386,17 @@ class MoveTest extends TestCase
         $response = $this->request->post('/moves/places', $move);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E101', $response->jsonBody()['code'], 'places amountが文字列');
+
+        $move = $this->validMove();
+        $move['amount'] = '100';
+
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes amountが文字列');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places amountが文字列');
     }
 
     /**
@@ -558,6 +569,28 @@ class MoveTest extends TestCase
         $response = $this->request->post('/moves/places', $move);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E101', $response->jsonBody()['code'], 'places after_idが文字列');
+
+        // before_id が文字列数字
+        $move = $this->validMove();
+        $move['before_id'] = '5';
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes before_idが文字列');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places before_idが文字列');
+
+        // after_id が文字列
+        $move = $this->validMove();
+        $move['after_id'] = '5';
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes after_idが文字列');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places after_idが文字列');
     }
 
     /**
@@ -644,12 +677,15 @@ class MoveTest extends TestCase
      */
     public function testMoveShowBalanceRecord(): void
     {
+        $response = $this->request->get('/balances?limit=1');
+        $id = $response->jsonBody()[0]['id'];
+
         // 収支レコードのIDで移動を取得しようとすると 404
-        $response = $this->request->get('/moves/purposes/10');
+        $response = $this->request->get('/moves/purposes/' . $id);
         Assert::assertStatusCode404($response->statusCode());
         Assert::assertSame('E301', $response->jsonBody()['code'], 'purposes 収支レコード');
 
-        $response = $this->request->get('/moves/places/10');
+        $response = $this->request->get('/moves/places/' . $id);
         Assert::assertStatusCode404($response->statusCode());
         Assert::assertSame('E301', $response->jsonBody()['code'], 'places 収支レコード');
     }
@@ -802,6 +838,17 @@ class MoveTest extends TestCase
 
         $move = $this->validMove();
         $move['amount'] = 'aaa';
+
+        $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes amountが文字列');
+
+        $response = $this->request->put('/moves/places/' . $placeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places amountが文字列');
+
+        $move = $this->validMove();
+        $move['amount'] = '1230';
 
         $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
         Assert::assertStatusCode400($response->statusCode());
@@ -1004,6 +1051,28 @@ class MoveTest extends TestCase
         $response = $this->request->put('/moves/places/' . $placeId, $move);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E101', $response->jsonBody()['code'], 'places after_idが文字列');
+
+        // before_id が文字列
+        $move = $this->validMove();
+        $move['before_id'] = '12';
+        $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes before_idが文字列');
+
+        $response = $this->request->put('/moves/places/' . $placeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places before_idが文字列');
+
+        // after_id が文字列
+        $move = $this->validMove();
+        $move['after_id'] = '12';
+        $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes after_idが文字列');
+
+        $response = $this->request->put('/moves/places/' . $placeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places after_idが文字列');
     }
 
     /**
@@ -1112,13 +1181,15 @@ class MoveTest extends TestCase
      */
     public function testMovePutBalanceRecord(): void
     {
-        $move = $this->validMove();
+        $response = $this->request->get('/balances?limit=1');
+        $id = $response->jsonBody()[0]['id'];
 
-        $response = $this->request->put('/moves/purposes/10', $move);
+        $move = $this->validMove();
+        $response = $this->request->put('/moves/purposes/' . $id, $move);
         Assert::assertStatusCode404($response->statusCode());
         Assert::assertSame('E301', $response->jsonBody()['code'], 'purposes 収支レコード');
 
-        $response = $this->request->put('/moves/places/10', $move);
+        $response = $this->request->put('/moves/places/' . $id, $move);
         Assert::assertStatusCode404($response->statusCode());
         Assert::assertSame('E301', $response->jsonBody()['code'], 'places 収支レコード');
     }
