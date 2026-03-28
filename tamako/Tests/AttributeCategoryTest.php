@@ -444,6 +444,21 @@ class AttributeCategoryTest extends TestCase
     }
 
     /**
+     * 属性カテゴリー更新バリデーションエラーテスト（移動用IDの更新）
+     */
+    public function testAttributeCategoryPutMove(): void
+    {
+        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+
+        foreach ($attributes as $attribute) {
+            $category = $this->validAttributeCategory();
+            $response = $this->request->put('/attribute_categories/' . $attribute . '/1', $category);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E108', $response->jsonBody()['code'], $attribute . ' 移動用idの更新');
+        }
+    }
+
+    /**
      * 認証なし
      */
     public function testAttributeCategoryWithoutAuth(): void
