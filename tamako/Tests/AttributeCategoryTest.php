@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeCategoryTest extends TestCase
 {
-    private int $suffix = 900;
+    private int $suffix = 1100;
 
     /**
      * 属性カテゴリー一覧取得テスト
@@ -90,6 +90,29 @@ class AttributeCategoryTest extends TestCase
             $response = $this->request->post('/attribute_categories/' . $attribute, $category);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' nameがない');
+        }
+    }
+
+    /**
+     * 属性カテゴリー登録バリデーションエラーテスト（名前の長さ）
+     */
+    public function testAttributeCategoryPostNameLength(): void
+    {
+        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+
+        foreach ($attributes as $attribute) {
+            // 20文字は登録できる
+            $category = $this->validAttributeCategory();
+            $category['name'] = 'Abcd_abAB_efgt_' . str_pad((string)$this->suffix, 5, '0', STR_PAD_LEFT);
+            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 21文字は登録できない
+            $category = $this->validAttributeCategory();
+            $category['name'] = 'Abcd_abAB_efgt_a' . str_pad((string)$this->suffix, 5, '0', STR_PAD_LEFT);
+            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E105', $response->jsonBody()['code'], $attribute . ' nameが長い');
         }
     }
 
@@ -200,6 +223,33 @@ class AttributeCategoryTest extends TestCase
             $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' nameがない');
+        }
+    }
+
+    /**
+     * 属性カテゴリー更新バリデーションエラーテスト（名前の長さ）
+     */
+    public function testAttributeCategoryPutNameLength(): void
+    {
+        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+
+        foreach ($attributes as $attribute) {
+            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
+            Assert::assertStatusCode200($response->statusCode());
+            $id = $response->jsonBody()['id'];
+
+            // 20文字は登録できる
+            $category = $this->validAttributeCategory();
+            $category['name'] = 'Aput_abAB_efgt_' . str_pad((string)$this->suffix, 5, '0', STR_PAD_LEFT);
+            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 21文字は登録できない
+            $category = $this->validAttributeCategory();
+            $category['name'] = 'Aput_abAB_efgt_a' . str_pad((string)$this->suffix, 5, '0', STR_PAD_LEFT);
+            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E105', $response->jsonBody()['code'], $attribute . ' nameが長い');
         }
     }
 
