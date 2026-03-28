@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeCategoryTest extends TestCase
 {
-    private int $suffix = 1400;
+    private int $suffix = 3400;
 
     /**
      * 属性カテゴリー一覧取得テスト
@@ -158,14 +158,16 @@ class AttributeCategoryTest extends TestCase
         $attributes = ['kind_category', 'purpose_category', 'place_category'];
 
         foreach ($attributes as $attribute) {
+            $name = 'Dup_post' . $this->suffix;
+
             $category = $this->validAttributeCategory();
-            $category['name'] = 'Duplicate_post';
+            $category['name'] = $name;
 
             $response = $this->request->post('/attribute_categories/' . $attribute, $category);
             Assert::assertStatusCode200($response->statusCode());
 
             $category = $this->validAttributeCategory();
-            $category['name'] = 'Duplicate_post';
+            $category['name'] = $name;
 
             $response = $this->request->post('/attribute_categories/' . $attribute, $category);
             Assert::assertStatusCode400($response->statusCode());
@@ -349,15 +351,22 @@ class AttributeCategoryTest extends TestCase
         $attributes = ['kind_category', 'purpose_category', 'place_category'];
 
         foreach ($attributes as $attribute) {
+            // 重複させるレコード
+            $name = 'Dup_put' . $this->suffix;
             $category = $this->validAttributeCategory();
-            $category['name'] = 'Duplicate_put';
+            $category['name'] = $name;
 
             $response = $this->request->post('/attribute_categories/' . $attribute, $category);
             Assert::assertStatusCode200($response->statusCode());
+
+            // 更新するレコードの作成
+            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
+            Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
 
+            // 更新
             $category = $this->validAttributeCategory();
-            $category['name'] = 'Duplicate_post';
+            $category['name'] = $name;
 
             $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
             Assert::assertStatusCode400($response->statusCode());
