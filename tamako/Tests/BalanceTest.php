@@ -592,6 +592,13 @@ class BalanceTest extends TestCase
         $response = $this->request->put('/balances/10', $balance);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E101', $response->jsonBody()['code'], 'amountが文字列');
+
+        // 金額が文字数字
+        $balance = $this->validBalance();
+        $balance['amount'] = '100';
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'amountが文字列');
     }
 
     /**
