@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeElementTest extends TestCase
 {
-    private int $nameCounter = 800;
+    private int $suffix = 900;
 
     /**
      * 属性要素一覧取得テスト
@@ -70,21 +70,21 @@ class AttributeElementTest extends TestCase
 
         foreach ($attributes as $attribute) {
             // 0
-            $element = $this->uniqueValidAttributeElement();
+            $element = $this->validAttributeElement();
             $element['priority'] = 0;
 
             $response = $this->request->post('/attribute_elements/' . $attribute, $element);
             Assert::assertStatusCode200($response->statusCode());
 
             // 100
-            $element = $this->uniqueValidAttributeElement();
+            $element = $this->validAttributeElement();
             $element['priority'] = 100;
 
             $response = $this->request->post('/attribute_elements/' . $attribute, $element);
             Assert::assertStatusCode200($response->statusCode());
 
             // -1 は登録できない
-            $element = $this->uniqueValidAttributeElement();
+            $element = $this->validAttributeElement();
             $element['priority'] = -1;
 
             $response = $this->request->post('/attribute_elements/' . $attribute, $element);
@@ -92,7 +92,7 @@ class AttributeElementTest extends TestCase
             Assert::assertSame('E102', $response->jsonBody()['code'], $attribute . ' priorityが-1');
 
             // 101 は登録できない
-            $element = $this->uniqueValidAttributeElement();
+            $element = $this->validAttributeElement();
             $element['priority'] = 101;
 
             $response = $this->request->post('/attribute_elements/' . $attribute, $element);
@@ -228,7 +228,7 @@ class AttributeElementTest extends TestCase
         $attributes = ['kind_element', 'purpose_element', 'place_element'];
 
         foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_elements/' . $attribute, $this->uniqueValidAttributeElement());
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
 
@@ -249,7 +249,7 @@ class AttributeElementTest extends TestCase
         $attributes = ['kind_element', 'purpose_element', 'place_element'];
 
         foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_elements/' . $attribute, $this->uniqueValidAttributeElement());
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
 
@@ -270,7 +270,7 @@ class AttributeElementTest extends TestCase
         $attributes = ['kind_element', 'purpose_element', 'place_element'];
 
         foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_elements/' . $attribute, $this->uniqueValidAttributeElement());
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
 
@@ -291,7 +291,7 @@ class AttributeElementTest extends TestCase
         $attributes = ['kind_element', 'purpose_element', 'place_element'];
 
         foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_elements/' . $attribute, $this->uniqueValidAttributeElement());
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
 
@@ -312,7 +312,7 @@ class AttributeElementTest extends TestCase
         $attributes = ['kind_element', 'purpose_element', 'place_element'];
 
         foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_elements/' . $attribute, $this->uniqueValidAttributeElement());
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
 
@@ -333,7 +333,7 @@ class AttributeElementTest extends TestCase
         $attributes = ['kind_element', 'purpose_element', 'place_element'];
 
         foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_elements/' . $attribute, $this->uniqueValidAttributeElement());
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
 
@@ -354,26 +354,26 @@ class AttributeElementTest extends TestCase
         $attributes = ['kind_element', 'purpose_element', 'place_element'];
 
         foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_elements/' . $attribute, $this->uniqueValidAttributeElement());
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
 
             // 0
-            $element = $this->uniqueValidAttributeElement();
+            $element = $this->validAttributeElement();
             $element['priority'] = 0;
 
             $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
             Assert::assertStatusCode200($response->statusCode());
 
             // 100
-            $element = $this->uniqueValidAttributeElement();
+            $element = $this->validAttributeElement();
             $element['priority'] = 100;
 
             $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
             Assert::assertStatusCode200($response->statusCode());
 
             // -1
-            $element = $this->uniqueValidAttributeElement();
+            $element = $this->validAttributeElement();
             $element['priority'] = -1;
 
             $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
@@ -381,7 +381,7 @@ class AttributeElementTest extends TestCase
             Assert::assertSame('E102', $response->jsonBody()['code'], $attribute . ' priorityが負');
 
             // 101
-            $element = $this->uniqueValidAttributeElement();
+            $element = $this->validAttributeElement();
             $element['priority'] = 101;
 
             $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, $element);
@@ -398,7 +398,7 @@ class AttributeElementTest extends TestCase
         $attributes = ['kind_element', 'purpose_element', 'place_element'];
 
         foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_elements/' . $attribute, $this->uniqueValidAttributeElement());
+            $response = $this->request->post('/attribute_elements/' . $attribute, $this->validAttributeElement());
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
 
@@ -441,19 +441,16 @@ class AttributeElementTest extends TestCase
 
     private function assertAttributeElementCRUD(string $attribute): void
     {
-        $name = $this->uniqueName();
-        $updatedName = $this->uniqueName();
-
         // 登録
         $response = $this->request->post('/attribute_elements/' . $attribute, [
-            'name' => $name,
+            'name' => 'hoge' . $this->suffix,
             'description' => '説明',
             'priority' => 50,
             'category_id' => 2,
         ]);
         Assert::assertStatusCode200($response->statusCode());
         $element = $response->jsonBody();
-        Assert::assertSame($name, $element['name'], $attribute . ' 登録後の name');
+        Assert::assertSame('hoge' . $this->suffix, $element['name'], $attribute . ' 登録後の name');
         Assert::assertSame('説明', $element['description'], $attribute . ' 登録後の description');
         Assert::assertSame(50, $element['priority'], $attribute . ' 登録後の priority');
         Assert::assertSame(2, $element['category_id'], $attribute . ' 登録後の category_id');
@@ -464,21 +461,21 @@ class AttributeElementTest extends TestCase
         $response = $this->request->get('/attribute_elements/' . $attribute . '/' . $id);
         Assert::assertStatusCode200($response->statusCode());
         $element = $response->jsonBody();
-        Assert::assertSame($name, $element['name'], $attribute . ' 取得後の name');
+        Assert::assertSame('hoge' . $this->suffix, $element['name'], $attribute . ' 取得後の name');
         Assert::assertSame('説明', $element['description'], $attribute . ' 取得後の description');
         Assert::assertSame(50, $element['priority'], $attribute . ' 取得後の priority');
         Assert::assertSame(2, $element['category_id'], $attribute . ' 取得後の category_id');
 
         // 更新
         $response = $this->request->put('/attribute_elements/' . $attribute . '/' . $id, [
-            'name' => $updatedName,
+            'name' => 'fuga' . $this->suffix,
             'description' => '説明更新後',
             'priority' => 100,
             'category_id' => 3,
         ]);
         Assert::assertStatusCode200($response->statusCode());
         $element = $response->jsonBody();
-        Assert::assertSame($updatedName, $element['name'], $attribute . ' 更新後の name');
+        Assert::assertSame('fuga' . $this->suffix, $element['name'], $attribute . ' 更新後の name');
         Assert::assertSame('説明更新後', $element['description'], $attribute . ' 更新後の description');
         Assert::assertSame(100, $element['priority'], $attribute . ' 更新後の priority');
         Assert::assertSame(3, $element['category_id'], $attribute . ' 更新後の category_id');
@@ -487,35 +484,22 @@ class AttributeElementTest extends TestCase
         $response = $this->request->get('/attribute_elements/' . $attribute . '/' . $id);
         Assert::assertStatusCode200($response->statusCode());
         $element = $response->jsonBody();
-        Assert::assertSame($updatedName, $element['name'], $attribute . ' 更新確認後の name');
+        Assert::assertSame('fuga' . $this->suffix, $element['name'], $attribute . ' 更新確認後の name');
         Assert::assertSame('説明更新後', $element['description'], $attribute . ' 更新確認後の description');
         Assert::assertSame(100, $element['priority'], $attribute . ' 更新確認後の priority');
         Assert::assertSame(3, $element['category_id'], $attribute . ' 更新確認後の category_id');
     }
 
+
     private function validAttributeElement(): array
     {
+        $this->suffix += 1;
+
         return [
-            'name' => 'hoge',
+            'name' => 'test' . $this->suffix,
             'description' => '説明',
             'priority' => 10,
             'category_id' => 2,
         ];
-    }
-
-    private function uniqueValidAttributeElement(): array
-    {
-        return [
-            'name' => $this->uniqueName(),
-            'description' => '説明',
-            'priority' => 10,
-            'category_id' => 2,
-        ];
-    }
-
-    private function uniqueName(): string
-    {
-        $this->nameCounter++;
-        return 'testelement' . $this->nameCounter;
     }
 }
