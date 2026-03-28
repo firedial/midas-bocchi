@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeCategoryTest extends TestCase
 {
-    private int $suffix = 1200;
+    private int $suffix = 1400;
 
     /**
      * 属性カテゴリー一覧取得テスト
@@ -147,6 +147,29 @@ class AttributeCategoryTest extends TestCase
             $response = $this->request->post('/attribute_categories/' . $attribute, $category);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E103', $response->jsonBody()['code'], $attribute . ' nameがマルチバイト');
+        }
+    }
+
+    /**
+     * 属性カテゴリー登録バリデーションエラーテスト（名前が重複）
+     */
+    public function testAttributeCategoryPostNameDuplicate(): void
+    {
+        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+
+        foreach ($attributes as $attribute) {
+            $category = $this->validAttributeCategory();
+            $category['name'] = 'Duplicate_post';
+
+            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
+            Assert::assertStatusCode200($response->statusCode());
+
+            $category = $this->validAttributeCategory();
+            $category['name'] = 'Duplicate_post';
+
+            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E304', $response->jsonBody()['code'], $attribute . ' name が重複');
         }
     }
 
@@ -315,6 +338,30 @@ class AttributeCategoryTest extends TestCase
             $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
             Assert::assertStatusCode400($response->statusCode());
             Assert::assertSame('E103', $response->jsonBody()['code'], $attribute . ' nameがマルチバイト');
+        }
+    }
+
+    /**
+     * 属性カテゴリー更新バリデーションエラーテスト（名前が重複）
+     */
+    public function testAttributeCategoryPutNameDuplicate(): void
+    {
+        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+
+        foreach ($attributes as $attribute) {
+            $category = $this->validAttributeCategory();
+            $category['name'] = 'Duplicate_put';
+
+            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
+            Assert::assertStatusCode200($response->statusCode());
+            $id = $response->jsonBody()['id'];
+
+            $category = $this->validAttributeCategory();
+            $category['name'] = 'Duplicate_post';
+
+            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
+            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertSame('E304', $response->jsonBody()['code'], $attribute . ' name が重複');
         }
     }
 
