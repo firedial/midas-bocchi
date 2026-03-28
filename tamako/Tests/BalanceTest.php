@@ -532,6 +532,39 @@ class BalanceTest extends TestCase
             'place_element_id' => 'aaa',
         ]);
         Assert::assertStatusCode400($response->statusCode());
+
+        // kind_element_id が文字列数字
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => '2',
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // purpose_element_id が文字列数字
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => '3',
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+
+        // place_element_id が文字列数字
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => '4',
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
     }
 
     /**
