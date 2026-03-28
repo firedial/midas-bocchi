@@ -496,22 +496,22 @@ class MoveTest extends TestCase
         $move = $this->validMove();
         $move['before_id'] = 10000;
         $response = $this->request->post('/moves/purposes', $move);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'purposes before_idがない');
 
         $response = $this->request->post('/moves/places', $move);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'places before_idがない');
 
         // after_id が存在しない
         $move = $this->validMove();
         $move['after_id'] = 10000;
         $response = $this->request->post('/moves/purposes', $move);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'purposes after_idがない');
 
         $response = $this->request->post('/moves/places', $move);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'places after_idがない');
     }
 
@@ -962,22 +962,22 @@ class MoveTest extends TestCase
         $move = $this->validMove();
         $move['before_id'] = 10000;
         $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'purposes before_idがない');
 
         $response = $this->request->put('/moves/places/' . $placeId, $move);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'places before_idがない');
 
         // after_id が存在しない
         $move = $this->validMove();
         $move['after_id'] = 10000;
         $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'purposes after_idがない');
 
         $response = $this->request->put('/moves/places/' . $placeId, $move);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'places after_idがない');
     }
 

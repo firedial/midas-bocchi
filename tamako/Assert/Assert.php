@@ -37,6 +37,11 @@ class Assert
         self::assertStatusCode($status, 404);
     }
 
+    public static function assertStatusCode409(int $status)
+    {
+        self::assertStatusCode($status, 409);
+    }
+
     private static function assertStatusCode(int $status, int $code)
     {
         if ($status !== $code) {

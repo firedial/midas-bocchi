@@ -452,7 +452,7 @@ class BalanceTest extends TestCase
         $balance['kind_element_id'] = 10000;
 
         $response = $this->request->post('/balances', $balance);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'kind idがない');
 
         // purpose_element_id が存在しない
@@ -460,7 +460,7 @@ class BalanceTest extends TestCase
         $balance['purpose_element_id'] = 10000;
 
         $response = $this->request->post('/balances', $balance);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'purpose idがない');
 
         // place_element_id が存在しない
@@ -468,7 +468,7 @@ class BalanceTest extends TestCase
         $balance['place_element_id'] = 10000;
 
         $response = $this->request->post('/balances', $balance);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'place idがない');
     }
 
@@ -666,19 +666,19 @@ class BalanceTest extends TestCase
         $balance = $this->validBalance();
         $balance['kind_element_id'] = 10000;
         $response = $this->request->put('/balances/10', $balance);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'kind idがない');
 
         $balance = $this->validBalance();
         $balance['purpose_element_id'] = 10000;
         $response = $this->request->put('/balances/10', $balance);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'purpose idがない');
 
         $balance = $this->validBalance();
         $balance['place_element_id'] = 10000;
         $response = $this->request->put('/balances/10', $balance);
-        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertStatusCode409($response->statusCode());
         Assert::assertSame('E302', $response->jsonBody()['code'], 'place idがない');
     }
 

@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeCategoryTest extends TestCase
 {
-    private int $suffix = 3400;
+    private int $suffix = 10000;
 
     /**
      * 属性カテゴリー一覧取得テスト
@@ -170,7 +170,7 @@ class AttributeCategoryTest extends TestCase
             $category['name'] = $name;
 
             $response = $this->request->post('/attribute_categories/' . $attribute, $category);
-            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertStatusCode409($response->statusCode());
             Assert::assertSame('E304', $response->jsonBody()['code'], $attribute . ' name が重複');
         }
     }
@@ -369,7 +369,7 @@ class AttributeCategoryTest extends TestCase
             $category['name'] = $name;
 
             $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
-            Assert::assertStatusCode400($response->statusCode());
+            Assert::assertStatusCode409($response->statusCode());
             Assert::assertSame('E304', $response->jsonBody()['code'], $attribute . ' name が重複');
         }
     }

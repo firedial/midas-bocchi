@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeElementTest extends TestCase
 {
-    private int $suffix = 8000;
+    private int $suffix = 10000;
 
     /**
      * 属性要素一覧取得テスト
