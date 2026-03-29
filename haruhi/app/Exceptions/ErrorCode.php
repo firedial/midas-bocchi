@@ -7,7 +7,6 @@ enum ErrorCode: string
     case INVALID_TYPE = 'E101';
     case INVALID_RANGE = 'E102';
     case INVALID_FORMAT = 'E103';
-    case INVALID_EMPTY = 'E104';
     case INVALID_LENGTH = 'E105';
     case INVALID_VALUE = 'E106';
     case MOVE_SAME_ID = 'E107';
@@ -25,17 +24,22 @@ enum ErrorCode: string
     case UNEXPECTED_ATTRIBUTE_NAME = 'E901';
     case UNEXPECTED_AMOUNT = 'E902';
     case UNEXPECTED_DIFFERENCE_ID_MOVE = 'E903';
+    case UNEXPECTED_NULL_READ = 'E904';
     case UNEXPECTED = 'E999';
 
     public function httpStatus(): int
     {
         return match ($this) {
             self::UNAUTHORIZED => 401,
-            self::PAGE_NOT_FOUND => 404,
             self::RECORD_NOT_FOUND => 404,
+            self::PARENT_RECORD_NOT_FOUND => 409,
+            self::CHILD_RECORD_EXISTS => 409,
+            self::DUPLICATE_ENTRY => 409,
+            self::PAGE_NOT_FOUND => 404,
             self::UNEXPECTED_ATTRIBUTE_NAME => 500,
             self::UNEXPECTED_AMOUNT => 500,
             self::UNEXPECTED_DIFFERENCE_ID_MOVE => 500,
+            self::UNEXPECTED_NULL_READ => 500,
             self::UNEXPECTED => 500,
             default => 400,
         };

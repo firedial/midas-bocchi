@@ -27,20 +27,34 @@ class MoveController extends Controller
 
     public function index(Request $request, string $attributeName)
     {
-        $limit = $request->input('limit');
-        if (!is_null($limit) && !is_numeric($limit)) {
-            throw new AppException(ErrorCode::INVALID_TYPE, 'limit is wrong');
+        try {
+            $validated = $request->validate([
+                'limit' => ['int', 'min:1'],
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            foreach ($failed as $field => $rules) {
+                if (isset($rules['Min'])) {
+                    throw new AppException(ErrorCode::INVALID_RANGE, "{$field} must be at least 1");
+                }
+                if (isset($rules['Integer'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a int type");
+                }
+            }
+
+            throw $e;
         }
 
         // 属性名
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $getMovesUsecase = new GetMovesUsecase();
-        $moves = $getMovesUsecase->execute($attribute, $limit);
+        $moves = $getMovesUsecase->execute($attribute, $validated['limit'] ?? null);
 
         return array_map(
             function (MoveEntity $move) {
@@ -69,7 +83,7 @@ class MoveController extends Controller
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $SelectMoveUsecase = new SelectMoveUsecase();
@@ -91,11 +105,11 @@ class MoveController extends Controller
     {
         try {
             $validated = $request->validate([
-                'amount' => ['required', new StrictInteger, 'min:1'],
-                'item' => 'required|string',
-                'before_id' => ['required', new StrictInteger],
-                'after_id' => ['required', new StrictInteger],
-                'date' => 'required|string',
+                'amount' => ['present', new StrictInteger, 'integer', 'min:1'],
+                'item' => 'present|string',
+                'before_id' => ['present', new StrictInteger],
+                'after_id' => ['present', new StrictInteger],
+                'date' => 'present|string',
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -104,7 +118,7 @@ class MoveController extends Controller
                 if (isset($rules[StrictInteger::class])) {
                     throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
                 }
-                if (isset($rules['Required'])) {
+                if (isset($rules['Present'])) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
                 }
                 if (isset($rules['Min'])) {
@@ -122,7 +136,7 @@ class MoveController extends Controller
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         // 移動前後で同じIDではないこと
@@ -168,11 +182,11 @@ class MoveController extends Controller
     {
         try {
             $validated = $request->validate([
-                'amount' => ['required', new StrictInteger, 'min:1'],
-                'item' => 'required|string',
-                'before_id' => ['required', new StrictInteger],
-                'after_id' => ['required', new StrictInteger],
-                'date' => 'required|string',
+                'amount' => ['present', new StrictInteger, 'integer', 'min:1'],
+                'item' => 'present|string',
+                'before_id' => ['present', new StrictInteger],
+                'after_id' => ['present', new StrictInteger],
+                'date' => 'present|string',
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -181,7 +195,7 @@ class MoveController extends Controller
                 if (isset($rules[StrictInteger::class])) {
                     throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
                 }
-                if (isset($rules['Required'])) {
+                if (isset($rules['Present'])) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
                 }
                 if (isset($rules['Min'])) {
@@ -199,7 +213,7 @@ class MoveController extends Controller
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         // 移動前後で同じIDではないこと
@@ -247,7 +261,7 @@ class MoveController extends Controller
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $deleteMoveUsecase = new DeleteMoveUsecase();

@@ -18,6 +18,8 @@ use App\Usecases\AttributeElement\SelectAttributeElementUsecase;
 use App\Usecases\AttributeElement\UpdateAttributeElementUsecase;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
+use App\Rules\StrictInteger;
+use Illuminate\Validation\ValidationException;
 
 class AttributeElementController extends Controller
 {
@@ -74,6 +76,31 @@ class AttributeElementController extends Controller
 
     public function store(Request $request, string $attributeName)
     {
+        try {
+            $validated = $request->validate([
+                'name' => 'present|string',
+                'description' => 'present|string',
+                'priority' => ['present', new StrictInteger],
+                'category_id' => ['present', new StrictInteger],
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            foreach ($failed as $field => $rules) {
+                if (isset($rules['Present'])) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
+                }
+                if (isset($rules[StrictInteger::class])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
+                }
+                if (isset($rules['String'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
+                }
+            }
+
+            throw $e;
+        }
+
         // 属性名
         $attribute = match ($attributeName) {
             'kind_element' => Attribute::kind(),
@@ -96,9 +123,9 @@ class AttributeElementController extends Controller
         $attributeElement = new AttributeElementEntity(
             $attribute,
             AttributeElementId::emptyId(),
-            new AttributeElementName($request->input('name')),
-            new Description($request->input('description')),
-            new Priority($request->input('priority')),
+            new AttributeElementName($validated['name']),
+            new Description($validated['description']),
+            new Priority($validated['priority']),
             $attributeCategoryId,
         );
 
@@ -115,6 +142,31 @@ class AttributeElementController extends Controller
 
     public function update(Request $request, string $attributeName, int $elementId)
     {
+        try {
+            $validated = $request->validate([
+                'name' => 'present|string',
+                'description' => 'present|string',
+                'priority' => ['present', new StrictInteger],
+                'category_id' => ['present', new StrictInteger],
+            ]);
+        } catch (ValidationException $e) {
+            $failed = $e->validator->failed();
+
+            foreach ($failed as $field => $rules) {
+                if (isset($rules['Present'])) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
+                }
+                if (isset($rules[StrictInteger::class])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
+                }
+                if (isset($rules['String'])) {
+                    throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
+                }
+            }
+
+            throw $e;
+        }
+
         // 属性名
         $attribute = match ($attributeName) {
             'kind_element' => Attribute::kind(),
@@ -141,9 +193,9 @@ class AttributeElementController extends Controller
         $attributeElement = new AttributeElementEntity(
             $attribute,
             AttributeElementId::filledId($elementId),
-            new AttributeElementName($request->input('name')),
-            new Description($request->input('description')),
-            new Priority($request->input('priority')),
+            new AttributeElementName($validated['name']),
+            new Description($validated['description']),
+            new Priority($validated['priority']),
             $attributeCategoryId,
         );
 

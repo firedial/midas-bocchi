@@ -12,7 +12,7 @@ class Description
     public function __construct(private readonly string $description)
     {
         if (mb_strlen($description) === 0) {
-            throw new AppException(ErrorCode::INVALID_EMPTY, "Description length is empty.");
+            throw new AppException(ErrorCode::INVALID_LENGTH, "Description length is empty.");
         }
         if (mb_strlen($description) > self::MAX_LENGTH) {
             throw new AppException(ErrorCode::INVALID_LENGTH, "Description length is over.");
