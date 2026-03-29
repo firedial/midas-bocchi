@@ -3,8 +3,6 @@ services:
         build:
             context: ./haruhi
             dockerfile: Dockerfile
-        volumes:
-            - ./haruhi:/var/www/html
     azusa:
         build:
             context: ./yui
