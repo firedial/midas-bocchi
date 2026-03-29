@@ -16,6 +16,11 @@ class BalanceTest extends TestCase
         Assert::assertStatusCode200($response->statusCode());
 
         $this->assertBalanceFields($response->jsonBody()[0], $this->validBalance(), '一覧取得');
+
+        $balance = $response->jsonBody()[0];
+        Assert::assertSame('kind_ele_desc_2', $balance['kind_element_description'], "kind_element_description");
+        Assert::assertSame('purpose_ele_desc_3', $balance['purpose_element_description'], "purpose_element_description");
+        Assert::assertSame('place_ele_desc_4', $balance['place_element_description'], "place_element_description");
     }
 
     /**
@@ -138,6 +143,11 @@ class BalanceTest extends TestCase
         $response = $this->request->get('/balances/' . $id);
         Assert::assertStatusCode200($response->statusCode());
         $this->assertBalanceFields($response->jsonBody(), $createData, '収支登録後');
+
+        $balance = $response->jsonBody();
+        Assert::assertSame('kind_ele_desc_2', $balance['kind_element_description'], "kind_element_description");
+        Assert::assertSame('purpose_ele_desc_3', $balance['purpose_element_description'], "purpose_element_description");
+        Assert::assertSame('place_ele_desc_4', $balance['place_element_description'], "place_element_description");
 
         // 更新
         $response = $this->request->put('/balances/' . $id, $updateData);

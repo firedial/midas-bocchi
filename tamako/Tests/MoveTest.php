@@ -16,6 +16,10 @@ class MoveTest extends TestCase
         Assert::assertStatusCode200($response->statusCode());
 
         $this->assertMoveFields($response->jsonBody()[0], $this->validMove(), '一覧取得');
+
+        $move = $response->jsonBody()[0];
+        Assert::assertSame('purpose_ele_desc_2', $move['before_description'], "purpose の before_description");
+        Assert::assertSame('purpose_ele_desc_3', $move['after_description'], "purpose の after_description");
     }
 
     /**
@@ -30,6 +34,10 @@ class MoveTest extends TestCase
         Assert::assertStatusCode200($response->statusCode());
 
         $this->assertMoveFields($response->jsonBody()[0], $this->validMove(), '一覧取得');
+
+        $move = $response->jsonBody()[0];
+        Assert::assertSame('place_ele_desc_2', $move['before_description'], "place の before_description");
+        Assert::assertSame('place_ele_desc_3', $move['after_description'], "place の after_description");
     }
 
     /**
@@ -778,6 +786,10 @@ class MoveTest extends TestCase
         $response = $this->request->get('/moves/' . $moveType . '/' . $id);
         Assert::assertStatusCode200($response->statusCode());
         $this->assertMoveFields($response->jsonBody(), $createData, '移動取得後');
+
+        $move = $response->jsonBody();
+        Assert::assertSame(substr($moveType, 0, -1) . '_ele_desc_2', $move['before_description'], "{$moveType} の before_description");
+        Assert::assertSame(substr($moveType, 0, -1) . '_ele_desc_3', $move['after_description'], "{$moveType} の after_description");
 
         // 更新
         $response = $this->request->put('/moves/' . $moveType . '/' . $id, $updateData);
