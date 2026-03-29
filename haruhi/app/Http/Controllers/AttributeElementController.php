@@ -78,16 +78,16 @@ class AttributeElementController extends Controller
     {
         try {
             $validated = $request->validate([
-                'name' => 'required|string',
-                'description' => 'required|string',
-                'priority' => ['required', new StrictInteger],
-                'category_id' => ['required', new StrictInteger],
+                'name' => 'present|string',
+                'description' => 'present|string',
+                'priority' => ['present', new StrictInteger],
+                'category_id' => ['present', new StrictInteger],
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
 
             foreach ($failed as $field => $rules) {
-                if (isset($rules['Required'])) {
+                if (isset($rules['Present'])) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
                 }
                 if (isset($rules[StrictInteger::class])) {
@@ -144,16 +144,16 @@ class AttributeElementController extends Controller
     {
         try {
             $validated = $request->validate([
-                'name' => 'required|string',
-                'description' => 'required|string',
-                'priority' => ['required', new StrictInteger],
-                'category_id' => ['required', new StrictInteger],
+                'name' => 'present|string',
+                'description' => 'present|string',
+                'priority' => ['present', new StrictInteger],
+                'category_id' => ['present', new StrictInteger],
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
 
             foreach ($failed as $field => $rules) {
-                if (isset($rules['Required'])) {
+                if (isset($rules['Present'])) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
                 }
                 if (isset($rules[StrictInteger::class])) {

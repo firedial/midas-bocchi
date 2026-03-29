@@ -4,7 +4,7 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeCategoryTest extends TestCase
 {
-    private int $suffix = 10000;
+    private int $suffix = 23000;
 
     /**
      * 属性カテゴリー一覧取得テスト

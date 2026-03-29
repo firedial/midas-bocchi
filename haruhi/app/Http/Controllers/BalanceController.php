@@ -48,7 +48,7 @@ class BalanceController extends Controller
                     throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a int type");
                 }
                 if (isset($rules['In'])) {
-                    throw new AppException(ErrorCode::INVALID_VALUE, "{$field} is not a valid value");
+                    throw new AppException(ErrorCode::INVALID_FORMAT, "{$field} is not a valid value");
                 }
             }
 
@@ -100,18 +100,18 @@ class BalanceController extends Controller
     {
         try {
             $validated = $request->validate([
-                'amount' => ['required', new StrictInteger],
-                'kind_element_id' => ['required', new StrictInteger],
-                'purpose_element_id' => ['required', new StrictInteger],
-                'place_element_id' => ['required', new StrictInteger],
-                'item' => 'required|string',
-                'date' => 'required|string',
+                'amount' => ['present', new StrictInteger],
+                'kind_element_id' => ['present', new StrictInteger],
+                'purpose_element_id' => ['present', new StrictInteger],
+                'place_element_id' => ['present', new StrictInteger],
+                'item' => 'present|string',
+                'date' => 'present|string',
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
 
             foreach ($failed as $field => $rules) {
-                if (isset($rules['Required'])) {
+                if (isset($rules['Present'])) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
                 }
                 // StrictInteger はクラス名で入る
@@ -149,7 +149,7 @@ class BalanceController extends Controller
         }
 
         if ($balance->amount()->value() === 0) {
-            throw new AppException(ErrorCode::INVALID_VALUE, 'Amount is zero.');
+            throw new AppException(ErrorCode::INVALID_RANGE, 'Amount is zero.');
         }
 
         $insertBalanceUsecase = new InsertBalanceUsecase();
@@ -169,18 +169,18 @@ class BalanceController extends Controller
     {
         try {
             $validated = $request->validate([
-                'amount' => ['required', new StrictInteger],
-                'kind_element_id' => ['required', new StrictInteger],
-                'purpose_element_id' => ['required', new StrictInteger],
-                'place_element_id' => ['required', new StrictInteger],
-                'item' => 'required|string',
-                'date' => 'required|string',
+                'amount' => ['present', new StrictInteger],
+                'kind_element_id' => ['present', new StrictInteger],
+                'purpose_element_id' => ['present', new StrictInteger],
+                'place_element_id' => ['present', new StrictInteger],
+                'item' => 'present|string',
+                'date' => 'present|string',
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
 
             foreach ($failed as $field => $rules) {
-                if (isset($rules['Required'])) {
+                if (isset($rules['Present'])) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
                 }
                 if (isset($rules[StrictInteger::class])) {
@@ -217,7 +217,7 @@ class BalanceController extends Controller
         }
 
         if ($balance->amount()->value() === 0) {
-            throw new AppException(ErrorCode::INVALID_VALUE, 'Amount is zero.');
+            throw new AppException(ErrorCode::INVALID_RANGE, 'Amount is zero.');
         }
 
         $updateBalanceUsecase = new UpdateBalanceUsecase();

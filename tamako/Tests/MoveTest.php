@@ -372,10 +372,38 @@ class MoveTest extends TestCase
     }
 
     /**
+     * 移動登録バリデーションエラーテスト（金額が null）
+     */
+    public function testMovePostAmountNull(): void
+    {
+        $move = $this->validMove();
+        $move['amount'] = null;
+
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes amountがnull');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places amountがnull');
+    }
+
+    /**
      * 移動登録バリデーションエラーテスト（金額が文字）
      */
     public function testMovePostAmountString(): void
     {
+        $move = $this->validMove();
+        $move['amount'] = '';
+
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes amountが空文字列');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places amountが空文字列');
+
         $move = $this->validMove();
         $move['amount'] = 'aaa';
 
@@ -409,11 +437,28 @@ class MoveTest extends TestCase
 
         $response = $this->request->post('/moves/purposes', $move);
         Assert::assertStatusCode400($response->statusCode());
-        Assert::assertSame('E109', $response->jsonBody()['code'], 'purposes itemが空');
+        Assert::assertSame('E105', $response->jsonBody()['code'], 'purposes itemが空');
 
         $response = $this->request->post('/moves/places', $move);
         Assert::assertStatusCode400($response->statusCode());
-        Assert::assertSame('E109', $response->jsonBody()['code'], 'places itemが空');
+        Assert::assertSame('E105', $response->jsonBody()['code'], 'places itemが空');
+    }
+
+    /**
+     * 移動登録バリデーションエラーテスト（項目が null）
+     */
+    public function testMovePostItemNull(): void
+    {
+        $move = $this->validMove();
+        $move['item'] = null;
+
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes itemがnull');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places itemがnull');
     }
 
     /**
@@ -544,10 +589,60 @@ class MoveTest extends TestCase
     }
 
     /**
+     * 移動登録バリデーションエラーテスト（要素パラメータ null）
+     */
+    public function testMovePostElementNull(): void
+    {
+        // before_id なし
+        $move = $this->validMove();
+        $move['before_id'] = null;
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes before_idがnull');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places before_idがnull');
+
+        // after_id なし
+        $move = $this->validMove();
+        $move['after_id'] = null;
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes after_idがnull');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places after_idがnull');
+    }
+
+    /**
      * 移動登録バリデーションエラーテスト（要素パラメータが文字列）
      */
     public function testMovePostElementString(): void
     {
+        // before_id が文字列
+        $move = $this->validMove();
+        $move['before_id'] = '';
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes before_idが空文字列');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places before_idが空文字列');
+
+        // after_id が文字列
+        $move = $this->validMove();
+        $move['after_id'] = '';
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes after_idが空文字列');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places after_idが空文字列');
+
         // before_id が文字列
         $move = $this->validMove();
         $move['before_id'] = 'aaa';
@@ -643,6 +738,23 @@ class MoveTest extends TestCase
         $response = $this->request->post('/moves/places', $move);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E109', $response->jsonBody()['code'], 'places 日付がない');
+    }
+
+    /**
+     * 移動登録バリデーションエラーテスト（日付が null）
+     */
+    public function testMovePostDateNull(): void
+    {
+        $move = $this->validMove();
+        $move['date'] = null;
+
+        $response = $this->request->post('/moves/purposes', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes 日付がnull');
+
+        $response = $this->request->post('/moves/places', $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places 日付がnull');
     }
 
     /**
@@ -824,6 +936,31 @@ class MoveTest extends TestCase
     }
 
     /**
+     * 移動更新バリデーションエラーテスト（金額が null）
+     */
+    public function testMovePutAmountNull(): void
+    {
+        $response = $this->request->post('/moves/purposes', $this->validMove());
+        Assert::assertStatusCode200($response->statusCode());
+        $purposeId = $response->jsonBody()['id'];
+
+        $response = $this->request->post('/moves/places', $this->validMove());
+        Assert::assertStatusCode200($response->statusCode());
+        $placeId = $response->jsonBody()['id'];
+
+        $move = $this->validMove();
+        $move['amount'] = null;
+
+        $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes amountがnull');
+
+        $response = $this->request->put('/moves/places/' . $placeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places amountがnull');
+    }
+
+    /**
      * 移動更新バリデーションエラーテスト（金額が文字）
      */
     public function testMovePutAmountString(): void
@@ -835,6 +972,17 @@ class MoveTest extends TestCase
         $response = $this->request->post('/moves/places', $this->validMove());
         Assert::assertStatusCode200($response->statusCode());
         $placeId = $response->jsonBody()['id'];
+
+        $move = $this->validMove();
+        $move['amount'] = '';
+
+        $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes amountが空文字列');
+
+        $response = $this->request->put('/moves/places/' . $placeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places amountが空文字列');
 
         $move = $this->validMove();
         $move['amount'] = 'aaa';
@@ -877,11 +1025,36 @@ class MoveTest extends TestCase
 
         $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
         Assert::assertStatusCode400($response->statusCode());
-        Assert::assertSame('E109', $response->jsonBody()['code'], 'purposes itemが空文字列');
+        Assert::assertSame('E105', $response->jsonBody()['code'], 'purposes itemが空文字列');
 
         $response = $this->request->put('/moves/places/' . $placeId, $move);
         Assert::assertStatusCode400($response->statusCode());
-        Assert::assertSame('E109', $response->jsonBody()['code'], 'places itemが空文字列');
+        Assert::assertSame('E105', $response->jsonBody()['code'], 'places itemが空文字列');
+    }
+
+    /**
+     * 移動更新バリデーションエラーテスト（項目が null）
+     */
+    public function testMovePutItemNull(): void
+    {
+        $response = $this->request->post('/moves/purposes', $this->validMove());
+        Assert::assertStatusCode200($response->statusCode());
+        $purposeId = $response->jsonBody()['id'];
+
+        $response = $this->request->post('/moves/places', $this->validMove());
+        Assert::assertStatusCode200($response->statusCode());
+        $placeId = $response->jsonBody()['id'];
+
+        $move = $this->validMove();
+        $move['item'] = null;
+
+        $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes itemがnull');
+
+        $response = $this->request->put('/moves/places/' . $placeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places itemがnull');
     }
 
     /**
@@ -1018,6 +1191,42 @@ class MoveTest extends TestCase
     }
 
     /**
+     * 移動更新バリデーションエラーテスト（要素パラメータ null）
+     */
+    public function testMovePutElementNull(): void
+    {
+        $response = $this->request->post('/moves/purposes', $this->validMove());
+        Assert::assertStatusCode200($response->statusCode());
+        $purposeId = $response->jsonBody()['id'];
+
+        $response = $this->request->post('/moves/places', $this->validMove());
+        Assert::assertStatusCode200($response->statusCode());
+        $placeId = $response->jsonBody()['id'];
+
+        // before_id なし
+        $move = $this->validMove();
+        $move['before_id'] = null;
+        $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes before_idがnull');
+
+        $response = $this->request->put('/moves/places/' . $placeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places before_idがnull');
+
+        // after_id なし
+        $move = $this->validMove();
+        $move['after_id'] = null;
+        $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes after_idがnull');
+
+        $response = $this->request->put('/moves/places/' . $placeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places after_idがnull');
+    }
+
+    /**
      * 移動更新バリデーションエラーテスト（要素パラメータが文字列）
      */
     public function testMovePutElementString(): void
@@ -1124,6 +1333,17 @@ class MoveTest extends TestCase
         $response = $this->request->put('/moves/places/' . $placeId, $move);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E109', $response->jsonBody()['code'], 'places dateがない');
+
+        // 日付 null
+        $move = $this->validMove();
+        $move['date'] = null;
+        $response = $this->request->put('/moves/purposes/' . $purposeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purposes dateがnull');
+
+        $response = $this->request->put('/moves/places/' . $placeId, $move);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'places dateがnull');
 
         // 存在しない日付
         $move = $this->validMove();

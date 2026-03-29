@@ -59,7 +59,7 @@ class FixedBalanceEntity
     public function kindElementDescription(): Description
     {
         if (is_null($this->kindElementDescription)) {
-            throw new AppException(ErrorCode::INVALID_EMPTY, "Kind element description is null.");
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, "Kind element description is null.");
         }
         return $this->kindElementDescription;
     }
@@ -67,7 +67,7 @@ class FixedBalanceEntity
     public function purposeElementDescription(): Description
     {
         if (is_null($this->purposeElementDescription)) {
-            throw new AppException(ErrorCode::INVALID_EMPTY, "Purpose element description is null.");
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, "Purpose element description is null.");
         }
         return $this->purposeElementDescription;
     }
@@ -75,7 +75,7 @@ class FixedBalanceEntity
     public function placeElementDescription(): Description
     {
         if (is_null($this->placeElementDescription)) {
-            throw new AppException(ErrorCode::INVALID_EMPTY, "Place element description is null.");
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, "Place element description is null.");
         }
         return $this->placeElementDescription;
     }

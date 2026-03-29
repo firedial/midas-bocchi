@@ -105,11 +105,11 @@ class MoveController extends Controller
     {
         try {
             $validated = $request->validate([
-                'amount' => ['required', new StrictInteger, 'integer', 'min:1'],
-                'item' => 'required|string',
-                'before_id' => ['required', new StrictInteger],
-                'after_id' => ['required', new StrictInteger],
-                'date' => 'required|string',
+                'amount' => ['present', new StrictInteger, 'integer', 'min:1'],
+                'item' => 'present|string',
+                'before_id' => ['present', new StrictInteger],
+                'after_id' => ['present', new StrictInteger],
+                'date' => 'present|string',
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -118,7 +118,7 @@ class MoveController extends Controller
                 if (isset($rules[StrictInteger::class])) {
                     throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
                 }
-                if (isset($rules['Required'])) {
+                if (isset($rules['Present'])) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
                 }
                 if (isset($rules['Min'])) {
@@ -182,11 +182,11 @@ class MoveController extends Controller
     {
         try {
             $validated = $request->validate([
-                'amount' => ['required', new StrictInteger, 'integer', 'min:1'],
-                'item' => 'required|string',
-                'before_id' => ['required', new StrictInteger],
-                'after_id' => ['required', new StrictInteger],
-                'date' => 'required|string',
+                'amount' => ['present', new StrictInteger, 'integer', 'min:1'],
+                'item' => 'present|string',
+                'before_id' => ['present', new StrictInteger],
+                'after_id' => ['present', new StrictInteger],
+                'date' => 'present|string',
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -195,7 +195,7 @@ class MoveController extends Controller
                 if (isset($rules[StrictInteger::class])) {
                     throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be an integer type");
                 }
-                if (isset($rules['Required'])) {
+                if (isset($rules['Present'])) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} is required");
                 }
                 if (isset($rules['Min'])) {

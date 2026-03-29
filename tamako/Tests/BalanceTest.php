@@ -115,7 +115,7 @@ class BalanceTest extends TestCase
     {
         $response = $this->request->get('/balances?orderby=aaa');
         Assert::assertStatusCode400($response->statusCode());
-        Assert::assertSame('E106', $response->jsonBody()['code'], '順序指定が未定義の文字列');
+        Assert::assertSame('E103', $response->jsonBody()['code'], '順序指定が未定義の文字列');
     }
 
     /**
@@ -283,7 +283,7 @@ class BalanceTest extends TestCase
 
         $response = $this->request->post('/balances', $balance);
         Assert::assertStatusCode400($response->statusCode());
-        Assert::assertSame('E106', $response->jsonBody()['code'], 'amountが0');
+        Assert::assertSame('E102', $response->jsonBody()['code'], 'amountが0');
     }
 
     /**
@@ -297,6 +297,32 @@ class BalanceTest extends TestCase
         $response = $this->request->post('/balances', $balance);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E109', $response->jsonBody()['code'], 'amountがない');
+    }
+
+    /**
+     * 収支登録バリデーションエラーテスト（amount が null）
+     */
+    public function testBalancePostAmountNull(): void
+    {
+        $balance = $this->validBalance();
+        $balance['amount'] = null;
+
+        $response = $this->request->post('/balances', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'amountがnull');
+    }
+
+    /**
+     * 収支登録バリデーションエラーテスト（amount が空文字）
+     */
+    public function testBalancePostAmountEmptyString(): void
+    {
+        $balance = $this->validBalance();
+        $balance['amount'] = '';
+
+        $response = $this->request->post('/balances', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'amountが空文字列');
     }
 
     /**
@@ -329,7 +355,20 @@ class BalanceTest extends TestCase
 
         $response = $this->request->post('/balances', $balance);
         Assert::assertStatusCode400($response->statusCode());
-        Assert::assertSame('E109', $response->jsonBody()['code'], 'itemが空');
+        Assert::assertSame('E105', $response->jsonBody()['code'], 'itemが空');
+    }
+
+    /**
+     * 収支登録バリデーションエラーテスト（item が null）
+     */
+    public function testBalancePostItemNull(): void
+    {
+        $balance = $this->validBalance();
+        $balance['item'] = null;
+
+        $response = $this->request->post('/balances', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'itemがnull');
     }
 
     /**
@@ -388,6 +427,20 @@ class BalanceTest extends TestCase
         $response = $this->request->post('/balances', $balance);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E109', $response->jsonBody()['code'], '日付がない');
+    }
+
+
+    /**
+     * 収支登録バリデーションエラーテスト（date が null）
+     */
+    public function testBalancePostDateNull(): void
+    {
+        $balance = $this->validBalance();
+        $balance['date'] = null;
+
+        $response = $this->request->post('/balances', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], '日付が null');
     }
 
     /**
@@ -485,7 +538,7 @@ class BalanceTest extends TestCase
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E109', $response->jsonBody()['code'], 'kind idが空');
 
-        // kind_element_id なし
+        // purpose_element_id なし
         $balance = $this->validBalance();
         unset($balance['purpose_element_id']);
 
@@ -503,10 +556,76 @@ class BalanceTest extends TestCase
     }
 
     /**
+     * 収支登録バリデーションエラーテスト（要素パラメータが null）
+     */
+    public function testBalancePostElementNull(): void
+    {
+        // kind_element_id なし
+        $balance = $this->validBalance();
+        $balance['kind_element_id'] = null;
+
+        $response = $this->request->post('/balances', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'kind idがnull');
+
+        // purpose_element_id なし
+        $balance = $this->validBalance();
+        $balance['purpose_element_id'] = null;
+
+        $response = $this->request->post('/balances', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purpose idがnull');
+
+        // place_element_id なし
+        $balance = $this->validBalance();
+        $balance['place_element_id'] = null;
+
+        $response = $this->request->post('/balances', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'place idがnull');
+    }
+
+    /**
      * 収支登録バリデーションエラーテスト（要素パラメータが文字列）
      */
     public function testBalancePostElementString(): void
     {
+        // kind_element_id が空文字列
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => '',
+            'purpose_element_id' => 3,
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'kind idが文字列');
+
+        // purpose_element_id が空文字列
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => '',
+            'place_element_id' => 4,
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purpose idが文字列');
+
+        // place_element_id が空文字列
+        $response = $this->request->post('/balances', [
+            'amount' => -500,
+            'item' => 'うどん',
+            'date' => '2024-10-23',
+            'kind_element_id' => 2,
+            'purpose_element_id' => 3,
+            'place_element_id' => '',
+        ]);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'place idが文字列');
+
         // kind_element_id が文字列
         $response = $this->request->post('/balances', [
             'amount' => -500,
@@ -590,7 +709,14 @@ class BalanceTest extends TestCase
         $balance['amount'] = 0;
         $response = $this->request->put('/balances/10', $balance);
         Assert::assertStatusCode400($response->statusCode());
-        Assert::assertSame('E106', $response->jsonBody()['code'], 'amountが0');
+        Assert::assertSame('E102', $response->jsonBody()['code'], 'amountが0');
+
+        // 金額がnull
+        $balance = $this->validBalance();
+        $balance['amount'] = null;
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'amountがnull');
 
         // 金額がない
         $balance = $this->validBalance();
@@ -598,6 +724,13 @@ class BalanceTest extends TestCase
         $response = $this->request->put('/balances/10', $balance);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E109', $response->jsonBody()['code'], 'amountがない');
+
+        // 金額が文字
+        $balance = $this->validBalance();
+        $balance['amount'] = '';
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'amountが文字列');
 
         // 金額が文字
         $balance = $this->validBalance();
@@ -624,7 +757,14 @@ class BalanceTest extends TestCase
         $balance['item'] = '';
         $response = $this->request->put('/balances/10', $balance);
         Assert::assertStatusCode400($response->statusCode());
-        Assert::assertSame('E109', $response->jsonBody()['code'], 'itemが空文字列');
+        Assert::assertSame('E105', $response->jsonBody()['code'], 'itemが空文字列');
+
+        // 項目が空文字列
+        $balance = $this->validBalance();
+        $balance['item'] = null;
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'itemがnull');
 
         // 項目がない
         $balance = $this->validBalance();
@@ -707,10 +847,52 @@ class BalanceTest extends TestCase
     }
 
     /**
+     * 収支更新バリデーションエラーテスト（要素パラメータが null）
+     */
+    public function testBalancePutElementNull(): void
+    {
+        $balance = $this->validBalance();
+        $balance['kind_element_id'] = null;
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'kind idがnull');
+
+        $balance = $this->validBalance();
+        $balance['purpose_element_id'] = null;
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purpose idがnull');
+
+        $balance = $this->validBalance();
+        $balance['place_element_id'] = null;
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'place idがnull');
+    }
+
+    /**
      * 収支更新バリデーションエラーテスト（要素パラメータが文字列）
      */
     public function testBalancePutElementString(): void
     {
+        $balance = $this->validBalance();
+        $balance['kind_element_id'] = '';
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'kind idが空文字列');
+
+        $balance = $this->validBalance();
+        $balance['purpose_element_id'] = '';
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'purpose idが空文字列');
+
+        $balance = $this->validBalance();
+        $balance['place_element_id'] = '';
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'place idが空文字列');
+
         $balance = $this->validBalance();
         $balance['kind_element_id'] = 'aaa';
         $response = $this->request->put('/balances/10', $balance);
@@ -759,6 +941,13 @@ class BalanceTest extends TestCase
         $response = $this->request->put('/balances/10', $balance);
         Assert::assertStatusCode400($response->statusCode());
         Assert::assertSame('E109', $response->jsonBody()['code'], 'dateがない');
+
+        // null 日付
+        $balance = $this->validBalance();
+        $balance['date'] = null;
+        $response = $this->request->put('/balances/10', $balance);
+        Assert::assertStatusCode400($response->statusCode());
+        Assert::assertSame('E101', $response->jsonBody()['code'], 'dateがnull');
 
         // 存在しない日付
         $balance = $this->validBalance();

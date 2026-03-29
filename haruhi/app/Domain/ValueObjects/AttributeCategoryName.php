@@ -12,7 +12,7 @@ class AttributeCategoryName
     public function __construct(private readonly string $name)
     {
         if (mb_strlen($name) === 0) {
-            throw new AppException(ErrorCode::INVALID_EMPTY, "Name length is empty.");
+            throw new AppException(ErrorCode::INVALID_LENGTH, "Name length is empty.");
         }
         if (mb_strlen($name) > self::MAX_LENGTH) {
             throw new AppException(ErrorCode::INVALID_LENGTH, "Name length is over.");

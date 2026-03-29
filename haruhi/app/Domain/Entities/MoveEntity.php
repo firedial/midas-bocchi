@@ -57,7 +57,7 @@ class MoveEntity
     public function beforeDescription(): Description
     {
         if (is_null($this->beforeDescription)) {
-            throw new AppException(ErrorCode::INVALID_EMPTY, "Before description is null.");
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, "Before description is null.");
         }
         return $this->beforeDescription;
     }
@@ -65,7 +65,7 @@ class MoveEntity
     public function afterDescription(): Description
     {
         if (is_null($this->afterDescription)) {
-            throw new AppException(ErrorCode::INVALID_EMPTY, "After description is null.");
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, "After description is null.");
         }
         return $this->afterDescription;
     }
