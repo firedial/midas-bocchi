@@ -50,7 +50,7 @@ class MoveController extends Controller
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $getMovesUsecase = new GetMovesUsecase();
@@ -83,7 +83,7 @@ class MoveController extends Controller
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $SelectMoveUsecase = new SelectMoveUsecase();
@@ -136,7 +136,7 @@ class MoveController extends Controller
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         // 移動前後で同じIDではないこと
@@ -213,7 +213,7 @@ class MoveController extends Controller
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         // 移動前後で同じIDではないこと
@@ -261,7 +261,7 @@ class MoveController extends Controller
         $attribute = match ($attributeName) {
             'purposes' => Attribute::purpose(),
             'places' => Attribute::place(),
-            default => throw new AppException(ErrorCode::INVALID_VALUE, 'Attribute name is wrong.'),
+            default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
         $deleteMoveUsecase = new DeleteMoveUsecase();

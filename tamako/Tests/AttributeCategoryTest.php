@@ -4,21 +4,18 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 
 class AttributeCategoryTest extends TestCase
 {
-    private int $suffix = 23000;
+    private int $suffix = 10000;
 
     /**
      * 属性カテゴリー一覧取得テスト
      */
     public function testAttributeCategoryGet(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributeNames() as $attribute) {
             $response = $this->request->get('/attribute_categories/' . $attribute);
             Assert::assertStatusCode200($response->statusCode());
 
-            $categories = $response->jsonBody();
-            $category = $categories[0];
+            $category = $response->jsonBody()[0];
             Assert::assertSame(true, is_int($category['id']), $attribute . ' idがint');
             Assert::assertSame(true, is_string($category['name']), $attribute . ' nameがstring');
             Assert::assertSame(true, is_string($category['description']), $attribute . ' descriptionがstring');
@@ -60,37 +57,21 @@ class AttributeCategoryTest extends TestCase
     }
 
     /**
-     * 属性カテゴリー登録バリデーションエラーテスト（名前が空）
+     * 属性カテゴリー登録バリデーションエラーテスト（名前）
      */
-    public function testAttributeCategoryPostNameEmpty(): void
+    public function testAttributeCategoryPostNameInvalid(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+        // 名前が空
+        $this->assertPostErrorForAll(['name' => ''], 400, 'E109', 'nameが空');
 
-        foreach ($attributes as $attribute) {
-            $category = $this->validAttributeCategory();
-            $category['name'] = '';
+        // 名前がない
+        $this->assertPostErrorUnsetForAll('name', 400, 'E109', 'nameがない');
 
-            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' nameが空');
-        }
-    }
+        // 名前が小文字から始まる
+        $this->assertPostErrorForAll(['name' => 'aaa'], 400, 'E103', 'nameが小文字始まり');
 
-    /**
-     * 属性カテゴリー登録バリデーションエラーテスト（名前がない）
-     */
-    public function testAttributeCategoryPostNameMissing(): void
-    {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
-            $category = $this->validAttributeCategory();
-            unset($category['name']);
-
-            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' nameがない');
-        }
+        // 名前がマルチバイト文字
+        $this->assertPostErrorForAll(['name' => 'あああ'], 400, 'E103', 'nameがマルチバイト');
     }
 
     /**
@@ -98,9 +79,7 @@ class AttributeCategoryTest extends TestCase
      */
     public function testAttributeCategoryPostNameLength(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributeNames() as $attribute) {
             // 20文字は登録できる
             $category = $this->validAttributeCategory();
             $category['name'] = 'Abcd_abAB_efgt_' . str_pad((string)$this->suffix, 5, '0', STR_PAD_LEFT);
@@ -117,58 +96,20 @@ class AttributeCategoryTest extends TestCase
     }
 
     /**
-     * 属性カテゴリー登録バリデーションエラーテスト（名前が小文字から始まる）
-     */
-    public function testAttributeCategoryPostNameLowercase(): void
-    {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
-            $category = $this->validAttributeCategory();
-            $category['name'] = 'aaa';
-
-            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E103', $response->jsonBody()['code'], $attribute . ' nameが小文字始まり');
-        }
-    }
-
-    /**
-     * 属性カテゴリー登録バリデーションエラーテスト（名前がマルチバイト文字）
-     */
-    public function testAttributeCategoryPostNameMultibyte(): void
-    {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
-            $category = $this->validAttributeCategory();
-            $category['name'] = 'あああ';
-
-            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E103', $response->jsonBody()['code'], $attribute . ' nameがマルチバイト');
-        }
-    }
-
-    /**
      * 属性カテゴリー登録バリデーションエラーテスト（名前が重複）
      */
     public function testAttributeCategoryPostNameDuplicate(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributeNames() as $attribute) {
             $name = 'Dup_post' . $this->suffix;
 
             $category = $this->validAttributeCategory();
             $category['name'] = $name;
-
             $response = $this->request->post('/attribute_categories/' . $attribute, $category);
             Assert::assertStatusCode200($response->statusCode());
 
             $category = $this->validAttributeCategory();
             $category['name'] = $name;
-
             $response = $this->request->post('/attribute_categories/' . $attribute, $category);
             Assert::assertStatusCode409($response->statusCode());
             Assert::assertSame('E304', $response->jsonBody()['code'], $attribute . ' name が重複');
@@ -176,37 +117,15 @@ class AttributeCategoryTest extends TestCase
     }
 
     /**
-     * 属性カテゴリー登録バリデーションエラーテスト（説明が空）
+     * 属性カテゴリー登録バリデーションエラーテスト（説明）
      */
-    public function testAttributeCategoryPostDescriptionEmpty(): void
+    public function testAttributeCategoryPostDescriptionInvalid(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+        // 説明が空
+        $this->assertPostErrorForAll(['description' => ''], 400, 'E109', 'descriptionが空');
 
-        foreach ($attributes as $attribute) {
-            $category = $this->validAttributeCategory();
-            $category['description'] = '';
-
-            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' descriptionが空');
-        }
-    }
-
-    /**
-     * 属性カテゴリー登録バリデーションエラーテスト（説明がない）
-     */
-    public function testAttributeCategoryPostDescriptionMissing(): void
-    {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
-            $category = $this->validAttributeCategory();
-            unset($category['description']);
-
-            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' descriptionがない');
-        }
+        // 説明がない
+        $this->assertPostErrorUnsetForAll('description', 400, 'E109', 'descriptionがない');
     }
 
     /**
@@ -214,9 +133,7 @@ class AttributeCategoryTest extends TestCase
      */
     public function testAttributeCategoryPostDescriptionLength(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributeNames() as $attribute) {
             // 20文字
             $category = $this->validAttributeCategory();
             $category['description'] = 'あいうえおかきくけこさしすせそたちつてと';
@@ -233,45 +150,21 @@ class AttributeCategoryTest extends TestCase
     }
 
     /**
-     * 属性カテゴリー更新バリデーションエラーテスト（名前が空）
+     * 属性カテゴリー更新バリデーションエラーテスト（名前）
      */
-    public function testAttributeCategoryPutNameEmpty(): void
+    public function testAttributeCategoryPutNameInvalid(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+        // 名前が空
+        $this->assertPutErrorForAll(['name' => ''], 400, 'E109', 'nameが空');
 
-        foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
-            Assert::assertStatusCode200($response->statusCode());
-            $id = $response->jsonBody()['id'];
+        // 名前がない
+        $this->assertPutErrorUnsetForAll('name', 400, 'E109', 'nameがない');
 
-            $category = $this->validAttributeCategory();
-            $category['name'] = '';
+        // 名前が小文字から始まる
+        $this->assertPutErrorForAll(['name' => 'aaa'], 400, 'E103', 'nameが小文字始まり');
 
-            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' nameが空');
-        }
-    }
-
-    /**
-     * 属性カテゴリー更新バリデーションエラーテスト（名前がない）
-     */
-    public function testAttributeCategoryPutNameMissing(): void
-    {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
-            Assert::assertStatusCode200($response->statusCode());
-            $id = $response->jsonBody()['id'];
-
-            $category = $this->validAttributeCategory();
-            unset($category['name']);
-
-            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' nameがない');
-        }
+        // 名前がマルチバイト文字
+        $this->assertPutErrorForAll(['name' => 'あああ'], 400, 'E103', 'nameがマルチバイト');
     }
 
     /**
@@ -279,9 +172,7 @@ class AttributeCategoryTest extends TestCase
      */
     public function testAttributeCategoryPutNameLength(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributeNames() as $attribute) {
             $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
@@ -302,60 +193,15 @@ class AttributeCategoryTest extends TestCase
     }
 
     /**
-     * 属性カテゴリー更新バリデーションエラーテスト（名前が小文字から始まる）
-     */
-    public function testAttributeCategoryPutNameLowercase(): void
-    {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
-            Assert::assertStatusCode200($response->statusCode());
-            $id = $response->jsonBody()['id'];
-
-            $category = $this->validAttributeCategory();
-            $category['name'] = 'aaa';
-
-            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E103', $response->jsonBody()['code'], $attribute . ' nameが小文字始まり');
-        }
-    }
-
-    /**
-     * 属性カテゴリー更新バリデーションエラーテスト（名前がマルチバイト文字）
-     */
-    public function testAttributeCategoryPutNameMultibyte(): void
-    {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
-            Assert::assertStatusCode200($response->statusCode());
-            $id = $response->jsonBody()['id'];
-
-            $category = $this->validAttributeCategory();
-            $category['name'] = 'あああ';
-
-            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E103', $response->jsonBody()['code'], $attribute . ' nameがマルチバイト');
-        }
-    }
-
-    /**
      * 属性カテゴリー更新バリデーションエラーテスト（名前が重複）
      */
     public function testAttributeCategoryPutNameDuplicate(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributeNames() as $attribute) {
             // 重複させるレコード
             $name = 'Dup_put' . $this->suffix;
             $category = $this->validAttributeCategory();
             $category['name'] = $name;
-
             $response = $this->request->post('/attribute_categories/' . $attribute, $category);
             Assert::assertStatusCode200($response->statusCode());
 
@@ -367,7 +213,6 @@ class AttributeCategoryTest extends TestCase
             // 更新
             $category = $this->validAttributeCategory();
             $category['name'] = $name;
-
             $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
             Assert::assertStatusCode409($response->statusCode());
             Assert::assertSame('E304', $response->jsonBody()['code'], $attribute . ' name が重複');
@@ -375,45 +220,15 @@ class AttributeCategoryTest extends TestCase
     }
 
     /**
-     * 属性カテゴリー更新バリデーションエラーテスト（説明が空）
+     * 属性カテゴリー更新バリデーションエラーテスト（説明）
      */
-    public function testAttributeCategoryPutDescriptionEmpty(): void
+    public function testAttributeCategoryPutDescriptionInvalid(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
+        // 説明が空
+        $this->assertPutErrorForAll(['description' => ''], 400, 'E109', 'descriptionが空');
 
-        foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
-            Assert::assertStatusCode200($response->statusCode());
-            $id = $response->jsonBody()['id'];
-
-            $category = $this->validAttributeCategory();
-            $category['description'] = '';
-
-            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' descriptionが空');
-        }
-    }
-
-    /**
-     * 属性カテゴリー更新バリデーションエラーテスト（説明がない）
-     */
-    public function testAttributeCategoryPutDescriptionMissing(): void
-    {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
-            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
-            Assert::assertStatusCode200($response->statusCode());
-            $id = $response->jsonBody()['id'];
-
-            $category = $this->validAttributeCategory();
-            unset($category['description']);
-
-            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
-            Assert::assertStatusCode400($response->statusCode());
-            Assert::assertSame('E109', $response->jsonBody()['code'], $attribute . ' descriptionがない');
-        }
+        // 説明がない
+        $this->assertPutErrorUnsetForAll('description', 400, 'E109', 'descriptionがない');
     }
 
     /**
@@ -421,9 +236,7 @@ class AttributeCategoryTest extends TestCase
      */
     public function testAttributeCategoryPutDescriptionLength(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributeNames() as $attribute) {
             $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
             Assert::assertStatusCode200($response->statusCode());
             $id = $response->jsonBody()['id'];
@@ -448,9 +261,7 @@ class AttributeCategoryTest extends TestCase
      */
     public function testAttributeCategoryPutMove(): void
     {
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributeNames() as $attribute) {
             $category = $this->validAttributeCategory();
             $response = $this->request->put('/attribute_categories/' . $attribute . '/1', $category);
             Assert::assertStatusCode400($response->statusCode());
@@ -465,9 +276,7 @@ class AttributeCategoryTest extends TestCase
     {
         $noSessionRequest = new Request();
 
-        $attributes = ['kind_category', 'purpose_category', 'place_category'];
-
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributeNames() as $attribute) {
             $response = $noSessionRequest->get('/attribute_categories/' . $attribute);
             Assert::assertStatusCode401($response->statusCode());
             Assert::assertSame('E201', $response->jsonBody()['code'], '認証無し一覧取得 ' . $attribute);
@@ -482,43 +291,120 @@ class AttributeCategoryTest extends TestCase
         }
     }
 
+    private function attributeNames(): array
+    {
+        return ['kind_category', 'purpose_category', 'place_category'];
+    }
+
     private function assertAttributeCategoryCRUD(string $attribute): void
     {
-        // 登録
-        $response = $this->request->post('/attribute_categories/' . $attribute, [
+        $createData = [
             'name' => 'Hoge' . $this->suffix,
             'description' => '説明',
-        ]);
-        Assert::assertStatusCode200($response->statusCode());
-        $category = $response->jsonBody();
-        Assert::assertSame('Hoge' . $this->suffix, $category['name'], $attribute . ' 登録後の name');
-        Assert::assertSame('説明', $category['description'], $attribute . ' 登録後の description');
+        ];
+        $updateData = [
+            'name' => 'Fuga' . $this->suffix,
+            'description' => '説明更新後',
+        ];
 
-        $id = $category['id'];
+        // 登録
+        $response = $this->request->post('/attribute_categories/' . $attribute, $createData);
+        Assert::assertStatusCode200($response->statusCode());
+        $this->assertCategoryFields($response->jsonBody(), $createData, $attribute . ' 登録後');
+
+        $id = $response->jsonBody()['id'];
 
         // 個別取得
         $response = $this->request->get('/attribute_categories/' . $attribute . '/' . $id);
         Assert::assertStatusCode200($response->statusCode());
-        $category = $response->jsonBody();
-        Assert::assertSame('Hoge' . $this->suffix, $category['name'], $attribute . ' 取得後の name');
-        Assert::assertSame('説明', $category['description'], $attribute . ' 取得後の description');
+        $this->assertCategoryFields($response->jsonBody(), $createData, $attribute . ' 取得後');
 
         // 更新
-        $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, [
-            'name' => 'Fuga' . $this->suffix,
-            'description' => '説明更新後',
-        ]);
+        $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $updateData);
         Assert::assertStatusCode200($response->statusCode());
-        $category = $response->jsonBody();
-        Assert::assertSame('Fuga' . $this->suffix, $category['name'], $attribute . ' 更新後の name');
-        Assert::assertSame('説明更新後', $category['description'], $attribute . ' 更新後の description');
+        $this->assertCategoryFields($response->jsonBody(), $updateData, $attribute . ' 更新後');
 
         // 更新後の値を確認
         $response = $this->request->get('/attribute_categories/' . $attribute . '/' . $id);
         Assert::assertStatusCode200($response->statusCode());
-        $category = $response->jsonBody();
-        Assert::assertSame('Fuga' . $this->suffix, $category['name'], $attribute . ' 更新確認後の name');
-        Assert::assertSame('説明更新後', $category['description'], $attribute . ' 更新確認後の description');
+        $this->assertCategoryFields($response->jsonBody(), $updateData, $attribute . ' 更新確認後');
+    }
+
+    /**
+     * カテゴリの各フィールドをアサートする
+     */
+    private function assertCategoryFields(array $category, array $expected, string $prefix): void
+    {
+        Assert::assertSame($expected['name'], $category['name'], "{$prefix}の name");
+        Assert::assertSame($expected['description'], $category['description'], "{$prefix}の description");
+    }
+
+    /**
+     * 全属性タイプで POST エラーをアサートする（フィールド上書き）
+     */
+    private function assertPostErrorForAll(array $overrides, int $statusCode, string $errorCode, string $message): void
+    {
+        foreach ($this->attributeNames() as $attribute) {
+            $category = array_merge($this->validAttributeCategory(), $overrides);
+            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
+            $this->assertErrorResponse($response, $statusCode, $errorCode, $attribute . ' ' . $message);
+        }
+    }
+
+    /**
+     * 全属性タイプで POST エラーをアサートする（フィールド削除）
+     */
+    private function assertPostErrorUnsetForAll(string $field, int $statusCode, string $errorCode, string $message): void
+    {
+        foreach ($this->attributeNames() as $attribute) {
+            $category = $this->validAttributeCategory();
+            unset($category[$field]);
+            $response = $this->request->post('/attribute_categories/' . $attribute, $category);
+            $this->assertErrorResponse($response, $statusCode, $errorCode, $attribute . ' ' . $message);
+        }
+    }
+
+    /**
+     * 全属性タイプで PUT エラーをアサートする（フィールド上書き）
+     */
+    private function assertPutErrorForAll(array $overrides, int $statusCode, string $errorCode, string $message): void
+    {
+        foreach ($this->attributeNames() as $attribute) {
+            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
+            Assert::assertStatusCode200($response->statusCode());
+            $id = $response->jsonBody()['id'];
+
+            $category = array_merge($this->validAttributeCategory(), $overrides);
+            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
+            $this->assertErrorResponse($response, $statusCode, $errorCode, $attribute . ' ' . $message);
+        }
+    }
+
+    /**
+     * 全属性タイプで PUT エラーをアサートする（フィールド削除）
+     */
+    private function assertPutErrorUnsetForAll(string $field, int $statusCode, string $errorCode, string $message): void
+    {
+        foreach ($this->attributeNames() as $attribute) {
+            $response = $this->request->post('/attribute_categories/' . $attribute, $this->validAttributeCategory());
+            Assert::assertStatusCode200($response->statusCode());
+            $id = $response->jsonBody()['id'];
+
+            $category = $this->validAttributeCategory();
+            unset($category[$field]);
+            $response = $this->request->put('/attribute_categories/' . $attribute . '/' . $id, $category);
+            $this->assertErrorResponse($response, $statusCode, $errorCode, $attribute . ' ' . $message);
+        }
+    }
+
+    /**
+     * エラーレスポンスをアサートする
+     */
+    private function assertErrorResponse($response, int $statusCode, string $errorCode, string $message): void
+    {
+        $assertMethod = 'assertStatusCode' . $statusCode;
+        Assert::$assertMethod($response->statusCode());
+        Assert::assertSame($errorCode, $response->jsonBody()['code'], $message);
     }
 
     private function validAttributeCategory(): array
