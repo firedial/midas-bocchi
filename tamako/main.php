@@ -6,6 +6,7 @@ require_once __DIR__ . '/Tests/BalanceTest.php';
 require_once __DIR__ . '/Tests/MoveTest.php';
 require_once __DIR__ . '/Tests/AttributeElementTest.php';
 require_once __DIR__ . '/Tests/AttributeCategoryTest.php';
+require_once __DIR__ . '/Tests/ScenarioTest.php';
 require_once __DIR__ . '/Tests/OtherTest.php';
 
 $host = getenv('APP_URL') ?: 'http://haruhi/api';
@@ -17,6 +18,7 @@ $runner->addTestClass(BalanceTest::class);
 $runner->addTestClass(MoveTest::class);
 $runner->addTestClass(AttributeElementTest::class);
 $runner->addTestClass(AttributeCategoryTest::class);
+$runner->addTestClass(ScenarioTest::class);
 $runner->addTestClass(OtherTest::class);
 
 $runner->run();
