@@ -16,7 +16,7 @@ class ScenarioDetailDataModel
     private const C_TYPE_ELEMENT_ID   = 'type_element_id';
     private const C_PURPOSE_ELEMENT_ID = 'purpose_element_id';
     private const C_PLACE_ELEMENT_ID  = 'place_element_id';
-    private const C_MOVE_KIND         = 'move_kind';
+    private const C_MOVE_ATTRIBUTE         = 'move_attribute';
     private const C_MOVE_BEFORE_ID    = 'move_before_id';
     private const C_MOVE_AFTER_ID     = 'move_after_id';
 

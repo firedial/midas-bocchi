@@ -15,7 +15,7 @@ class ScenarioDetailEntity
         protected readonly int $typeElementId,
         protected readonly ?int $purposeElementId,
         protected readonly ?int $placeElementId,
-        protected readonly ?int $moveKind,
+        protected readonly ?int $moveAttribute,
         protected readonly ?int $moveBeforeId,
         protected readonly ?int $moveAfterId,
     ) {}
@@ -55,9 +55,9 @@ class ScenarioDetailEntity
         return $this->placeElementId;
     }
 
-    public function moveKind(): ?int
+    public function moveAttribute(): ?int
     {
-        return $this->moveKind;
+        return $this->moveAttribute;
     }
 
     public function moveBeforeId(): ?int

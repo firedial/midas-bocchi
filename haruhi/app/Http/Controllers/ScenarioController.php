@@ -51,7 +51,7 @@ class ScenarioController extends Controller
                     'type_element_id' => $d->typeElementId(),
                     'purpose_element_id' => $d->purposeElementId(),
                     'place_element_id' => $d->placeElementId(),
-                    'move_kind' => $d->moveKind(),
+                    'move_attribute' => $d->moveAttribute(),
                     'move_before_id' => $d->moveBeforeId(),
                     'move_after_id' => $d->moveAfterId(),
                 ],
@@ -145,7 +145,7 @@ class ScenarioController extends Controller
             $amount = $detail['amount'];
             $purposeElementId = $request->input("details.{$i}.purpose_element_id");
             $placeElementId = $request->input("details.{$i}.place_element_id");
-            $moveKind = $request->input("details.{$i}.move_kind");
+            $moveAttribute = $request->input("details.{$i}.move_attribute");
             $moveBeforeId = $request->input("details.{$i}.move_before_id");
             $moveAfterId = $request->input("details.{$i}.move_after_id");
 
@@ -160,8 +160,8 @@ class ScenarioController extends Controller
                 if (!is_int($placeElementId)) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.place_element_id is required");
                 }
-                if (!is_null($moveKind)) {
-                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_kind must be null");
+                if (!is_null($moveAttribute)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_attribute must be null");
                 }
                 if (!is_null($moveBeforeId)) {
                     throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_before_id must be null");
@@ -180,8 +180,8 @@ class ScenarioController extends Controller
                 if (!is_null($placeElementId)) {
                     throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.place_element_id must be null");
                 }
-                if (!is_int($moveKind) || !in_array($moveKind, [1, 2], true)) {
-                    throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.move_kind is required (1 or 2)");
+                if (!is_int($moveAttribute) || !in_array($moveAttribute, [1, 2], true)) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.move_attribute is required (1 or 2)");
                 }
                 if (!is_int($moveBeforeId)) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.move_before_id is required");
@@ -199,7 +199,7 @@ class ScenarioController extends Controller
                 typeElementId: $detail['type_element_id'],
                 purposeElementId: $purposeElementId,
                 placeElementId: $placeElementId,
-                moveKind: $moveKind,
+                moveAttribute: $moveAttribute,
                 moveBeforeId: $moveBeforeId,
                 moveAfterId: $moveAfterId,
             );

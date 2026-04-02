@@ -20,7 +20,7 @@ class ScenarioTest extends TestCase
                     'type_element_id' => 12,
                     'purpose_element_id' => 13,
                     'place_element_id' => 14,
-                    'move_kind' => null,
+                    'move_attribute' => null,
                     'move_before_id' => null,
                     'move_after_id' => null,
                 ],
@@ -334,7 +334,7 @@ class ScenarioTest extends TestCase
      */
     public function testScenarioDetailType1MoveFieldsMustBeNull(): void
     {
-        $this->assertPostDetail1Error(['move_kind' => 1], 400, 'E106', 'type=1でmove_kindがnullでない');
+        $this->assertPostDetail1Error(['move_attribute' => 1], 400, 'E106', 'type=1でmove_attributeがnullでない');
         $this->assertPostDetail1Error(['move_before_id' => 1], 400, 'E106', 'type=1でmove_before_idがnullでない');
         $this->assertPostDetail1Error(['move_after_id' => 1], 400, 'E106', 'type=1でmove_after_idがnullでない');
     }
@@ -352,24 +352,24 @@ class ScenarioTest extends TestCase
     }
 
     /**
-     * 明細 type=2 move_kind バリデーションエラーテスト
+     * 明細 type=2 move_attribute バリデーションエラーテスト
      */
     public function testScenarioDetailType2MoveKindInvalid(): void
     {
-        // move_kind がない
-        $this->assertPostDetail2ErrorUnset('move_kind', 400, 'E109', 'move_kindがない');
+        // move_attribute がない
+        $this->assertPostDetail2ErrorUnset('move_attribute', 400, 'E109', 'move_attributeがない');
 
-        // move_kind が null
-        $this->assertPostDetail2Error(['move_kind' => null], 400, 'E109', 'move_kindがnull');
+        // move_attribute が null
+        $this->assertPostDetail2Error(['move_attribute' => null], 400, 'E109', 'move_attributeがnull');
 
-        // move_kind が文字列
-        $this->assertPostDetail2Error(['move_kind' => 'aaa'], 400, 'E109', 'move_kindが文字列');
+        // move_attribute が文字列
+        $this->assertPostDetail2Error(['move_attribute' => 'aaa'], 400, 'E109', 'move_attributeが文字列');
 
-        // move_kind が範囲外 (0)
-        $this->assertPostDetail2Error(['move_kind' => 0], 400, 'E109', 'move_kindが0');
+        // move_attribute が範囲外 (0)
+        $this->assertPostDetail2Error(['move_attribute' => 0], 400, 'E109', 'move_attributeが0');
 
-        // move_kind が範囲外 (3)
-        $this->assertPostDetail2Error(['move_kind' => 3], 400, 'E109', 'move_kindが3');
+        // move_attribute が範囲外 (3)
+        $this->assertPostDetail2Error(['move_attribute' => 3], 400, 'E109', 'move_attributeが3');
     }
 
     /**
@@ -431,7 +431,7 @@ class ScenarioTest extends TestCase
             'type_element_id' => 2,
             'purpose_element_id' => 3,
             'place_element_id' => 4,
-            'move_kind' => null,
+            'move_attribute' => null,
             'move_before_id' => null,
             'move_after_id' => null,
         ];
@@ -446,7 +446,7 @@ class ScenarioTest extends TestCase
             'type_element_id' => 2,
             'purpose_element_id' => null,
             'place_element_id' => null,
-            'move_kind' => 2,
+            'move_attribute' => 2,
             'move_before_id' => 2,
             'move_after_id' => 5,
         ];
@@ -460,7 +460,7 @@ class ScenarioTest extends TestCase
         Assert::assertSame($expected['type_element_id'], $detail['type_element_id'], "{$prefix}の type_element_id");
         Assert::assertSame($expected['purpose_element_id'], $detail['purpose_element_id'], "{$prefix}の purpose_element_id");
         Assert::assertSame($expected['place_element_id'], $detail['place_element_id'], "{$prefix}の place_element_id");
-        Assert::assertSame($expected['move_kind'], $detail['move_kind'], "{$prefix}の move_kind");
+        Assert::assertSame($expected['move_attribute'], $detail['move_attribute'], "{$prefix}の move_attribute");
         Assert::assertSame($expected['move_before_id'], $detail['move_before_id'], "{$prefix}の move_before_id");
         Assert::assertSame($expected['move_after_id'], $detail['move_after_id'], "{$prefix}の move_after_id");
     }
