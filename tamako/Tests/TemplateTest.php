@@ -2,14 +2,14 @@
 
 require_once __DIR__ . '/../TestRunner/TestCase.php';
 
-class ScenarioTest extends TestCase
+class TemplateTest extends TestCase
 {
     /**
      * シナリオCRUDテスト
      */
-    public function testScenarioCRUD(): void
+    public function testTemplateCRUD(): void
     {
-        $createData = $this->validScenario();
+        $createData = $this->validTemplate();
         $updateData = [
             'name' => 'シナリオ更新後',
             'details' => [
@@ -28,14 +28,14 @@ class ScenarioTest extends TestCase
         ];
 
         // 登録
-        $response = $this->request->post('/scenarios', $createData);
+        $response = $this->request->post('/templates', $createData);
         Assert::assertStatusCode200($response->statusCode());
         Assert::assertSame($createData['name'], $response->jsonBody()['name'], '登録後のname');
 
         $id = $response->jsonBody()['id'];
 
         // 個別取得
-        $response = $this->request->get('/scenarios/' . $id);
+        $response = $this->request->get('/templates/' . $id);
         Assert::assertStatusCode200($response->statusCode());
         Assert::assertSame($createData['name'], $response->jsonBody()['name'], '取得後のname');
         Assert::assertSame(2, count($response->jsonBody()['details']), '取得後の明細件数');
@@ -43,23 +43,23 @@ class ScenarioTest extends TestCase
         $this->assertDetailFields($response->jsonBody()['details'][1], $createData['details'][1], '取得後の明細2');
 
         // 更新
-        $response = $this->request->put('/scenarios/' . $id, $updateData);
+        $response = $this->request->put('/templates/' . $id, $updateData);
         Assert::assertStatusCode200($response->statusCode());
         Assert::assertSame($updateData['name'], $response->jsonBody()['name'], '更新後のname');
 
         // 更新後の個別取得
-        $response = $this->request->get('/scenarios/' . $id);
+        $response = $this->request->get('/templates/' . $id);
         Assert::assertStatusCode200($response->statusCode());
         Assert::assertSame($updateData['name'], $response->jsonBody()['name'], '更新後の取得name');
         Assert::assertSame(1, count($response->jsonBody()['details']), '更新後の明細件数');
 
         // 削除
-        $response = $this->request->delete('/scenarios/' . $id);
+        $response = $this->request->delete('/templates/' . $id);
         Assert::assertStatusCode200($response->statusCode());
         Assert::assertSame($updateData['name'], $response->jsonBody()['name'], '削除後のname');
 
         // 削除後に取得すると404
-        $response = $this->request->get('/scenarios/' . $id);
+        $response = $this->request->get('/templates/' . $id);
         Assert::assertStatusCode404($response->statusCode());
         Assert::assertSame('E301', $response->jsonBody()['code'], '削除後の取得');
     }
@@ -67,16 +67,16 @@ class ScenarioTest extends TestCase
     /**
      * シナリオ一覧取得テスト
      */
-    public function testScenarioGet(): void
+    public function testTemplateGet(): void
     {
-        $response = $this->request->get('/scenarios');
+        $response = $this->request->get('/templates');
         Assert::assertStatusCode200($response->statusCode());
         $beforeCount = count($response->jsonBody());
 
-        $response = $this->request->post('/scenarios', $this->validScenario());
+        $response = $this->request->post('/templates', $this->validTemplate());
         Assert::assertStatusCode200($response->statusCode());
 
-        $response = $this->request->get('/scenarios');
+        $response = $this->request->get('/templates');
         Assert::assertStatusCode200($response->statusCode());
         Assert::assertSame($beforeCount + 1, count($response->jsonBody()), '登録後の件数');
     }
@@ -84,19 +84,19 @@ class ScenarioTest extends TestCase
     /**
      * シナリオ一覧レスポンスボディテスト（明細を含まない）
      */
-    public function testScenarioGetResponseBody(): void
+    public function testTemplateGetResponseBody(): void
     {
-        $response = $this->request->post('/scenarios', $this->validScenario());
+        $response = $this->request->post('/templates', $this->validTemplate());
         Assert::assertStatusCode200($response->statusCode());
         $id = $response->jsonBody()['id'];
 
-        $response = $this->request->get('/scenarios');
+        $response = $this->request->get('/templates');
         Assert::assertStatusCode200($response->statusCode());
 
         $found = null;
-        foreach ($response->jsonBody() as $scenario) {
-            if ($scenario['id'] === $id) {
-                $found = $scenario;
+        foreach ($response->jsonBody() as $template) {
+            if ($template['id'] === $id) {
+                $found = $template;
                 break;
             }
         }
@@ -108,37 +108,37 @@ class ScenarioTest extends TestCase
     /**
      * シナリオ詳細レスポンスボディテスト（seq昇順）
      */
-    public function testScenarioShowDetails(): void
+    public function testTemplateShowDetails(): void
     {
-        $response = $this->request->post('/scenarios', $this->validScenario());
+        $response = $this->request->post('/templates', $this->validTemplate());
         Assert::assertStatusCode200($response->statusCode());
         $id = $response->jsonBody()['id'];
 
-        $response = $this->request->get('/scenarios/' . $id);
+        $response = $this->request->get('/templates/' . $id);
         Assert::assertStatusCode200($response->statusCode());
 
         $details = $response->jsonBody()['details'];
         Assert::assertSame(2, count($details), '明細件数');
         Assert::assertSame(1, $details[0]['seq'], '明細1のseq');
         Assert::assertSame(2, $details[1]['seq'], '明細2のseq');
-        $this->assertDetailFields($details[0], $this->validScenario()['details'][0], '明細1');
-        $this->assertDetailFields($details[1], $this->validScenario()['details'][1], '明細2');
+        $this->assertDetailFields($details[0], $this->validTemplate()['details'][0], '明細1');
+        $this->assertDetailFields($details[1], $this->validTemplate()['details'][1], '明細2');
     }
 
     /**
      * 存在しないシナリオのテスト
      */
-    public function testScenarioNotFound(): void
+    public function testTemplateNotFound(): void
     {
-        $response = $this->request->get('/scenarios/999999');
+        $response = $this->request->get('/templates/999999');
         Assert::assertStatusCode404($response->statusCode());
         Assert::assertSame('E301', $response->jsonBody()['code'], '取得');
 
-        $response = $this->request->put('/scenarios/999999', $this->validScenario());
+        $response = $this->request->put('/templates/999999', $this->validTemplate());
         Assert::assertStatusCode404($response->statusCode());
         Assert::assertSame('E301', $response->jsonBody()['code'], '更新');
 
-        $response = $this->request->delete('/scenarios/999999');
+        $response = $this->request->delete('/templates/999999');
         Assert::assertStatusCode404($response->statusCode());
         Assert::assertSame('E301', $response->jsonBody()['code'], '削除');
     }
@@ -146,27 +146,27 @@ class ScenarioTest extends TestCase
     /**
      * 認証なしテスト
      */
-    public function testScenarioWithoutAuth(): void
+    public function testTemplateWithoutAuth(): void
     {
         $noSessionRequest = new Request();
 
-        $response = $noSessionRequest->get('/scenarios');
+        $response = $noSessionRequest->get('/templates');
         Assert::assertStatusCode401($response->statusCode());
         Assert::assertSame('E201', $response->jsonBody()['code'], '認証なし一覧取得');
 
-        $response = $noSessionRequest->get('/scenarios/1');
+        $response = $noSessionRequest->get('/templates/1');
         Assert::assertStatusCode401($response->statusCode());
         Assert::assertSame('E201', $response->jsonBody()['code'], '認証なし取得');
 
-        $response = $noSessionRequest->post('/scenarios', $this->validScenario());
+        $response = $noSessionRequest->post('/templates', $this->validTemplate());
         Assert::assertStatusCode401($response->statusCode());
         Assert::assertSame('E201', $response->jsonBody()['code'], '認証なし登録');
 
-        $response = $noSessionRequest->put('/scenarios/1', $this->validScenario());
+        $response = $noSessionRequest->put('/templates/1', $this->validTemplate());
         Assert::assertStatusCode401($response->statusCode());
         Assert::assertSame('E201', $response->jsonBody()['code'], '認証なし更新');
 
-        $response = $noSessionRequest->delete('/scenarios/1');
+        $response = $noSessionRequest->delete('/templates/1');
         Assert::assertStatusCode401($response->statusCode());
         Assert::assertSame('E201', $response->jsonBody()['code'], '認証なし削除');
     }
@@ -174,7 +174,7 @@ class ScenarioTest extends TestCase
     /**
      * シナリオ名バリデーションエラーテスト
      */
-    public function testScenarioNameInvalid(): void
+    public function testTemplateNameInvalid(): void
     {
         // name がない
         $this->assertPostErrorUnset('name', 400, 'E109', 'nameがない');
@@ -186,16 +186,16 @@ class ScenarioTest extends TestCase
         $this->assertPostError(['name' => 'あいうえおかきくけこさしすせそたちつてとな'], 400, 'E105', 'nameが21文字');
 
         // name が20文字 (正常系)
-        $scenario = $this->validScenario();
-        $scenario['name'] = 'あいうえおかきくけこさしすせそたちつてと';
-        $response = $this->request->post('/scenarios', $scenario);
+        $template = $this->validTemplate();
+        $template['name'] = 'あいうえおかきくけこさしすせそたちつてと';
+        $response = $this->request->post('/templates', $template);
         Assert::assertStatusCode200($response->statusCode());
     }
 
     /**
      * details バリデーションエラーテスト
      */
-    public function testScenarioDetailsInvalid(): void
+    public function testTemplateDetailsInvalid(): void
     {
         // details がない
         $this->assertPostErrorUnset('details', 400, 'E109', 'detailsがない');
@@ -207,7 +207,7 @@ class ScenarioTest extends TestCase
     /**
      * 明細 type バリデーションエラーテスト
      */
-    public function testScenarioDetailTypeInvalid(): void
+    public function testTemplateDetailTypeInvalid(): void
     {
         // type がない
         $this->assertPostDetail1ErrorUnset('type', 400, 'E109', 'typeがない');
@@ -231,7 +231,7 @@ class ScenarioTest extends TestCase
     /**
      * 明細 amount バリデーションエラーテスト (type=1)
      */
-    public function testScenarioDetailAmountInvalid(): void
+    public function testTemplateDetailAmountInvalid(): void
     {
         // amount がない
         $this->assertPostDetail1ErrorUnset('amount', 400, 'E109', 'amountがない');
@@ -252,7 +252,7 @@ class ScenarioTest extends TestCase
     /**
      * 明細 item バリデーションエラーテスト
      */
-    public function testScenarioDetailItemInvalid(): void
+    public function testTemplateDetailItemInvalid(): void
     {
         // item がない
         $this->assertPostDetail1ErrorUnset('item', 400, 'E109', 'itemがない');
@@ -269,16 +269,16 @@ class ScenarioTest extends TestCase
         );
 
         // item が50文字 (正常系)
-        $scenario = $this->validScenario();
-        $scenario['details'][0]['item'] = 'あいうえおかきくけこさしすせそたちつてとなにぬねのあいうえおかきくけこさしすせそたちつてとなにぬねの';
-        $response = $this->request->post('/scenarios', $scenario);
+        $template = $this->validTemplate();
+        $template['details'][0]['item'] = 'あいうえおかきくけこさしすせそたちつてとなにぬねのあいうえおかきくけこさしすせそたちつてとなにぬねの';
+        $response = $this->request->post('/templates', $template);
         Assert::assertStatusCode200($response->statusCode());
     }
 
     /**
      * 明細 type_element_id バリデーションエラーテスト
      */
-    public function testScenarioDetailTypeElementIdInvalid(): void
+    public function testTemplateDetailTypeElementIdInvalid(): void
     {
         // type_element_id がない
         $this->assertPostDetail1ErrorUnset('type_element_id', 400, 'E109', 'type_element_idがない');
@@ -296,7 +296,7 @@ class ScenarioTest extends TestCase
     /**
      * 明細 type=1 purpose_element_id バリデーションエラーテスト
      */
-    public function testScenarioDetailType1PurposeElementIdInvalid(): void
+    public function testTemplateDetailType1PurposeElementIdInvalid(): void
     {
         // purpose_element_id がない
         $this->assertPostDetail1ErrorUnset('purpose_element_id', 400, 'E109', 'purpose_element_idがない');
@@ -314,7 +314,7 @@ class ScenarioTest extends TestCase
     /**
      * 明細 type=1 place_element_id バリデーションエラーテスト
      */
-    public function testScenarioDetailType1PlaceElementIdInvalid(): void
+    public function testTemplateDetailType1PlaceElementIdInvalid(): void
     {
         // place_element_id がない
         $this->assertPostDetail1ErrorUnset('place_element_id', 400, 'E109', 'place_element_idがない');
@@ -332,7 +332,7 @@ class ScenarioTest extends TestCase
     /**
      * 明細 type=1 の移動系フィールドは null でなければならないテスト
      */
-    public function testScenarioDetailType1MoveFieldsMustBeNull(): void
+    public function testTemplateDetailType1MoveFieldsMustBeNull(): void
     {
         $this->assertPostDetail1Error(['move_attribute' => 1], 400, 'E106', 'type=1でmove_attributeがnullでない');
         $this->assertPostDetail1Error(['move_before_id' => 1], 400, 'E106', 'type=1でmove_before_idがnullでない');
@@ -342,7 +342,7 @@ class ScenarioTest extends TestCase
     /**
      * 明細 type=2 amount は正の値でなければならないテスト
      */
-    public function testScenarioDetailType2AmountMustBePositive(): void
+    public function testTemplateDetailType2AmountMustBePositive(): void
     {
         // amount が0
         $this->assertPostDetail2Error(['amount' => 0], 400, 'E102', 'type=2でamountが0');
@@ -354,7 +354,7 @@ class ScenarioTest extends TestCase
     /**
      * 明細 type=2 move_attribute バリデーションエラーテスト
      */
-    public function testScenarioDetailType2MoveKindInvalid(): void
+    public function testTemplateDetailType2MoveKindInvalid(): void
     {
         // move_attribute がない
         $this->assertPostDetail2ErrorUnset('move_attribute', 400, 'E109', 'move_attributeがない');
@@ -375,7 +375,7 @@ class ScenarioTest extends TestCase
     /**
      * 明細 type=2 move_before_id バリデーションエラーテスト
      */
-    public function testScenarioDetailType2MoveBeforeIdInvalid(): void
+    public function testTemplateDetailType2MoveBeforeIdInvalid(): void
     {
         // move_before_id がない
         $this->assertPostDetail2ErrorUnset('move_before_id', 400, 'E109', 'move_before_idがない');
@@ -390,7 +390,7 @@ class ScenarioTest extends TestCase
     /**
      * 明細 type=2 move_after_id バリデーションエラーテスト
      */
-    public function testScenarioDetailType2MoveAfterIdInvalid(): void
+    public function testTemplateDetailType2MoveAfterIdInvalid(): void
     {
         // move_after_id がない
         $this->assertPostDetail2ErrorUnset('move_after_id', 400, 'E109', 'move_after_idがない');
@@ -405,13 +405,13 @@ class ScenarioTest extends TestCase
     /**
      * 明細 type=2 の purpose/place は null でなければならないテスト
      */
-    public function testScenarioDetailType2PurposePlaceMustBeNull(): void
+    public function testTemplateDetailType2PurposePlaceMustBeNull(): void
     {
         $this->assertPostDetail2Error(['purpose_element_id' => 3], 400, 'E106', 'type=2でpurpose_element_idがnullでない');
         $this->assertPostDetail2Error(['place_element_id' => 4], 400, 'E106', 'type=2でplace_element_idがnullでない');
     }
 
-    private function validScenario(): array
+    private function validTemplate(): array
     {
         return [
             'name' => 'テストシナリオ',
@@ -467,52 +467,52 @@ class ScenarioTest extends TestCase
 
     private function assertPostError(array $overrides, int $statusCode, string $errorCode, string $message): void
     {
-        $scenario = array_merge($this->validScenario(), $overrides);
-        $response = $this->request->post('/scenarios', $scenario);
+        $template = array_merge($this->validTemplate(), $overrides);
+        $response = $this->request->post('/templates', $template);
         $this->assertErrorResponse($response, $statusCode, $errorCode, $message);
     }
 
     private function assertPostErrorUnset(string $field, int $statusCode, string $errorCode, string $message): void
     {
-        $scenario = $this->validScenario();
-        unset($scenario[$field]);
-        $response = $this->request->post('/scenarios', $scenario);
+        $template = $this->validTemplate();
+        unset($template[$field]);
+        $response = $this->request->post('/templates', $template);
         $this->assertErrorResponse($response, $statusCode, $errorCode, $message);
     }
 
     private function assertPostDetail1Error(array $overrides, int $statusCode, string $errorCode, string $message): void
     {
-        $scenario = $this->validScenario();
-        $scenario['details'] = [array_merge($this->validDetail1(), $overrides)];
-        $response = $this->request->post('/scenarios', $scenario);
+        $template = $this->validTemplate();
+        $template['details'] = [array_merge($this->validDetail1(), $overrides)];
+        $response = $this->request->post('/templates', $template);
         $this->assertErrorResponse($response, $statusCode, $errorCode, $message);
     }
 
     private function assertPostDetail1ErrorUnset(string $field, int $statusCode, string $errorCode, string $message): void
     {
-        $scenario = $this->validScenario();
+        $template = $this->validTemplate();
         $detail = $this->validDetail1();
         unset($detail[$field]);
-        $scenario['details'] = [$detail];
-        $response = $this->request->post('/scenarios', $scenario);
+        $template['details'] = [$detail];
+        $response = $this->request->post('/templates', $template);
         $this->assertErrorResponse($response, $statusCode, $errorCode, $message);
     }
 
     private function assertPostDetail2Error(array $overrides, int $statusCode, string $errorCode, string $message): void
     {
-        $scenario = $this->validScenario();
-        $scenario['details'] = [array_merge($this->validDetail2(), $overrides)];
-        $response = $this->request->post('/scenarios', $scenario);
+        $template = $this->validTemplate();
+        $template['details'] = [array_merge($this->validDetail2(), $overrides)];
+        $response = $this->request->post('/templates', $template);
         $this->assertErrorResponse($response, $statusCode, $errorCode, $message);
     }
 
     private function assertPostDetail2ErrorUnset(string $field, int $statusCode, string $errorCode, string $message): void
     {
-        $scenario = $this->validScenario();
+        $template = $this->validTemplate();
         $detail = $this->validDetail2();
         unset($detail[$field]);
-        $scenario['details'] = [$detail];
-        $response = $this->request->post('/scenarios', $scenario);
+        $template['details'] = [$detail];
+        $response = $this->request->post('/templates', $template);
         $this->assertErrorResponse($response, $statusCode, $errorCode, $message);
     }
 

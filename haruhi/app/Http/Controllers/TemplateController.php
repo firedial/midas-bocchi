@@ -2,48 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Entities\ScenarioDetailEntity;
-use App\Domain\Entities\ScenarioEntity;
+use App\Domain\Entities\TemplateDetailEntity;
+use App\Domain\Entities\TemplateEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\Item;
-use App\Domain\ValueObjects\ScenarioId;
+use App\Domain\ValueObjects\TemplateId;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
 use App\Rules\StrictInteger;
-use App\Usecases\Scenario\DeleteScenarioUsecase;
-use App\Usecases\Scenario\GetScenariosUsecase;
-use App\Usecases\Scenario\InsertScenarioUsecase;
-use App\Usecases\Scenario\SelectScenarioUsecase;
-use App\Usecases\Scenario\UpdateScenarioUsecase;
+use App\Usecases\Template\DeleteTemplateUsecase;
+use App\Usecases\Template\GetTemplatesUsecase;
+use App\Usecases\Template\InsertTemplateUsecase;
+use App\Usecases\Template\SelectTemplateUsecase;
+use App\Usecases\Template\UpdateTemplateUsecase;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-class ScenarioController extends Controller
+class TemplateController extends Controller
 {
     public function index()
     {
-        $getScenariosUsecase = new GetScenariosUsecase();
-        $scenarios = $getScenariosUsecase->execute();
+        $getTemplatesUsecase = new GetTemplatesUsecase();
+        $templates = $getTemplatesUsecase->execute();
 
         return array_map(
-            fn (ScenarioEntity $s) => [
-                'id' => $s->scenarioId()->value(),
+            fn (TemplateEntity $s) => [
+                'id' => $s->templateId()->value(),
                 'name' => $s->name(),
             ],
-            $scenarios
+            $templates
         );
     }
 
     public function show(int $id)
     {
-        $selectScenarioUsecase = new SelectScenarioUsecase();
-        $scenario = $selectScenarioUsecase->execute(ScenarioId::filledId($id));
+        $selectTemplateUsecase = new SelectTemplateUsecase();
+        $template = $selectTemplateUsecase->execute(TemplateId::filledId($id));
 
         return [
-            'id' => $scenario->scenarioId()->value(),
-            'name' => $scenario->name(),
+            'id' => $template->templateId()->value(),
+            'name' => $template->name(),
             'details' => array_map(
-                fn (ScenarioDetailEntity $d) => [
+                fn (TemplateDetailEntity $d) => [
                     'seq' => $d->seq(),
                     'type' => $d->type(),
                     'amount' => $d->amount()->value(),
@@ -55,7 +55,7 @@ class ScenarioController extends Controller
                     'move_before_id' => $d->moveBeforeId(),
                     'move_after_id' => $d->moveAfterId(),
                 ],
-                $scenario->details()
+                $template->details()
             ),
         ];
     }
@@ -64,13 +64,13 @@ class ScenarioController extends Controller
     {
         [$name, $details] = $this->validateAndBuildDetails($request);
 
-        $scenario = new ScenarioEntity(ScenarioId::emptyId(), $name, $details);
+        $template = new TemplateEntity(TemplateId::emptyId(), $name, $details);
 
-        $insertScenarioUsecase = new InsertScenarioUsecase();
-        $result = $insertScenarioUsecase->execute($scenario);
+        $insertTemplateUsecase = new InsertTemplateUsecase();
+        $result = $insertTemplateUsecase->execute($template);
 
         return [
-            'id' => $result->scenarioId()->value(),
+            'id' => $result->templateId()->value(),
             'name' => $result->name(),
         ];
     }
@@ -79,30 +79,30 @@ class ScenarioController extends Controller
     {
         [$name, $details] = $this->validateAndBuildDetails($request);
 
-        $scenario = new ScenarioEntity(ScenarioId::filledId($id), $name, $details);
+        $template = new TemplateEntity(TemplateId::filledId($id), $name, $details);
 
-        $updateScenarioUsecase = new UpdateScenarioUsecase();
-        $result = $updateScenarioUsecase->execute($scenario);
+        $updateTemplateUsecase = new UpdateTemplateUsecase();
+        $result = $updateTemplateUsecase->execute($template);
 
         return [
-            'id' => $result->scenarioId()->value(),
+            'id' => $result->templateId()->value(),
             'name' => $result->name(),
         ];
     }
 
     public function destroy(int $id)
     {
-        $deleteScenarioUsecase = new DeleteScenarioUsecase();
-        $result = $deleteScenarioUsecase->execute(ScenarioId::filledId($id));
+        $deleteTemplateUsecase = new DeleteTemplateUsecase();
+        $result = $deleteTemplateUsecase->execute(TemplateId::filledId($id));
 
         return [
-            'id' => $result->scenarioId()->value(),
+            'id' => $result->templateId()->value(),
             'name' => $result->name(),
         ];
     }
 
     /**
-     * リクエストをバリデートし、[name, ScenarioDetailEntity[]] を返す。
+     * リクエストをバリデートし、[name, TemplateDetailEntity[]] を返す。
      */
     private function validateAndBuildDetails(Request $request): array
     {
@@ -191,7 +191,7 @@ class ScenarioController extends Controller
                 }
             }
 
-            $detailEntities[] = new ScenarioDetailEntity(
+            $detailEntities[] = new TemplateDetailEntity(
                 seq: $i + 1,
                 type: $type,
                 amount: new Amount($amount),

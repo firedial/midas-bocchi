@@ -2,19 +2,19 @@
 
 namespace App\Domain\Entities;
 
-use App\Domain\ValueObjects\ScenarioId;
+use App\Domain\ValueObjects\TemplateId;
 
-class ScenarioEntity
+class TemplateEntity
 {
     public function __construct(
-        protected readonly ScenarioId $scenarioId,
+        protected readonly TemplateId $templateId,
         protected readonly string $name,
         protected readonly array $details = [],
     ) {}
 
-    public function scenarioId(): ScenarioId
+    public function templateId(): TemplateId
     {
-        return $this->scenarioId;
+        return $this->templateId;
     }
 
     public function name(): string
@@ -22,7 +22,7 @@ class ScenarioEntity
         return $this->name;
     }
 
-    /** @return ScenarioDetailEntity[] */
+    /** @return TemplateDetailEntity[] */
     public function details(): array
     {
         return $this->details;

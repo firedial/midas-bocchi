@@ -4,11 +4,11 @@ namespace App\Models\DataModels;
 
 use Illuminate\Support\Facades\DB;
 
-class ScenarioDetailDataModel
+class TemplateDetailDataModel
 {
-    private const TABLE_NAME = 'scenario_detail';
+    private const TABLE_NAME = 'template_detail';
 
-    private const C_SCENARIO_ID       = 'scenario_id';
+    private const C_SCENARIO_ID       = 'template_id';
     private const C_SEQ               = 'seq';
     private const C_TYPE              = 'type';
     private const C_AMOUNT            = 'amount';
@@ -20,24 +20,24 @@ class ScenarioDetailDataModel
     private const C_MOVE_BEFORE_ID    = 'move_before_id';
     private const C_MOVE_AFTER_ID     = 'move_after_id';
 
-    public static function selectScenarioDetails(int $scenarioId): array
+    public static function selectTemplateDetails(int $templateId): array
     {
         return DB::table(self::TABLE_NAME)
-            ->where(self::C_SCENARIO_ID, '=', $scenarioId)
+            ->where(self::C_SCENARIO_ID, '=', $templateId)
             ->orderBy(self::C_SEQ)
             ->get()
             ->toArray();
     }
 
-    public static function insertScenarioDetails(array $rows): void
+    public static function insertTemplateDetails(array $rows): void
     {
         DB::table(self::TABLE_NAME)->insert($rows);
     }
 
-    public static function deleteScenarioDetails(int $scenarioId): void
+    public static function deleteTemplateDetails(int $templateId): void
     {
         DB::table(self::TABLE_NAME)
-            ->where(self::C_SCENARIO_ID, '=', $scenarioId)
+            ->where(self::C_SCENARIO_ID, '=', $templateId)
             ->delete();
     }
 }

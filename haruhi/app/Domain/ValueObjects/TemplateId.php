@@ -2,4 +2,4 @@
 
 namespace App\Domain\ValueObjects;
 
-class ScenarioId extends Id {}
+class TemplateId extends Id {}

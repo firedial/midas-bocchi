@@ -5,7 +5,7 @@ namespace App\Domain\Entities;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\Item;
 
-class ScenarioDetailEntity
+class TemplateDetailEntity
 {
     public function __construct(
         protected readonly int $seq,

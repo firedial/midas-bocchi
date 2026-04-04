@@ -6,7 +6,7 @@ use App\Http\Controllers\AttributeElementController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\FixedBalanceController;
 use App\Http\Controllers\MoveController;
-use App\Http\Controllers\ScenarioController;
+use App\Http\Controllers\TemplateController;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
 
@@ -27,7 +27,7 @@ Route::post('/logout', 'App\Http\Controllers\LoginController@logout');
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/balances', BalanceController::class);
     Route::apiResource('/fixed_balances', FixedBalanceController::class);
-    Route::apiResource('/scenarios', ScenarioController::class);
+    Route::apiResource('/templates', TemplateController::class);
 
     Route::prefix('/moves/{attribute_name}')
         ->whereIn('attribute_name', ['purposes', 'places'])
