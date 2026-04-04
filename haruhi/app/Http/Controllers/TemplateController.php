@@ -6,7 +6,12 @@ use App\Domain\Entities\TemplateDetailEntity;
 use App\Domain\Entities\TemplateEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\Item;
+use App\Domain\ValueObjects\KindElementId;
+use App\Domain\ValueObjects\TemplateDetailType;
+use App\Domain\ValueObjects\PlaceElementId;
+use App\Domain\ValueObjects\PurposeElementId;
 use App\Domain\ValueObjects\TemplateId;
+use App\Domain\ValueObjects\TemplateName;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
 use App\Rules\StrictInteger;
@@ -28,7 +33,7 @@ class TemplateController extends Controller
         return array_map(
             fn (TemplateEntity $s) => [
                 'id' => $s->templateId()->value(),
-                'name' => $s->name(),
+                'name' => $s->name()->value(),
             ],
             $templates
         );
@@ -41,20 +46,20 @@ class TemplateController extends Controller
 
         return [
             'id' => $template->templateId()->value(),
-            'name' => $template->name(),
+            'name' => $template->name()->value(),
             'details' => array_map(
                 fn (TemplateDetailEntity $d) => [
                     'seq' => $d->seq(),
-                    'type' => $d->type(),
+                    'type' => $d->type()->value(),
                     'amount' => $d->amount()->value(),
                     'item' => $d->item()->value(),
-                    'kind_element_id' => $d->kindElementId(),
-                    'purpose_element_id' => $d->purposeElementId(),
-                    'place_element_id' => $d->placeElementId(),
-                    'move_before_purpose_id' => $d->moveBeforePurposeId(),
-                    'move_after_purpose_id' => $d->moveAfterPurposeId(),
-                    'move_before_place_id' => $d->moveBeforePlaceId(),
-                    'move_after_place_id' => $d->moveAfterPlaceId(),
+                    'kind_element_id' => $d->kindElementId()->value(),
+                    'purpose_element_id' => $d->purposeElementId()?->value(),
+                    'place_element_id' => $d->placeElementId()?->value(),
+                    'move_before_purpose_id' => $d->moveBeforePurposeId()?->value(),
+                    'move_after_purpose_id' => $d->moveAfterPurposeId()?->value(),
+                    'move_before_place_id' => $d->moveBeforePlaceId()?->value(),
+                    'move_after_place_id' => $d->moveAfterPlaceId()?->value(),
                 ],
                 $template->details()
             ),
@@ -65,14 +70,14 @@ class TemplateController extends Controller
     {
         [$name, $details] = $this->validateAndBuildDetails($request);
 
-        $template = new TemplateEntity(TemplateId::emptyId(), $name, $details);
+        $template = new TemplateEntity(TemplateId::emptyId(), new TemplateName($name), $details);
 
         $insertTemplateUsecase = new InsertTemplateUsecase();
         $result = $insertTemplateUsecase->execute($template);
 
         return [
             'id' => $result->templateId()->value(),
-            'name' => $result->name(),
+            'name' => $result->name()->value(),
         ];
     }
 
@@ -80,14 +85,14 @@ class TemplateController extends Controller
     {
         [$name, $details] = $this->validateAndBuildDetails($request);
 
-        $template = new TemplateEntity(TemplateId::filledId($id), $name, $details);
+        $template = new TemplateEntity(TemplateId::filledId($id), new TemplateName($name), $details);
 
         $updateTemplateUsecase = new UpdateTemplateUsecase();
         $result = $updateTemplateUsecase->execute($template);
 
         return [
             'id' => $result->templateId()->value(),
-            'name' => $result->name(),
+            'name' => $result->name()->value(),
         ];
     }
 
@@ -98,7 +103,7 @@ class TemplateController extends Controller
 
         return [
             'id' => $result->templateId()->value(),
-            'name' => $result->name(),
+            'name' => $result->name()->value(),
         ];
     }
 
@@ -224,16 +229,16 @@ class TemplateController extends Controller
 
             $detailEntities[] = new TemplateDetailEntity(
                 seq: $i + 1,
-                type: $type,
+                type: new TemplateDetailType($type),
                 amount: new Amount($amount),
                 item: new Item($detail['item']),
-                kindElementId: $detail['kind_element_id'],
-                purposeElementId: $purposeElementId,
-                placeElementId: $placeElementId,
-                moveBeforePurposeId: $moveBeforePurposeId,
-                moveAfterPurposeId: $moveAfterPurposeId,
-                moveBeforePlaceId: $moveBeforePlaceId,
-                moveAfterPlaceId: $moveAfterPlaceId,
+                kindElementId: KindElementId::filledId($detail['kind_element_id']),
+                purposeElementId: is_null($purposeElementId) ? null : PurposeElementId::filledId($purposeElementId),
+                placeElementId: is_null($placeElementId) ? null : PlaceElementId::filledId($placeElementId),
+                moveBeforePurposeId: is_null($moveBeforePurposeId) ? null : PurposeElementId::filledId($moveBeforePurposeId),
+                moveAfterPurposeId: is_null($moveAfterPurposeId) ? null : PurposeElementId::filledId($moveAfterPurposeId),
+                moveBeforePlaceId: is_null($moveBeforePlaceId) ? null : PlaceElementId::filledId($moveBeforePlaceId),
+                moveAfterPlaceId: is_null($moveAfterPlaceId) ? null : PlaceElementId::filledId($moveAfterPlaceId),
             );
         }
 

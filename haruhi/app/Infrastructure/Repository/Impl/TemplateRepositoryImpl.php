@@ -6,7 +6,12 @@ use App\Domain\Entities\TemplateDetailEntity;
 use App\Domain\Entities\TemplateEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\Item;
+use App\Domain\ValueObjects\KindElementId;
+use App\Domain\ValueObjects\TemplateDetailType;
+use App\Domain\ValueObjects\PlaceElementId;
+use App\Domain\ValueObjects\PurposeElementId;
 use App\Domain\ValueObjects\TemplateId;
+use App\Domain\ValueObjects\TemplateName;
 use App\Infrastructure\Repository\Concerns\HandlesQueryException;
 use App\Infrastructure\Repository\TemplateRepositoryInterface;
 use App\Models\DataModels\TemplateDataModel;
@@ -23,7 +28,7 @@ class TemplateRepositoryImpl implements TemplateRepositoryInterface
         return array_map(
             fn ($row) => new TemplateEntity(
                 TemplateId::filledId($row->id),
-                $row->name,
+                new TemplateName($row->name),
             ),
             $rows
         );
@@ -42,14 +47,14 @@ class TemplateRepositoryImpl implements TemplateRepositoryInterface
 
         return new TemplateEntity(
             TemplateId::filledId($rows[0]->id),
-            $rows[0]->name,
+            new TemplateName($rows[0]->name),
             $details,
         );
     }
 
     public function insertTemplate(TemplateEntity $template): TemplateEntity
     {
-        $row = TemplateDataModel::insertTemplate($template->name());
+        $row = TemplateDataModel::insertTemplate($template->name()->value());
 
         try {
             TemplateDetailDataModel::insertTemplateDetails(
@@ -61,7 +66,7 @@ class TemplateRepositoryImpl implements TemplateRepositoryInterface
 
         return new TemplateEntity(
             TemplateId::filledId($row->id),
-            $row->name,
+            new TemplateName($row->name),
             $template->details(),
         );
     }
@@ -70,7 +75,7 @@ class TemplateRepositoryImpl implements TemplateRepositoryInterface
     {
         $row = TemplateDataModel::updateTemplate(
             $template->templateId()->value(),
-            $template->name(),
+            $template->name()->value(),
         );
 
         TemplateDetailDataModel::deleteTemplateDetails($template->templateId()->value());
@@ -85,7 +90,7 @@ class TemplateRepositoryImpl implements TemplateRepositoryInterface
 
         return new TemplateEntity(
             TemplateId::filledId($row->id),
-            $row->name,
+            new TemplateName($row->name),
             $template->details(),
         );
     }
@@ -96,7 +101,7 @@ class TemplateRepositoryImpl implements TemplateRepositoryInterface
 
         return new TemplateEntity(
             TemplateId::filledId($row->id),
-            $row->name,
+            new TemplateName($row->name),
         );
     }
 
@@ -106,16 +111,16 @@ class TemplateRepositoryImpl implements TemplateRepositoryInterface
         return array_map(
             fn ($row) => new TemplateDetailEntity(
                 seq: $row->seq,
-                type: $row->type,
+                type: new TemplateDetailType($row->type),
                 amount: new Amount($row->amount),
                 item: new Item($row->item),
-                kindElementId: $row->kind_element_id,
-                purposeElementId: $row->purpose_element_id,
-                placeElementId: $row->place_element_id,
-                moveBeforePurposeId: $row->move_before_purpose_id,
-                moveAfterPurposeId: $row->move_after_purpose_id,
-                moveBeforePlaceId: $row->move_before_place_id,
-                moveAfterPlaceId: $row->move_after_place_id,
+                kindElementId: KindElementId::filledId($row->kind_element_id),
+                purposeElementId: is_null($row->purpose_element_id) ? null : PurposeElementId::filledId($row->purpose_element_id),
+                placeElementId: is_null($row->place_element_id) ? null : PlaceElementId::filledId($row->place_element_id),
+                moveBeforePurposeId: is_null($row->move_before_purpose_id) ? null : PurposeElementId::filledId($row->move_before_purpose_id),
+                moveAfterPurposeId: is_null($row->move_after_purpose_id) ? null : PurposeElementId::filledId($row->move_after_purpose_id),
+                moveBeforePlaceId: is_null($row->move_before_place_id) ? null : PlaceElementId::filledId($row->move_before_place_id),
+                moveAfterPlaceId: is_null($row->move_after_place_id) ? null : PlaceElementId::filledId($row->move_after_place_id),
             ),
             $rows
         );
@@ -128,16 +133,16 @@ class TemplateRepositoryImpl implements TemplateRepositoryInterface
             fn (TemplateDetailEntity $d) => [
                 'template_id' => $templateId,
                 'seq' => $d->seq(),
-                'type' => $d->type(),
+                'type' => $d->type()->value(),
                 'amount' => $d->amount()->value(),
                 'item' => $d->item()->value(),
-                'kind_element_id' => $d->kindElementId(),
-                'purpose_element_id' => $d->purposeElementId(),
-                'place_element_id' => $d->placeElementId(),
-                'move_before_purpose_id' => $d->moveBeforePurposeId(),
-                'move_after_purpose_id' => $d->moveAfterPurposeId(),
-                'move_before_place_id' => $d->moveBeforePlaceId(),
-                'move_after_place_id' => $d->moveAfterPlaceId(),
+                'kind_element_id' => $d->kindElementId()->value(),
+                'purpose_element_id' => $d->purposeElementId()?->value(),
+                'place_element_id' => $d->placeElementId()?->value(),
+                'move_before_purpose_id' => $d->moveBeforePurposeId()?->value(),
+                'move_after_purpose_id' => $d->moveAfterPurposeId()?->value(),
+                'move_before_place_id' => $d->moveBeforePlaceId()?->value(),
+                'move_after_place_id' => $d->moveAfterPlaceId()?->value(),
             ],
             $details
         );

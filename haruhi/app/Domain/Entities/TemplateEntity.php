@@ -3,12 +3,13 @@
 namespace App\Domain\Entities;
 
 use App\Domain\ValueObjects\TemplateId;
+use App\Domain\ValueObjects\TemplateName;
 
 class TemplateEntity
 {
     public function __construct(
         protected readonly TemplateId $templateId,
-        protected readonly string $name,
+        protected readonly TemplateName $name,
         protected readonly array $details = [],
     ) {}
 
@@ -17,7 +18,7 @@ class TemplateEntity
         return $this->templateId;
     }
 
-    public function name(): string
+    public function name(): TemplateName
     {
         return $this->name;
     }

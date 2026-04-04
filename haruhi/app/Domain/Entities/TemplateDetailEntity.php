@@ -4,21 +4,25 @@ namespace App\Domain\Entities;
 
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\Item;
+use App\Domain\ValueObjects\KindElementId;
+use App\Domain\ValueObjects\PlaceElementId;
+use App\Domain\ValueObjects\PurposeElementId;
+use App\Domain\ValueObjects\TemplateDetailType;
 
 class TemplateDetailEntity
 {
     public function __construct(
         protected readonly int $seq,
-        protected readonly int $type,
+        protected readonly TemplateDetailType $type,
         protected readonly Amount $amount,
         protected readonly Item $item,
-        protected readonly int $kindElementId,
-        protected readonly ?int $purposeElementId,
-        protected readonly ?int $placeElementId,
-        protected readonly ?int $moveBeforePurposeId,
-        protected readonly ?int $moveAfterPurposeId,
-        protected readonly ?int $moveBeforePlaceId,
-        protected readonly ?int $moveAfterPlaceId,
+        protected readonly KindElementId $kindElementId,
+        protected readonly ?PurposeElementId $purposeElementId,
+        protected readonly ?PlaceElementId $placeElementId,
+        protected readonly ?PurposeElementId $moveBeforePurposeId,
+        protected readonly ?PurposeElementId $moveAfterPurposeId,
+        protected readonly ?PlaceElementId $moveBeforePlaceId,
+        protected readonly ?PlaceElementId $moveAfterPlaceId,
     ) {}
 
     public function seq(): int
@@ -26,7 +30,7 @@ class TemplateDetailEntity
         return $this->seq;
     }
 
-    public function type(): int
+    public function type(): TemplateDetailType
     {
         return $this->type;
     }
@@ -41,37 +45,37 @@ class TemplateDetailEntity
         return $this->item;
     }
 
-    public function kindElementId(): int
+    public function kindElementId(): KindElementId
     {
         return $this->kindElementId;
     }
 
-    public function purposeElementId(): ?int
+    public function purposeElementId(): ?PurposeElementId
     {
         return $this->purposeElementId;
     }
 
-    public function placeElementId(): ?int
+    public function placeElementId(): ?PlaceElementId
     {
         return $this->placeElementId;
     }
 
-    public function moveBeforePurposeId(): ?int
+    public function moveBeforePurposeId(): ?PurposeElementId
     {
         return $this->moveBeforePurposeId;
     }
 
-    public function moveAfterPurposeId(): ?int
+    public function moveAfterPurposeId(): ?PurposeElementId
     {
         return $this->moveAfterPurposeId;
     }
 
-    public function moveBeforePlaceId(): ?int
+    public function moveBeforePlaceId(): ?PlaceElementId
     {
         return $this->moveBeforePlaceId;
     }
 
-    public function moveAfterPlaceId(): ?int
+    public function moveAfterPlaceId(): ?PlaceElementId
     {
         return $this->moveAfterPlaceId;
     }
