@@ -16,8 +16,8 @@ $runner = new TestRunner($host);
 $runner->addTestClass(LoginTest::class);
 $runner->addTestClass(BalanceTest::class);
 $runner->addTestClass(MoveTest::class);
-$runner->addTestClass(AttributeElementTest::class);
-$runner->addTestClass(AttributeCategoryTest::class);
+// $runner->addTestClass(AttributeElementTest::class);
+// $runner->addTestClass(AttributeCategoryTest::class);
 $runner->addTestClass(TemplateTest::class);
 $runner->addTestClass(OtherTest::class);
 

@@ -5,24 +5,25 @@ require_once __DIR__ . '/../TestRunner/TestCase.php';
 class TemplateTest extends TestCase
 {
     /**
-     * シナリオCRUDテスト
+     * テンプレートCRUDテスト
      */
     public function testTemplateCRUD(): void
     {
         $createData = $this->validTemplate();
         $updateData = [
-            'name' => 'シナリオ更新後',
+            'name' => 'テンプレート更新後',
             'details' => [
                 [
                     'type' => 1,
                     'amount' => -200,
                     'item' => '更新収支',
-                    'type_element_id' => 12,
+                    'kind_element_id' => 12,
                     'purpose_element_id' => 13,
                     'place_element_id' => 14,
-                    'move_attribute' => null,
-                    'move_before_id' => null,
-                    'move_after_id' => null,
+                    'move_before_purpose_id' => null,
+                    'move_after_purpose_id' => null,
+                    'move_before_place_id' => null,
+                    'move_after_place_id' => null,
                 ],
             ],
         ];
@@ -65,7 +66,7 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * シナリオ一覧取得テスト
+     * テンプレート一覧取得テスト
      */
     public function testTemplateGet(): void
     {
@@ -82,7 +83,7 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * シナリオ一覧レスポンスボディテスト（明細を含まない）
+     * テンプレート一覧レスポンスボディテスト（明細を含まない）
      */
     public function testTemplateGetResponseBody(): void
     {
@@ -101,12 +102,12 @@ class TemplateTest extends TestCase
             }
         }
 
-        Assert::assertSame(true, !is_null($found), '一覧に登録したシナリオが存在する');
+        Assert::assertSame(true, !is_null($found), '一覧に登録したテンプレートが存在する');
         Assert::assertSame(false, isset($found['details']), '一覧にdetailsは含まれない');
     }
 
     /**
-     * シナリオ詳細レスポンスボディテスト（seq昇順）
+     * テンプレート詳細レスポンスボディテスト（seq昇順）
      */
     public function testTemplateShowDetails(): void
     {
@@ -126,7 +127,7 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * 存在しないシナリオのテスト
+     * 存在しないテンプレートのテスト
      */
     public function testTemplateNotFound(): void
     {
@@ -172,7 +173,7 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * シナリオ名バリデーションエラーテスト
+     * テンプレート名バリデーションエラーテスト
      */
     public function testTemplateNameInvalid(): void
     {
@@ -224,8 +225,14 @@ class TemplateTest extends TestCase
         // type が範囲外 (0)
         $this->assertPostDetail1Error(['type' => 0], 400, 'E106', 'typeが0');
 
-        // type が範囲外 (3)
-        $this->assertPostDetail1Error(['type' => 3], 400, 'E106', 'typeが3');
+        // type が範囲外 (4)
+        $this->assertPostDetail1Error(['type' => 4], 400, 'E106', 'typeが4');
+
+        // type が3 (正常系)
+        $template = $this->validTemplate();
+        $template['details'] = [$this->validDetail3()];
+        $response = $this->request->post('/templates', $template);
+        Assert::assertStatusCode200($response->statusCode());
     }
 
     /**
@@ -276,21 +283,21 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * 明細 type_element_id バリデーションエラーテスト
+     * 明細 kind_element_id バリデーションエラーテスト
      */
-    public function testTemplateDetailTypeElementIdInvalid(): void
+    public function testTemplateDetailKindElementIdInvalid(): void
     {
-        // type_element_id がない
-        $this->assertPostDetail1ErrorUnset('type_element_id', 400, 'E109', 'type_element_idがない');
+        // kind_element_id がない
+        $this->assertPostDetail1ErrorUnset('kind_element_id', 400, 'E109', 'kind_element_idがない');
 
-        // type_element_id が null
-        $this->assertPostDetail1Error(['type_element_id' => null], 400, 'E109', 'type_element_idがnull');
+        // kind_element_id が null
+        $this->assertPostDetail1Error(['kind_element_id' => null], 400, 'E109', 'kind_element_idがnull');
 
-        // type_element_id が文字列
-        $this->assertPostDetail1Error(['type_element_id' => 'aaa'], 400, 'E101', 'type_element_idが文字列');
+        // kind_element_id が文字列
+        $this->assertPostDetail1Error(['kind_element_id' => 'aaa'], 400, 'E101', 'kind_element_idが文字列');
 
-        // type_element_id が文字列数字
-        $this->assertPostDetail1Error(['type_element_id' => '2'], 400, 'E101', 'type_element_idが文字列数字');
+        // kind_element_id が文字列数字
+        $this->assertPostDetail1Error(['kind_element_id' => '2'], 400, 'E101', 'kind_element_idが文字列数字');
     }
 
     /**
@@ -334,9 +341,10 @@ class TemplateTest extends TestCase
      */
     public function testTemplateDetailType1MoveFieldsMustBeNull(): void
     {
-        $this->assertPostDetail1Error(['move_attribute' => 1], 400, 'E106', 'type=1でmove_attributeがnullでない');
-        $this->assertPostDetail1Error(['move_before_id' => 1], 400, 'E106', 'type=1でmove_before_idがnullでない');
-        $this->assertPostDetail1Error(['move_after_id' => 1], 400, 'E106', 'type=1でmove_after_idがnullでない');
+        $this->assertPostDetail1Error(['move_before_purpose_id' => 1], 400, 'E106', 'type=1でmove_before_purpose_idがnullでない');
+        $this->assertPostDetail1Error(['move_after_purpose_id' => 1], 400, 'E106', 'type=1でmove_after_purpose_idがnullでない');
+        $this->assertPostDetail1Error(['move_before_place_id' => 1], 400, 'E106', 'type=1でmove_before_place_idがnullでない');
+        $this->assertPostDetail1Error(['move_after_place_id' => 1], 400, 'E106', 'type=1でmove_after_place_idがnullでない');
     }
 
     /**
@@ -352,54 +360,33 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * 明細 type=2 move_attribute バリデーションエラーテスト
+     * 明細 type=2 move_before_purpose_id バリデーションエラーテスト
      */
-    public function testTemplateDetailType2MoveKindInvalid(): void
+    public function testTemplateDetailType2MoveBeforePurposeIdInvalid(): void
     {
-        // move_attribute がない
-        $this->assertPostDetail2ErrorUnset('move_attribute', 400, 'E109', 'move_attributeがない');
+        // move_before_purpose_id がない
+        $this->assertPostDetail2ErrorUnset('move_before_purpose_id', 400, 'E109', 'move_before_purpose_idがない');
 
-        // move_attribute が null
-        $this->assertPostDetail2Error(['move_attribute' => null], 400, 'E109', 'move_attributeがnull');
+        // move_before_purpose_id が null
+        $this->assertPostDetail2Error(['move_before_purpose_id' => null], 400, 'E109', 'move_before_purpose_idがnull');
 
-        // move_attribute が文字列
-        $this->assertPostDetail2Error(['move_attribute' => 'aaa'], 400, 'E109', 'move_attributeが文字列');
-
-        // move_attribute が範囲外 (0)
-        $this->assertPostDetail2Error(['move_attribute' => 0], 400, 'E109', 'move_attributeが0');
-
-        // move_attribute が範囲外 (3)
-        $this->assertPostDetail2Error(['move_attribute' => 3], 400, 'E109', 'move_attributeが3');
+        // move_before_purpose_id が文字列
+        $this->assertPostDetail2Error(['move_before_purpose_id' => 'aaa'], 400, 'E109', 'move_before_purpose_idが文字列');
     }
 
     /**
-     * 明細 type=2 move_before_id バリデーションエラーテスト
+     * 明細 type=2 move_after_purpose_id バリデーションエラーテスト
      */
-    public function testTemplateDetailType2MoveBeforeIdInvalid(): void
+    public function testTemplateDetailType2MoveAfterPurposeIdInvalid(): void
     {
-        // move_before_id がない
-        $this->assertPostDetail2ErrorUnset('move_before_id', 400, 'E109', 'move_before_idがない');
+        // move_after_purpose_id がない
+        $this->assertPostDetail2ErrorUnset('move_after_purpose_id', 400, 'E109', 'move_after_purpose_idがない');
 
-        // move_before_id が null
-        $this->assertPostDetail2Error(['move_before_id' => null], 400, 'E109', 'move_before_idがnull');
+        // move_after_purpose_id が null
+        $this->assertPostDetail2Error(['move_after_purpose_id' => null], 400, 'E109', 'move_after_purpose_idがnull');
 
-        // move_before_id が文字列
-        $this->assertPostDetail2Error(['move_before_id' => 'aaa'], 400, 'E109', 'move_before_idが文字列');
-    }
-
-    /**
-     * 明細 type=2 move_after_id バリデーションエラーテスト
-     */
-    public function testTemplateDetailType2MoveAfterIdInvalid(): void
-    {
-        // move_after_id がない
-        $this->assertPostDetail2ErrorUnset('move_after_id', 400, 'E109', 'move_after_idがない');
-
-        // move_after_id が null
-        $this->assertPostDetail2Error(['move_after_id' => null], 400, 'E109', 'move_after_idがnull');
-
-        // move_after_id が文字列
-        $this->assertPostDetail2Error(['move_after_id' => 'aaa'], 400, 'E109', 'move_after_idが文字列');
+        // move_after_purpose_id が文字列
+        $this->assertPostDetail2Error(['move_after_purpose_id' => 'aaa'], 400, 'E109', 'move_after_purpose_idが文字列');
     }
 
     /**
@@ -411,10 +398,79 @@ class TemplateTest extends TestCase
         $this->assertPostDetail2Error(['place_element_id' => 4], 400, 'E106', 'type=2でplace_element_idがnullでない');
     }
 
+    /**
+     * 明細 type=2 の場所移動系フィールドは null でなければならないテスト
+     */
+    public function testTemplateDetailType2MovePlacesMustBeNull(): void
+    {
+        $this->assertPostDetail2Error(['move_before_place_id' => 1], 400, 'E106', 'type=2でmove_before_place_idがnullでない');
+        $this->assertPostDetail2Error(['move_after_place_id' => 1], 400, 'E106', 'type=2でmove_after_place_idがnullでない');
+    }
+
+    /**
+     * 明細 type=3 amount は正の値でなければならないテスト
+     */
+    public function testTemplateDetailType3AmountMustBePositive(): void
+    {
+        // amount が0
+        $this->assertPostDetail3Error(['amount' => 0], 400, 'E102', 'type=3でamountが0');
+
+        // amount がマイナス
+        $this->assertPostDetail3Error(['amount' => -1], 400, 'E102', 'type=3でamountがマイナス');
+    }
+
+    /**
+     * 明細 type=3 move_before_place_id バリデーションエラーテスト
+     */
+    public function testTemplateDetailType3MoveBeforePlaceIdInvalid(): void
+    {
+        // move_before_place_id がない
+        $this->assertPostDetail3ErrorUnset('move_before_place_id', 400, 'E109', 'move_before_place_idがない');
+
+        // move_before_place_id が null
+        $this->assertPostDetail3Error(['move_before_place_id' => null], 400, 'E109', 'move_before_place_idがnull');
+
+        // move_before_place_id が文字列
+        $this->assertPostDetail3Error(['move_before_place_id' => 'aaa'], 400, 'E109', 'move_before_place_idが文字列');
+    }
+
+    /**
+     * 明細 type=3 move_after_place_id バリデーションエラーテスト
+     */
+    public function testTemplateDetailType3MoveAfterPlaceIdInvalid(): void
+    {
+        // move_after_place_id がない
+        $this->assertPostDetail3ErrorUnset('move_after_place_id', 400, 'E109', 'move_after_place_idがない');
+
+        // move_after_place_id が null
+        $this->assertPostDetail3Error(['move_after_place_id' => null], 400, 'E109', 'move_after_place_idがnull');
+
+        // move_after_place_id が文字列
+        $this->assertPostDetail3Error(['move_after_place_id' => 'aaa'], 400, 'E109', 'move_after_place_idが文字列');
+    }
+
+    /**
+     * 明細 type=3 の purpose/place は null でなければならないテスト
+     */
+    public function testTemplateDetailType3PurposePlaceMustBeNull(): void
+    {
+        $this->assertPostDetail3Error(['purpose_element_id' => 3], 400, 'E106', 'type=3でpurpose_element_idがnullでない');
+        $this->assertPostDetail3Error(['place_element_id' => 4], 400, 'E106', 'type=3でplace_element_idがnullでない');
+    }
+
+    /**
+     * 明細 type=3 の予算移動系フィールドは null でなければならないテスト
+     */
+    public function testTemplateDetailType3MovePurposesMustBeNull(): void
+    {
+        $this->assertPostDetail3Error(['move_before_purpose_id' => 1], 400, 'E106', 'type=3でmove_before_purpose_idがnullでない');
+        $this->assertPostDetail3Error(['move_after_purpose_id' => 1], 400, 'E106', 'type=3でmove_after_purpose_idがnullでない');
+    }
+
     private function validTemplate(): array
     {
         return [
-            'name' => 'テストシナリオ',
+            'name' => 'テストテンプレート',
             'details' => [
                 $this->validDetail1(),
                 $this->validDetail2(),
@@ -428,12 +484,13 @@ class TemplateTest extends TestCase
             'type' => 1,
             'amount' => 1000,
             'item' => 'テスト収支',
-            'type_element_id' => 2,
+            'kind_element_id' => 2,
             'purpose_element_id' => 3,
             'place_element_id' => 4,
-            'move_attribute' => null,
-            'move_before_id' => null,
-            'move_after_id' => null,
+            'move_before_purpose_id' => null,
+            'move_after_purpose_id' => null,
+            'move_before_place_id' => null,
+            'move_after_place_id' => null,
         ];
     }
 
@@ -442,13 +499,30 @@ class TemplateTest extends TestCase
         return [
             'type' => 2,
             'amount' => 500,
-            'item' => 'テスト移動',
-            'type_element_id' => 2,
+            'item' => 'テスト予算移動',
+            'kind_element_id' => 2,
             'purpose_element_id' => null,
             'place_element_id' => null,
-            'move_attribute' => 2,
-            'move_before_id' => 2,
-            'move_after_id' => 5,
+            'move_before_purpose_id' => 2,
+            'move_after_purpose_id' => 5,
+            'move_before_place_id' => null,
+            'move_after_place_id' => null,
+        ];
+    }
+
+    private function validDetail3(): array
+    {
+        return [
+            'type' => 3,
+            'amount' => 300,
+            'item' => 'テスト場所移動',
+            'kind_element_id' => 2,
+            'purpose_element_id' => null,
+            'place_element_id' => null,
+            'move_before_purpose_id' => null,
+            'move_after_purpose_id' => null,
+            'move_before_place_id' => 4,
+            'move_after_place_id' => 5,
         ];
     }
 
@@ -457,12 +531,13 @@ class TemplateTest extends TestCase
         Assert::assertSame($expected['type'], $detail['type'], "{$prefix}の type");
         Assert::assertSame($expected['amount'], $detail['amount'], "{$prefix}の amount");
         Assert::assertSame($expected['item'], $detail['item'], "{$prefix}の item");
-        Assert::assertSame($expected['type_element_id'], $detail['type_element_id'], "{$prefix}の type_element_id");
+        Assert::assertSame($expected['kind_element_id'], $detail['kind_element_id'], "{$prefix}の kind_element_id");
         Assert::assertSame($expected['purpose_element_id'], $detail['purpose_element_id'], "{$prefix}の purpose_element_id");
         Assert::assertSame($expected['place_element_id'], $detail['place_element_id'], "{$prefix}の place_element_id");
-        Assert::assertSame($expected['move_attribute'], $detail['move_attribute'], "{$prefix}の move_attribute");
-        Assert::assertSame($expected['move_before_id'], $detail['move_before_id'], "{$prefix}の move_before_id");
-        Assert::assertSame($expected['move_after_id'], $detail['move_after_id'], "{$prefix}の move_after_id");
+        Assert::assertSame($expected['move_before_purpose_id'], $detail['move_before_purpose_id'], "{$prefix}の move_before_purpose_id");
+        Assert::assertSame($expected['move_after_purpose_id'], $detail['move_after_purpose_id'], "{$prefix}の move_after_purpose_id");
+        Assert::assertSame($expected['move_before_place_id'], $detail['move_before_place_id'], "{$prefix}の move_before_place_id");
+        Assert::assertSame($expected['move_after_place_id'], $detail['move_after_place_id'], "{$prefix}の move_after_place_id");
     }
 
     private function assertPostError(array $overrides, int $statusCode, string $errorCode, string $message): void
@@ -510,6 +585,24 @@ class TemplateTest extends TestCase
     {
         $template = $this->validTemplate();
         $detail = $this->validDetail2();
+        unset($detail[$field]);
+        $template['details'] = [$detail];
+        $response = $this->request->post('/templates', $template);
+        $this->assertErrorResponse($response, $statusCode, $errorCode, $message);
+    }
+
+    private function assertPostDetail3Error(array $overrides, int $statusCode, string $errorCode, string $message): void
+    {
+        $template = $this->validTemplate();
+        $template['details'] = [array_merge($this->validDetail3(), $overrides)];
+        $response = $this->request->post('/templates', $template);
+        $this->assertErrorResponse($response, $statusCode, $errorCode, $message);
+    }
+
+    private function assertPostDetail3ErrorUnset(string $field, int $statusCode, string $errorCode, string $message): void
+    {
+        $template = $this->validTemplate();
+        $detail = $this->validDetail3();
         unset($detail[$field]);
         $template['details'] = [$detail];
         $response = $this->request->post('/templates', $template);

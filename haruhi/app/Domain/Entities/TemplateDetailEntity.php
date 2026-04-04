@@ -12,12 +12,13 @@ class TemplateDetailEntity
         protected readonly int $type,
         protected readonly Amount $amount,
         protected readonly Item $item,
-        protected readonly int $typeElementId,
+        protected readonly int $kindElementId,
         protected readonly ?int $purposeElementId,
         protected readonly ?int $placeElementId,
-        protected readonly ?int $moveAttribute,
-        protected readonly ?int $moveBeforeId,
-        protected readonly ?int $moveAfterId,
+        protected readonly ?int $moveBeforePurposeId,
+        protected readonly ?int $moveAfterPurposeId,
+        protected readonly ?int $moveBeforePlaceId,
+        protected readonly ?int $moveAfterPlaceId,
     ) {}
 
     public function seq(): int
@@ -40,9 +41,9 @@ class TemplateDetailEntity
         return $this->item;
     }
 
-    public function typeElementId(): int
+    public function kindElementId(): int
     {
-        return $this->typeElementId;
+        return $this->kindElementId;
     }
 
     public function purposeElementId(): ?int
@@ -55,18 +56,23 @@ class TemplateDetailEntity
         return $this->placeElementId;
     }
 
-    public function moveAttribute(): ?int
+    public function moveBeforePurposeId(): ?int
     {
-        return $this->moveAttribute;
+        return $this->moveBeforePurposeId;
     }
 
-    public function moveBeforeId(): ?int
+    public function moveAfterPurposeId(): ?int
     {
-        return $this->moveBeforeId;
+        return $this->moveAfterPurposeId;
     }
 
-    public function moveAfterId(): ?int
+    public function moveBeforePlaceId(): ?int
     {
-        return $this->moveAfterId;
+        return $this->moveBeforePlaceId;
+    }
+
+    public function moveAfterPlaceId(): ?int
+    {
+        return $this->moveAfterPlaceId;
     }
 }

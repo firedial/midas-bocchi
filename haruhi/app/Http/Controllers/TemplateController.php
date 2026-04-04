@@ -48,12 +48,13 @@ class TemplateController extends Controller
                     'type' => $d->type(),
                     'amount' => $d->amount()->value(),
                     'item' => $d->item()->value(),
-                    'type_element_id' => $d->typeElementId(),
+                    'kind_element_id' => $d->kindElementId(),
                     'purpose_element_id' => $d->purposeElementId(),
                     'place_element_id' => $d->placeElementId(),
-                    'move_attribute' => $d->moveAttribute(),
-                    'move_before_id' => $d->moveBeforeId(),
-                    'move_after_id' => $d->moveAfterId(),
+                    'move_before_purpose_id' => $d->moveBeforePurposeId(),
+                    'move_after_purpose_id' => $d->moveAfterPurposeId(),
+                    'move_before_place_id' => $d->moveBeforePlaceId(),
+                    'move_after_place_id' => $d->moveAfterPlaceId(),
                 ],
                 $template->details()
             ),
@@ -110,10 +111,10 @@ class TemplateController extends Controller
             $validated = $request->validate([
                 'name' => 'required|string|max:20',
                 'details' => 'required|array|min:1',
-                'details.*.type' => ['required', new StrictInteger, 'in:1,2'],
+                'details.*.type' => ['required', new StrictInteger, 'in:1,2,3'],
                 'details.*.amount' => ['required', new StrictInteger],
                 'details.*.item' => 'required|string|max:50',
-                'details.*.type_element_id' => ['required', new StrictInteger],
+                'details.*.kind_element_id' => ['required', new StrictInteger],
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -145,9 +146,10 @@ class TemplateController extends Controller
             $amount = $detail['amount'];
             $purposeElementId = $request->input("details.{$i}.purpose_element_id");
             $placeElementId = $request->input("details.{$i}.place_element_id");
-            $moveAttribute = $request->input("details.{$i}.move_attribute");
-            $moveBeforeId = $request->input("details.{$i}.move_before_id");
-            $moveAfterId = $request->input("details.{$i}.move_after_id");
+            $moveBeforePurposeId = $request->input("details.{$i}.move_before_purpose_id");
+            $moveAfterPurposeId = $request->input("details.{$i}.move_after_purpose_id");
+            $moveBeforePlaceId = $request->input("details.{$i}.move_before_place_id");
+            $moveAfterPlaceId = $request->input("details.{$i}.move_after_place_id");
 
             if ($type === 1) {
                 // 収支
@@ -160,17 +162,20 @@ class TemplateController extends Controller
                 if (!is_int($placeElementId)) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.place_element_id is required");
                 }
-                if (!is_null($moveAttribute)) {
-                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_attribute must be null");
+                if (!is_null($moveBeforePurposeId)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_before_purpose_id must be null");
                 }
-                if (!is_null($moveBeforeId)) {
-                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_before_id must be null");
+                if (!is_null($moveAfterPurposeId)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_after_purpose_id must be null");
                 }
-                if (!is_null($moveAfterId)) {
-                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_after_id must be null");
+                if (!is_null($moveBeforePlaceId)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_before_place_id must be null");
                 }
-            } else {
-                // 移動 (type === 2)
+                if (!is_null($moveAfterPlaceId)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_after_place_id must be null");
+                }
+            } elseif ($type === 2) {
+                // 予算移動
                 if ($amount <= 0) {
                     throw new AppException(ErrorCode::INVALID_RANGE, "details.{$i}.amount must be positive");
                 }
@@ -180,14 +185,40 @@ class TemplateController extends Controller
                 if (!is_null($placeElementId)) {
                     throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.place_element_id must be null");
                 }
-                if (!is_int($moveAttribute) || !in_array($moveAttribute, [1, 2], true)) {
-                    throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.move_attribute is required (1 or 2)");
+                if (!is_int($moveBeforePurposeId)) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.move_before_purpose_id is required");
                 }
-                if (!is_int($moveBeforeId)) {
-                    throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.move_before_id is required");
+                if (!is_int($moveAfterPurposeId)) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.move_after_purpose_id is required");
                 }
-                if (!is_int($moveAfterId)) {
-                    throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.move_after_id is required");
+                if (!is_null($moveBeforePlaceId)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_before_place_id must be null");
+                }
+                if (!is_null($moveAfterPlaceId)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_after_place_id must be null");
+                }
+            } else {
+                // 場所移動 (type === 3)
+                if ($amount <= 0) {
+                    throw new AppException(ErrorCode::INVALID_RANGE, "details.{$i}.amount must be positive");
+                }
+                if (!is_null($purposeElementId)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.purpose_element_id must be null");
+                }
+                if (!is_null($placeElementId)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.place_element_id must be null");
+                }
+                if (!is_null($moveBeforePurposeId)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_before_purpose_id must be null");
+                }
+                if (!is_null($moveAfterPurposeId)) {
+                    throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.move_after_purpose_id must be null");
+                }
+                if (!is_int($moveBeforePlaceId)) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.move_before_place_id is required");
+                }
+                if (!is_int($moveAfterPlaceId)) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.move_after_place_id is required");
                 }
             }
 
@@ -196,12 +227,13 @@ class TemplateController extends Controller
                 type: $type,
                 amount: new Amount($amount),
                 item: new Item($detail['item']),
-                typeElementId: $detail['type_element_id'],
+                kindElementId: $detail['kind_element_id'],
                 purposeElementId: $purposeElementId,
                 placeElementId: $placeElementId,
-                moveAttribute: $moveAttribute,
-                moveBeforeId: $moveBeforeId,
-                moveAfterId: $moveAfterId,
+                moveBeforePurposeId: $moveBeforePurposeId,
+                moveAfterPurposeId: $moveAfterPurposeId,
+                moveBeforePlaceId: $moveBeforePlaceId,
+                moveAfterPlaceId: $moveAfterPlaceId,
             );
         }
 
