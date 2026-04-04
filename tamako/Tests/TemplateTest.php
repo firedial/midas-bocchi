@@ -199,6 +199,9 @@ class TemplateTest extends TestCase
 
         // details が null
         $this->assertPostError(['details' => null], 400, 'E109', 'detailsがnull');
+
+        // details が空配列
+        $this->assertPostError(['details' => []], 400, 'E109', 'detailsが空配列');
     }
 
     /**

@@ -135,6 +135,9 @@ class TemplateController extends Controller
                 if (isset($rules['Max'])) {
                     throw new AppException(ErrorCode::INVALID_LENGTH, "{$field} is too long");
                 }
+                if (isset($rules['Min'])) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "{$field} must have at least one item");
+                }
             }
 
             throw $e;
