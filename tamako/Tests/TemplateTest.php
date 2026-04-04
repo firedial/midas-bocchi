@@ -20,10 +20,6 @@ class TemplateTest extends TestCase
                     'kind_element_id' => 12,
                     'purpose_element_id' => 13,
                     'place_element_id' => 14,
-                    'move_before_purpose_id' => null,
-                    'move_after_purpose_id' => null,
-                    'move_before_place_id' => null,
-                    'move_after_place_id' => null,
                 ],
             ],
         ];
@@ -487,10 +483,6 @@ class TemplateTest extends TestCase
             'kind_element_id' => 2,
             'purpose_element_id' => 3,
             'place_element_id' => 4,
-            'move_before_purpose_id' => null,
-            'move_after_purpose_id' => null,
-            'move_before_place_id' => null,
-            'move_after_place_id' => null,
         ];
     }
 
@@ -501,12 +493,8 @@ class TemplateTest extends TestCase
             'amount' => 500,
             'item' => 'テスト予算移動',
             'kind_element_id' => 2,
-            'purpose_element_id' => null,
-            'place_element_id' => null,
             'move_before_purpose_id' => 2,
             'move_after_purpose_id' => 5,
-            'move_before_place_id' => null,
-            'move_after_place_id' => null,
         ];
     }
 
@@ -517,10 +505,6 @@ class TemplateTest extends TestCase
             'amount' => 300,
             'item' => 'テスト場所移動',
             'kind_element_id' => 2,
-            'purpose_element_id' => null,
-            'place_element_id' => null,
-            'move_before_purpose_id' => null,
-            'move_after_purpose_id' => null,
             'move_before_place_id' => 4,
             'move_after_place_id' => 5,
         ];
@@ -532,12 +516,12 @@ class TemplateTest extends TestCase
         Assert::assertSame($expected['amount'], $detail['amount'], "{$prefix}の amount");
         Assert::assertSame($expected['item'], $detail['item'], "{$prefix}の item");
         Assert::assertSame($expected['kind_element_id'], $detail['kind_element_id'], "{$prefix}の kind_element_id");
-        Assert::assertSame($expected['purpose_element_id'], $detail['purpose_element_id'], "{$prefix}の purpose_element_id");
-        Assert::assertSame($expected['place_element_id'], $detail['place_element_id'], "{$prefix}の place_element_id");
-        Assert::assertSame($expected['move_before_purpose_id'], $detail['move_before_purpose_id'], "{$prefix}の move_before_purpose_id");
-        Assert::assertSame($expected['move_after_purpose_id'], $detail['move_after_purpose_id'], "{$prefix}の move_after_purpose_id");
-        Assert::assertSame($expected['move_before_place_id'], $detail['move_before_place_id'], "{$prefix}の move_before_place_id");
-        Assert::assertSame($expected['move_after_place_id'], $detail['move_after_place_id'], "{$prefix}の move_after_place_id");
+        Assert::assertSame($expected['purpose_element_id'] ?? null, $detail['purpose_element_id'], "{$prefix}の purpose_element_id");
+        Assert::assertSame($expected['place_element_id'] ?? null, $detail['place_element_id'], "{$prefix}の place_element_id");
+        Assert::assertSame($expected['move_before_purpose_id'] ?? null, $detail['move_before_purpose_id'], "{$prefix}の move_before_purpose_id");
+        Assert::assertSame($expected['move_after_purpose_id'] ?? null, $detail['move_after_purpose_id'], "{$prefix}の move_after_purpose_id");
+        Assert::assertSame($expected['move_before_place_id'] ?? null, $detail['move_before_place_id'], "{$prefix}の move_before_place_id");
+        Assert::assertSame($expected['move_after_place_id'] ?? null, $detail['move_after_place_id'], "{$prefix}の move_after_place_id");
     }
 
     private function assertPostError(array $overrides, int $statusCode, string $errorCode, string $message): void
