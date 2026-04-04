@@ -3,6 +3,7 @@ module Request.Request exposing
     , deleteBalance
     , deleteFixedBalance
     , deleteMove
+    , deleteTemplate
     , getAttributeCategories
     , getAttributeElement
     , getAttributeElements
@@ -12,6 +13,8 @@ module Request.Request exposing
     , getFixedBalances
     , getMove
     , getMoves
+    , getTemplate
+    , getTemplates
     , postAttributeElement
     , postBalance
     , postBonus
@@ -21,10 +24,12 @@ module Request.Request exposing
     , postLogout
     , postMove
     , postSalary
+    , postTemplate
     , putAttributeElement
     , putBalance
     , putFixedBalance
     , putMove
+    , putTemplate
     )
 
 import Json.Decode as D
@@ -34,6 +39,7 @@ import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.BalanceEntity as BalanceEntity
 import Model.Enitity.FixedBalanceEntity as FixedBalanceEntity
 import Model.Enitity.MoveEntity as MoveEntity
+import Model.Enitity.TemplateEntity as TemplateEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Request.BaseRequest as BaseRequest
@@ -269,6 +275,104 @@ deleteMove xsrfToken moveAttributeName moveId toMsg =
     BaseRequest.delete xsrfToken ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt moveId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
+getTemplates : (Result Error TemplateEntity.Templates -> msg) -> Cmd msg
+getTemplates toMsg =
+    let
+        decodeTemplate =
+            D.succeed TemplateEntity.Template
+                |> required "id" D.int
+                |> required "name" D.string
+    in
+    BaseRequest.get "/api/templates" (D.list decodeTemplate) (toMsg << Result.mapError mapError)
+
+
+getTemplate : Int -> (Result Error ( TemplateEntity.Template, List TemplateEntity.TemplateDetail ) -> msg) -> Cmd msg
+getTemplate id toMsg =
+    let
+        decodeDetail =
+            D.succeed TemplateEntity.TemplateDetail
+                |> required "seq" D.int
+                |> required "type" D.int
+                |> required "amount" D.int
+                |> required "item" D.string
+                |> required "kind_element_id" D.int
+                |> required "purpose_element_id" (D.nullable D.int)
+                |> required "place_element_id" (D.nullable D.int)
+                |> required "move_before_purpose_id" (D.nullable D.int)
+                |> required "move_after_purpose_id" (D.nullable D.int)
+                |> required "move_before_place_id" (D.nullable D.int)
+                |> required "move_after_place_id" (D.nullable D.int)
+
+        decodeResponse =
+            D.map2
+                (\template details -> ( template, details ))
+                (D.succeed TemplateEntity.Template
+                    |> required "id" D.int
+                    |> required "name" D.string
+                )
+                (D.field "details" (D.list decodeDetail))
+    in
+    BaseRequest.get ("/api/templates/" ++ String.fromInt id) decodeResponse (toMsg << Result.mapError mapError)
+
+
+postTemplate : String -> TemplateEntity.NewTemplate -> (Result Error () -> msg) -> Cmd msg
+postTemplate xsrfToken newTemplate toMsg =
+    let
+        encodeDetail d =
+            E.object
+                ([ ( "type", E.int d.type_ )
+                 , ( "amount", E.int d.amount )
+                 , ( "item", E.string d.item )
+                 , ( "kind_element_id", E.int d.kindElementId )
+                 , ( "purpose_element_id", encodeMaybeInt d.purposeElementId )
+                 , ( "place_element_id", encodeMaybeInt d.placeElementId )
+                 , ( "move_before_purpose_id", encodeMaybeInt d.moveBeforePurposeId )
+                 , ( "move_after_purpose_id", encodeMaybeInt d.moveAfterPurposeId )
+                 , ( "move_before_place_id", encodeMaybeInt d.moveBeforePlaceId )
+                 , ( "move_after_place_id", encodeMaybeInt d.moveAfterPlaceId )
+                 ]
+                )
+
+        encoded =
+            E.object
+                [ ( "name", E.string newTemplate.name )
+                , ( "details", E.list encodeDetail newTemplate.details )
+                ]
+    in
+    BaseRequest.post xsrfToken "/api/templates" encoded (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+putTemplate : String -> Int -> TemplateEntity.NewTemplate -> (Result Error () -> msg) -> Cmd msg
+putTemplate xsrfToken id newTemplate toMsg =
+    let
+        encodeDetail d =
+            E.object
+                [ ( "type", E.int d.type_ )
+                , ( "amount", E.int d.amount )
+                , ( "item", E.string d.item )
+                , ( "kind_element_id", E.int d.kindElementId )
+                , ( "purpose_element_id", encodeMaybeInt d.purposeElementId )
+                , ( "place_element_id", encodeMaybeInt d.placeElementId )
+                , ( "move_before_purpose_id", encodeMaybeInt d.moveBeforePurposeId )
+                , ( "move_after_purpose_id", encodeMaybeInt d.moveAfterPurposeId )
+                , ( "move_before_place_id", encodeMaybeInt d.moveBeforePlaceId )
+                , ( "move_after_place_id", encodeMaybeInt d.moveAfterPlaceId )
+                ]
+
+        encoded =
+            E.object
+                [ ( "name", E.string newTemplate.name )
+                , ( "details", E.list encodeDetail newTemplate.details )
+                ]
+    in
+    BaseRequest.put xsrfToken ("/api/templates/" ++ String.fromInt id) encoded (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+deleteTemplate : String -> Int -> (Result Error () -> msg) -> Cmd msg
+deleteTemplate xsrfToken templateId toMsg =
+    BaseRequest.delete xsrfToken ("/api/templates/" ++ String.fromInt templateId) (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
 getAttributeElement : AttributeValueObject.Attribute -> Int -> (Result Error AttributeElementEntity.AttributeElement -> msg) -> Cmd msg
 getAttributeElement attributeValueObject id toMsg =
     let
@@ -403,6 +507,16 @@ postLogin xsrfToken email password toMsg =
 postLogout : String -> (Result Error () -> msg) -> Cmd msg
 postLogout xsrfToken toMsg =
     BaseRequest.post xsrfToken "/api/logout" (E.object []) (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+encodeMaybeInt : Maybe Int -> E.Value
+encodeMaybeInt maybeInt =
+    case maybeInt of
+        Nothing ->
+            E.null
+
+        Just i ->
+            E.int i
 
 
 mapAttributeName : AttributeValueObject.Attribute -> String

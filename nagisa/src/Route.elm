@@ -27,6 +27,9 @@ type Route
     | KindElementId Int
     | PurposeElementId Int
     | PlaceElementId Int
+    | TemplateTable
+    | TemplateCreate
+    | TemplateId Int
     | Salary
     | Bonus
     | CheckPlaceSum
@@ -64,6 +67,9 @@ routes =
         , Parser.map KindElementId (Parser.s "kind" </> Parser.s "elements" </> Parser.int)
         , Parser.map PurposeElementId (Parser.s "purpose" </> Parser.s "elements" </> Parser.int)
         , Parser.map PlaceElementId (Parser.s "place" </> Parser.s "elements" </> Parser.int)
+        , Parser.map TemplateTable (Parser.s "templates")
+        , Parser.map TemplateCreate (Parser.s "templates" </> Parser.s "create")
+        , Parser.map TemplateId (Parser.s "templates" </> Parser.int)
         , Parser.map Salary (Parser.s "salary")
         , Parser.map Bonus (Parser.s "bonus")
         , Parser.map CheckPlaceSum (Parser.s "check_place_sum")
@@ -140,6 +146,15 @@ toPath route =
 
         PlaceElementId id ->
             "/place/elements/" ++ String.fromInt id
+
+        TemplateTable ->
+            "/templates"
+
+        TemplateCreate ->
+            "/templates/create"
+
+        TemplateId id ->
+            "/templates/" ++ String.fromInt id
 
         Salary ->
             "/salary"

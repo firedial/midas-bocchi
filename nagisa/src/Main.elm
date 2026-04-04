@@ -19,6 +19,8 @@ import Page.Logout
 import Page.MoveId
 import Page.MoveTable
 import Page.Salary
+import Page.TemplateId
+import Page.TemplateTable
 import Page.Top
 import Route
 import Url
@@ -50,6 +52,8 @@ type Page
     | Salary Page.Salary.Model
     | Bonus Page.Bonus.Model
     | CheckPlaceSum Page.CheckPlaceSum.Model
+    | TemplateTable Page.TemplateTable.Model
+    | TemplateId Page.TemplateId.Model
     | Login Page.Login.Model
     | Logout Page.Logout.Model
 
@@ -81,6 +85,8 @@ type Msg
     | SalaryMsg Page.Salary.Msg
     | BonusMsg Page.Bonus.Msg
     | CheckPlaceSumMsg Page.CheckPlaceSum.Msg
+    | TemplateTableMsg Page.TemplateTable.Msg
+    | TemplateIdMsg Page.TemplateId.Msg
     | LoginMsg Page.Login.Msg
     | LogoutMsg Page.Logout.Msg
 
@@ -267,6 +273,34 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        TemplateTableMsg pageMsg ->
+            case model.page of
+                TemplateTable pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.TemplateTable.update pageMsg pageModel
+                    in
+                    ( { model | page = TemplateTable newModel }
+                    , Cmd.map TemplateTableMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        TemplateIdMsg pageMsg ->
+            case model.page of
+                TemplateId pageModel ->
+                    let
+                        ( newModel, newCmd ) =
+                            Page.TemplateId.update pageMsg pageModel
+                    in
+                    ( { model | page = TemplateId newModel }
+                    , Cmd.map TemplateIdMsg newCmd
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
         LoginMsg pageMsg ->
             case model.page of
                 Login pageModel ->
@@ -308,6 +342,7 @@ view model =
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.BalanceTable) ] [ Html.text "balance" ] ]
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.BalanceCreate) ] [ Html.text "balance_create" ] ]
                     , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.PlaceMoveTable) ] [ Html.text "place_move" ] ]
+                    , Html.li [] [ Html.a [ Attributes.href (Route.toPath Route.TemplateTable) ] [ Html.text "template" ] ]
                     ]
                 ]
             ]
@@ -362,6 +397,14 @@ view model =
             CheckPlaceSum pageModel ->
                 Page.CheckPlaceSum.view pageModel
                     |> Html.map CheckPlaceSumMsg
+
+            TemplateTable pageModel ->
+                Page.TemplateTable.view pageModel
+                    |> Html.map TemplateTableMsg
+
+            TemplateId pageModel ->
+                Page.TemplateId.view pageModel
+                    |> Html.map TemplateIdMsg
 
             Login pageModel ->
                 Page.Login.view pageModel
@@ -576,6 +619,33 @@ goTo maybeRoute model =
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
+            )
+
+        Just Route.TemplateTable ->
+            let
+                ( newModel, newCmd ) =
+                    Page.TemplateTable.init
+            in
+            ( { model | page = TemplateTable newModel }
+            , Cmd.map TemplateTableMsg newCmd
+            )
+
+        Just Route.TemplateCreate ->
+            let
+                ( newModel, newCmd ) =
+                    Page.TemplateId.init model.xsrfToken model.key Nothing
+            in
+            ( { model | page = TemplateId newModel }
+            , Cmd.map TemplateIdMsg newCmd
+            )
+
+        Just (Route.TemplateId id) ->
+            let
+                ( newModel, newCmd ) =
+                    Page.TemplateId.init model.xsrfToken model.key (Just id)
+            in
+            ( { model | page = TemplateId newModel }
+            , Cmd.map TemplateIdMsg newCmd
             )
 
         Just Route.Salary ->
