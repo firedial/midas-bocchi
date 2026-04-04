@@ -7,12 +7,15 @@ use App\Domain\Entities\TemplateEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\TemplateId;
+use App\Infrastructure\Repository\Concerns\HandlesQueryException;
 use App\Infrastructure\Repository\TemplateRepositoryInterface;
 use App\Models\DataModels\TemplateDataModel;
 use App\Models\DataModels\TemplateDetailDataModel;
+use Illuminate\Database\QueryException;
 
 class TemplateRepositoryImpl implements TemplateRepositoryInterface
 {
+    use HandlesQueryException;
     public function getTemplates(): array
     {
         $rows = TemplateDataModel::selectTemplate();
@@ -48,9 +51,13 @@ class TemplateRepositoryImpl implements TemplateRepositoryInterface
     {
         $row = TemplateDataModel::insertTemplate($template->name());
 
-        TemplateDetailDataModel::insertTemplateDetails(
-            $this->buildDetailRows($row->id, $template->details())
-        );
+        try {
+            TemplateDetailDataModel::insertTemplateDetails(
+                $this->buildDetailRows($row->id, $template->details())
+            );
+        } catch (QueryException $e) {
+            self::handleQueryException($e, "Insert template detail error.");
+        }
 
         return new TemplateEntity(
             TemplateId::filledId($row->id),
@@ -67,9 +74,14 @@ class TemplateRepositoryImpl implements TemplateRepositoryInterface
         );
 
         TemplateDetailDataModel::deleteTemplateDetails($template->templateId()->value());
-        TemplateDetailDataModel::insertTemplateDetails(
-            $this->buildDetailRows($row->id, $template->details())
-        );
+
+        try {
+            TemplateDetailDataModel::insertTemplateDetails(
+                $this->buildDetailRows($row->id, $template->details())
+            );
+        } catch (QueryException $e) {
+            self::handleQueryException($e, "Update template detail error.");
+        }
 
         return new TemplateEntity(
             TemplateId::filledId($row->id),

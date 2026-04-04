@@ -156,9 +156,6 @@ class TemplateController extends Controller
 
             if ($type === 1) {
                 // 収支
-                if ($amount === 0) {
-                    throw new AppException(ErrorCode::INVALID_RANGE, "details.{$i}.amount must not be zero");
-                }
                 if (!is_int($purposeElementId)) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.purpose_element_id is required");
                 }

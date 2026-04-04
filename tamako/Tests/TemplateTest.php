@@ -250,9 +250,6 @@ class TemplateTest extends TestCase
 
         // amount が文字列数字
         $this->assertPostDetail1Error(['amount' => '100'], 400, 'E101', 'amountが文字列数字');
-
-        // amount が0 (type=1)
-        $this->assertPostDetail1Error(['amount' => 0], 400, 'E102', 'amountが0');
     }
 
     /**
@@ -464,6 +461,33 @@ class TemplateTest extends TestCase
     {
         $this->assertPostDetail3Error(['move_before_purpose_id' => 1], 400, 'E106', 'type=3でmove_before_purpose_idがnullでない');
         $this->assertPostDetail3Error(['move_after_purpose_id' => 1], 400, 'E106', 'type=3でmove_after_purpose_idがnullでない');
+    }
+
+    /**
+     * 外部キー制約違反テスト
+     */
+    public function testTemplateForeignKeyViolation(): void
+    {
+        // kind_element_id が存在しない
+        $this->assertPostDetail1Error(['kind_element_id' => 999999], 409, 'E302', 'kind_element_idが存在しない');
+
+        // purpose_element_id が存在しない (type=1)
+        $this->assertPostDetail1Error(['purpose_element_id' => 999999], 409, 'E302', 'purpose_element_idが存在しない');
+
+        // place_element_id が存在しない (type=1)
+        $this->assertPostDetail1Error(['place_element_id' => 999999], 409, 'E302', 'place_element_idが存在しない');
+
+        // move_before_purpose_id が存在しない (type=2)
+        $this->assertPostDetail2Error(['move_before_purpose_id' => 999999], 409, 'E302', 'move_before_purpose_idが存在しない');
+
+        // move_after_purpose_id が存在しない (type=2)
+        $this->assertPostDetail2Error(['move_after_purpose_id' => 999999], 409, 'E302', 'move_after_purpose_idが存在しない');
+
+        // move_before_place_id が存在しない (type=3)
+        $this->assertPostDetail3Error(['move_before_place_id' => 999999], 409, 'E302', 'move_before_place_idが存在しない');
+
+        // move_after_place_id が存在しない (type=3)
+        $this->assertPostDetail3Error(['move_after_place_id' => 999999], 409, 'E302', 'move_after_place_idが存在しない');
     }
 
     private function validTemplate(): array
