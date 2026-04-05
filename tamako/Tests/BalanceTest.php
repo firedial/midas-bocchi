@@ -130,6 +130,7 @@ class BalanceTest extends TestCase
             'kind_element_id' => 12,
             'purpose_element_id' => 13,
             'place_element_id' => 14,
+            'group_id' => 5,
         ];
 
         // 登録
@@ -486,6 +487,29 @@ class BalanceTest extends TestCase
     }
 
     /**
+     * 収支登録バリデーションエラーテスト（グループID不正）
+     */
+    public function testBalancePostGroupIdInvalid(): void
+    {
+        $this->assertPostError(['group_id' => 0], 400, 'E102', 'group_idが0');
+        $this->assertPostError(['group_id' => ''], 400, 'E101', 'group_idが空文字列');
+        $this->assertPostError(['group_id' => 'aaa'], 400, 'E101', 'group_idが文字列');
+        $this->assertPostError(['group_id' => '5'], 400, 'E101', 'group_idが文字列数字');
+    }
+
+    /**
+     * 収支更新バリデーションエラーテスト（グループID不正）
+     */
+    public function testBalancePutGroupIdInvalid(): void
+    {
+        $this->assertPutErrorUnset('group_id', 400, 'E109', 'group_idがない');
+        $this->assertPutError(['group_id' => null], 400, 'E101', 'group_idがnull');
+        $this->assertPutError(['group_id' => 0], 400, 'E102', 'group_idが0');
+        $this->assertPutError(['group_id' => ''], 400, 'E101', 'group_idが文字列');
+        $this->assertPutError(['group_id' => '5'], 400, 'E101', 'group_idが文字列数字');
+    }
+
+    /**
      * 収支更新(存在しない)
      */
     public function testBalancePutNotFound(): void
@@ -612,6 +636,7 @@ class BalanceTest extends TestCase
             'kind_element_id' => 2,
             'purpose_element_id' => 3,
             'place_element_id' => 4,
+            'group_id' => 2,
         ];
     }
 
@@ -646,6 +671,7 @@ class BalanceTest extends TestCase
         Assert::assertSame($expected['kind_element_id'], $balance['kind_element_id'], "{$prefix}の kind_element_id");
         Assert::assertSame($expected['purpose_element_id'], $balance['purpose_element_id'], "{$prefix}の purpose_element_id");
         Assert::assertSame($expected['place_element_id'], $balance['place_element_id'], "{$prefix}の place_element_id");
+        Assert::assertSame($expected['group_id'] ?? null, $balance['group_id'], "{$prefix}の group_id");
     }
 
     /**
