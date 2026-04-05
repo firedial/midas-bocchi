@@ -24,7 +24,7 @@ class BalanceEntity
         protected readonly PurposeElementId $purposeElementId,
         protected readonly PlaceElementId $placeElementId,
         protected readonly Date $date,
-        protected readonly ?GroupId $groupId = null,
+        protected readonly GroupId $groupId,
         protected readonly ?Description $kindElementDescription = null,
         protected readonly ?Description $purposeElementDescription = null,
         protected readonly ?Description $placeElementDescription = null,
