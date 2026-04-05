@@ -16,6 +16,7 @@ class BalanceDataModel
     private const C_PURPOSE_ELEMENT_ID = "purpose_element_id";
     private const C_PLACE_ELEMENT_ID = "place_element_id";
     private const C_DATE = "date";
+    private const C_GROUP_ID = "group_id";
 
     public static function selectBalance(
         ?int $notKindElementId = null,
@@ -34,6 +35,7 @@ class BalanceDataModel
                 self::TABLE_NAME . '.' . self::C_PURPOSE_ELEMENT_ID,
                 self::TABLE_NAME . '.' . self::C_PLACE_ELEMENT_ID,
                 self::TABLE_NAME . '.' . self::C_DATE,
+                self::TABLE_NAME . '.' . self::C_GROUP_ID,
                 KindElementDataModel::TABLE_NAME . '.' . KindElementDataModel::C_DESCRIPTION . ' AS kind_element_description',
                 PurposeElementDataModel::TABLE_NAME . '.' . PurposeElementDataModel::C_DESCRIPTION . ' AS purpose_element_description',
                 PlaceElementDataModel::TABLE_NAME . '.' . PlaceElementDataModel::C_DESCRIPTION . ' AS place_element_description',
@@ -70,18 +72,29 @@ class BalanceDataModel
         int $purposeElementId,
         int $placeElementId,
         string $date,
+        ?int $groupId = null,
     ): stdClass {
-        return DB::selectOne(
+        $result = DB::selectOne(
             'INSERT INTO ' . self::TABLE_NAME . ' (' .
                 self::C_AMOUNT . ', ' .
                 self::C_ITEM . ', ' .
                 self::C_KIND_ELEMENT_ID . ', ' .
                 self::C_PURPOSE_ELEMENT_ID . ', ' .
                 self::C_PLACE_ELEMENT_ID . ', ' .
-                self::C_DATE .
-                ') VALUES (?, ?, ?, ?, ?, ?) RETURNING *',
-            [$amount, $item, $kindElementId, $purposeElementId, $placeElementId, $date]
+                self::C_DATE . ', ' .
+                self::C_GROUP_ID .
+                ') VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING *',
+            [$amount, $item, $kindElementId, $purposeElementId, $placeElementId, $date, $groupId]
         );
+
+        if (is_null($groupId)) {
+            DB::table(self::TABLE_NAME)
+                ->where(self::C_ID, '=', $result->id)
+                ->update([self::C_GROUP_ID => $result->id]);
+            $result->group_id = $result->id;
+        }
+
+        return $result;
     }
 
     public static function updateBalance(
@@ -92,6 +105,7 @@ class BalanceDataModel
         int $purposeElementId,
         int $placeElementId,
         string $date,
+        ?int $groupId = null,
     ): stdClass {
         DB::table(self::TABLE_NAME)
             ->where(self::C_ID, '=', $id)
@@ -102,6 +116,7 @@ class BalanceDataModel
                 self::C_PURPOSE_ELEMENT_ID => $purposeElementId,
                 self::C_PLACE_ELEMENT_ID => $placeElementId,
                 self::C_DATE => $date,
+                self::C_GROUP_ID => $groupId,
             ]);
 
         return DB::selectOne(

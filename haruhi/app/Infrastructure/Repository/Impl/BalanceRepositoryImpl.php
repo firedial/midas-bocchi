@@ -9,6 +9,7 @@ use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\BalanceId;
 use App\Domain\ValueObjects\Date;
 use App\Domain\ValueObjects\Description;
+use App\Domain\ValueObjects\GroupId;
 use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\KindElementId;
 use App\Domain\ValueObjects\PlaceElementId;
@@ -37,6 +38,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
                     PurposeElementId::filledId($balance->purpose_element_id),
                     PlaceElementId::filledId($balance->place_element_id),
                     new Date($balance->date),
+                    is_null($balance->group_id) ? null : GroupId::filledId($balance->group_id),
                     new Description($balance->kind_element_description),
                     new Description($balance->purpose_element_description),
                     new Description($balance->place_element_description),
@@ -65,6 +67,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
                 $balance->purposeElementId()->value(),
                 $balance->placeElementId()->value(),
                 $balance->date()->value(),
+                $balance->groupId()?->value(),
             );
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Insert balance error.');
@@ -78,6 +81,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             PurposeElementId::filledId($result->purpose_element_id),
             PlaceElementId::filledId($result->place_element_id),
             new Date($result->date),
+            is_null($result->group_id) ? null : GroupId::filledId($result->group_id),
         );
     }
 
@@ -92,6 +96,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
                 $balance->purposeElementId()->value(),
                 $balance->placeElementId()->value(),
                 $balance->date()->value(),
+                $balance->groupId()?->value(),
             );
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Update balance error.');
@@ -105,6 +110,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             PurposeElementId::filledId($result->purpose_element_id),
             PlaceElementId::filledId($result->place_element_id),
             new Date($result->date),
+            is_null($result->group_id) ? null : GroupId::filledId($result->group_id),
         );
     }
 
@@ -124,6 +130,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             PurposeElementId::filledId($result->purpose_element_id),
             PlaceElementId::filledId($result->place_element_id),
             new Date($result->date),
+            is_null($result->group_id) ? null : GroupId::filledId($result->group_id),
         );
     }
 

@@ -50,6 +50,7 @@ CREATE TABLE `m_balance` (
   `purpose_element_id` bigint(20) unsigned NOT NULL,
   `place_element_id` bigint(20) unsigned NOT NULL,
   `date` date NOT NULL,
+  `group_id` bigint(20) unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
