@@ -113,7 +113,7 @@ class MoveController extends Controller
                 'before_id' => ['present', new StrictInteger],
                 'after_id' => ['present', new StrictInteger],
                 'date' => 'present|string',
-                'group_id' => ['nullable', new StrictInteger(nullable: true), 'min:1'],
+                'group_id' => ['nullable', new StrictInteger(nullable: true), 'integer', 'min:1'],
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -193,7 +193,7 @@ class MoveController extends Controller
                 'before_id' => ['present', new StrictInteger],
                 'after_id' => ['present', new StrictInteger],
                 'date' => 'present|string',
-                'group_id' => ['present', new StrictInteger, 'min:1'],
+                'group_id' => ['present', new StrictInteger, 'integer', 'min:1'],
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
