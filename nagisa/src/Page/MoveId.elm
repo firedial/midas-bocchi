@@ -146,7 +146,7 @@ update msg model =
                                 (String.fromInt move.beforeId)
                                 (String.fromInt move.afterId)
                                 move.date
-                                (move.groupId |> Maybe.map String.fromInt |> Maybe.withDefault "")
+                                (String.fromInt move.groupId)
                     in
                     ( { model | move = stringMove }, Cmd.none )
 

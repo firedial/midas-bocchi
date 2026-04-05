@@ -174,7 +174,7 @@ update msg model =
                                 (String.fromInt balance.purposeElementId)
                                 (String.fromInt balance.placeElementId)
                                 balance.date
-                                (balance.groupId |> Maybe.map String.fromInt |> Maybe.withDefault "")
+                                (String.fromInt balance.groupId)
                     in
                     ( { model | balance = stringBalance }, Cmd.none )
 

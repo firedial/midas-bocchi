@@ -8,7 +8,7 @@ type alias Move =
     , beforeId : Int
     , afterId : Int
     , date : String
-    , groupId : Maybe Int
+    , groupId : Int
     , beforeDescription : String
     , afterDescription : String
     }

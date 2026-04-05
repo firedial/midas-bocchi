@@ -9,7 +9,7 @@ type alias Balance =
     , purposeElementId : Int
     , placeElementId : Int
     , date : String
-    , groupId : Maybe Int
+    , groupId : Int
     , kindElementDescription : String
     , purposeElementDescription : String
     , placeElementDescription : String

@@ -97,7 +97,7 @@ view model =
                             , Html.td [] [ Html.text move.beforeDescription ]
                             , Html.td [] [ Html.text move.afterDescription ]
                             , Html.td [] [ Html.text move.date ]
-                            , Html.td [] [ Html.text (move.groupId |> Maybe.map String.fromInt |> Maybe.withDefault "") ]
+                            , Html.td [] [ Html.text (String.fromInt move.groupId) ]
                             ]
                     )
                     model.moves

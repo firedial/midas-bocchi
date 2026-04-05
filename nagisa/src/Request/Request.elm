@@ -57,7 +57,7 @@ getBalance id toMsg =
                 |> required "purpose_element_id" D.int
                 |> required "place_element_id" D.int
                 |> required "date" D.string
-                |> required "group_id" (D.nullable D.int)
+                |> required "group_id" D.int
                 |> required "kind_element_description" D.string
                 |> required "purpose_element_description" D.string
                 |> required "place_element_description" D.string
@@ -77,7 +77,7 @@ getBalances limit toMsg =
                 |> required "purpose_element_id" D.int
                 |> required "place_element_id" D.int
                 |> required "date" D.string
-                |> required "group_id" (D.nullable D.int)
+                |> required "group_id" D.int
                 |> required "kind_element_description" D.string
                 |> required "purpose_element_description" D.string
                 |> required "place_element_description" D.string
@@ -214,7 +214,7 @@ getMove moveAttributeValueObject id toMsg =
                 |> required "before_id" D.int
                 |> required "after_id" D.int
                 |> required "date" D.string
-                |> required "group_id" (D.nullable D.int)
+                |> required "group_id" D.int
                 |> required "before_description" D.string
                 |> required "after_description" D.string
     in
@@ -232,7 +232,7 @@ getMoves moveAttributeValueObject toMsg =
                 |> required "before_id" D.int
                 |> required "after_id" D.int
                 |> required "date" D.string
-                |> required "group_id" (D.nullable D.int)
+                |> required "group_id" D.int
                 |> required "before_description" D.string
                 |> required "after_description" D.string
     in

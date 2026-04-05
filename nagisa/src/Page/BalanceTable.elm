@@ -79,7 +79,7 @@ view model =
                             , Html.td [] [ Html.text balance.purposeElementDescription ]
                             , Html.td [] [ Html.text balance.placeElementDescription ]
                             , Html.td [] [ Html.text balance.date ]
-                            , Html.td [] [ Html.text (balance.groupId |> Maybe.map String.fromInt |> Maybe.withDefault "") ]
+                            , Html.td [] [ Html.text (String.fromInt balance.groupId) ]
                             ]
                     )
                     model.balances
