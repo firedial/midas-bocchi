@@ -105,7 +105,7 @@ class BalanceDataModel
         int $purposeElementId,
         int $placeElementId,
         string $date,
-        ?int $groupId = null,
+        int $groupId,
     ): stdClass {
         DB::table(self::TABLE_NAME)
             ->where(self::C_ID, '=', $id)
