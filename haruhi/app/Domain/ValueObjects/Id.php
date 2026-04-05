@@ -24,6 +24,11 @@ abstract class Id
         return new static(self::EMPTY_ID);
     }
 
+    public function isEmpty(): bool
+    {
+        return $this->id === self::EMPTY_ID;
+    }
+
     public function value(): int
     {
         if ($this->id === self::EMPTY_ID) {

@@ -69,7 +69,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
                 $balance->purposeElementId()->value(),
                 $balance->placeElementId()->value(),
                 $balance->date()->value(),
-                $balance->groupId()?->value(),
+                $balance->groupId()->isEmpty() ? null : $balance->groupId()->value(),
             );
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Insert balance error.');
@@ -98,7 +98,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
                 $balance->purposeElementId()->value(),
                 $balance->placeElementId()->value(),
                 $balance->date()->value(),
-                $balance->groupId()?->value(),
+                $balance->groupId()->value(),
             );
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Update balance error.');

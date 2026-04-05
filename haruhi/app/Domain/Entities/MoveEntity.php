@@ -21,7 +21,7 @@ class MoveEntity
         protected readonly AttributeElementId $beforeId,
         protected readonly AttributeElementId $afterId,
         protected readonly Date $date,
-        protected readonly ?GroupId $groupId = null,
+        protected readonly GroupId $groupId,
         protected readonly ?Description $beforeDescription = null,
         protected readonly ?Description $afterDescription = null,
     ) {}
@@ -56,7 +56,7 @@ class MoveEntity
         return $this->date;
     }
 
-    public function groupId(): ?GroupId
+    public function groupId(): GroupId
     {
         return $this->groupId;
     }

@@ -77,10 +77,6 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             };
 
-            if (is_null($before->group_id)) {
-                throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
-            }
-
             $moves[] = new MoveEntity(
                 MoveId::filledId($before->id),
                 new Amount($after->amount),
@@ -153,10 +149,6 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
-        if (is_null($before->group_id)) {
-            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
-        }
-
         return new MoveEntity(
             MoveId::filledId($before->id),
             new Amount($after->amount),
@@ -208,7 +200,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $beforePurposeElementId->value(),
                 $beforePlaceElementId->value(),
                 $move->date()->value(),
-                $move->groupId()?->value(),
+                $move->groupId()->isEmpty() ? null : $move->groupId()->value(),
             );
 
             $afterBalance = BalanceDataModel::insertBalance(
@@ -218,7 +210,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $afterPurposeElementId->value(),
                 $afterPlaceElementId->value(),
                 $move->date()->value(),
-                $move->groupId()?->value() ?? $beforeBalance->id,
+                $move->groupId()->isEmpty() ? $beforeBalance->id : $move->groupId()->value(),
             );
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Insert move error.');
@@ -227,10 +219,6 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
         // 1違いでなければ例外
         if ($afterBalance->id !== $beforeBalance->id + 1) {
             throw new AppException(ErrorCode::UNEXPECTED_DIFFERENCE_ID_MOVE, 'After id is wrong.');
-        }
-
-        if (is_null($beforeBalance->group_id)) {
-            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
         }
 
         return new MoveEntity(
@@ -291,7 +279,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $beforePurposeElementId->value(),
                 $beforePlaceElementId->value(),
                 $move->date()->value(),
-                $move->groupId()?->value(),
+                $move->groupId()->value(),
             );
 
             $afterBalance = BalanceDataModel::updateBalance(
@@ -302,14 +290,10 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $afterPurposeElementId->value(),
                 $afterPlaceElementId->value(),
                 $move->date()->value(),
-                $move->groupId()?->value(),
+                $move->groupId()->value(),
             );
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Update move error.');
-        }
-
-        if (is_null($beforeBalance->group_id)) {
-            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
         }
 
         return new MoveEntity(
@@ -340,10 +324,6 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             self::handleQueryException($e, 'Delete move error.');
         }
 
-        if (is_null($beforeBalance->group_id)) {
-            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
-        }
-
         return new MoveEntity(
             MoveId::filledId($beforeBalance->id),
             new Amount($afterBalance->amount),
@@ -359,7 +339,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             },
             new Date($beforeBalance->date),
-            is_null($beforeBalance->group_id) ? null : GroupId::filledId($beforeBalance->group_id),
+            GroupId::filledId($beforeBalance->group_id),
         );
     }
 }
