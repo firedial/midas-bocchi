@@ -4,6 +4,7 @@ namespace App\Domain\Entities;
 
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\AttributeElementId;
+use App\Domain\ValueObjects\GroupId;
 use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\Date;
 use App\Domain\ValueObjects\Description;
@@ -20,6 +21,7 @@ class MoveEntity
         protected readonly AttributeElementId $beforeId,
         protected readonly AttributeElementId $afterId,
         protected readonly Date $date,
+        protected readonly ?GroupId $groupId = null,
         protected readonly ?Description $beforeDescription = null,
         protected readonly ?Description $afterDescription = null,
     ) {}
@@ -52,6 +54,11 @@ class MoveEntity
     public function date(): Date
     {
         return $this->date;
+    }
+
+    public function groupId(): ?GroupId
+    {
+        return $this->groupId;
     }
 
     public function beforeDescription(): Description

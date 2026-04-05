@@ -8,6 +8,7 @@ type alias Move =
     , beforeId : Int
     , afterId : Int
     , date : String
+    , groupId : Maybe Int
     , beforeDescription : String
     , afterDescription : String
     }
@@ -23,4 +24,5 @@ type alias NewMove =
     , beforeId : Int
     , afterId : Int
     , date : String
+    , groupId : Maybe Int
     }

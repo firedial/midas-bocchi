@@ -34,6 +34,7 @@ type alias StringMove =
     , beforeId : String
     , afterId : String
     , date : String
+    , groupId : String
     }
 
 
@@ -43,6 +44,7 @@ type Msg
     | InputBeforeElementId String
     | InputAfterElementId String
     | InputDate String
+    | InputGroupId String
     | GetMove (Result Request.Error MoveEntity.Move)
     | GetAttributeElements (Result Request.Error AttributeElementEntity.AttributeElements)
     | Upsert
@@ -64,7 +66,7 @@ init xsrfToken key moveAttributeValueObject id =
                     AttributeValueObject.Place
     in
     ( Model
-        (StringMove "" "" "" "" "")
+        (StringMove "" "" "" "" "" "")
         []
         xsrfToken
         moveAttributeValueObject
@@ -126,6 +128,13 @@ update msg model =
             in
             ( { model | move = { newMove | date = date } }, Cmd.none )
 
+        InputGroupId groupId ->
+            let
+                newMove =
+                    model.move
+            in
+            ( { model | move = { newMove | groupId = groupId } }, Cmd.none )
+
         GetMove result ->
             case result of
                 Ok move ->
@@ -137,6 +146,7 @@ update msg model =
                                 (String.fromInt move.beforeId)
                                 (String.fromInt move.afterId)
                                 move.date
+                                (move.groupId |> Maybe.map String.fromInt |> Maybe.withDefault "")
                     in
                     ( { model | move = stringMove }, Cmd.none )
 
@@ -175,6 +185,7 @@ update msg model =
                             |> Maybe.withDefault 0
                         )
                         model.move.date
+                        (String.toInt model.move.groupId)
 
                 cmd =
                     case model.id of
@@ -242,6 +253,7 @@ view model =
                 , Html.th [] [ Html.text "移動前" ]
                 , Html.th [] [ Html.text "移動後" ]
                 , Html.th [] [ Html.text "日付" ]
+                , Html.th [] [ Html.text "グループID" ]
                 ]
             , Html.tr []
                 [ Html.td []
@@ -283,6 +295,9 @@ view model =
                         )
                     ]
                 , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.move.date, onInput InputDate ] [] ]
+                , Html.td []
+                    [ Html.input [ Attributes.type_ "text", Attributes.value model.move.groupId, onInput InputGroupId ] []
+                    ]
                 ]
             ]
         , Html.div []

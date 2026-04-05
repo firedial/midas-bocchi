@@ -7,6 +7,7 @@ use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\Attribute;
 use App\Domain\ValueObjects\AttributeElementId;
 use App\Domain\ValueObjects\Date;
+use App\Domain\ValueObjects\GroupId;
 use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\MoveId;
 use App\Domain\ValueObjects\PlaceElementId;
@@ -65,6 +66,7 @@ class MoveController extends Controller
                     "before_id" => $move->beforeId()->value(),
                     "after_id" => $move->afterId()->value(),
                     "date" => $move->date()->value(),
+                    "group_id" => $move->groupId()?->value(),
                     "before_description" => $move->beforeDescription()->value(),
                     "after_description" => $move->afterDescription()->value(),
                 ];
@@ -96,6 +98,7 @@ class MoveController extends Controller
             "before_id" => $move->beforeId()->value(),
             "after_id" => $move->afterId()->value(),
             "date" => $move->date()->value(),
+            "group_id" => $move->groupId()?->value(),
             "before_description" => $move->beforeDescription()->value(),
             "after_description" => $move->afterDescription()->value(),
         ];
@@ -110,6 +113,7 @@ class MoveController extends Controller
                 'before_id' => ['present', new StrictInteger],
                 'after_id' => ['present', new StrictInteger],
                 'date' => 'present|string',
+                'group_id' => ['nullable', new StrictInteger(nullable: true), 'min:1'],
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -156,6 +160,8 @@ class MoveController extends Controller
             throw new AppException(ErrorCode::USING_MOVE_ID, 'Before id or after id is move id.');
         }
 
+        $groupId = !is_null($validated['group_id'] ?? null) ? GroupId::filledId($validated['group_id']) : null;
+
         $move = new MoveEntity(
             MoveId::emptyId(),
             new Amount($validated['amount']),
@@ -163,6 +169,7 @@ class MoveController extends Controller
             $beforeId,
             $afterId,
             new Date($validated['date']),
+            $groupId,
         );
 
         $insertMoveUsecase = new InsertMoveUsecase();
@@ -175,6 +182,7 @@ class MoveController extends Controller
             "before_id" => $result->beforeId()->value(),
             "after_id" => $result->afterId()->value(),
             "date" => $result->date()->value(),
+            "group_id" => $result->groupId()?->value(),
         ];
     }
 
@@ -187,6 +195,7 @@ class MoveController extends Controller
                 'before_id' => ['present', new StrictInteger],
                 'after_id' => ['present', new StrictInteger],
                 'date' => 'present|string',
+                'group_id' => ['present', new StrictInteger, 'min:1'],
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -233,6 +242,8 @@ class MoveController extends Controller
             throw new AppException(ErrorCode::USING_MOVE_ID, 'Before id or after id is move id.');
         }
 
+        $groupId = GroupId::filledId($validated['group_id']);
+
         $move = new MoveEntity(
             MoveId::filledId($id),
             new Amount($validated['amount']),
@@ -240,6 +251,7 @@ class MoveController extends Controller
             $beforeId,
             $afterId,
             new Date($validated['date']),
+            $groupId,
         );
 
         $updateMoveUsecase = new UpdateMoveUsecase();
@@ -252,6 +264,7 @@ class MoveController extends Controller
             "before_id" => $result->beforeId()->value(),
             "after_id" => $result->afterId()->value(),
             "date" => $result->date()->value(),
+            "group_id" => $result->groupId()?->value(),
         ];
     }
 
@@ -274,6 +287,7 @@ class MoveController extends Controller
             "before_id" => $result->beforeId()->value(),
             "after_id" => $result->afterId()->value(),
             "date" => $result->date()->value(),
+            "group_id" => $result->groupId()?->value(),
         ];
     }
 }
