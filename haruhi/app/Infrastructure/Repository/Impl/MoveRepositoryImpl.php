@@ -77,6 +77,10 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             };
 
+            if (is_null($before->group_id)) {
+                throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
+            }
+
             $moves[] = new MoveEntity(
                 MoveId::filledId($before->id),
                 new Amount($after->amount),
@@ -84,7 +88,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $beforeElementId,
                 $afterElementId,
                 new Date($before->date),
-                is_null($before->group_id) ? null : GroupId::filledId($before->group_id),
+                GroupId::filledId($before->group_id),
                 beforeDescription: $beforeElementDescription,
                 afterDescription: $afterElementDescription,
             );
@@ -149,6 +153,10 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
         };
 
+        if (is_null($before->group_id)) {
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
+        }
+
         return new MoveEntity(
             MoveId::filledId($before->id),
             new Amount($after->amount),
@@ -156,7 +164,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             $beforeElementId,
             $afterElementId,
             new Date($before->date),
-            is_null($before->group_id) ? null : GroupId::filledId($before->group_id),
+            GroupId::filledId($before->group_id),
             beforeDescription: $beforeElementDescription,
             afterDescription: $afterElementDescription,
         );
@@ -221,6 +229,10 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             throw new AppException(ErrorCode::UNEXPECTED_DIFFERENCE_ID_MOVE, 'After id is wrong.');
         }
 
+        if (is_null($beforeBalance->group_id)) {
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
+        }
+
         return new MoveEntity(
             MoveId::filledId($beforeBalance->id),
             new Amount($afterBalance->amount),
@@ -236,7 +248,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             },
             new Date($beforeBalance->date),
-            is_null($beforeBalance->group_id) ? null : GroupId::filledId($beforeBalance->group_id),
+            GroupId::filledId($beforeBalance->group_id),
         );
     }
 
@@ -296,6 +308,10 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             self::handleQueryException($e, 'Update move error.');
         }
 
+        if (is_null($beforeBalance->group_id)) {
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
+        }
+
         return new MoveEntity(
             MoveId::filledId($beforeBalance->id),
             new Amount($afterBalance->amount),
@@ -311,7 +327,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             },
             new Date($beforeBalance->date),
-            is_null($beforeBalance->group_id) ? null : GroupId::filledId($beforeBalance->group_id),
+            GroupId::filledId($beforeBalance->group_id),
         );
     }
 
@@ -322,6 +338,10 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             $afterBalance = BalanceDataModel::deleteBalance($moveId->value() + 1);
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Delete move error.');
+        }
+
+        if (is_null($beforeBalance->group_id)) {
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
         }
 
         return new MoveEntity(
