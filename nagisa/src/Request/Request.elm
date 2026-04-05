@@ -57,6 +57,7 @@ getBalance id toMsg =
                 |> required "purpose_element_id" D.int
                 |> required "place_element_id" D.int
                 |> required "date" D.string
+                |> required "group_id" (D.nullable D.int)
                 |> required "kind_element_description" D.string
                 |> required "purpose_element_description" D.string
                 |> required "place_element_description" D.string
@@ -76,6 +77,7 @@ getBalances limit toMsg =
                 |> required "purpose_element_id" D.int
                 |> required "place_element_id" D.int
                 |> required "date" D.string
+                |> required "group_id" (D.nullable D.int)
                 |> required "kind_element_description" D.string
                 |> required "purpose_element_description" D.string
                 |> required "place_element_description" D.string
@@ -97,6 +99,7 @@ postBalance xsrfToken newBalance toMsg =
                 , ( "purpose_element_id", E.int newBalance.purposeElementId )
                 , ( "place_element_id", E.int newBalance.placeElementId )
                 , ( "date", E.string newBalance.date )
+                , ( "group_id", newBalance.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
                 ]
     in
     BaseRequest.post xsrfToken "/api/balances" encodedNewBalance (D.succeed ()) (toMsg << Result.mapError mapError)
@@ -114,6 +117,7 @@ putBalance xsrfToken id balance toMsg =
                 , ( "purpose_element_id", E.int balance.purposeElementId )
                 , ( "place_element_id", E.int balance.placeElementId )
                 , ( "date", E.string balance.date )
+                , ( "group_id", balance.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
                 ]
     in
     BaseRequest.put xsrfToken ("/api/balances/" ++ String.fromInt id) encodedBalance (D.succeed ()) (toMsg << Result.mapError mapError)

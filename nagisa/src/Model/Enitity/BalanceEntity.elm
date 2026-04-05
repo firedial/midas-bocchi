@@ -9,6 +9,7 @@ type alias Balance =
     , purposeElementId : Int
     , placeElementId : Int
     , date : String
+    , groupId : Maybe Int
     , kindElementDescription : String
     , purposeElementDescription : String
     , placeElementDescription : String
@@ -26,4 +27,5 @@ type alias NewBalance =
     , purposeElementId : Int
     , placeElementId : Int
     , date : String
+    , groupId : Maybe Int
     }
