@@ -14,6 +14,8 @@ use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\KindElementId;
 use App\Domain\ValueObjects\PlaceElementId;
 use App\Domain\ValueObjects\PurposeElementId;
+use App\Exceptions\AppException;
+use App\Exceptions\ErrorCode;
 use App\Infrastructure\Repository\BalanceRepositoryInterface;
 use App\Models\DataModels\BalanceDataModel;
 use stdClass;
@@ -30,6 +32,10 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
         $balances = BalanceDataModel::selectBalance(notKindElementId: KindElementId::moveId()->value(), id: $balanceId?->value(), limit: $limit, orderByDesc: $orderByDesc);
         return array_map(
             function ($balance) {
+                if (is_null($balance->group_id)) {
+                    throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
+                }
+
                 return new BalanceEntity(
                     BalanceId::filledId($balance->id),
                     new Amount($balance->amount),
@@ -38,7 +44,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
                     PurposeElementId::filledId($balance->purpose_element_id),
                     PlaceElementId::filledId($balance->place_element_id),
                     new Date($balance->date),
-                    is_null($balance->group_id) ? null : GroupId::filledId($balance->group_id),
+                    GroupId::filledId($balance->group_id),
                     new Description($balance->kind_element_description),
                     new Description($balance->purpose_element_description),
                     new Description($balance->place_element_description),
@@ -73,6 +79,10 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             self::handleQueryException($e, 'Insert balance error.');
         }
 
+        if (is_null($result->group_id)) {
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
+        }
+
         return new BalanceEntity(
             BalanceId::filledId($result->id),
             new Amount($result->amount),
@@ -81,7 +91,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             PurposeElementId::filledId($result->purpose_element_id),
             PlaceElementId::filledId($result->place_element_id),
             new Date($result->date),
-            is_null($result->group_id) ? null : GroupId::filledId($result->group_id),
+            GroupId::filledId($result->group_id),
         );
     }
 
@@ -102,6 +112,10 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             self::handleQueryException($e, 'Update balance error.');
         }
 
+        if (is_null($result->group_id)) {
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
+        }
+
         return new BalanceEntity(
             BalanceId::filledId($result->id),
             new Amount($result->amount),
@@ -110,7 +124,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             PurposeElementId::filledId($result->purpose_element_id),
             PlaceElementId::filledId($result->place_element_id),
             new Date($result->date),
-            is_null($result->group_id) ? null : GroupId::filledId($result->group_id),
+            GroupId::filledId($result->group_id),
         );
     }
 
@@ -122,6 +136,10 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             self::handleQueryException($e, 'Delete balance error.');
         }
 
+        if (is_null($result->group_id)) {
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
+        }
+
         return new BalanceEntity(
             BalanceId::filledId($result->id),
             new Amount($result->amount),
@@ -130,7 +148,7 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             PurposeElementId::filledId($result->purpose_element_id),
             PlaceElementId::filledId($result->place_element_id),
             new Date($result->date),
-            is_null($result->group_id) ? null : GroupId::filledId($result->group_id),
+            GroupId::filledId($result->group_id),
         );
     }
 
