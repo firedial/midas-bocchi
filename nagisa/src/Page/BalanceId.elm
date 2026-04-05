@@ -27,6 +27,7 @@ type alias Model =
     , isRemainPurpose : Bool
     , isRemainPlace : Bool
     , isRemainDate : Bool
+    , isRemainGroupId : Bool
     , enableInputDeleteString : Bool
     , deleteString : String
     , isDisabledEditButton : Bool
@@ -42,6 +43,7 @@ type alias StringBalance =
     , purposeElementId : String
     , placeElementId : String
     , date : String
+    , groupId : String
     }
 
 
@@ -65,6 +67,8 @@ type Msg
     | CheckRemainPurpose Bool
     | CheckRemainPlace Bool
     | CheckRemainDate Bool
+    | InputGroupId String
+    | CheckRemainGroupId Bool
 
 
 init : String -> Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
@@ -77,12 +81,14 @@ init xsrfToken key id =
             ""
             ""
             ""
+            ""
         )
         []
         []
         []
         xsrfToken
         id
+        False
         False
         False
         False
@@ -168,6 +174,7 @@ update msg model =
                                 (String.fromInt balance.purposeElementId)
                                 (String.fromInt balance.placeElementId)
                                 balance.date
+                                (String.fromInt balance.groupId)
                     in
                     ( { model | balance = stringBalance }, Cmd.none )
 
@@ -210,6 +217,7 @@ update msg model =
                         (model.balance.purposeElementId |> String.toInt |> Maybe.withDefault 0)
                         (model.balance.placeElementId |> String.toInt |> Maybe.withDefault 0)
                         model.balance.date
+                        (model.balance.groupId |> String.toInt)
 
                 cmd =
                     case model.id of
@@ -278,6 +286,12 @@ update msg model =
                                          else
                                             ""
                                         )
+                                        (if model.isRemainGroupId then
+                                            model.balance.groupId
+
+                                         else
+                                            ""
+                                        )
                             in
                             ( { model | errorMessage = Just "OK", balance = stringBalance, isDisabledEditButton = False }, Cmd.none )
 
@@ -308,6 +322,16 @@ update msg model =
         CheckRemainDate bool ->
             ( { model | isRemainDate = bool }, Cmd.none )
 
+        InputGroupId groupId ->
+            let
+                newBalance =
+                    model.balance
+            in
+            ( { model | balance = { newBalance | groupId = groupId } }, Cmd.none )
+
+        CheckRemainGroupId bool ->
+            ( { model | isRemainGroupId = bool }, Cmd.none )
+
 
 view : Model -> Html.Html Msg
 view model =
@@ -323,6 +347,7 @@ view model =
                 , Html.th [] [ Html.text "予算" ]
                 , Html.th [] [ Html.text "場所" ]
                 , Html.th [] [ Html.text "日付" ]
+                , Html.th [] [ Html.text "グループID" ]
                 ]
             , Html.tr []
                 [ Html.th [] []
@@ -332,6 +357,7 @@ view model =
                 , Html.th [] [ Html.input [ Attributes.type_ "checkbox", Attributes.checked model.isRemainPurpose, onCheck CheckRemainPurpose ] [] ]
                 , Html.th [] [ Html.input [ Attributes.type_ "checkbox", Attributes.checked model.isRemainPlace, onCheck CheckRemainPlace ] [] ]
                 , Html.th [] [ Html.input [ Attributes.type_ "checkbox", Attributes.checked model.isRemainDate, onCheck CheckRemainDate ] [] ]
+                , Html.th [] [ Html.input [ Attributes.type_ "checkbox", Attributes.checked model.isRemainGroupId, onCheck CheckRemainGroupId ] [] ]
                 ]
             , Html.tr []
                 [ Html.td []
@@ -386,6 +412,7 @@ view model =
                         )
                     ]
                 , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.balance.date, onInput InputDate ] [] ]
+                , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value model.balance.groupId, onInput InputGroupId ] [] ]
                 ]
             ]
         , Html.div []

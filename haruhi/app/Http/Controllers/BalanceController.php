@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\Entities\BalanceEntity;
 use App\Domain\ValueObjects\Amount;
 use App\Domain\ValueObjects\BalanceId;
+use App\Domain\ValueObjects\GroupId;
 use Illuminate\Http\Request;
 use App\Domain\ValueObjects\Date;
 use App\Domain\ValueObjects\Item;
@@ -66,6 +67,7 @@ class BalanceController extends Controller
                     "kind_element_id" => $balance->kindElementId()->value(),
                     "purpose_element_id" => $balance->purposeElementId()->value(),
                     "place_element_id" => $balance->placeElementId()->value(),
+                    "group_id" => $balance->groupId()->value(),
                     "kind_element_description" => $balance->kindElementDescription()->value(),
                     "purpose_element_description" => $balance->purposeElementDescription()->value(),
                     "place_element_description" => $balance->placeElementDescription()->value(),
@@ -89,6 +91,7 @@ class BalanceController extends Controller
             "kind_element_id" => $balance->kindElementId()->value(),
             "purpose_element_id" => $balance->purposeElementId()->value(),
             "place_element_id" => $balance->placeElementId()->value(),
+            "group_id" => $balance->groupId()->value(),
             "kind_element_description" => $balance->kindElementDescription()->value(),
             "purpose_element_description" => $balance->purposeElementDescription()->value(),
             "place_element_description" => $balance->placeElementDescription()->value(),
@@ -106,6 +109,7 @@ class BalanceController extends Controller
                 'place_element_id' => ['present', new StrictInteger],
                 'item' => 'present|string',
                 'date' => 'present|string',
+                'group_id' => ['nullable', new StrictInteger(nullable: true), 'integer', 'min:1'],
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -121,10 +125,14 @@ class BalanceController extends Controller
                 if (isset($rules['String'])) {
                     throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
                 }
+                if (isset($rules['Min'])) {
+                    throw new AppException(ErrorCode::INVALID_RANGE, "{$field} must be at least 1");
+                }
             }
 
             throw $e;
         }
+
 
         $balance = new BalanceEntity(
             BalanceId::emptyId(),
@@ -134,6 +142,7 @@ class BalanceController extends Controller
             PurposeElementId::filledId($validated['purpose_element_id']),
             PlaceElementId::filledId($validated['place_element_id']),
             new Date($validated['date']),
+            !is_null($validated['group_id'] ?? null) ? GroupId::filledId($validated['group_id']) : GroupId::emptyId(),
         );
 
         if ($balance->kindElementId()->isMoveId()) {
@@ -161,6 +170,7 @@ class BalanceController extends Controller
             "kind_element_id" => $result->kindElementId()->value(),
             "purpose_element_id" => $result->purposeElementId()->value(),
             "place_element_id" => $result->placeElementId()->value(),
+            "group_id" => $result->groupId()->value(),
             "date" => $result->date()->value(),
         ];
     }
@@ -175,6 +185,7 @@ class BalanceController extends Controller
                 'place_element_id' => ['present', new StrictInteger],
                 'item' => 'present|string',
                 'date' => 'present|string',
+                'group_id' => ['present', new StrictInteger, 'integer', 'min:1'],
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -189,6 +200,9 @@ class BalanceController extends Controller
                 if (isset($rules['String'])) {
                     throw new AppException(ErrorCode::INVALID_TYPE, "{$field} must be a string type");
                 }
+                if (isset($rules['Min'])) {
+                    throw new AppException(ErrorCode::INVALID_RANGE, "{$field} must be at least 1");
+                }
             }
 
             throw $e;
@@ -202,6 +216,7 @@ class BalanceController extends Controller
             PurposeElementId::filledId($validated['purpose_element_id']),
             PlaceElementId::filledId($validated['place_element_id']),
             new Date($validated['date']),
+            GroupId::filledId($validated['group_id']),
         );
 
         if ($balance->kindElementId()->isMoveId()) {
@@ -230,6 +245,7 @@ class BalanceController extends Controller
             "kind_element_id" => $result->kindElementId()->value(),
             "purpose_element_id" => $result->purposeElementId()->value(),
             "place_element_id" => $result->placeElementId()->value(),
+            "group_id" => $result->groupId()->value(),
             "date" => $result->date()->value(),
         ];
     }
@@ -248,6 +264,7 @@ class BalanceController extends Controller
             "kind_element_id" => $result->kindElementId()->value(),
             "purpose_element_id" => $result->purposeElementId()->value(),
             "place_element_id" => $result->placeElementId()->value(),
+            "group_id" => $result->groupId()->value(),
             "date" => $result->date()->value(),
         ];
     }

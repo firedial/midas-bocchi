@@ -133,6 +133,7 @@ update msg model =
                                 (targetBalance_.purposeElementId |> String.toInt |> Maybe.withDefault 0)
                                 (targetBalance_.placeElementId |> String.toInt |> Maybe.withDefault 0)
                                 targetBalance_.date
+                                Nothing
                     in
                     ( { model | isDisabledEditButton = True, errorMessage = Nothing }
                     , Request.postBalance model.xsrfToken newBalance ModifiedResult

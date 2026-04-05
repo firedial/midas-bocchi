@@ -56,10 +56,12 @@ view model =
                 , Html.th [] [ Html.text "予算" ]
                 , Html.th [] [ Html.text "場所" ]
                 , Html.th [] [ Html.text "日付" ]
+                , Html.th [] [ Html.text "グループID" ]
                 ]
                 :: Html.tr
                     []
                     [ Html.td [] [ Html.a [ Attributes.href (Route.toPath Route.BalanceCreate) ] [ Html.text "+" ] ]
+                    , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
@@ -77,6 +79,7 @@ view model =
                             , Html.td [] [ Html.text balance.purposeElementDescription ]
                             , Html.td [] [ Html.text balance.placeElementDescription ]
                             , Html.td [] [ Html.text balance.date ]
+                            , Html.td [] [ Html.text (String.fromInt balance.groupId) ]
                             ]
                     )
                     model.balances
