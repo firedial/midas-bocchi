@@ -32,10 +32,6 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
         $balances = BalanceDataModel::selectBalance(notKindElementId: KindElementId::moveId()->value(), id: $balanceId?->value(), limit: $limit, orderByDesc: $orderByDesc);
         return array_map(
             function ($balance) {
-                if (is_null($balance->group_id)) {
-                    throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
-                }
-
                 return new BalanceEntity(
                     BalanceId::filledId($balance->id),
                     new Amount($balance->amount),
@@ -79,10 +75,6 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             self::handleQueryException($e, 'Insert balance error.');
         }
 
-        if (is_null($result->group_id)) {
-            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
-        }
-
         return new BalanceEntity(
             BalanceId::filledId($result->id),
             new Amount($result->amount),
@@ -112,10 +104,6 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             self::handleQueryException($e, 'Update balance error.');
         }
 
-        if (is_null($result->group_id)) {
-            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
-        }
-
         return new BalanceEntity(
             BalanceId::filledId($result->id),
             new Amount($result->amount),
@@ -134,10 +122,6 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             $result = BalanceDataModel::deleteBalance($balanceId->value());
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Delete balance error.');
-        }
-
-        if (is_null($result->group_id)) {
-            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, 'Group id is null.');
         }
 
         return new BalanceEntity(

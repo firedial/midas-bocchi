@@ -67,7 +67,7 @@ class BalanceController extends Controller
                     "kind_element_id" => $balance->kindElementId()->value(),
                     "purpose_element_id" => $balance->purposeElementId()->value(),
                     "place_element_id" => $balance->placeElementId()->value(),
-                    "group_id" => $balance->groupId()?->value(),
+                    "group_id" => $balance->groupId()->value(),
                     "kind_element_description" => $balance->kindElementDescription()->value(),
                     "purpose_element_description" => $balance->purposeElementDescription()->value(),
                     "place_element_description" => $balance->placeElementDescription()->value(),
@@ -91,7 +91,7 @@ class BalanceController extends Controller
             "kind_element_id" => $balance->kindElementId()->value(),
             "purpose_element_id" => $balance->purposeElementId()->value(),
             "place_element_id" => $balance->placeElementId()->value(),
-            "group_id" => $balance->groupId()?->value(),
+            "group_id" => $balance->groupId()->value(),
             "kind_element_description" => $balance->kindElementDescription()->value(),
             "purpose_element_description" => $balance->purposeElementDescription()->value(),
             "place_element_description" => $balance->placeElementDescription()->value(),
@@ -133,7 +133,6 @@ class BalanceController extends Controller
             throw $e;
         }
 
-        $groupId = !is_null($validated['group_id'] ?? null) ? GroupId::filledId($validated['group_id']) : null;
 
         $balance = new BalanceEntity(
             BalanceId::emptyId(),
@@ -143,7 +142,7 @@ class BalanceController extends Controller
             PurposeElementId::filledId($validated['purpose_element_id']),
             PlaceElementId::filledId($validated['place_element_id']),
             new Date($validated['date']),
-            $groupId,
+            !is_null($validated['group_id'] ?? null) ? GroupId::filledId($validated['group_id']) : GroupId::emptyId(),
         );
 
         if ($balance->kindElementId()->isMoveId()) {
@@ -171,7 +170,7 @@ class BalanceController extends Controller
             "kind_element_id" => $result->kindElementId()->value(),
             "purpose_element_id" => $result->purposeElementId()->value(),
             "place_element_id" => $result->placeElementId()->value(),
-            "group_id" => $result->groupId()?->value(),
+            "group_id" => $result->groupId()->value(),
             "date" => $result->date()->value(),
         ];
     }
@@ -209,8 +208,6 @@ class BalanceController extends Controller
             throw $e;
         }
 
-        $groupId = GroupId::filledId($validated['group_id']);
-
         $balance = new BalanceEntity(
             BalanceId::filledId($id),
             new Amount($validated['amount']),
@@ -219,7 +216,7 @@ class BalanceController extends Controller
             PurposeElementId::filledId($validated['purpose_element_id']),
             PlaceElementId::filledId($validated['place_element_id']),
             new Date($validated['date']),
-            $groupId,
+            GroupId::filledId($validated['group_id']),
         );
 
         if ($balance->kindElementId()->isMoveId()) {
@@ -248,7 +245,7 @@ class BalanceController extends Controller
             "kind_element_id" => $result->kindElementId()->value(),
             "purpose_element_id" => $result->purposeElementId()->value(),
             "place_element_id" => $result->placeElementId()->value(),
-            "group_id" => $result->groupId()?->value(),
+            "group_id" => $result->groupId()->value(),
             "date" => $result->date()->value(),
         ];
     }
@@ -267,7 +264,7 @@ class BalanceController extends Controller
             "kind_element_id" => $result->kindElementId()->value(),
             "purpose_element_id" => $result->purposeElementId()->value(),
             "place_element_id" => $result->placeElementId()->value(),
-            "group_id" => $result->groupId()?->value(),
+            "group_id" => $result->groupId()->value(),
             "date" => $result->date()->value(),
         ];
     }

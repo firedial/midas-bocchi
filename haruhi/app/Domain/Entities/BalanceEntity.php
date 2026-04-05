@@ -65,7 +65,7 @@ class BalanceEntity
         return $this->date;
     }
 
-    public function groupId(): ?GroupId
+    public function groupId(): GroupId
     {
         return $this->groupId;
     }

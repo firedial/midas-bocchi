@@ -26,6 +26,9 @@ abstract class Id
 
     public function value(): int
     {
+        if ($this->id === self::EMPTY_ID) {
+            throw new AppException(ErrorCode::UNEXPECTED_NULL_READ, "Read empty id.");
+        }
         return $this->id;
     }
 }
