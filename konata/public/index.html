@@ -7,12 +7,20 @@
     <script src="/main.js"></script>
     <link href="/css/env.css" rel="stylesheet" type="text/css">
     <link href="/css/main.css" rel="stylesheet" type="text/css">
-    <link href="/sanctum/csrf-cookie" rel="stylesheet" type="text/css">
 </head>
 
 <body>
     <div id="myapp"></div>
     <script>
+        const _open = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function () {
+            _open.apply(this, arguments);
+            const apiKey = localStorage.getItem('api_key');
+            if (apiKey) {
+                this.setRequestHeader('Authorization', 'Bearer ' + apiKey);
+            }
+        };
+
         const apiKey = localStorage.getItem('api_key');
         Elm.Main.init({
             node: document.getElementById('myapp'),
