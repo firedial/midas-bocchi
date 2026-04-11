@@ -13,14 +13,10 @@
 <body>
     <div id="myapp"></div>
     <script>
-        const xsrfToken = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("XSRF-TOKEN="))
-            ?.split("=")[1]
-            .replace("%3D", "=");
-        var app = Elm.Main.init({
+        const apiKey = localStorage.getItem('api_key');
+        Elm.Main.init({
             node: document.getElementById('myapp'),
-            flags: xsrfToken
+            flags: apiKey
         });
     </script>
 </body>

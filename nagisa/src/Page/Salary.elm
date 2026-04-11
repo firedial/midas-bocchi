@@ -12,7 +12,7 @@ import String
 
 type alias Model =
     { salary : StringSalary
-    , xsrfToken : String
+    , apiKey : String
     , isDisabledEditButton : Bool
     , key : Navigation.Key
     , errorMessage : Maybe String
@@ -52,10 +52,10 @@ type Msg
 
 
 init : String -> Navigation.Key -> ( Model, Cmd Msg )
-init xsrfToken key =
+init apiKey key =
     ( Model
         (StringSalary "" "" "" "" "" "" "" "" "" "" "")
-        xsrfToken
+        apiKey
         False
         key
         Nothing
@@ -146,7 +146,7 @@ update msg model =
         Insert ->
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }
             , Request.postSalary
-                model.xsrfToken
+                model.apiKey
                 (String.toInt model.salary.baseSalary |> Maybe.withDefault 0)
                 (String.toInt model.salary.adjustmentSalary |> Maybe.withDefault 0)
                 (String.toInt model.salary.transportation |> Maybe.withDefault 0)

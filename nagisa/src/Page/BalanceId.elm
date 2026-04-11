@@ -19,7 +19,7 @@ type alias Model =
     , kindElements : AttributeElementEntity.AttributeElements
     , purposeElements : AttributeElementEntity.AttributeElements
     , placeElements : AttributeElementEntity.AttributeElements
-    , xsrfToken : String
+    , apiKey : String
     , id : Maybe Int
     , isRemainAmount : Bool
     , isRemainItem : Bool
@@ -72,7 +72,7 @@ type Msg
 
 
 init : String -> Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
-init xsrfToken key id =
+init apiKey key id =
     ( Model
         (StringBalance
             ""
@@ -86,7 +86,7 @@ init xsrfToken key id =
         []
         []
         []
-        xsrfToken
+        apiKey
         id
         False
         False
@@ -101,16 +101,16 @@ init xsrfToken key id =
         key
         Nothing
     , Cmd.batch
-        ([ Request.getAttributeElements AttributeValueObject.Kind (GetAttributeElements AttributeValueObject.Kind)
-         , Request.getAttributeElements AttributeValueObject.Purpose (GetAttributeElements AttributeValueObject.Purpose)
-         , Request.getAttributeElements AttributeValueObject.Place (GetAttributeElements AttributeValueObject.Place)
+        ([ Request.getAttributeElements apiKey AttributeValueObject.Kind (GetAttributeElements AttributeValueObject.Kind)
+         , Request.getAttributeElements apiKey AttributeValueObject.Purpose (GetAttributeElements AttributeValueObject.Purpose)
+         , Request.getAttributeElements apiKey AttributeValueObject.Place (GetAttributeElements AttributeValueObject.Place)
          ]
             ++ (case id of
                     Nothing ->
                         []
 
                     Just id_ ->
-                        [ Request.getBalance id_ GetBalance
+                        [ Request.getBalance apiKey id_ GetBalance
                         ]
                )
         )
@@ -222,10 +222,10 @@ update msg model =
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postBalance model.xsrfToken newBalance ModifiedResult
+                            Request.postBalance model.apiKey newBalance ModifiedResult
 
                         Just id ->
-                            Request.putBalance model.xsrfToken id newBalance ModifiedResult
+                            Request.putBalance model.apiKey id newBalance ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
@@ -234,7 +234,7 @@ update msg model =
 
         Delete id ->
             if model.deleteString == "delete" then
-                ( model, Request.deleteBalance model.xsrfToken id ModifiedResult )
+                ( model, Request.deleteBalance model.apiKey id ModifiedResult )
 
             else
                 ( { model | enableInputDeleteString = True }, Cmd.none )

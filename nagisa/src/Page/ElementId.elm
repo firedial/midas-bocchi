@@ -17,7 +17,7 @@ type alias Model =
     { attributeElement : StringAttributeElement
     , attributeCategories : AttributeCategoryEntity.AttributeCategories
     , isDisabledEditButton : Bool
-    , xsrfToken : String
+    , apiKey : String
     , attributeName : AttributeValueObject.Attribute
     , id : Maybe Int
     , key : Navigation.Key
@@ -46,12 +46,12 @@ type Msg
 
 
 init : String -> Navigation.Key -> AttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
-init xsrfToken key attributeValueObject id =
+init apiKey key attributeValueObject id =
     ( Model
         (StringAttributeElement "" "" "" "")
         []
         False
-        xsrfToken
+        apiKey
         attributeValueObject
         id
         key
@@ -59,12 +59,12 @@ init xsrfToken key attributeValueObject id =
     , Cmd.batch
         (case id of
             Nothing ->
-                [ Request.getAttributeCategories attributeValueObject GetAttributeCategories
+                [ Request.getAttributeCategories apiKey attributeValueObject GetAttributeCategories
                 ]
 
             Just id_ ->
-                [ Request.getAttributeElement attributeValueObject id_ GetAttributeElement
-                , Request.getAttributeCategories attributeValueObject GetAttributeCategories
+                [ Request.getAttributeElement apiKey attributeValueObject id_ GetAttributeElement
+                , Request.getAttributeCategories apiKey attributeValueObject GetAttributeCategories
                 ]
         )
     )
@@ -149,10 +149,10 @@ update msg model =
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postAttributeElement model.xsrfToken model.attributeName newAttributeElement ModifiedResult
+                            Request.postAttributeElement model.apiKey model.attributeName newAttributeElement ModifiedResult
 
                         Just id ->
-                            Request.putAttributeElement model.xsrfToken model.attributeName id newAttributeElement ModifiedResult
+                            Request.putAttributeElement model.apiKey model.attributeName id newAttributeElement ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 

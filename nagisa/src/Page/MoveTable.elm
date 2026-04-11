@@ -22,12 +22,12 @@ type Msg
     = GetAttributeMoves (Result Request.Error MoveEntity.Moves)
 
 
-init : MoveAttributeValueObject.Attribute -> ( Model, Cmd Msg )
-init moveAttributeValueObject =
+init : String -> MoveAttributeValueObject.Attribute -> ( Model, Cmd Msg )
+init apiKey moveAttributeValueObject =
     ( Model []
         moveAttributeValueObject
         Nothing
-    , Request.getMoves moveAttributeValueObject GetAttributeMoves
+    , Request.getMoves apiKey moveAttributeValueObject GetAttributeMoves
     )
 
 

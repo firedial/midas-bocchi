@@ -17,7 +17,7 @@ import String
 type alias Model =
     { move : StringMove
     , attributeElements : AttributeElementEntity.AttributeElements
-    , xsrfToken : String
+    , apiKey : String
     , moveAttributeName : MoveAttributeValueObject.Attribute
     , id : Maybe Int
     , enableInputDeleteString : Bool
@@ -55,7 +55,7 @@ type Msg
 
 
 init : String -> Navigation.Key -> MoveAttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
-init xsrfToken key moveAttributeValueObject id =
+init apiKey key moveAttributeValueObject id =
     let
         attributeValueObject =
             case moveAttributeValueObject of
@@ -68,7 +68,7 @@ init xsrfToken key moveAttributeValueObject id =
     ( Model
         (StringMove "" "" "" "" "" "")
         []
-        xsrfToken
+        apiKey
         moveAttributeValueObject
         id
         False
@@ -79,12 +79,12 @@ init xsrfToken key moveAttributeValueObject id =
     , Cmd.batch
         (case id of
             Nothing ->
-                [ Request.getAttributeElements attributeValueObject GetAttributeElements
+                [ Request.getAttributeElements apiKey attributeValueObject GetAttributeElements
                 ]
 
             Just id_ ->
-                [ Request.getMove moveAttributeValueObject id_ GetMove
-                , Request.getAttributeElements attributeValueObject GetAttributeElements
+                [ Request.getMove apiKey moveAttributeValueObject id_ GetMove
+                , Request.getAttributeElements apiKey attributeValueObject GetAttributeElements
                 ]
         )
     )
@@ -190,10 +190,10 @@ update msg model =
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postMove model.xsrfToken model.moveAttributeName newMove ModifiedResult
+                            Request.postMove model.apiKey model.moveAttributeName newMove ModifiedResult
 
                         Just id ->
-                            Request.putMove model.xsrfToken model.moveAttributeName id newMove ModifiedResult
+                            Request.putMove model.apiKey model.moveAttributeName id newMove ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
@@ -211,7 +211,7 @@ update msg model =
 
         Delete moveId ->
             if model.deleteString == "delete" then
-                ( model, Request.deleteMove model.xsrfToken model.moveAttributeName moveId ModifiedResult )
+                ( model, Request.deleteMove model.apiKey model.moveAttributeName moveId ModifiedResult )
 
             else
                 ( { model | enableInputDeleteString = True }, Cmd.none )

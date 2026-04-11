@@ -7,7 +7,7 @@ class Request
     private $ch;
     private string $appUrl;
 
-    public function __construct(?string $session = null, ?string $xsrfToken = null)
+    public function __construct(?string $apiToken = null)
     {
         $this->appUrl = getenv('APP_URL');
 
@@ -21,15 +21,10 @@ class Request
             'Accept-Charset: UTF-8',
         ];
 
-        $cookies = [];
-        if (!is_null($session)) {
-            $cookies[] = "laravel_session=$session;";
-            $cookies[] = "XSRF-TOKEN=$xsrfToken";
+        if (!is_null($apiToken)) {
+            $headers[] = "Authorization: Bearer $apiToken";
         }
 
-        if (count($cookies) != 0) {
-            $headers[] = "Cookie: " . implode(';', $cookies);
-        }
         curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
     }
 

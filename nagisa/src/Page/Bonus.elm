@@ -12,7 +12,7 @@ import String
 
 type alias Model =
     { bonus : StringBonus
-    , xsrfToken : String
+    , apiKey : String
     , isDisabledEditButton : Bool
     , key : Navigation.Key
     , errorMessage : Maybe String
@@ -42,10 +42,10 @@ type Msg
 
 
 init : String -> Navigation.Key -> ( Model, Cmd Msg )
-init xsrfToken key =
+init apiKey key =
     ( Model
         (StringBonus "" "" "" "" "" "")
-        xsrfToken
+        apiKey
         False
         key
         Nothing
@@ -101,7 +101,7 @@ update msg model =
         Insert ->
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }
             , Request.postBonus
-                model.xsrfToken
+                model.apiKey
                 (String.toInt model.bonus.bonus |> Maybe.withDefault 0)
                 (String.toInt model.bonus.healthInsurance |> Maybe.withDefault 0)
                 (String.toInt model.bonus.welfarePension |> Maybe.withDefault 0)

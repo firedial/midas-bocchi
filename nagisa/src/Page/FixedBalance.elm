@@ -15,7 +15,7 @@ import String
 type alias Model =
     { stringBalances : List StringBalance
     , isDisabledEditButton : Bool
-    , xsrfToken : String
+    , apiKey : String
     , errorMessage : Maybe String
     }
 
@@ -43,9 +43,9 @@ type Msg
 
 
 init : String -> ( Model, Cmd Msg )
-init xsrfToken =
-    ( Model [] False xsrfToken Nothing
-    , Request.getFixedBalances GetFixedBalances
+init apiKey =
+    ( Model [] False apiKey Nothing
+    , Request.getFixedBalances apiKey GetFixedBalances
     )
 
 
@@ -136,7 +136,7 @@ update msg model =
                                 Nothing
                     in
                     ( { model | isDisabledEditButton = True, errorMessage = Nothing }
-                    , Request.postBalance model.xsrfToken newBalance ModifiedResult
+                    , Request.postBalance model.apiKey newBalance ModifiedResult
                     )
 
         ModifiedResult result ->

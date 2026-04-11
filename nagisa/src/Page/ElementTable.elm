@@ -22,12 +22,12 @@ type Msg
     = GetAttributeElements (Result Request.Error AttributeElementEntity.AttributeElements)
 
 
-init : AttributeValueObject.Attribute -> ( Model, Cmd Msg )
-init attributeValueObject =
+init : String -> AttributeValueObject.Attribute -> ( Model, Cmd Msg )
+init apiKey attributeValueObject =
     ( Model []
         attributeValueObject
         Nothing
-    , Request.getAttributeElements attributeValueObject GetAttributeElements
+    , Request.getAttributeElements apiKey attributeValueObject GetAttributeElements
     )
 
 

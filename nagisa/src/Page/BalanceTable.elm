@@ -20,10 +20,10 @@ type Msg
     = GetBalances (Result Request.Error BalanceEntity.Balances)
 
 
-init : ( Model, Cmd Msg )
-init =
+init : String -> ( Model, Cmd Msg )
+init apiKey =
     ( Model [] Nothing
-    , Request.getBalances 100 GetBalances
+    , Request.getBalances apiKey 100 GetBalances
     )
 
 

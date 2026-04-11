@@ -19,7 +19,7 @@ type alias Model =
     , kindElements : AttributeElementEntity.AttributeElements
     , purposeElements : AttributeElementEntity.AttributeElements
     , placeElements : AttributeElementEntity.AttributeElements
-    , xsrfToken : String
+    , apiKey : String
     , id : Maybe Int
     , enableInputDeleteString : Bool
     , deleteString : String
@@ -54,7 +54,7 @@ type Msg
 
 
 init : String -> Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
-init xsrfToken key id =
+init apiKey key id =
     ( Model
         (StringFixedBalance
             ""
@@ -66,7 +66,7 @@ init xsrfToken key id =
         []
         []
         []
-        xsrfToken
+        apiKey
         id
         False
         ""
@@ -74,16 +74,16 @@ init xsrfToken key id =
         key
         Nothing
     , Cmd.batch
-        ([ Request.getAttributeElements AttributeValueObject.Kind (GetAttributeElements AttributeValueObject.Kind)
-         , Request.getAttributeElements AttributeValueObject.Purpose (GetAttributeElements AttributeValueObject.Purpose)
-         , Request.getAttributeElements AttributeValueObject.Place (GetAttributeElements AttributeValueObject.Place)
+        ([ Request.getAttributeElements apiKey AttributeValueObject.Kind (GetAttributeElements AttributeValueObject.Kind)
+         , Request.getAttributeElements apiKey AttributeValueObject.Purpose (GetAttributeElements AttributeValueObject.Purpose)
+         , Request.getAttributeElements apiKey AttributeValueObject.Place (GetAttributeElements AttributeValueObject.Place)
          ]
             ++ (case id of
                     Nothing ->
                         []
 
                     Just id_ ->
-                        [ Request.getFixedBalance id_ GetFixedBalance
+                        [ Request.getFixedBalance apiKey id_ GetFixedBalance
                         ]
                )
         )
@@ -184,10 +184,10 @@ update msg model =
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postFixedBalance model.xsrfToken newFixedBalance ModifiedResult
+                            Request.postFixedBalance model.apiKey newFixedBalance ModifiedResult
 
                         Just id ->
-                            Request.putFixedBalance model.xsrfToken id newFixedBalance ModifiedResult
+                            Request.putFixedBalance model.apiKey id newFixedBalance ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
@@ -196,7 +196,7 @@ update msg model =
 
         Delete id ->
             if model.deleteString == "delete" then
-                ( model, Request.deleteFixedBalance model.xsrfToken id ModifiedResult )
+                ( model, Request.deleteFixedBalance model.apiKey id ModifiedResult )
 
             else
                 ( { model | enableInputDeleteString = True }, Cmd.none )
