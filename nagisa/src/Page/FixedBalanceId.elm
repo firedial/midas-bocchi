@@ -19,7 +19,6 @@ type alias Model =
     , kindElements : AttributeElementEntity.AttributeElements
     , purposeElements : AttributeElementEntity.AttributeElements
     , placeElements : AttributeElementEntity.AttributeElements
-    , apiKey : String
     , id : Maybe Int
     , enableInputDeleteString : Bool
     , deleteString : String
@@ -53,20 +52,13 @@ type Msg
     | ModifiedResult (Result Request.Error ())
 
 
-init : String -> Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
-init apiKey key id =
+init : Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
+init key id =
     ( Model
-        (StringFixedBalance
-            ""
-            ""
-            ""
-            ""
-            ""
-        )
+        (StringFixedBalance "" "" "" "" "")
         []
         []
         []
-        apiKey
         id
         False
         ""
@@ -74,16 +66,16 @@ init apiKey key id =
         key
         Nothing
     , Cmd.batch
-        ([ Request.getAttributeElements apiKey AttributeValueObject.Kind (GetAttributeElements AttributeValueObject.Kind)
-         , Request.getAttributeElements apiKey AttributeValueObject.Purpose (GetAttributeElements AttributeValueObject.Purpose)
-         , Request.getAttributeElements apiKey AttributeValueObject.Place (GetAttributeElements AttributeValueObject.Place)
+        ([ Request.getAttributeElements AttributeValueObject.Kind (GetAttributeElements AttributeValueObject.Kind)
+         , Request.getAttributeElements AttributeValueObject.Purpose (GetAttributeElements AttributeValueObject.Purpose)
+         , Request.getAttributeElements AttributeValueObject.Place (GetAttributeElements AttributeValueObject.Place)
          ]
             ++ (case id of
                     Nothing ->
                         []
 
                     Just id_ ->
-                        [ Request.getFixedBalance apiKey id_ GetFixedBalance
+                        [ Request.getFixedBalance id_ GetFixedBalance
                         ]
                )
         )
@@ -184,10 +176,10 @@ update msg model =
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postFixedBalance model.apiKey newFixedBalance ModifiedResult
+                            Request.postFixedBalance newFixedBalance ModifiedResult
 
                         Just id ->
-                            Request.putFixedBalance model.apiKey id newFixedBalance ModifiedResult
+                            Request.putFixedBalance id newFixedBalance ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
@@ -196,7 +188,7 @@ update msg model =
 
         Delete id ->
             if model.deleteString == "delete" then
-                ( model, Request.deleteFixedBalance model.apiKey id ModifiedResult )
+                ( model, Request.deleteFixedBalance id ModifiedResult )
 
             else
                 ( { model | enableInputDeleteString = True }, Cmd.none )

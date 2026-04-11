@@ -19,7 +19,6 @@ type alias Model =
     , kindElements : AttributeElementEntity.AttributeElements
     , purposeElements : AttributeElementEntity.AttributeElements
     , placeElements : AttributeElementEntity.AttributeElements
-    , apiKey : String
     , id : Maybe Int
     , isRemainAmount : Bool
     , isRemainItem : Bool
@@ -71,22 +70,13 @@ type Msg
     | CheckRemainGroupId Bool
 
 
-init : String -> Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
-init apiKey key id =
+init : Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
+init key id =
     ( Model
-        (StringBalance
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-        )
+        (StringBalance "" "" "" "" "" "" "")
         []
         []
         []
-        apiKey
         id
         False
         False
@@ -101,16 +91,16 @@ init apiKey key id =
         key
         Nothing
     , Cmd.batch
-        ([ Request.getAttributeElements apiKey AttributeValueObject.Kind (GetAttributeElements AttributeValueObject.Kind)
-         , Request.getAttributeElements apiKey AttributeValueObject.Purpose (GetAttributeElements AttributeValueObject.Purpose)
-         , Request.getAttributeElements apiKey AttributeValueObject.Place (GetAttributeElements AttributeValueObject.Place)
+        ([ Request.getAttributeElements AttributeValueObject.Kind (GetAttributeElements AttributeValueObject.Kind)
+         , Request.getAttributeElements AttributeValueObject.Purpose (GetAttributeElements AttributeValueObject.Purpose)
+         , Request.getAttributeElements AttributeValueObject.Place (GetAttributeElements AttributeValueObject.Place)
          ]
             ++ (case id of
                     Nothing ->
                         []
 
                     Just id_ ->
-                        [ Request.getBalance apiKey id_ GetBalance
+                        [ Request.getBalance id_ GetBalance
                         ]
                )
         )
@@ -222,10 +212,10 @@ update msg model =
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postBalance model.apiKey newBalance ModifiedResult
+                            Request.postBalance newBalance ModifiedResult
 
                         Just id ->
-                            Request.putBalance model.apiKey id newBalance ModifiedResult
+                            Request.putBalance id newBalance ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
@@ -234,7 +224,7 @@ update msg model =
 
         Delete id ->
             if model.deleteString == "delete" then
-                ( model, Request.deleteBalance model.apiKey id ModifiedResult )
+                ( model, Request.deleteBalance id ModifiedResult )
 
             else
                 ( { model | enableInputDeleteString = True }, Cmd.none )

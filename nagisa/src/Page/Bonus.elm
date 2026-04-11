@@ -12,7 +12,6 @@ import String
 
 type alias Model =
     { bonus : StringBonus
-    , apiKey : String
     , isDisabledEditButton : Bool
     , key : Navigation.Key
     , errorMessage : Maybe String
@@ -41,11 +40,10 @@ type Msg
     | ModifiedResult (Result Request.Error ())
 
 
-init : String -> Navigation.Key -> ( Model, Cmd Msg )
-init apiKey key =
+init : Navigation.Key -> ( Model, Cmd Msg )
+init key =
     ( Model
         (StringBonus "" "" "" "" "" "")
-        apiKey
         False
         key
         Nothing
@@ -101,7 +99,6 @@ update msg model =
         Insert ->
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }
             , Request.postBonus
-                model.apiKey
                 (String.toInt model.bonus.bonus |> Maybe.withDefault 0)
                 (String.toInt model.bonus.healthInsurance |> Maybe.withDefault 0)
                 (String.toInt model.bonus.welfarePension |> Maybe.withDefault 0)

@@ -22,7 +22,7 @@ import Route
 import Url
 
 
-main : Program (Maybe String) Model Msg
+main : Program () Model Msg
 main =
     Browser.application
         { init = init
@@ -53,13 +53,12 @@ type Page
 type alias Model =
     { key : Navigation.Key
     , page : Page
-    , apiKey : String
     }
 
 
-init : Maybe String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
-init maybeApiKey url key =
-    Model key NotFound (Maybe.withDefault "" maybeApiKey) |> goTo (Route.parse url)
+init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
+init _ url key =
+    Model key NotFound |> goTo (Route.parse url)
 
 
 type Msg
@@ -351,7 +350,7 @@ goTo maybeRoute model =
         Just Route.BalanceTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.BalanceTable.init model.apiKey
+                    Page.BalanceTable.init
             in
             ( { model | page = BalanceTable newModel }
             , Cmd.map BalanceTableMsg newCmd
@@ -360,7 +359,7 @@ goTo maybeRoute model =
         Just Route.BalanceCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.BalanceId.init model.apiKey model.key Nothing
+                    Page.BalanceId.init model.key Nothing
             in
             ( { model | page = BalanceId newModel }
             , Cmd.map BalanceIdMsg newCmd
@@ -369,7 +368,7 @@ goTo maybeRoute model =
         Just (Route.BalanceId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.BalanceId.init model.apiKey model.key (Just id)
+                    Page.BalanceId.init model.key (Just id)
             in
             ( { model | page = BalanceId newModel }
             , Cmd.map BalanceIdMsg newCmd
@@ -378,7 +377,7 @@ goTo maybeRoute model =
         Just Route.FixedBalance ->
             let
                 ( newModel, newCmd ) =
-                    Page.FixedBalance.init model.apiKey
+                    Page.FixedBalance.init
             in
             ( { model | page = FixedBalance newModel }
             , Cmd.map FixedBalanceMsg newCmd
@@ -387,7 +386,7 @@ goTo maybeRoute model =
         Just Route.FixedBalanceCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.FixedBalanceId.init model.apiKey model.key Nothing
+                    Page.FixedBalanceId.init model.key Nothing
             in
             ( { model | page = FixedBalanceId newModel }
             , Cmd.map FixedBalanceIdMsg newCmd
@@ -396,7 +395,7 @@ goTo maybeRoute model =
         Just (Route.FixedBalanceId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.FixedBalanceId.init model.apiKey model.key (Just id)
+                    Page.FixedBalanceId.init model.key (Just id)
             in
             ( { model | page = FixedBalanceId newModel }
             , Cmd.map FixedBalanceIdMsg newCmd
@@ -405,7 +404,7 @@ goTo maybeRoute model =
         Just Route.PurposeMoveTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveTable.init model.apiKey MoveAttributeValueObject.Purpose
+                    Page.MoveTable.init MoveAttributeValueObject.Purpose
             in
             ( { model | page = MoveTable newModel }
             , Cmd.map MoveTableMsg newCmd
@@ -414,7 +413,7 @@ goTo maybeRoute model =
         Just Route.PlaceMoveTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveTable.init model.apiKey MoveAttributeValueObject.Place
+                    Page.MoveTable.init MoveAttributeValueObject.Place
             in
             ( { model | page = MoveTable newModel }
             , Cmd.map MoveTableMsg newCmd
@@ -423,7 +422,7 @@ goTo maybeRoute model =
         Just Route.PurposeMoveCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.apiKey model.key MoveAttributeValueObject.Purpose Nothing
+                    Page.MoveId.init model.key MoveAttributeValueObject.Purpose Nothing
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -432,7 +431,7 @@ goTo maybeRoute model =
         Just Route.PlaceMoveCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.apiKey model.key MoveAttributeValueObject.Place Nothing
+                    Page.MoveId.init model.key MoveAttributeValueObject.Place Nothing
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -441,7 +440,7 @@ goTo maybeRoute model =
         Just (Route.PurposeMoveId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.apiKey model.key MoveAttributeValueObject.Purpose (Just id)
+                    Page.MoveId.init model.key MoveAttributeValueObject.Purpose (Just id)
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -450,7 +449,7 @@ goTo maybeRoute model =
         Just (Route.PlaceMoveId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.apiKey model.key MoveAttributeValueObject.Place (Just id)
+                    Page.MoveId.init model.key MoveAttributeValueObject.Place (Just id)
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -459,7 +458,7 @@ goTo maybeRoute model =
         Just Route.KindElementTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementTable.init model.apiKey AttributeValueObject.Kind
+                    Page.ElementTable.init AttributeValueObject.Kind
             in
             ( { model | page = ElementTable newModel }
             , Cmd.map ElementTableMsg newCmd
@@ -468,7 +467,7 @@ goTo maybeRoute model =
         Just Route.PurposeElementTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementTable.init model.apiKey AttributeValueObject.Purpose
+                    Page.ElementTable.init AttributeValueObject.Purpose
             in
             ( { model | page = ElementTable newModel }
             , Cmd.map ElementTableMsg newCmd
@@ -477,7 +476,7 @@ goTo maybeRoute model =
         Just Route.PlaceElementTable ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementTable.init model.apiKey AttributeValueObject.Place
+                    Page.ElementTable.init AttributeValueObject.Place
             in
             ( { model | page = ElementTable newModel }
             , Cmd.map ElementTableMsg newCmd
@@ -486,7 +485,7 @@ goTo maybeRoute model =
         Just Route.KindElementCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.apiKey model.key AttributeValueObject.Kind Nothing
+                    Page.ElementId.init model.key AttributeValueObject.Kind Nothing
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -495,7 +494,7 @@ goTo maybeRoute model =
         Just Route.PurposeElementCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.apiKey model.key AttributeValueObject.Purpose Nothing
+                    Page.ElementId.init model.key AttributeValueObject.Purpose Nothing
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -504,7 +503,7 @@ goTo maybeRoute model =
         Just Route.PlaceElementCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.apiKey model.key AttributeValueObject.Place Nothing
+                    Page.ElementId.init model.key AttributeValueObject.Place Nothing
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -513,7 +512,7 @@ goTo maybeRoute model =
         Just (Route.KindElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.apiKey model.key AttributeValueObject.Kind (Just id)
+                    Page.ElementId.init model.key AttributeValueObject.Kind (Just id)
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -522,7 +521,7 @@ goTo maybeRoute model =
         Just (Route.PurposeElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.apiKey model.key AttributeValueObject.Purpose (Just id)
+                    Page.ElementId.init model.key AttributeValueObject.Purpose (Just id)
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -531,7 +530,7 @@ goTo maybeRoute model =
         Just (Route.PlaceElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.apiKey model.key AttributeValueObject.Place (Just id)
+                    Page.ElementId.init model.key AttributeValueObject.Place (Just id)
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -540,7 +539,7 @@ goTo maybeRoute model =
         Just Route.Salary ->
             let
                 ( newModel, newCmd ) =
-                    Page.Salary.init model.apiKey model.key
+                    Page.Salary.init model.key
             in
             ( { model | page = Salary newModel }
             , Cmd.map SalaryMsg newCmd
@@ -549,7 +548,7 @@ goTo maybeRoute model =
         Just Route.Bonus ->
             let
                 ( newModel, newCmd ) =
-                    Page.Bonus.init model.apiKey model.key
+                    Page.Bonus.init model.key
             in
             ( { model | page = Bonus newModel }
             , Cmd.map BonusMsg newCmd
@@ -558,7 +557,7 @@ goTo maybeRoute model =
         Just Route.CheckPlaceSum ->
             let
                 ( newModel, newCmd ) =
-                    Page.CheckPlaceSum.init model.apiKey model.key
+                    Page.CheckPlaceSum.init model.key
             in
             ( { model | page = CheckPlaceSum newModel }
             , Cmd.map CheckPlaceSumMsg newCmd

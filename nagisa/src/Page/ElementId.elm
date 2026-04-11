@@ -17,7 +17,6 @@ type alias Model =
     { attributeElement : StringAttributeElement
     , attributeCategories : AttributeCategoryEntity.AttributeCategories
     , isDisabledEditButton : Bool
-    , apiKey : String
     , attributeName : AttributeValueObject.Attribute
     , id : Maybe Int
     , key : Navigation.Key
@@ -45,13 +44,12 @@ type Msg
     | ModifiedResult (Result Request.Error ())
 
 
-init : String -> Navigation.Key -> AttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
-init apiKey key attributeValueObject id =
+init : Navigation.Key -> AttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
+init key attributeValueObject id =
     ( Model
         (StringAttributeElement "" "" "" "")
         []
         False
-        apiKey
         attributeValueObject
         id
         key
@@ -59,12 +57,12 @@ init apiKey key attributeValueObject id =
     , Cmd.batch
         (case id of
             Nothing ->
-                [ Request.getAttributeCategories apiKey attributeValueObject GetAttributeCategories
+                [ Request.getAttributeCategories attributeValueObject GetAttributeCategories
                 ]
 
             Just id_ ->
-                [ Request.getAttributeElement apiKey attributeValueObject id_ GetAttributeElement
-                , Request.getAttributeCategories apiKey attributeValueObject GetAttributeCategories
+                [ Request.getAttributeElement attributeValueObject id_ GetAttributeElement
+                , Request.getAttributeCategories attributeValueObject GetAttributeCategories
                 ]
         )
     )
@@ -137,22 +135,16 @@ update msg model =
                     AttributeElementEntity.NewAttributeElement
                         model.attributeElement.name
                         model.attributeElement.description
-                        (String.toInt
-                            model.attributeElement.priority
-                            |> Maybe.withDefault 0
-                        )
-                        (String.toInt
-                            model.attributeElement.categoryId
-                            |> Maybe.withDefault 0
-                        )
+                        (String.toInt model.attributeElement.priority |> Maybe.withDefault 0)
+                        (String.toInt model.attributeElement.categoryId |> Maybe.withDefault 0)
 
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postAttributeElement model.apiKey model.attributeName newAttributeElement ModifiedResult
+                            Request.postAttributeElement model.attributeName newAttributeElement ModifiedResult
 
                         Just id ->
-                            Request.putAttributeElement model.apiKey model.attributeName id newAttributeElement ModifiedResult
+                            Request.putAttributeElement model.attributeName id newAttributeElement ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 

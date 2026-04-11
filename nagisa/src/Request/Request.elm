@@ -43,8 +43,8 @@ type Error
     | RequestError String
 
 
-getBalance : String -> Int -> (Result Error BalanceEntity.Balance -> msg) -> Cmd msg
-getBalance apiKey id toMsg =
+getBalance : Int -> (Result Error BalanceEntity.Balance -> msg) -> Cmd msg
+getBalance id toMsg =
     let
         decodeBalance =
             D.succeed BalanceEntity.Balance
@@ -60,11 +60,11 @@ getBalance apiKey id toMsg =
                 |> required "purpose_element_description" D.string
                 |> required "place_element_description" D.string
     in
-    BaseRequest.get apiKey ("/api/balances/" ++ String.fromInt id) decodeBalance (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/balances/" ++ String.fromInt id) decodeBalance (toMsg << Result.mapError mapError)
 
 
-getBalances : String -> Int -> (Result Error BalanceEntity.Balances -> msg) -> Cmd msg
-getBalances apiKey limit toMsg =
+getBalances : Int -> (Result Error BalanceEntity.Balances -> msg) -> Cmd msg
+getBalances limit toMsg =
     let
         decodeBalance =
             D.succeed BalanceEntity.Balance
@@ -83,11 +83,11 @@ getBalances apiKey limit toMsg =
         decodeBalances =
             D.list decodeBalance
     in
-    BaseRequest.get apiKey ("/api/balances?limit=" ++ String.fromInt limit ++ "&orderby=desc") decodeBalances (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/balances?limit=" ++ String.fromInt limit ++ "&orderby=desc") decodeBalances (toMsg << Result.mapError mapError)
 
 
-postBalance : String -> BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg
-postBalance apiKey newBalance toMsg =
+postBalance : BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg
+postBalance newBalance toMsg =
     let
         encodedNewBalance =
             E.object
@@ -100,11 +100,11 @@ postBalance apiKey newBalance toMsg =
                 , ( "group_id", newBalance.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
                 ]
     in
-    BaseRequest.post apiKey "/api/balances" encodedNewBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post "/api/balances" encodedNewBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putBalance : String -> Int -> BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg
-putBalance apiKey id balance toMsg =
+putBalance : Int -> BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg
+putBalance id balance toMsg =
     let
         encodedBalance =
             E.object
@@ -118,16 +118,16 @@ putBalance apiKey id balance toMsg =
                 , ( "group_id", balance.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
                 ]
     in
-    BaseRequest.put apiKey ("/api/balances/" ++ String.fromInt id) encodedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put ("/api/balances/" ++ String.fromInt id) encodedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-deleteBalance : String -> Int -> (Result Error () -> msg) -> Cmd msg
-deleteBalance apiKey balanceId toMsg =
-    BaseRequest.delete apiKey ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
+deleteBalance : Int -> (Result Error () -> msg) -> Cmd msg
+deleteBalance balanceId toMsg =
+    BaseRequest.delete ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-getFixedBalance : String -> Int -> (Result Error FixedBalanceEntity.FixedBalance -> msg) -> Cmd msg
-getFixedBalance apiKey id toMsg =
+getFixedBalance : Int -> (Result Error FixedBalanceEntity.FixedBalance -> msg) -> Cmd msg
+getFixedBalance id toMsg =
     let
         decodeFixedBalance =
             D.succeed FixedBalanceEntity.FixedBalance
@@ -141,11 +141,11 @@ getFixedBalance apiKey id toMsg =
                 |> required "purpose_element_description" D.string
                 |> required "place_element_description" D.string
     in
-    BaseRequest.get apiKey ("/api/fixed_balances/" ++ String.fromInt id) decodeFixedBalance (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/fixed_balances/" ++ String.fromInt id) decodeFixedBalance (toMsg << Result.mapError mapError)
 
 
-getFixedBalances : String -> (Result Error FixedBalanceEntity.FixedBalances -> msg) -> Cmd msg
-getFixedBalances apiKey toMsg =
+getFixedBalances : (Result Error FixedBalanceEntity.FixedBalances -> msg) -> Cmd msg
+getFixedBalances toMsg =
     let
         decodeFixedBalance =
             D.succeed FixedBalanceEntity.FixedBalance
@@ -162,11 +162,11 @@ getFixedBalances apiKey toMsg =
         decodeFixedBalances =
             D.list decodeFixedBalance
     in
-    BaseRequest.get apiKey "/api/fixed_balances" decodeFixedBalances (toMsg << Result.mapError mapError)
+    BaseRequest.get "/api/fixed_balances" decodeFixedBalances (toMsg << Result.mapError mapError)
 
 
-postFixedBalance : String -> FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
-postFixedBalance apiKey newFixedBalance toMsg =
+postFixedBalance : FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
+postFixedBalance newFixedBalance toMsg =
     let
         encodedNewFixedBalance =
             E.object
@@ -177,11 +177,11 @@ postFixedBalance apiKey newFixedBalance toMsg =
                 , ( "place_element_id", E.int newFixedBalance.placeElementId )
                 ]
     in
-    BaseRequest.post apiKey "/api/fixed_balances" encodedNewFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post "/api/fixed_balances" encodedNewFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putFixedBalance : String -> Int -> FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
-putFixedBalance apiKey id fixedBalance toMsg =
+putFixedBalance : Int -> FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
+putFixedBalance id fixedBalance toMsg =
     let
         encodedFixedBalance =
             E.object
@@ -193,16 +193,16 @@ putFixedBalance apiKey id fixedBalance toMsg =
                 , ( "place_element_id", E.int fixedBalance.placeElementId )
                 ]
     in
-    BaseRequest.put apiKey ("/api/fixed_balances/" ++ String.fromInt id) encodedFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put ("/api/fixed_balances/" ++ String.fromInt id) encodedFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-deleteFixedBalance : String -> Int -> (Result Error () -> msg) -> Cmd msg
-deleteFixedBalance apiKey fixedBalanceId toMsg =
-    BaseRequest.delete apiKey ("/api/fixed_balances/" ++ String.fromInt fixedBalanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
+deleteFixedBalance : Int -> (Result Error () -> msg) -> Cmd msg
+deleteFixedBalance fixedBalanceId toMsg =
+    BaseRequest.delete ("/api/fixed_balances/" ++ String.fromInt fixedBalanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-getMove : String -> MoveAttributeValueObject.Attribute -> Int -> (Result Error MoveEntity.Move -> msg) -> Cmd msg
-getMove apiKey moveAttributeValueObject id toMsg =
+getMove : MoveAttributeValueObject.Attribute -> Int -> (Result Error MoveEntity.Move -> msg) -> Cmd msg
+getMove moveAttributeValueObject id toMsg =
     let
         decodeMove =
             D.succeed MoveEntity.Move
@@ -216,11 +216,11 @@ getMove apiKey moveAttributeValueObject id toMsg =
                 |> required "before_description" D.string
                 |> required "after_description" D.string
     in
-    BaseRequest.get apiKey ("/api/moves/" ++ mapMoveAttributeName moveAttributeValueObject ++ "s/" ++ String.fromInt id) decodeMove (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/moves/" ++ mapMoveAttributeName moveAttributeValueObject ++ "s/" ++ String.fromInt id) decodeMove (toMsg << Result.mapError mapError)
 
 
-getMoves : String -> MoveAttributeValueObject.Attribute -> (Result Error MoveEntity.Moves -> msg) -> Cmd msg
-getMoves apiKey moveAttributeValueObject toMsg =
+getMoves : MoveAttributeValueObject.Attribute -> (Result Error MoveEntity.Moves -> msg) -> Cmd msg
+getMoves moveAttributeValueObject toMsg =
     let
         decodeMove =
             D.succeed MoveEntity.Move
@@ -234,11 +234,11 @@ getMoves apiKey moveAttributeValueObject toMsg =
                 |> required "before_description" D.string
                 |> required "after_description" D.string
     in
-    BaseRequest.get apiKey ("/api/moves/" ++ mapMoveAttributeName moveAttributeValueObject ++ "s") (D.list decodeMove) (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/moves/" ++ mapMoveAttributeName moveAttributeValueObject ++ "s") (D.list decodeMove) (toMsg << Result.mapError mapError)
 
 
-postMove : String -> MoveAttributeValueObject.Attribute -> MoveEntity.NewMove -> (Result Error () -> msg) -> Cmd msg
-postMove apiKey moveAttributeName newMove toMsg =
+postMove : MoveAttributeValueObject.Attribute -> MoveEntity.NewMove -> (Result Error () -> msg) -> Cmd msg
+postMove moveAttributeName newMove toMsg =
     let
         encodedNewMove =
             E.object
@@ -250,11 +250,11 @@ postMove apiKey moveAttributeName newMove toMsg =
                 , ( "group_id", newMove.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
                 ]
     in
-    BaseRequest.post apiKey ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s") encodedNewMove (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s") encodedNewMove (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putMove : String -> MoveAttributeValueObject.Attribute -> Int -> MoveEntity.NewMove -> (Result Error () -> msg) -> Cmd msg
-putMove apiKey moveAttributeName id move toMsg =
+putMove : MoveAttributeValueObject.Attribute -> Int -> MoveEntity.NewMove -> (Result Error () -> msg) -> Cmd msg
+putMove moveAttributeName id move toMsg =
     let
         encodedMove =
             E.object
@@ -267,16 +267,16 @@ putMove apiKey moveAttributeName id move toMsg =
                 , ( "group_id", move.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
                 ]
     in
-    BaseRequest.put apiKey ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt id) encodedMove (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt id) encodedMove (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-deleteMove : String -> MoveAttributeValueObject.Attribute -> Int -> (Result Error () -> msg) -> Cmd msg
-deleteMove apiKey moveAttributeName moveId toMsg =
-    BaseRequest.delete apiKey ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt moveId) (D.succeed ()) (toMsg << Result.mapError mapError)
+deleteMove : MoveAttributeValueObject.Attribute -> Int -> (Result Error () -> msg) -> Cmd msg
+deleteMove moveAttributeName moveId toMsg =
+    BaseRequest.delete ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt moveId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-getAttributeElement : String -> AttributeValueObject.Attribute -> Int -> (Result Error AttributeElementEntity.AttributeElement -> msg) -> Cmd msg
-getAttributeElement apiKey attributeValueObject id toMsg =
+getAttributeElement : AttributeValueObject.Attribute -> Int -> (Result Error AttributeElementEntity.AttributeElement -> msg) -> Cmd msg
+getAttributeElement attributeValueObject id toMsg =
     let
         decodeAttributeElement =
             D.succeed AttributeElementEntity.AttributeElement
@@ -286,11 +286,11 @@ getAttributeElement apiKey attributeValueObject id toMsg =
                 |> required "priority" D.int
                 |> required "category_id" D.int
     in
-    BaseRequest.get apiKey ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) decodeAttributeElement (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) decodeAttributeElement (toMsg << Result.mapError mapError)
 
 
-getAttributeElements : String -> AttributeValueObject.Attribute -> (Result Error AttributeElementEntity.AttributeElements -> msg) -> Cmd msg
-getAttributeElements apiKey attributeValueObject toMsg =
+getAttributeElements : AttributeValueObject.Attribute -> (Result Error AttributeElementEntity.AttributeElements -> msg) -> Cmd msg
+getAttributeElements attributeValueObject toMsg =
     let
         decodeAttributeElement =
             D.succeed AttributeElementEntity.AttributeElement
@@ -300,11 +300,11 @@ getAttributeElements apiKey attributeValueObject toMsg =
                 |> required "priority" D.int
                 |> required "category_id" D.int
     in
-    BaseRequest.get apiKey ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") (D.list decodeAttributeElement) (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") (D.list decodeAttributeElement) (toMsg << Result.mapError mapError)
 
 
-postAttributeElement : String -> AttributeValueObject.Attribute -> AttributeElementEntity.NewAttributeElement -> (Result Error () -> msg) -> Cmd msg
-postAttributeElement apiKey attributeValueObject newAttributeElement toMsg =
+postAttributeElement : AttributeValueObject.Attribute -> AttributeElementEntity.NewAttributeElement -> (Result Error () -> msg) -> Cmd msg
+postAttributeElement attributeValueObject newAttributeElement toMsg =
     let
         encodedNewAttributeElement =
             E.object
@@ -314,11 +314,11 @@ postAttributeElement apiKey attributeValueObject newAttributeElement toMsg =
                 , ( "category_id", E.int newAttributeElement.categoryId )
                 ]
     in
-    BaseRequest.post apiKey ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") encodedNewAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") encodedNewAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putAttributeElement : String -> AttributeValueObject.Attribute -> Int -> AttributeElementEntity.NewAttributeElement -> (Result Error () -> msg) -> Cmd msg
-putAttributeElement apiKey attributeValueObject id attributeElement toMsg =
+putAttributeElement : AttributeValueObject.Attribute -> Int -> AttributeElementEntity.NewAttributeElement -> (Result Error () -> msg) -> Cmd msg
+putAttributeElement attributeValueObject id attributeElement toMsg =
     let
         encodedAttributeElement =
             E.object
@@ -329,11 +329,11 @@ putAttributeElement apiKey attributeValueObject id attributeElement toMsg =
                 , ( "category_id", E.int attributeElement.categoryId )
                 ]
     in
-    BaseRequest.put apiKey ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) encodedAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) encodedAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-getAttributeCategories : String -> AttributeValueObject.Attribute -> (Result Error AttributeCategoryEntity.AttributeCategories -> msg) -> Cmd msg
-getAttributeCategories apiKey attributeValueObject toMsg =
+getAttributeCategories : AttributeValueObject.Attribute -> (Result Error AttributeCategoryEntity.AttributeCategories -> msg) -> Cmd msg
+getAttributeCategories attributeValueObject toMsg =
     let
         decodeAttributeCategory =
             D.succeed AttributeCategoryEntity.AttributeCategory
@@ -341,11 +341,11 @@ getAttributeCategories apiKey attributeValueObject toMsg =
                 |> required "name" D.string
                 |> required "description" D.string
     in
-    BaseRequest.get apiKey ("/api/attribute_categories/" ++ mapAttributeName attributeValueObject ++ "_category") (D.list decodeAttributeCategory) (toMsg << Result.mapError mapError)
+    BaseRequest.get ("/api/attribute_categories/" ++ mapAttributeName attributeValueObject ++ "_category") (D.list decodeAttributeCategory) (toMsg << Result.mapError mapError)
 
 
-postSalary : String -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
-postSalary apiKey baseSalary adjustmentSalary transportation holdingIncentives healthInsurance welfarePension residentTax employmentInsurance incomeTax holding date toMsg =
+postSalary : Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
+postSalary baseSalary adjustmentSalary transportation holdingIncentives healthInsurance welfarePension residentTax employmentInsurance incomeTax holding date toMsg =
     let
         encodedSalary =
             E.object
@@ -362,11 +362,11 @@ postSalary apiKey baseSalary adjustmentSalary transportation holdingIncentives h
                 , ( "date", E.string date )
                 ]
     in
-    BaseRequest.post apiKey "/api/salary" encodedSalary (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post "/api/salary" encodedSalary (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-postBonus : String -> Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
-postBonus apiKey bonus healthInsurance welfarePension employmentInsurance incomeTax date toMsg =
+postBonus : Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
+postBonus bonus healthInsurance welfarePension employmentInsurance incomeTax date toMsg =
     let
         encodedBonus =
             E.object
@@ -378,11 +378,11 @@ postBonus apiKey bonus healthInsurance welfarePension employmentInsurance income
                 , ( "date", E.string date )
                 ]
     in
-    BaseRequest.post apiKey "/api/bonus" encodedBonus (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post "/api/bonus" encodedBonus (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-postCheckPlaceSum : String -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
-postCheckPlaceSum apiKey sum placeElementId date toMsg =
+postCheckPlaceSum : Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
+postCheckPlaceSum sum placeElementId date toMsg =
     let
         encodedCheckPlaceSum =
             E.object
@@ -391,8 +391,7 @@ postCheckPlaceSum apiKey sum placeElementId date toMsg =
                 , ( "date", E.string date )
                 ]
     in
-    BaseRequest.post apiKey "/api/check_place_sum" encodedCheckPlaceSum (D.succeed ()) (toMsg << Result.mapError mapError)
-
+    BaseRequest.post "/api/check_place_sum" encodedCheckPlaceSum (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 mapAttributeName : AttributeValueObject.Attribute -> String

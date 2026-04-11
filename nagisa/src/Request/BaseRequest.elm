@@ -19,28 +19,16 @@ type Error
     | GoodStatusDecodeError String
 
 
-get : String -> String -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
-get apiKey url decoder toMsg =
-    Http.request
-        { method = "GET"
-        , headers =
-            [ Http.header "Authorization" ("Bearer " ++ apiKey)
-            ]
-        , url = url
-        , body = Http.emptyBody
-        , expect = expect decoder toMsg
-        , timeout = Nothing
-        , tracker = Nothing
-        }
+get : String -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
+get url decoder toMsg =
+    Http.get { url = url, expect = expect decoder toMsg }
 
 
-post : String -> String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
-post apiKey url body decoder toMsg =
+post : String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
+post url body decoder toMsg =
     Http.request
         { method = "POST"
-        , headers =
-            [ Http.header "Authorization" ("Bearer " ++ apiKey)
-            ]
+        , headers = []
         , url = url
         , body = Http.jsonBody body
         , expect = expect decoder toMsg
@@ -49,14 +37,11 @@ post apiKey url body decoder toMsg =
         }
 
 
-
-put : String -> String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
-put apiKey url body decoder toMsg =
+put : String -> Json.Encode.Value -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
+put url body decoder toMsg =
     Http.request
         { method = "PUT"
-        , headers =
-            [ Http.header "Authorization" ("Bearer " ++ apiKey)
-            ]
+        , headers = []
         , url = url
         , body = Http.jsonBody body
         , expect = expect decoder toMsg
@@ -65,13 +50,11 @@ put apiKey url body decoder toMsg =
         }
 
 
-delete : String -> String -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
-delete apiKey url decoder toMsg =
+delete : String -> Json.Decode.Decoder a -> (Result Error a -> msg) -> Cmd msg
+delete url decoder toMsg =
     Http.request
         { method = "DELETE"
-        , headers =
-            [ Http.header "Authorization" ("Bearer " ++ apiKey)
-            ]
+        , headers = []
         , url = url
         , body = Http.emptyBody
         , expect = expect decoder toMsg
@@ -106,14 +89,10 @@ expect decoder toMsg =
                             Err (BadStatus errorResponse.message)
 
                         Err _ ->
-                            -- JSONデコードに失敗した場合は生のボディを返す
                             Err (BadStatusDecodeError body)
 
                 Http.GoodStatus_ _ body ->
-                    -- 正常なレスポンスの場合はデコード
                     let
-                        -- 空文字列を JSON に変換できないのでこうしている
-                        -- @todo それを直す
                         body_ =
                             if body == "" then
                                 "1"

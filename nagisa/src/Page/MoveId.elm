@@ -17,7 +17,6 @@ import String
 type alias Model =
     { move : StringMove
     , attributeElements : AttributeElementEntity.AttributeElements
-    , apiKey : String
     , moveAttributeName : MoveAttributeValueObject.Attribute
     , id : Maybe Int
     , enableInputDeleteString : Bool
@@ -54,8 +53,8 @@ type Msg
     | ModifiedResult (Result Request.Error ())
 
 
-init : String -> Navigation.Key -> MoveAttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
-init apiKey key moveAttributeValueObject id =
+init : Navigation.Key -> MoveAttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
+init key moveAttributeValueObject id =
     let
         attributeValueObject =
             case moveAttributeValueObject of
@@ -68,7 +67,6 @@ init apiKey key moveAttributeValueObject id =
     ( Model
         (StringMove "" "" "" "" "" "")
         []
-        apiKey
         moveAttributeValueObject
         id
         False
@@ -79,12 +77,12 @@ init apiKey key moveAttributeValueObject id =
     , Cmd.batch
         (case id of
             Nothing ->
-                [ Request.getAttributeElements apiKey attributeValueObject GetAttributeElements
+                [ Request.getAttributeElements attributeValueObject GetAttributeElements
                 ]
 
             Just id_ ->
-                [ Request.getMove apiKey moveAttributeValueObject id_ GetMove
-                , Request.getAttributeElements apiKey attributeValueObject GetAttributeElements
+                [ Request.getMove moveAttributeValueObject id_ GetMove
+                , Request.getAttributeElements attributeValueObject GetAttributeElements
                 ]
         )
     )
@@ -171,29 +169,20 @@ update msg model =
             let
                 newMove =
                     MoveEntity.NewMove
-                        (String.toInt
-                            model.move.amount
-                            |> Maybe.withDefault 0
-                        )
+                        (String.toInt model.move.amount |> Maybe.withDefault 0)
                         model.move.item
-                        (String.toInt
-                            model.move.beforeId
-                            |> Maybe.withDefault 0
-                        )
-                        (String.toInt
-                            model.move.afterId
-                            |> Maybe.withDefault 0
-                        )
+                        (String.toInt model.move.beforeId |> Maybe.withDefault 0)
+                        (String.toInt model.move.afterId |> Maybe.withDefault 0)
                         model.move.date
                         (String.toInt model.move.groupId)
 
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postMove model.apiKey model.moveAttributeName newMove ModifiedResult
+                            Request.postMove model.moveAttributeName newMove ModifiedResult
 
                         Just id ->
-                            Request.putMove model.apiKey model.moveAttributeName id newMove ModifiedResult
+                            Request.putMove model.moveAttributeName id newMove ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
@@ -211,7 +200,7 @@ update msg model =
 
         Delete moveId ->
             if model.deleteString == "delete" then
-                ( model, Request.deleteMove model.apiKey model.moveAttributeName moveId ModifiedResult )
+                ( model, Request.deleteMove model.moveAttributeName moveId ModifiedResult )
 
             else
                 ( { model | enableInputDeleteString = True }, Cmd.none )
