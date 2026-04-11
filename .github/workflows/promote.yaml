@@ -20,7 +20,7 @@ jobs:
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: konata
-      change: konata
+      change: konata|nagisa
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -32,7 +32,7 @@ jobs:
     uses: firedial/midas-bocchi/.github/workflows/image_promote.yaml@main
     with:
       name: haruhi
-      change: haruhi|nagisa
+      change: haruhi
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
