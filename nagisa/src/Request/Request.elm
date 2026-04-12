@@ -17,8 +17,6 @@ module Request.Request exposing
     , postBonus
     , postCheckPlaceSum
     , postFixedBalance
-    , postLogin
-    , postLogout
     , postMove
     , postSalary
     , putAttributeElement
@@ -88,8 +86,8 @@ getBalances limit toMsg =
     BaseRequest.get ("/api/balances?limit=" ++ String.fromInt limit ++ "&orderby=desc") decodeBalances (toMsg << Result.mapError mapError)
 
 
-postBalance : String -> BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg
-postBalance xsrfToken newBalance toMsg =
+postBalance : BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg
+postBalance newBalance toMsg =
     let
         encodedNewBalance =
             E.object
@@ -102,11 +100,11 @@ postBalance xsrfToken newBalance toMsg =
                 , ( "group_id", newBalance.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
                 ]
     in
-    BaseRequest.post xsrfToken "/api/balances" encodedNewBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post "/api/balances" encodedNewBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putBalance : String -> Int -> BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg
-putBalance xsrfToken id balance toMsg =
+putBalance : Int -> BalanceEntity.NewBalance -> (Result Error () -> msg) -> Cmd msg
+putBalance id balance toMsg =
     let
         encodedBalance =
             E.object
@@ -120,12 +118,12 @@ putBalance xsrfToken id balance toMsg =
                 , ( "group_id", balance.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
                 ]
     in
-    BaseRequest.put xsrfToken ("/api/balances/" ++ String.fromInt id) encodedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put ("/api/balances/" ++ String.fromInt id) encodedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-deleteBalance : String -> Int -> (Result Error () -> msg) -> Cmd msg
-deleteBalance xsrfToken balanceId toMsg =
-    BaseRequest.delete xsrfToken ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
+deleteBalance : Int -> (Result Error () -> msg) -> Cmd msg
+deleteBalance balanceId toMsg =
+    BaseRequest.delete ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getFixedBalance : Int -> (Result Error FixedBalanceEntity.FixedBalance -> msg) -> Cmd msg
@@ -167,8 +165,8 @@ getFixedBalances toMsg =
     BaseRequest.get "/api/fixed_balances" decodeFixedBalances (toMsg << Result.mapError mapError)
 
 
-postFixedBalance : String -> FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
-postFixedBalance xsrfToken newFixedBalance toMsg =
+postFixedBalance : FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
+postFixedBalance newFixedBalance toMsg =
     let
         encodedNewFixedBalance =
             E.object
@@ -179,11 +177,11 @@ postFixedBalance xsrfToken newFixedBalance toMsg =
                 , ( "place_element_id", E.int newFixedBalance.placeElementId )
                 ]
     in
-    BaseRequest.post xsrfToken "/api/fixed_balances" encodedNewFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post "/api/fixed_balances" encodedNewFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putFixedBalance : String -> Int -> FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
-putFixedBalance xsrfToken id fixedBalance toMsg =
+putFixedBalance : Int -> FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
+putFixedBalance id fixedBalance toMsg =
     let
         encodedFixedBalance =
             E.object
@@ -195,12 +193,12 @@ putFixedBalance xsrfToken id fixedBalance toMsg =
                 , ( "place_element_id", E.int fixedBalance.placeElementId )
                 ]
     in
-    BaseRequest.put xsrfToken ("/api/fixed_balances/" ++ String.fromInt id) encodedFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put ("/api/fixed_balances/" ++ String.fromInt id) encodedFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-deleteFixedBalance : String -> Int -> (Result Error () -> msg) -> Cmd msg
-deleteFixedBalance xsrfToken fixedBalanceId toMsg =
-    BaseRequest.delete xsrfToken ("/api/fixed_balances/" ++ String.fromInt fixedBalanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
+deleteFixedBalance : Int -> (Result Error () -> msg) -> Cmd msg
+deleteFixedBalance fixedBalanceId toMsg =
+    BaseRequest.delete ("/api/fixed_balances/" ++ String.fromInt fixedBalanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getMove : MoveAttributeValueObject.Attribute -> Int -> (Result Error MoveEntity.Move -> msg) -> Cmd msg
@@ -239,8 +237,8 @@ getMoves moveAttributeValueObject toMsg =
     BaseRequest.get ("/api/moves/" ++ mapMoveAttributeName moveAttributeValueObject ++ "s") (D.list decodeMove) (toMsg << Result.mapError mapError)
 
 
-postMove : String -> MoveAttributeValueObject.Attribute -> MoveEntity.NewMove -> (Result Error () -> msg) -> Cmd msg
-postMove xsrfToken moveAttributeName newMove toMsg =
+postMove : MoveAttributeValueObject.Attribute -> MoveEntity.NewMove -> (Result Error () -> msg) -> Cmd msg
+postMove moveAttributeName newMove toMsg =
     let
         encodedNewMove =
             E.object
@@ -252,11 +250,11 @@ postMove xsrfToken moveAttributeName newMove toMsg =
                 , ( "group_id", newMove.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
                 ]
     in
-    BaseRequest.post xsrfToken ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s") encodedNewMove (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s") encodedNewMove (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putMove : String -> MoveAttributeValueObject.Attribute -> Int -> MoveEntity.NewMove -> (Result Error () -> msg) -> Cmd msg
-putMove xsrfToken moveAttributeName id move toMsg =
+putMove : MoveAttributeValueObject.Attribute -> Int -> MoveEntity.NewMove -> (Result Error () -> msg) -> Cmd msg
+putMove moveAttributeName id move toMsg =
     let
         encodedMove =
             E.object
@@ -269,12 +267,12 @@ putMove xsrfToken moveAttributeName id move toMsg =
                 , ( "group_id", move.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
                 ]
     in
-    BaseRequest.put xsrfToken ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt id) encodedMove (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt id) encodedMove (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-deleteMove : String -> MoveAttributeValueObject.Attribute -> Int -> (Result Error () -> msg) -> Cmd msg
-deleteMove xsrfToken moveAttributeName moveId toMsg =
-    BaseRequest.delete xsrfToken ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt moveId) (D.succeed ()) (toMsg << Result.mapError mapError)
+deleteMove : MoveAttributeValueObject.Attribute -> Int -> (Result Error () -> msg) -> Cmd msg
+deleteMove moveAttributeName moveId toMsg =
+    BaseRequest.delete ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt moveId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getAttributeElement : AttributeValueObject.Attribute -> Int -> (Result Error AttributeElementEntity.AttributeElement -> msg) -> Cmd msg
@@ -305,8 +303,8 @@ getAttributeElements attributeValueObject toMsg =
     BaseRequest.get ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") (D.list decodeAttributeElement) (toMsg << Result.mapError mapError)
 
 
-postAttributeElement : String -> AttributeValueObject.Attribute -> AttributeElementEntity.NewAttributeElement -> (Result Error () -> msg) -> Cmd msg
-postAttributeElement xsrfToken attributeValueObject newAttributeElement toMsg =
+postAttributeElement : AttributeValueObject.Attribute -> AttributeElementEntity.NewAttributeElement -> (Result Error () -> msg) -> Cmd msg
+postAttributeElement attributeValueObject newAttributeElement toMsg =
     let
         encodedNewAttributeElement =
             E.object
@@ -316,11 +314,11 @@ postAttributeElement xsrfToken attributeValueObject newAttributeElement toMsg =
                 , ( "category_id", E.int newAttributeElement.categoryId )
                 ]
     in
-    BaseRequest.post xsrfToken ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") encodedNewAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element") encodedNewAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putAttributeElement : String -> AttributeValueObject.Attribute -> Int -> AttributeElementEntity.NewAttributeElement -> (Result Error () -> msg) -> Cmd msg
-putAttributeElement xsrfToken attributeValueObject id attributeElement toMsg =
+putAttributeElement : AttributeValueObject.Attribute -> Int -> AttributeElementEntity.NewAttributeElement -> (Result Error () -> msg) -> Cmd msg
+putAttributeElement attributeValueObject id attributeElement toMsg =
     let
         encodedAttributeElement =
             E.object
@@ -331,7 +329,7 @@ putAttributeElement xsrfToken attributeValueObject id attributeElement toMsg =
                 , ( "category_id", E.int attributeElement.categoryId )
                 ]
     in
-    BaseRequest.put xsrfToken ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) encodedAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put ("/api/attribute_elements/" ++ mapAttributeName attributeValueObject ++ "_element/" ++ String.fromInt id) encodedAttributeElement (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getAttributeCategories : AttributeValueObject.Attribute -> (Result Error AttributeCategoryEntity.AttributeCategories -> msg) -> Cmd msg
@@ -346,8 +344,8 @@ getAttributeCategories attributeValueObject toMsg =
     BaseRequest.get ("/api/attribute_categories/" ++ mapAttributeName attributeValueObject ++ "_category") (D.list decodeAttributeCategory) (toMsg << Result.mapError mapError)
 
 
-postSalary : String -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
-postSalary xsrfToken baseSalary adjustmentSalary transportation holdingIncentives healthInsurance welfarePension residentTax employmentInsurance incomeTax holding date toMsg =
+postSalary : Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
+postSalary baseSalary adjustmentSalary transportation holdingIncentives healthInsurance welfarePension residentTax employmentInsurance incomeTax holding date toMsg =
     let
         encodedSalary =
             E.object
@@ -364,11 +362,11 @@ postSalary xsrfToken baseSalary adjustmentSalary transportation holdingIncentive
                 , ( "date", E.string date )
                 ]
     in
-    BaseRequest.post xsrfToken "/api/salary" encodedSalary (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post "/api/salary" encodedSalary (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-postBonus : String -> Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
-postBonus xsrfToken bonus healthInsurance welfarePension employmentInsurance incomeTax date toMsg =
+postBonus : Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
+postBonus bonus healthInsurance welfarePension employmentInsurance incomeTax date toMsg =
     let
         encodedBonus =
             E.object
@@ -380,11 +378,11 @@ postBonus xsrfToken bonus healthInsurance welfarePension employmentInsurance inc
                 , ( "date", E.string date )
                 ]
     in
-    BaseRequest.post xsrfToken "/api/bonus" encodedBonus (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post "/api/bonus" encodedBonus (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-postCheckPlaceSum : String -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
-postCheckPlaceSum xsrfToken sum placeElementId date toMsg =
+postCheckPlaceSum : Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
+postCheckPlaceSum sum placeElementId date toMsg =
     let
         encodedCheckPlaceSum =
             E.object
@@ -393,24 +391,7 @@ postCheckPlaceSum xsrfToken sum placeElementId date toMsg =
                 , ( "date", E.string date )
                 ]
     in
-    BaseRequest.post xsrfToken "/api/check_place_sum" encodedCheckPlaceSum (D.succeed ()) (toMsg << Result.mapError mapError)
-
-
-postLogin : String -> String -> String -> (Result Error () -> msg) -> Cmd msg
-postLogin xsrfToken email password toMsg =
-    let
-        data =
-            E.object
-                [ ( "email", E.string email )
-                , ( "password", E.string password )
-                ]
-    in
-    BaseRequest.post xsrfToken "/api/login" data (D.succeed ()) (toMsg << Result.mapError mapError)
-
-
-postLogout : String -> (Result Error () -> msg) -> Cmd msg
-postLogout xsrfToken toMsg =
-    BaseRequest.post xsrfToken "/api/logout" (E.object []) (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post "/api/check_place_sum" encodedCheckPlaceSum (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 mapAttributeName : AttributeValueObject.Attribute -> String

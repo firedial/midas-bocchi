@@ -19,7 +19,6 @@ type alias Model =
     , kindElements : AttributeElementEntity.AttributeElements
     , purposeElements : AttributeElementEntity.AttributeElements
     , placeElements : AttributeElementEntity.AttributeElements
-    , xsrfToken : String
     , id : Maybe Int
     , isRemainAmount : Bool
     , isRemainItem : Bool
@@ -71,22 +70,13 @@ type Msg
     | CheckRemainGroupId Bool
 
 
-init : String -> Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
-init xsrfToken key id =
+init : Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
+init key id =
     ( Model
-        (StringBalance
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-        )
+        (StringBalance "" "" "" "" "" "" "")
         []
         []
         []
-        xsrfToken
         id
         False
         False
@@ -222,10 +212,10 @@ update msg model =
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postBalance model.xsrfToken newBalance ModifiedResult
+                            Request.postBalance newBalance ModifiedResult
 
                         Just id ->
-                            Request.putBalance model.xsrfToken id newBalance ModifiedResult
+                            Request.putBalance id newBalance ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
@@ -234,7 +224,7 @@ update msg model =
 
         Delete id ->
             if model.deleteString == "delete" then
-                ( model, Request.deleteBalance model.xsrfToken id ModifiedResult )
+                ( model, Request.deleteBalance id ModifiedResult )
 
             else
                 ( { model | enableInputDeleteString = True }, Cmd.none )

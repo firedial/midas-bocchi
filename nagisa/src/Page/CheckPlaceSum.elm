@@ -15,7 +15,6 @@ type alias Model =
     { checkPlaeSum : StringCheckPlaceSum
     , attributeElements : AttributeElementEntity.AttributeElements
     , isDisabledEditButton : Bool
-    , xsrfToken : String
     , key : Navigation.Key
     , errorMessage : Maybe String
     }
@@ -37,13 +36,12 @@ type Msg
     | ModifiedResult (Result Request.Error ())
 
 
-init : String -> Navigation.Key -> ( Model, Cmd Msg )
-init xsrfToken key =
+init : Navigation.Key -> ( Model, Cmd Msg )
+init key =
     ( Model
         (StringCheckPlaceSum "" "" "")
         []
         False
-        xsrfToken
         key
         Nothing
     , Request.getAttributeElements AttributeValueObject.Place GetAttributeElements
@@ -81,7 +79,6 @@ update msg model =
         Insert ->
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }
             , Request.postCheckPlaceSum
-                model.xsrfToken
                 (String.toInt model.checkPlaeSum.sum |> Maybe.withDefault 0)
                 (String.toInt model.checkPlaeSum.placeElementId |> Maybe.withDefault 0)
                 model.checkPlaeSum.date

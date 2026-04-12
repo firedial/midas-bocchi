@@ -7,20 +7,24 @@
     <script src="/main.js"></script>
     <link href="/css/env.css" rel="stylesheet" type="text/css">
     <link href="/css/main.css" rel="stylesheet" type="text/css">
-    <link href="/sanctum/csrf-cookie" rel="stylesheet" type="text/css">
 </head>
 
 <body>
     <div id="myapp"></div>
     <script>
-        const xsrfToken = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("XSRF-TOKEN="))
-            ?.split("=")[1]
-            .replace("%3D", "=");
-        var app = Elm.Main.init({
+        const _open = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function () {
+            _open.apply(this, arguments);
+            const apiKey = localStorage.getItem('api_key');
+            if (apiKey) {
+                this.setRequestHeader('Authorization', 'Bearer ' + apiKey);
+            }
+        };
+
+        const apiKey = localStorage.getItem('api_key');
+        Elm.Main.init({
             node: document.getElementById('myapp'),
-            flags: xsrfToken
+            flags: apiKey
         });
     </script>
 </body>

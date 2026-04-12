@@ -55,18 +55,9 @@ readonly class Response
         return '';
     }
 
-    public function getXsrfToken(): string
+    public function getApiToken(): string
     {
-        $cookies = $this->getHeaderSetCookies();
-
-        // XSRF-TOKEN のクッキーを探す
-        foreach ($cookies as $cookie) {
-            if (str_starts_with($cookie, 'XSRF-TOKEN')) {
-                $divided = explode(';', $cookie)[0];
-                return str_replace('XSRF-TOKEN=', '', $divided);
-            }
-        }
-
-        return '';
+        $body = $this->jsonBody();
+        return $body['token'] ?? '';
     }
 }

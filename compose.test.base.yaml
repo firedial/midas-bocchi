@@ -25,6 +25,7 @@ services:
             - APP_DOMAIN=haruhi
             - SANCTUM_STATEFUL_DOMAINS=haruhi
             - SESSION_DOMAIN=haruhi
+            - API_KEY=apikey
         volumes:
             - ./haruhi:/var/www/html
     azusa:
