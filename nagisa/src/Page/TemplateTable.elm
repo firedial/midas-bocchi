@@ -607,7 +607,7 @@ view model =
                                                         [ case selected.submitStatus of
                                                             FailedSubsequent _ _ retryFromIdx ->
                                                                 Html.button
-                                                                    [ onClick (Retry template.id) ]
+                                                                    [ Attributes.class "edit-button", onClick (Retry template.id) ]
                                                                     [ Html.text ("再送 (" ++ String.fromInt (List.length selected.details - retryFromIdx) ++ "件)") ]
 
                                                             _ ->
