@@ -36,6 +36,8 @@ type alias Model =
     , placeElements : AttributeElementEntity.AttributeElements
     , id : Maybe Int
     , key : Navigation.Key
+    , enableInputDeleteString : Bool
+    , deleteString : String
     , isDisabledEditButton : Bool
     , errorMessage : Maybe String
     }
@@ -64,13 +66,15 @@ type Msg
     | GetTemplate (Result Request.Error ( TemplateEntity.Template, List TemplateEntity.TemplateDetail ))
     | GetAttributeElements AttributeValueObject.Attribute (Result Request.Error AttributeElementEntity.AttributeElements)
     | Upsert
+    | Delete
+    | InputDeleteString String
     | Cancel
     | ModifiedResult (Result Request.Error ())
 
 
 init : Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
 init key id =
-    ( Model "" [ emptyDetail ] [] [] [] id key False Nothing
+    ( Model "" [ emptyDetail ] [] [] [] id key False "" False Nothing
     , Cmd.batch
         ([ Request.getAttributeElements AttributeValueObject.Kind (GetAttributeElements AttributeValueObject.Kind)
          , Request.getAttributeElements AttributeValueObject.Purpose (GetAttributeElements AttributeValueObject.Purpose)
@@ -201,6 +205,23 @@ update msg model =
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
+        Delete ->
+            case model.id of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just id ->
+                    if model.deleteString == "delete" then
+                        ( { model | isDisabledEditButton = True, errorMessage = Nothing }
+                        , Request.deleteTemplate id ModifiedResult
+                        )
+
+                    else
+                        ( { model | enableInputDeleteString = True }, Cmd.none )
+
+        InputDeleteString deleteString ->
+            ( { model | deleteString = deleteString }, Cmd.none )
+
         Cancel ->
             ( model, Navigation.pushUrl model.key (Route.toPath Route.TemplateTable) )
 
@@ -330,7 +351,10 @@ view model =
                     [ Html.button [ Attributes.class "edit-button", onClick Upsert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "作成" ] ]
 
                 Just _ ->
-                    [ Html.button [ Attributes.class "edit-button", onClick Upsert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "保存" ] ]
+                    [ Html.button [ Attributes.class "edit-button", onClick Upsert, Attributes.disabled model.isDisabledEditButton ] [ Html.text "保存" ]
+                    , Html.button [ Attributes.class "delete-button", onClick Delete, Attributes.disabled model.isDisabledEditButton ] [ Html.text "削除" ]
+                    , Html.input [ Attributes.type_ "text", Attributes.value model.deleteString, onInput InputDeleteString, Attributes.hidden (not model.enableInputDeleteString) ] []
+                    ]
             )
         , Html.div []
             [ Html.button [ Attributes.class "cancel-button", onClick Cancel ] [ Html.text "キャンセル" ] ]
