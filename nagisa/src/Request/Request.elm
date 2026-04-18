@@ -17,10 +17,12 @@ module Request.Request exposing
     , getTemplates
     , postAttributeElement
     , postBalance
+    , postBalanceGetGroupId
     , postBonus
     , postCheckPlaceSum
     , postFixedBalance
     , postMove
+    , postMoveGetGroupId
     , postSalary
     , postTemplate
     , putAttributeElement
@@ -125,6 +127,23 @@ putBalance id balance toMsg =
                 ]
     in
     BaseRequest.put ("/api/balances/" ++ String.fromInt id) encodedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+postBalanceGetGroupId : BalanceEntity.NewBalance -> (Result Error Int -> msg) -> Cmd msg
+postBalanceGetGroupId newBalance toMsg =
+    let
+        encodedNewBalance =
+            E.object
+                [ ( "amount", E.int newBalance.amount )
+                , ( "item", E.string newBalance.item )
+                , ( "kind_element_id", E.int newBalance.kindElementId )
+                , ( "purpose_element_id", E.int newBalance.purposeElementId )
+                , ( "place_element_id", E.int newBalance.placeElementId )
+                , ( "date", E.string newBalance.date )
+                , ( "group_id", newBalance.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
+                ]
+    in
+    BaseRequest.post "/api/balances" encodedNewBalance (D.field "group_id" D.int) (toMsg << Result.mapError mapError)
 
 
 deleteBalance : Int -> (Result Error () -> msg) -> Cmd msg
@@ -274,6 +293,22 @@ putMove moveAttributeName id move toMsg =
                 ]
     in
     BaseRequest.put ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt id) encodedMove (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+postMoveGetGroupId : MoveAttributeValueObject.Attribute -> MoveEntity.NewMove -> (Result Error Int -> msg) -> Cmd msg
+postMoveGetGroupId moveAttributeName newMove toMsg =
+    let
+        encodedNewMove =
+            E.object
+                [ ( "amount", E.int newMove.amount )
+                , ( "item", E.string newMove.item )
+                , ( "before_id", E.int newMove.beforeId )
+                , ( "after_id", E.int newMove.afterId )
+                , ( "date", E.string newMove.date )
+                , ( "group_id", newMove.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
+                ]
+    in
+    BaseRequest.post ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s") encodedNewMove (D.field "group_id" D.int) (toMsg << Result.mapError mapError)
 
 
 deleteMove : MoveAttributeValueObject.Attribute -> Int -> (Result Error () -> msg) -> Cmd msg

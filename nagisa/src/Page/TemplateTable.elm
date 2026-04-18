@@ -38,7 +38,8 @@ type Msg
     | InputDate Int String
     | InputAmount Int Int String
     | Submit Int
-    | ModifiedResult (Result Request.Error ())
+    | GotFirstGroupId Int String (List ( Int, TemplateEntity.TemplateDetail )) (Result Request.Error Int)
+    | PostedSubsequent Int Int String (List ( Int, TemplateEntity.TemplateDetail )) (Result Request.Error ())
 
 
 init : ( Model, Cmd Msg )
@@ -93,9 +94,7 @@ update msg model =
         InputDate id date ->
             ( { model
                 | openTemplates =
-                    Dict.update id
-                        (Maybe.map (\s -> { s | date = date }))
-                        model.openTemplates
+                    Dict.update id (Maybe.map (\s -> { s | date = date })) model.openTemplates
               }
             , Cmd.none
             )
@@ -132,80 +131,150 @@ update msg model =
 
                 Just selected ->
                     let
-                        cmds =
-                            List.indexedMap
-                                (\i detail ->
-                                    let
-                                        amount =
-                                            List.drop i selected.amounts
-                                                |> List.head
-                                                |> Maybe.andThen String.toInt
-                                                |> Maybe.withDefault detail.amount
-                                    in
-                                    postDetail selected.date amount detail
+                        pairs =
+                            List.map2
+                                (\amountStr detail ->
+                                    ( String.toInt amountStr |> Maybe.withDefault detail.amount, detail )
                                 )
+                                selected.amounts
                                 selected.details
                     in
-                    ( { model | isDisabledEditButton = True, errorMessage = Nothing }
-                    , Cmd.batch cmds
-                    )
+                    case pairs of
+                        [] ->
+                            ( model, Cmd.none )
 
-        ModifiedResult result ->
+                        ( amount, detail ) :: rest ->
+                            ( { model | isDisabledEditButton = True, errorMessage = Nothing }
+                            , postFirstDetail id selected.date amount detail rest
+                            )
+
+        GotFirstGroupId templateId date remaining result ->
             case result of
-                Ok _ ->
-                    ( { model | errorMessage = Just "OK", isDisabledEditButton = False }, Cmd.none )
-
                 Err (Request.DecodeError message) ->
                     ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
 
                 Err (Request.RequestError message) ->
                     ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
 
+                Ok groupId ->
+                    case remaining of
+                        [] ->
+                            ( { model | errorMessage = Just "OK", isDisabledEditButton = False }, Cmd.none )
 
-postDetail : String -> Int -> TemplateEntity.TemplateDetail -> Cmd Msg
-postDetail date amount detail =
+                        ( amount, detail ) :: rest ->
+                            ( model, postSubsequentDetail templateId groupId date amount detail rest )
+
+        PostedSubsequent templateId groupId date remaining result ->
+            case result of
+                Err (Request.DecodeError message) ->
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
+
+                Err (Request.RequestError message) ->
+                    ( { model | errorMessage = Just message, isDisabledEditButton = False }, Cmd.none )
+
+                Ok _ ->
+                    case remaining of
+                        [] ->
+                            ( { model | errorMessage = Just "OK", isDisabledEditButton = False }, Cmd.none )
+
+                        ( amount, detail ) :: rest ->
+                            ( model, postSubsequentDetail templateId groupId date amount detail rest )
+
+
+postFirstDetail : Int -> String -> Int -> TemplateEntity.TemplateDetail -> List ( Int, TemplateEntity.TemplateDetail ) -> Cmd Msg
+postFirstDetail templateId date amount detail remaining =
+    let
+        toMsg result =
+            GotFirstGroupId templateId date remaining result
+    in
     case detail.type_ of
         1 ->
-            Request.postBalance
-                (BalanceEntity.NewBalance
-                    amount
-                    detail.item
-                    detail.kindElementId
+            Request.postBalanceGetGroupId
+                (BalanceEntity.NewBalance amount detail.item detail.kindElementId
                     (detail.purposeElementId |> Maybe.withDefault 0)
                     (detail.placeElementId |> Maybe.withDefault 0)
                     date
                     Nothing
                 )
-                ModifiedResult
+                toMsg
 
         2 ->
-            Request.postMove
+            Request.postMoveGetGroupId
                 MoveAttributeValueObject.Purpose
-                (MoveEntity.NewMove
-                    amount
-                    detail.item
+                (MoveEntity.NewMove amount detail.item
                     (detail.moveBeforePurposeId |> Maybe.withDefault 0)
                     (detail.moveAfterPurposeId |> Maybe.withDefault 0)
                     date
                     Nothing
                 )
-                ModifiedResult
+                toMsg
 
         3 ->
-            Request.postMove
+            Request.postMoveGetGroupId
                 MoveAttributeValueObject.Place
-                (MoveEntity.NewMove
-                    amount
-                    detail.item
+                (MoveEntity.NewMove amount detail.item
                     (detail.moveBeforePlaceId |> Maybe.withDefault 0)
                     (detail.moveAfterPlaceId |> Maybe.withDefault 0)
                     date
                     Nothing
                 )
-                ModifiedResult
+                toMsg
 
         _ ->
-            Cmd.none
+            case remaining of
+                [] ->
+                    Cmd.none
+
+                ( nextAmount, nextDetail ) :: rest ->
+                    postFirstDetail templateId date nextAmount nextDetail rest
+
+
+postSubsequentDetail : Int -> Int -> String -> Int -> TemplateEntity.TemplateDetail -> List ( Int, TemplateEntity.TemplateDetail ) -> Cmd Msg
+postSubsequentDetail templateId groupId date amount detail remaining =
+    let
+        toMsg result =
+            PostedSubsequent templateId groupId date remaining result
+    in
+    case detail.type_ of
+        1 ->
+            Request.postBalance
+                (BalanceEntity.NewBalance amount detail.item detail.kindElementId
+                    (detail.purposeElementId |> Maybe.withDefault 0)
+                    (detail.placeElementId |> Maybe.withDefault 0)
+                    date
+                    (Just groupId)
+                )
+                toMsg
+
+        2 ->
+            Request.postMove
+                MoveAttributeValueObject.Purpose
+                (MoveEntity.NewMove amount detail.item
+                    (detail.moveBeforePurposeId |> Maybe.withDefault 0)
+                    (detail.moveAfterPurposeId |> Maybe.withDefault 0)
+                    date
+                    (Just groupId)
+                )
+                toMsg
+
+        3 ->
+            Request.postMove
+                MoveAttributeValueObject.Place
+                (MoveEntity.NewMove amount detail.item
+                    (detail.moveBeforePlaceId |> Maybe.withDefault 0)
+                    (detail.moveAfterPlaceId |> Maybe.withDefault 0)
+                    date
+                    (Just groupId)
+                )
+                toMsg
+
+        _ ->
+            case remaining of
+                [] ->
+                    Cmd.none
+
+                ( nextAmount, nextDetail ) :: rest ->
+                    postSubsequentDetail templateId groupId date nextAmount nextDetail rest
 
 
 typeLabel : Int -> String
