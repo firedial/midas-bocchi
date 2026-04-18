@@ -59,6 +59,7 @@ type Msg
     | InputDetailMoveBeforePlaceId Int String
     | InputDetailMoveAfterPlaceId Int String
     | AddDetail
+    | InsertDetailAfter Int
     | RemoveDetail Int
     | GetTemplate (Result Request.Error ( TemplateEntity.Template, List TemplateEntity.TemplateDetail ))
     | GetAttributeElements AttributeValueObject.Attribute (Result Request.Error AttributeElementEntity.AttributeElements)
@@ -136,7 +137,10 @@ update msg model =
             ( { model | details = updateDetailAt i (\d -> { d | moveAfterPlaceId = val }) model.details }, Cmd.none )
 
         AddDetail ->
-            ( { model | details = model.details ++ [ emptyDetail ] }, Cmd.none )
+            ( { model | details = emptyDetail :: model.details }, Cmd.none )
+
+        InsertDetailAfter i ->
+            ( { model | details = List.take (i + 1) model.details ++ emptyDetail :: List.drop (i + 1) model.details }, Cmd.none )
 
         RemoveDetail i ->
             ( { model | details = List.indexedMap Tuple.pair model.details |> List.filter (\( idx, _ ) -> idx /= i) |> List.map Tuple.second }, Cmd.none )
@@ -309,12 +313,11 @@ view model =
                 , Html.th [] [ Html.text "後" ]
                 , Html.th [] []
                 ]
+                :: Html.tr []
+                    [ Html.td [ Attributes.colspan 6 ] []
+                    , Html.td [] [ Html.button [ Attributes.class "edit-button", onClick AddDetail ] [ Html.text "明細追加" ] ]
+                    ]
                 :: List.indexedMap (viewDetailRow model) model.details
-                ++ [ Html.tr []
-                        [ Html.td [] [ Html.button [ Attributes.class "edit-button", onClick AddDetail ] [ Html.text "明細追加" ] ]
-                        , Html.td [ Attributes.colspan 6 ] []
-                        ]
-                   ]
             )
         , Html.div []
             (case model.id of
@@ -373,5 +376,7 @@ viewDetailRow model i d =
                 [ elementSelect model.placeElements d.moveAfterPlaceId (InputDetailMoveAfterPlaceId i) ]
             )
         , Html.td []
-            [ Html.button [ Attributes.class "delete-button", onClick (RemoveDetail i) ] [ Html.text "削除" ] ]
+            [ Html.button [ Attributes.class "edit-button", onClick (InsertDetailAfter i) ] [ Html.text "挿入" ]
+            , Html.button [ Attributes.class "delete-button", onClick (RemoveDetail i) ] [ Html.text "削除" ]
+            ]
         ]
