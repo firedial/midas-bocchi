@@ -39,6 +39,7 @@ view _ =
             , getItem Route.Bonus "賞与入力" "image/cash-coin.svg"
             , getItem Route.FixedBalance "固定入力" "image/calendar3.svg"
             , getItem Route.CheckPlaceSum "金額チェック" "image/check-circle.svg"
+            , getItem Route.TemplateTable "テンプレート" "image/stack.svg"
             ]
         ]
 
