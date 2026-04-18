@@ -68,7 +68,14 @@ init =
 
 setDetailStatus : Int -> DetailStatus -> List DetailStatus -> List DetailStatus
 setDetailStatus idx status =
-    List.indexedMap (\i s -> if i == idx then status else s)
+    List.indexedMap
+        (\i s ->
+            if i == idx then
+                status
+
+            else
+                s
+        )
 
 
 buildPairs : List String -> List TemplateEntity.TemplateDetail -> List ( Int, Int, TemplateEntity.TemplateDetail )
@@ -385,7 +392,9 @@ postFirstDetail templateId date ( idx, amount, detail ) remaining =
     case detail.type_ of
         1 ->
             Request.postBalanceGetGroupId
-                (BalanceEntity.NewBalance amount detail.item detail.kindElementId
+                (BalanceEntity.NewBalance amount
+                    detail.item
+                    detail.kindElementId
                     (detail.purposeElementId |> Maybe.withDefault 0)
                     (detail.placeElementId |> Maybe.withDefault 0)
                     date
@@ -396,7 +405,8 @@ postFirstDetail templateId date ( idx, amount, detail ) remaining =
         2 ->
             Request.postMoveGetGroupId
                 MoveAttributeValueObject.Purpose
-                (MoveEntity.NewMove amount detail.item
+                (MoveEntity.NewMove amount
+                    detail.item
                     (detail.moveBeforePurposeId |> Maybe.withDefault 0)
                     (detail.moveAfterPurposeId |> Maybe.withDefault 0)
                     date
@@ -407,7 +417,8 @@ postFirstDetail templateId date ( idx, amount, detail ) remaining =
         3 ->
             Request.postMoveGetGroupId
                 MoveAttributeValueObject.Place
-                (MoveEntity.NewMove amount detail.item
+                (MoveEntity.NewMove amount
+                    detail.item
                     (detail.moveBeforePlaceId |> Maybe.withDefault 0)
                     (detail.moveAfterPlaceId |> Maybe.withDefault 0)
                     date
@@ -433,7 +444,9 @@ postSubsequentDetail templateId groupId date idx amount detail remaining =
     case detail.type_ of
         1 ->
             Request.postBalance
-                (BalanceEntity.NewBalance amount detail.item detail.kindElementId
+                (BalanceEntity.NewBalance amount
+                    detail.item
+                    detail.kindElementId
                     (detail.purposeElementId |> Maybe.withDefault 0)
                     (detail.placeElementId |> Maybe.withDefault 0)
                     date
@@ -444,7 +457,8 @@ postSubsequentDetail templateId groupId date idx amount detail remaining =
         2 ->
             Request.postMove
                 MoveAttributeValueObject.Purpose
-                (MoveEntity.NewMove amount detail.item
+                (MoveEntity.NewMove amount
+                    detail.item
                     (detail.moveBeforePurposeId |> Maybe.withDefault 0)
                     (detail.moveAfterPurposeId |> Maybe.withDefault 0)
                     date
@@ -455,7 +469,8 @@ postSubsequentDetail templateId groupId date idx amount detail remaining =
         3 ->
             Request.postMove
                 MoveAttributeValueObject.Place
-                (MoveEntity.NewMove amount detail.item
+                (MoveEntity.NewMove amount
+                    detail.item
                     (detail.moveBeforePlaceId |> Maybe.withDefault 0)
                     (detail.moveAfterPlaceId |> Maybe.withDefault 0)
                     date
@@ -492,7 +507,7 @@ viewDetailStatus : DetailStatus -> Html.Html Msg
 viewDetailStatus status =
     case status of
         DetailIdle ->
-            Html.span [ Attributes.style "color" "gray" ] [ Html.text "未送信" ]
+            Html.span [ Attributes.style "color" "gray" ] [ Html.text "-" ]
 
         DetailSuccess ->
             Html.span [ Attributes.style "color" "green" ] [ Html.text "✓" ]
@@ -501,7 +516,7 @@ viewDetailStatus status =
             Html.span [ Attributes.style "color" "red" ] [ Html.text "✗" ]
 
         DetailSkipped ->
-            Html.span [ Attributes.style "color" "gray" ] [ Html.text "スキップ" ]
+            Html.span [ Attributes.style "color" "gray" ] [ Html.text "↓" ]
 
 
 view : Model -> Html.Html Msg
