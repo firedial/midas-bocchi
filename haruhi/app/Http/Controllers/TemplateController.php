@@ -31,7 +31,7 @@ class TemplateController extends Controller
         $templates = $getTemplatesUsecase->execute();
 
         return array_map(
-            fn (TemplateEntity $s) => [
+            fn(TemplateEntity $s) => [
                 'id' => $s->templateId()->value(),
                 'name' => $s->name()->value(),
             ],
@@ -48,7 +48,7 @@ class TemplateController extends Controller
             'id' => $template->templateId()->value(),
             'name' => $template->name()->value(),
             'details' => array_map(
-                fn (TemplateDetailEntity $d) => [
+                fn(TemplateDetailEntity $d) => [
                     'seq' => $d->seq(),
                     'type' => $d->type()->value(),
                     'amount' => $d->amount()->value(),
@@ -181,8 +181,8 @@ class TemplateController extends Controller
                 }
             } elseif ($type === 2) {
                 // 予算移動
-                if ($amount <= 0) {
-                    throw new AppException(ErrorCode::INVALID_RANGE, "details.{$i}.amount must be positive");
+                if ($amount < 0) {
+                    throw new AppException(ErrorCode::INVALID_RANGE, "details.{$i}.amount must not be negative");
                 }
                 if (!is_null($purposeElementId)) {
                     throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.purpose_element_id must be null");
@@ -204,8 +204,8 @@ class TemplateController extends Controller
                 }
             } else {
                 // 場所移動 (type === 3)
-                if ($amount <= 0) {
-                    throw new AppException(ErrorCode::INVALID_RANGE, "details.{$i}.amount must be positive");
+                if ($amount < 0) {
+                    throw new AppException(ErrorCode::INVALID_RANGE, "details.{$i}.amount must not be negative");
                 }
                 if (!is_null($purposeElementId)) {
                     throw new AppException(ErrorCode::INVALID_VALUE, "details.{$i}.purpose_element_id must be null");
