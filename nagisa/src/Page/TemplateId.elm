@@ -275,12 +275,8 @@ view model =
                 , Html.th [] [ Html.text "金額" ]
                 , Html.th [] [ Html.text "項目" ]
                 , Html.th [] [ Html.text "種類" ]
-                , Html.th [] [ Html.text "予算(収支)" ]
-                , Html.th [] [ Html.text "場所(収支)" ]
-                , Html.th [] [ Html.text "移動前予算" ]
-                , Html.th [] [ Html.text "移動後予算" ]
-                , Html.th [] [ Html.text "移動前場所" ]
-                , Html.th [] [ Html.text "移動後場所" ]
+                , Html.th [] [ Html.text "前" ]
+                , Html.th [] [ Html.text "後" ]
                 , Html.th [] []
                 ]
                 :: List.indexedMap (viewDetailRow (List.length model.details) model) model.details
@@ -315,48 +311,32 @@ viewDetailRow total model i d =
             ]
         , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value d.amount, onInput (InputDetailAmount i) ] [] ]
         , Html.td [] [ Html.input [ Attributes.type_ "text", Attributes.value d.item, onInput (InputDetailItem i) ] [] ]
-        , Html.td [] [ elementSelect model.kindElements d.kindElementId (InputDetailKindElementId i) ]
+        , Html.td []
+            (if type_ == 1 then
+                [ elementSelect model.kindElements d.kindElementId (InputDetailKindElementId i) ]
+
+             else
+                []
+            )
         , Html.td []
             (if type_ == 1 then
                 [ elementSelect model.purposeElements d.purposeElementId (InputDetailPurposeElementId i) ]
 
+             else if type_ == 2 then
+                [ elementSelect model.purposeElements d.moveBeforePurposeId (InputDetailMoveBeforePurposeId i) ]
+
              else
-                []
+                [ elementSelect model.placeElements d.moveBeforePlaceId (InputDetailMoveBeforePlaceId i) ]
             )
         , Html.td []
             (if type_ == 1 then
                 [ elementSelect model.placeElements d.placeElementId (InputDetailPlaceElementId i) ]
 
-             else
-                []
-            )
-        , Html.td []
-            (if type_ == 2 then
-                [ elementSelect model.purposeElements d.moveBeforePurposeId (InputDetailMoveBeforePurposeId i) ]
-
-             else
-                []
-            )
-        , Html.td []
-            (if type_ == 2 then
+             else if type_ == 2 then
                 [ elementSelect model.purposeElements d.moveAfterPurposeId (InputDetailMoveAfterPurposeId i) ]
 
              else
-                []
-            )
-        , Html.td []
-            (if type_ == 3 then
-                [ elementSelect model.placeElements d.moveBeforePlaceId (InputDetailMoveBeforePlaceId i) ]
-
-             else
-                []
-            )
-        , Html.td []
-            (if type_ == 3 then
                 [ elementSelect model.placeElements d.moveAfterPlaceId (InputDetailMoveAfterPlaceId i) ]
-
-             else
-                []
             )
         , Html.td []
             (if total > 1 then
