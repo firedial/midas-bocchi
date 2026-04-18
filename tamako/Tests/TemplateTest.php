@@ -290,10 +290,10 @@ class TemplateTest extends TestCase
         $this->assertPostDetail1Error(['kind_element_id' => null], 400, 'E109', 'kind_element_idがnull');
 
         // kind_element_id が文字列
-        $this->assertPostDetail1Error(['kind_element_id' => 'aaa'], 400, 'E101', 'kind_element_idが文字列');
+        $this->assertPostDetail1Error(['kind_element_id' => 'aaa'], 400, 'E109', 'kind_element_idが文字列');
 
         // kind_element_id が文字列数字
-        $this->assertPostDetail1Error(['kind_element_id' => '2'], 400, 'E101', 'kind_element_idが文字列数字');
+        $this->assertPostDetail1Error(['kind_element_id' => '2'], 400, 'E109', 'kind_element_idが文字列数字');
     }
 
     /**
