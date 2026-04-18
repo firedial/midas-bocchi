@@ -238,12 +238,42 @@ buildNewDetail d =
         (String.toInt d.amount |> Maybe.withDefault 0)
         d.item
         (String.toInt d.kindElementId |> Maybe.withDefault 0)
-        (if type_ == 1 then String.toInt d.purposeElementId else Nothing)
-        (if type_ == 1 then String.toInt d.placeElementId else Nothing)
-        (if type_ == 2 then String.toInt d.moveBeforePurposeId else Nothing)
-        (if type_ == 2 then String.toInt d.moveAfterPurposeId else Nothing)
-        (if type_ == 3 then String.toInt d.moveBeforePlaceId else Nothing)
-        (if type_ == 3 then String.toInt d.moveAfterPlaceId else Nothing)
+        (if type_ == 1 then
+            String.toInt d.purposeElementId
+
+         else
+            Nothing
+        )
+        (if type_ == 1 then
+            String.toInt d.placeElementId
+
+         else
+            Nothing
+        )
+        (if type_ == 2 then
+            String.toInt d.moveBeforePurposeId
+
+         else
+            Nothing
+        )
+        (if type_ == 2 then
+            String.toInt d.moveAfterPurposeId
+
+         else
+            Nothing
+        )
+        (if type_ == 3 then
+            String.toInt d.moveBeforePlaceId
+
+         else
+            Nothing
+        )
+        (if type_ == 3 then
+            String.toInt d.moveAfterPlaceId
+
+         else
+            Nothing
+        )
 
 
 elementSelect : List AttributeElementEntity.AttributeElement -> String -> (String -> Msg) -> Html.Html Msg
@@ -280,8 +310,12 @@ view model =
                 , Html.th [] []
                 ]
                 :: List.indexedMap (viewDetailRow (List.length model.details) model) model.details
+                ++ [ Html.tr []
+                        [ Html.td [] [ Html.button [ Attributes.class "edit-button", onClick AddDetail ] [ Html.text "明細追加" ] ]
+                        , Html.td [ Attributes.colspan 6 ] []
+                        ]
+                   ]
             )
-        , Html.button [ onClick AddDetail ] [ Html.text "+ 明細追加" ]
         , Html.div []
             (case model.id of
                 Nothing ->
@@ -339,10 +373,5 @@ viewDetailRow total model i d =
                 [ elementSelect model.placeElements d.moveAfterPlaceId (InputDetailMoveAfterPlaceId i) ]
             )
         , Html.td []
-            (if total > 1 then
-                [ Html.button [ onClick (RemoveDetail i) ] [ Html.text "-" ] ]
-
-             else
-                []
-            )
+            [ Html.button [ Attributes.class "delete-button", onClick (RemoveDetail i) ] [ Html.text "削除" ] ]
         ]
