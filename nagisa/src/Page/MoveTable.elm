@@ -76,10 +76,12 @@ view model =
                 , Html.th [] [ Html.text "移動前" ]
                 , Html.th [] [ Html.text "移動後" ]
                 , Html.th [] [ Html.text "日付" ]
+                , Html.th [] [ Html.text "グループID" ]
                 ]
                 :: Html.tr
                     []
                     [ Html.td [] [ Html.a [ Attributes.href createRouting ] [ Html.text "+" ] ]
+                    , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
                     , Html.td [] [ Html.text "" ]
@@ -95,6 +97,7 @@ view model =
                             , Html.td [] [ Html.text move.beforeDescription ]
                             , Html.td [] [ Html.text move.afterDescription ]
                             , Html.td [] [ Html.text move.date ]
+                            , Html.td [] [ Html.text (String.fromInt move.groupId) ]
                             ]
                     )
                     model.moves

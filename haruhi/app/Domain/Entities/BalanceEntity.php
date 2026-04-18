@@ -4,6 +4,7 @@ namespace App\Domain\Entities;
 
 use App\Domain\ValueObjects\BalanceId;
 use App\Domain\ValueObjects\Amount;
+use App\Domain\ValueObjects\GroupId;
 use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\KindElementId;
 use App\Domain\ValueObjects\PurposeElementId;
@@ -23,6 +24,7 @@ class BalanceEntity
         protected readonly PurposeElementId $purposeElementId,
         protected readonly PlaceElementId $placeElementId,
         protected readonly Date $date,
+        protected readonly GroupId $groupId,
         protected readonly ?Description $kindElementDescription = null,
         protected readonly ?Description $purposeElementDescription = null,
         protected readonly ?Description $placeElementDescription = null,
@@ -61,6 +63,11 @@ class BalanceEntity
     public function date(): Date
     {
         return $this->date;
+    }
+
+    public function groupId(): GroupId
+    {
+        return $this->groupId;
     }
 
     public function kindElementDescription(): Description

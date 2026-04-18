@@ -33,6 +33,7 @@ services:
             - DB_PASSWORD=$DB_MIDAS_API_PASSWORD
             - SANCTUM_STATEFUL_DOMAINS=$APP_DOMAIN
             - SESSION_DOMAIN=$APP_DOMAIN
+            - API_KEY=$API_KEY
         volumes:
             - ./haruhi:/var/www/html
     eru:

@@ -33,8 +33,6 @@ type Route
     | Salary
     | Bonus
     | CheckPlaceSum
-    | Login
-    | Logout
 
 
 parse : Url -> Maybe Route
@@ -73,8 +71,6 @@ routes =
         , Parser.map Salary (Parser.s "salary")
         , Parser.map Bonus (Parser.s "bonus")
         , Parser.map CheckPlaceSum (Parser.s "check_place_sum")
-        , Parser.map Login (Parser.s "login")
-        , Parser.map Logout (Parser.s "logout")
         ]
 
 
@@ -164,9 +160,3 @@ toPath route =
 
         CheckPlaceSum ->
             "/check_place_sum"
-
-        Login ->
-            "/login"
-
-        Logout ->
-            "/logout"

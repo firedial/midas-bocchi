@@ -17,7 +17,6 @@ type alias Model =
     { attributeElement : StringAttributeElement
     , attributeCategories : AttributeCategoryEntity.AttributeCategories
     , isDisabledEditButton : Bool
-    , xsrfToken : String
     , attributeName : AttributeValueObject.Attribute
     , id : Maybe Int
     , key : Navigation.Key
@@ -45,13 +44,12 @@ type Msg
     | ModifiedResult (Result Request.Error ())
 
 
-init : String -> Navigation.Key -> AttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
-init xsrfToken key attributeValueObject id =
+init : Navigation.Key -> AttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
+init key attributeValueObject id =
     ( Model
         (StringAttributeElement "" "" "" "")
         []
         False
-        xsrfToken
         attributeValueObject
         id
         key
@@ -137,22 +135,16 @@ update msg model =
                     AttributeElementEntity.NewAttributeElement
                         model.attributeElement.name
                         model.attributeElement.description
-                        (String.toInt
-                            model.attributeElement.priority
-                            |> Maybe.withDefault 0
-                        )
-                        (String.toInt
-                            model.attributeElement.categoryId
-                            |> Maybe.withDefault 0
-                        )
+                        (String.toInt model.attributeElement.priority |> Maybe.withDefault 0)
+                        (String.toInt model.attributeElement.categoryId |> Maybe.withDefault 0)
 
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postAttributeElement model.xsrfToken model.attributeName newAttributeElement ModifiedResult
+                            Request.postAttributeElement model.attributeName newAttributeElement ModifiedResult
 
                         Just id ->
-                            Request.putAttributeElement model.xsrfToken model.attributeName id newAttributeElement ModifiedResult
+                            Request.putAttributeElement model.attributeName id newAttributeElement ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 

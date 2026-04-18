@@ -14,8 +14,6 @@ import Page.ElementId
 import Page.ElementTable
 import Page.FixedBalance
 import Page.FixedBalanceId
-import Page.Login
-import Page.Logout
 import Page.MoveId
 import Page.MoveTable
 import Page.Salary
@@ -26,7 +24,7 @@ import Route
 import Url
 
 
-main : Program String Model Msg
+main : Program () Model Msg
 main =
     Browser.application
         { init = init
@@ -54,20 +52,17 @@ type Page
     | CheckPlaceSum Page.CheckPlaceSum.Model
     | TemplateTable Page.TemplateTable.Model
     | TemplateId Page.TemplateId.Model
-    | Login Page.Login.Model
-    | Logout Page.Logout.Model
 
 
 type alias Model =
     { key : Navigation.Key
     , page : Page
-    , xsrfToken : String
     }
 
 
-init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
-init xsrfToken url key =
-    Model key NotFound xsrfToken |> goTo (Route.parse url)
+init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
+init _ url key =
+    Model key NotFound |> goTo (Route.parse url)
 
 
 type Msg
@@ -87,8 +82,6 @@ type Msg
     | CheckPlaceSumMsg Page.CheckPlaceSum.Msg
     | TemplateTableMsg Page.TemplateTable.Msg
     | TemplateIdMsg Page.TemplateId.Msg
-    | LoginMsg Page.Login.Msg
-    | LogoutMsg Page.Logout.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -301,34 +294,6 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        LoginMsg pageMsg ->
-            case model.page of
-                Login pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.Login.update pageMsg pageModel
-                    in
-                    ( { model | page = Login newModel }
-                    , Cmd.map LoginMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
-        LogoutMsg pageMsg ->
-            case model.page of
-                Logout pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.Logout.update pageMsg pageModel
-                    in
-                    ( { model | page = Logout newModel }
-                    , Cmd.map LogoutMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
 
 view : Model -> Browser.Document Msg
 view model =
@@ -405,14 +370,6 @@ view model =
             TemplateId pageModel ->
                 Page.TemplateId.view pageModel
                     |> Html.map TemplateIdMsg
-
-            Login pageModel ->
-                Page.Login.view pageModel
-                    |> Html.map LoginMsg
-
-            Logout pageModel ->
-                Page.Logout.view pageModel
-                    |> Html.map LogoutMsg
         ]
     }
 
@@ -444,7 +401,7 @@ goTo maybeRoute model =
         Just Route.BalanceCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.BalanceId.init model.xsrfToken model.key Nothing
+                    Page.BalanceId.init model.key Nothing
             in
             ( { model | page = BalanceId newModel }
             , Cmd.map BalanceIdMsg newCmd
@@ -453,7 +410,7 @@ goTo maybeRoute model =
         Just (Route.BalanceId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.BalanceId.init model.xsrfToken model.key (Just id)
+                    Page.BalanceId.init model.key (Just id)
             in
             ( { model | page = BalanceId newModel }
             , Cmd.map BalanceIdMsg newCmd
@@ -462,7 +419,7 @@ goTo maybeRoute model =
         Just Route.FixedBalance ->
             let
                 ( newModel, newCmd ) =
-                    Page.FixedBalance.init model.xsrfToken
+                    Page.FixedBalance.init
             in
             ( { model | page = FixedBalance newModel }
             , Cmd.map FixedBalanceMsg newCmd
@@ -471,7 +428,7 @@ goTo maybeRoute model =
         Just Route.FixedBalanceCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.FixedBalanceId.init model.xsrfToken model.key Nothing
+                    Page.FixedBalanceId.init model.key Nothing
             in
             ( { model | page = FixedBalanceId newModel }
             , Cmd.map FixedBalanceIdMsg newCmd
@@ -480,7 +437,7 @@ goTo maybeRoute model =
         Just (Route.FixedBalanceId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.FixedBalanceId.init model.xsrfToken model.key (Just id)
+                    Page.FixedBalanceId.init model.key (Just id)
             in
             ( { model | page = FixedBalanceId newModel }
             , Cmd.map FixedBalanceIdMsg newCmd
@@ -507,7 +464,7 @@ goTo maybeRoute model =
         Just Route.PurposeMoveCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Purpose Nothing
+                    Page.MoveId.init model.key MoveAttributeValueObject.Purpose Nothing
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -516,7 +473,7 @@ goTo maybeRoute model =
         Just Route.PlaceMoveCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Place Nothing
+                    Page.MoveId.init model.key MoveAttributeValueObject.Place Nothing
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -525,7 +482,7 @@ goTo maybeRoute model =
         Just (Route.PurposeMoveId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Purpose (Just id)
+                    Page.MoveId.init model.key MoveAttributeValueObject.Purpose (Just id)
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -534,7 +491,7 @@ goTo maybeRoute model =
         Just (Route.PlaceMoveId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.MoveId.init model.xsrfToken model.key MoveAttributeValueObject.Place (Just id)
+                    Page.MoveId.init model.key MoveAttributeValueObject.Place (Just id)
             in
             ( { model | page = MoveId newModel }
             , Cmd.map MoveIdMsg newCmd
@@ -570,7 +527,7 @@ goTo maybeRoute model =
         Just Route.KindElementCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.xsrfToken model.key AttributeValueObject.Kind Nothing
+                    Page.ElementId.init model.key AttributeValueObject.Kind Nothing
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -579,7 +536,7 @@ goTo maybeRoute model =
         Just Route.PurposeElementCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.xsrfToken model.key AttributeValueObject.Purpose Nothing
+                    Page.ElementId.init model.key AttributeValueObject.Purpose Nothing
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -588,7 +545,7 @@ goTo maybeRoute model =
         Just Route.PlaceElementCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.xsrfToken model.key AttributeValueObject.Place Nothing
+                    Page.ElementId.init model.key AttributeValueObject.Place Nothing
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -597,7 +554,7 @@ goTo maybeRoute model =
         Just (Route.KindElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.xsrfToken model.key AttributeValueObject.Kind (Just id)
+                    Page.ElementId.init model.key AttributeValueObject.Kind (Just id)
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -606,7 +563,7 @@ goTo maybeRoute model =
         Just (Route.PurposeElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.xsrfToken model.key AttributeValueObject.Purpose (Just id)
+                    Page.ElementId.init model.key AttributeValueObject.Purpose (Just id)
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -615,7 +572,7 @@ goTo maybeRoute model =
         Just (Route.PlaceElementId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.ElementId.init model.xsrfToken model.key AttributeValueObject.Place (Just id)
+                    Page.ElementId.init model.key AttributeValueObject.Place (Just id)
             in
             ( { model | page = ElementId newModel }
             , Cmd.map ElementIdMsg newCmd
@@ -651,7 +608,7 @@ goTo maybeRoute model =
         Just Route.Salary ->
             let
                 ( newModel, newCmd ) =
-                    Page.Salary.init model.xsrfToken model.key
+                    Page.Salary.init model.key
             in
             ( { model | page = Salary newModel }
             , Cmd.map SalaryMsg newCmd
@@ -660,7 +617,7 @@ goTo maybeRoute model =
         Just Route.Bonus ->
             let
                 ( newModel, newCmd ) =
-                    Page.Bonus.init model.xsrfToken model.key
+                    Page.Bonus.init model.key
             in
             ( { model | page = Bonus newModel }
             , Cmd.map BonusMsg newCmd
@@ -669,26 +626,8 @@ goTo maybeRoute model =
         Just Route.CheckPlaceSum ->
             let
                 ( newModel, newCmd ) =
-                    Page.CheckPlaceSum.init model.xsrfToken model.key
+                    Page.CheckPlaceSum.init model.key
             in
             ( { model | page = CheckPlaceSum newModel }
             , Cmd.map CheckPlaceSumMsg newCmd
-            )
-
-        Just Route.Login ->
-            let
-                ( newModel, newCmd ) =
-                    Page.Login.init model.xsrfToken model.key
-            in
-            ( { model | page = Login newModel }
-            , Cmd.map LoginMsg newCmd
-            )
-
-        Just Route.Logout ->
-            let
-                ( newModel, newCmd ) =
-                    Page.Logout.init model.xsrfToken model.key
-            in
-            ( { model | page = Logout newModel }
-            , Cmd.map LogoutMsg newCmd
             )

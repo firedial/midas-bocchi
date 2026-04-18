@@ -19,7 +19,6 @@ type alias Model =
     , kindElements : AttributeElementEntity.AttributeElements
     , purposeElements : AttributeElementEntity.AttributeElements
     , placeElements : AttributeElementEntity.AttributeElements
-    , xsrfToken : String
     , id : Maybe Int
     , enableInputDeleteString : Bool
     , deleteString : String
@@ -53,20 +52,13 @@ type Msg
     | ModifiedResult (Result Request.Error ())
 
 
-init : String -> Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
-init xsrfToken key id =
+init : Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
+init key id =
     ( Model
-        (StringFixedBalance
-            ""
-            ""
-            ""
-            ""
-            ""
-        )
+        (StringFixedBalance "" "" "" "" "")
         []
         []
         []
-        xsrfToken
         id
         False
         ""
@@ -184,10 +176,10 @@ update msg model =
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postFixedBalance model.xsrfToken newFixedBalance ModifiedResult
+                            Request.postFixedBalance newFixedBalance ModifiedResult
 
                         Just id ->
-                            Request.putFixedBalance model.xsrfToken id newFixedBalance ModifiedResult
+                            Request.putFixedBalance id newFixedBalance ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
@@ -196,7 +188,7 @@ update msg model =
 
         Delete id ->
             if model.deleteString == "delete" then
-                ( model, Request.deleteFixedBalance model.xsrfToken id ModifiedResult )
+                ( model, Request.deleteFixedBalance id ModifiedResult )
 
             else
                 ( { model | enableInputDeleteString = True }, Cmd.none )

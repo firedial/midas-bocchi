@@ -17,7 +17,6 @@ import String
 type alias Model =
     { move : StringMove
     , attributeElements : AttributeElementEntity.AttributeElements
-    , xsrfToken : String
     , moveAttributeName : MoveAttributeValueObject.Attribute
     , id : Maybe Int
     , enableInputDeleteString : Bool
@@ -34,6 +33,7 @@ type alias StringMove =
     , beforeId : String
     , afterId : String
     , date : String
+    , groupId : String
     }
 
 
@@ -43,6 +43,7 @@ type Msg
     | InputBeforeElementId String
     | InputAfterElementId String
     | InputDate String
+    | InputGroupId String
     | GetMove (Result Request.Error MoveEntity.Move)
     | GetAttributeElements (Result Request.Error AttributeElementEntity.AttributeElements)
     | Upsert
@@ -52,8 +53,8 @@ type Msg
     | ModifiedResult (Result Request.Error ())
 
 
-init : String -> Navigation.Key -> MoveAttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
-init xsrfToken key moveAttributeValueObject id =
+init : Navigation.Key -> MoveAttributeValueObject.Attribute -> Maybe Int -> ( Model, Cmd Msg )
+init key moveAttributeValueObject id =
     let
         attributeValueObject =
             case moveAttributeValueObject of
@@ -64,9 +65,8 @@ init xsrfToken key moveAttributeValueObject id =
                     AttributeValueObject.Place
     in
     ( Model
-        (StringMove "" "" "" "" "")
+        (StringMove "" "" "" "" "" "")
         []
-        xsrfToken
         moveAttributeValueObject
         id
         False
@@ -126,6 +126,13 @@ update msg model =
             in
             ( { model | move = { newMove | date = date } }, Cmd.none )
 
+        InputGroupId groupId ->
+            let
+                newMove =
+                    model.move
+            in
+            ( { model | move = { newMove | groupId = groupId } }, Cmd.none )
+
         GetMove result ->
             case result of
                 Ok move ->
@@ -137,6 +144,7 @@ update msg model =
                                 (String.fromInt move.beforeId)
                                 (String.fromInt move.afterId)
                                 move.date
+                                (String.fromInt move.groupId)
                     in
                     ( { model | move = stringMove }, Cmd.none )
 
@@ -161,28 +169,20 @@ update msg model =
             let
                 newMove =
                     MoveEntity.NewMove
-                        (String.toInt
-                            model.move.amount
-                            |> Maybe.withDefault 0
-                        )
+                        (String.toInt model.move.amount |> Maybe.withDefault 0)
                         model.move.item
-                        (String.toInt
-                            model.move.beforeId
-                            |> Maybe.withDefault 0
-                        )
-                        (String.toInt
-                            model.move.afterId
-                            |> Maybe.withDefault 0
-                        )
+                        (String.toInt model.move.beforeId |> Maybe.withDefault 0)
+                        (String.toInt model.move.afterId |> Maybe.withDefault 0)
                         model.move.date
+                        (String.toInt model.move.groupId)
 
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postMove model.xsrfToken model.moveAttributeName newMove ModifiedResult
+                            Request.postMove model.moveAttributeName newMove ModifiedResult
 
                         Just id ->
-                            Request.putMove model.xsrfToken model.moveAttributeName id newMove ModifiedResult
+                            Request.putMove model.moveAttributeName id newMove ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 
@@ -200,7 +200,7 @@ update msg model =
 
         Delete moveId ->
             if model.deleteString == "delete" then
-                ( model, Request.deleteMove model.xsrfToken model.moveAttributeName moveId ModifiedResult )
+                ( model, Request.deleteMove model.moveAttributeName moveId ModifiedResult )
 
             else
                 ( { model | enableInputDeleteString = True }, Cmd.none )
@@ -242,6 +242,7 @@ view model =
                 , Html.th [] [ Html.text "移動前" ]
                 , Html.th [] [ Html.text "移動後" ]
                 , Html.th [] [ Html.text "日付" ]
+                , Html.th [] [ Html.text "グループID" ]
                 ]
             , Html.tr []
                 [ Html.td []
@@ -283,6 +284,9 @@ view model =
                         )
                     ]
                 , Html.td [] [ Html.input [ Attributes.type_ "date", Attributes.value model.move.date, onInput InputDate ] [] ]
+                , Html.td []
+                    [ Html.input [ Attributes.type_ "text", Attributes.value model.move.groupId, onInput InputGroupId ] []
+                    ]
                 ]
             ]
         , Html.div []

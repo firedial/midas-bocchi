@@ -699,6 +699,29 @@ class MoveTest extends TestCase
     }
 
     /**
+     * 移動登録バリデーションエラーテスト（グループID不正）
+     */
+    public function testMovePostGroupIdInvalid(): void
+    {
+        $this->assertPostErrorForAll(['group_id' => 0], 400, 'E102', 'group_idが0');
+        $this->assertPostErrorForAll(['group_id' => ''], 400, 'E101', 'group_idが空文字列');
+        $this->assertPostErrorForAll(['group_id' => 'aaa'], 400, 'E101', 'group_idが文字列');
+        $this->assertPostErrorForAll(['group_id' => '5'], 400, 'E101', 'group_idが文字列数字');
+    }
+
+    /**
+     * 移動更新バリデーションエラーテスト（グループID不正）
+     */
+    public function testMovePutGroupIdInvalid(): void
+    {
+        $this->assertPutErrorUnsetForAll('group_id', 400, 'E109', 'group_idがない');
+        $this->assertPutErrorForAll(['group_id' => null], 400, 'E101', 'group_idがnull');
+        $this->assertPutErrorForAll(['group_id' => 0], 400, 'E102', 'group_idが0');
+        $this->assertPutErrorForAll(['group_id' => ''], 400, 'E101', 'group_idが文字列');
+        $this->assertPutErrorForAll(['group_id' => '5'], 400, 'E101', 'group_idが文字列数字');
+    }
+
+    /**
      * 認証なし
      */
     public function testMoveWithoutAuth(): void
@@ -736,6 +759,7 @@ class MoveTest extends TestCase
             'before_id' => 2,
             'after_id' => 3,
             'date' => '2024-10-23',
+            'group_id' => 2,
         ];
     }
 
@@ -759,6 +783,7 @@ class MoveTest extends TestCase
         Assert::assertSame($expected['date'], $move['date'], "{$prefix}の date");
         Assert::assertSame($expected['before_id'], $move['before_id'], "{$prefix}の before_id");
         Assert::assertSame($expected['after_id'], $move['after_id'], "{$prefix}の after_id");
+        Assert::assertSame($expected['group_id'] ?? null, $move['group_id'], "{$prefix}の group_id");
     }
 
     /**
@@ -773,6 +798,7 @@ class MoveTest extends TestCase
             'before_id' => 4,
             'after_id' => 5,
             'date' => '2024-11-01',
+            'group_id' => 5,
         ];
 
         // 登録

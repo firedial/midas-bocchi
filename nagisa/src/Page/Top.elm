@@ -29,8 +29,7 @@ view : Model -> Html.Html Msg
 view _ =
     Html.div []
         [ Html.ul [ Attributes.class "box" ]
-            [ getItem Route.Login "ログイン" "image/door-open.svg"
-            , getItem Route.BalanceTable "収支表" "image/table.svg"
+            [ getItem Route.BalanceTable "収支表" "image/table.svg"
             , getItem Route.PurposeMoveTable "予算移動" "image/arrow-left-right.svg"
             , getItem Route.PlaceMoveTable "場所移動" "image/arrow-left-right.svg"
             , getItem Route.KindElementTable "種別" "image/layout-sidebar.svg"
@@ -40,7 +39,6 @@ view _ =
             , getItem Route.Bonus "賞与入力" "image/cash-coin.svg"
             , getItem Route.FixedBalance "固定入力" "image/calendar3.svg"
             , getItem Route.CheckPlaceSum "金額チェック" "image/check-circle.svg"
-            , getItem Route.Logout "ログアウト" "image/door-closed.svg"
             ]
         ]
 

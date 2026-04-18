@@ -10,6 +10,7 @@ use App\Domain\ValueObjects\Attribute;
 use App\Domain\ValueObjects\AttributeElementId;
 use App\Domain\ValueObjects\Date;
 use App\Domain\ValueObjects\Description;
+use App\Domain\ValueObjects\GroupId;
 use App\Domain\ValueObjects\Item;
 use App\Domain\ValueObjects\KindElementId;
 use App\Domain\ValueObjects\MoveId;
@@ -83,6 +84,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $beforeElementId,
                 $afterElementId,
                 new Date($before->date),
+                GroupId::filledId($before->group_id),
                 beforeDescription: $beforeElementDescription,
                 afterDescription: $afterElementDescription,
             );
@@ -154,6 +156,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
             $beforeElementId,
             $afterElementId,
             new Date($before->date),
+            GroupId::filledId($before->group_id),
             beforeDescription: $beforeElementDescription,
             afterDescription: $afterElementDescription,
         );
@@ -197,6 +200,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $beforePurposeElementId->value(),
                 $beforePlaceElementId->value(),
                 $move->date()->value(),
+                $move->groupId()->isEmpty() ? null : $move->groupId()->value(),
             );
 
             $afterBalance = BalanceDataModel::insertBalance(
@@ -206,6 +210,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $afterPurposeElementId->value(),
                 $afterPlaceElementId->value(),
                 $move->date()->value(),
+                $move->groupId()->isEmpty() ? $beforeBalance->id : $move->groupId()->value(),
             );
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Insert move error.');
@@ -231,6 +236,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             },
             new Date($beforeBalance->date),
+            GroupId::filledId($beforeBalance->group_id),
         );
     }
 
@@ -273,6 +279,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $beforePurposeElementId->value(),
                 $beforePlaceElementId->value(),
                 $move->date()->value(),
+                $move->groupId()->value(),
             );
 
             $afterBalance = BalanceDataModel::updateBalance(
@@ -283,6 +290,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 $afterPurposeElementId->value(),
                 $afterPlaceElementId->value(),
                 $move->date()->value(),
+                $move->groupId()->value(),
             );
         } catch (QueryException $e) {
             self::handleQueryException($e, 'Update move error.');
@@ -303,6 +311,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             },
             new Date($beforeBalance->date),
+            GroupId::filledId($beforeBalance->group_id),
         );
     }
 
@@ -330,6 +339,7 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
                 default => throw new AppException(ErrorCode::UNEXPECTED_ATTRIBUTE_NAME, 'Attribute name is wrong.'),
             },
             new Date($beforeBalance->date),
+            GroupId::filledId($beforeBalance->group_id),
         );
     }
 }

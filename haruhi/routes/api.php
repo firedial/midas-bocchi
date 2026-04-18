@@ -21,10 +21,7 @@ use App\Exceptions\ErrorCode;
 |
 */
 
-Route::post('/login', ['as' => 'login', 'uses' => 'App\Http\Controllers\LoginController@login']);
-Route::post('/logout', 'App\Http\Controllers\LoginController@logout');
-
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('check_api_key')->group(function () {
     Route::apiResource('/balances', BalanceController::class);
     Route::apiResource('/fixed_balances', FixedBalanceController::class);
     Route::apiResource('/templates', TemplateController::class);
