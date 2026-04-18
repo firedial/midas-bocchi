@@ -309,7 +309,7 @@ view model =
                 , Html.th [] [ Html.text "後" ]
                 , Html.th [] []
                 ]
-                :: List.indexedMap (viewDetailRow (List.length model.details) model) model.details
+                :: List.indexedMap (viewDetailRow model) model.details
                 ++ [ Html.tr []
                         [ Html.td [] [ Html.button [ Attributes.class "edit-button", onClick AddDetail ] [ Html.text "明細追加" ] ]
                         , Html.td [ Attributes.colspan 6 ] []
@@ -329,8 +329,8 @@ view model =
         ]
 
 
-viewDetailRow : Int -> Model -> Int -> StringDetail -> Html.Html Msg
-viewDetailRow total model i d =
+viewDetailRow : Model -> Int -> StringDetail -> Html.Html Msg
+viewDetailRow model i d =
     let
         type_ =
             String.toInt d.type_ |> Maybe.withDefault 1
