@@ -115,7 +115,7 @@ CREATE TABLE m_template_detail (
     type TINYINT NOT NULL,
     amount INT NOT NULL,
     item VARCHAR(50) NOT NULL,
-    kind_element_id BIGINT UNSIGNED NOT NULL,
+    kind_element_id BIGINT UNSIGNED NULL,
     purpose_element_id BIGINT UNSIGNED NULL,
     place_element_id BIGINT UNSIGNED NULL,
     move_before_purpose_id BIGINT UNSIGNED NULL,

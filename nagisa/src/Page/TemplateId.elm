@@ -222,7 +222,7 @@ detailToString d =
         (String.fromInt d.type_)
         (String.fromInt d.amount)
         d.item
-        (String.fromInt d.kindElementId)
+        (d.kindElementId |> Maybe.map String.fromInt |> Maybe.withDefault "")
         (d.purposeElementId |> Maybe.map String.fromInt |> Maybe.withDefault "")
         (d.placeElementId |> Maybe.map String.fromInt |> Maybe.withDefault "")
         (d.moveBeforePurposeId |> Maybe.map String.fromInt |> Maybe.withDefault "")
@@ -241,7 +241,12 @@ buildNewDetail d =
         type_
         (String.toInt d.amount |> Maybe.withDefault 0)
         d.item
-        (String.toInt d.kindElementId |> Maybe.withDefault 0)
+        (if type_ == 1 then
+            String.toInt d.kindElementId
+
+         else
+            Nothing
+        )
         (if type_ == 1 then
             String.toInt d.purposeElementId
 

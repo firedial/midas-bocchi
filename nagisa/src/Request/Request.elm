@@ -336,7 +336,7 @@ getTemplate id toMsg =
                 |> required "type" D.int
                 |> required "amount" D.int
                 |> required "item" D.string
-                |> required "kind_element_id" D.int
+                |> required "kind_element_id" (D.nullable D.int)
                 |> required "purpose_element_id" (D.nullable D.int)
                 |> required "place_element_id" (D.nullable D.int)
                 |> required "move_before_purpose_id" (D.nullable D.int)
@@ -364,7 +364,7 @@ postTemplate newTemplate toMsg =
                 ([ ( "type", E.int d.type_ )
                  , ( "amount", E.int d.amount )
                  , ( "item", E.string d.item )
-                 , ( "kind_element_id", E.int d.kindElementId )
+                 , ( "kind_element_id", encodeMaybeInt d.kindElementId )
                  , ( "purpose_element_id", encodeMaybeInt d.purposeElementId )
                  , ( "place_element_id", encodeMaybeInt d.placeElementId )
                  , ( "move_before_purpose_id", encodeMaybeInt d.moveBeforePurposeId )
@@ -391,7 +391,7 @@ putTemplate id newTemplate toMsg =
                 [ ( "type", E.int d.type_ )
                 , ( "amount", E.int d.amount )
                 , ( "item", E.string d.item )
-                , ( "kind_element_id", E.int d.kindElementId )
+                , ( "kind_element_id", encodeMaybeInt d.kindElementId )
                 , ( "purpose_element_id", encodeMaybeInt d.purposeElementId )
                 , ( "place_element_id", encodeMaybeInt d.placeElementId )
                 , ( "move_before_purpose_id", encodeMaybeInt d.moveBeforePurposeId )

@@ -53,7 +53,7 @@ class TemplateController extends Controller
                     'type' => $d->type()->value(),
                     'amount' => $d->amount()->value(),
                     'item' => $d->item()->value(),
-                    'kind_element_id' => $d->kindElementId()->value(),
+                    'kind_element_id' => $d->kindElementId()?->value(),
                     'purpose_element_id' => $d->purposeElementId()?->value(),
                     'place_element_id' => $d->placeElementId()?->value(),
                     'move_before_purpose_id' => $d->moveBeforePurposeId()?->value(),
@@ -119,7 +119,6 @@ class TemplateController extends Controller
                 'details.*.type' => ['required', new StrictInteger, 'in:1,2,3'],
                 'details.*.amount' => ['required', new StrictInteger],
                 'details.*.item' => 'required|string|max:50',
-                'details.*.kind_element_id' => ['required', new StrictInteger],
             ]);
         } catch (ValidationException $e) {
             $failed = $e->validator->failed();
@@ -152,6 +151,7 @@ class TemplateController extends Controller
         foreach ($validated['details'] as $i => $detail) {
             $type = $detail['type'];
             $amount = $detail['amount'];
+            $kindElementId = $request->input("details.{$i}.kind_element_id");
             $purposeElementId = $request->input("details.{$i}.purpose_element_id");
             $placeElementId = $request->input("details.{$i}.place_element_id");
             $moveBeforePurposeId = $request->input("details.{$i}.move_before_purpose_id");
@@ -161,6 +161,9 @@ class TemplateController extends Controller
 
             if ($type === 1) {
                 // 収支
+                if (!is_int($kindElementId)) {
+                    throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.kind_element_id is required");
+                }
                 if (!is_int($purposeElementId)) {
                     throw new AppException(ErrorCode::MISSING_REQUIRED, "details.{$i}.purpose_element_id is required");
                 }
@@ -232,7 +235,7 @@ class TemplateController extends Controller
                 type: new TemplateDetailType($type),
                 amount: new Amount($amount),
                 item: new Item($detail['item']),
-                kindElementId: KindElementId::filledId($detail['kind_element_id']),
+                kindElementId: is_null($kindElementId) ? null : KindElementId::filledId($kindElementId),
                 purposeElementId: is_null($purposeElementId) ? null : PurposeElementId::filledId($purposeElementId),
                 placeElementId: is_null($placeElementId) ? null : PlaceElementId::filledId($placeElementId),
                 moveBeforePurposeId: is_null($moveBeforePurposeId) ? null : PurposeElementId::filledId($moveBeforePurposeId),

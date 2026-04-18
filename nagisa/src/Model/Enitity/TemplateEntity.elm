@@ -16,7 +16,7 @@ type alias TemplateDetail =
     , type_ : Int
     , amount : Int
     , item : String
-    , kindElementId : Int
+    , kindElementId : Maybe Int
     , purposeElementId : Maybe Int
     , placeElementId : Maybe Int
     , moveBeforePurposeId : Maybe Int
@@ -36,7 +36,7 @@ type alias NewTemplateDetail =
     { type_ : Int
     , amount : Int
     , item : String
-    , kindElementId : Int
+    , kindElementId : Maybe Int
     , purposeElementId : Maybe Int
     , placeElementId : Maybe Int
     , moveBeforePurposeId : Maybe Int

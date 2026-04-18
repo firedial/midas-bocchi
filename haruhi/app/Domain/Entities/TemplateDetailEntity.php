@@ -16,7 +16,7 @@ class TemplateDetailEntity
         protected readonly TemplateDetailType $type,
         protected readonly Amount $amount,
         protected readonly Item $item,
-        protected readonly KindElementId $kindElementId,
+        protected readonly ?KindElementId $kindElementId,
         protected readonly ?PurposeElementId $purposeElementId,
         protected readonly ?PlaceElementId $placeElementId,
         protected readonly ?PurposeElementId $moveBeforePurposeId,
@@ -45,7 +45,7 @@ class TemplateDetailEntity
         return $this->item;
     }
 
-    public function kindElementId(): KindElementId
+    public function kindElementId(): ?KindElementId
     {
         return $this->kindElementId;
     }

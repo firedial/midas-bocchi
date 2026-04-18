@@ -394,7 +394,7 @@ postFirstDetail templateId date ( idx, amount, detail ) remaining =
             Request.postBalanceGetGroupId
                 (BalanceEntity.NewBalance amount
                     detail.item
-                    detail.kindElementId
+                    (detail.kindElementId |> Maybe.withDefault 0)
                     (detail.purposeElementId |> Maybe.withDefault 0)
                     (detail.placeElementId |> Maybe.withDefault 0)
                     date
@@ -446,7 +446,7 @@ postSubsequentDetail templateId groupId date idx amount detail remaining =
             Request.postBalance
                 (BalanceEntity.NewBalance amount
                     detail.item
-                    detail.kindElementId
+                    (detail.kindElementId |> Maybe.withDefault 0)
                     (detail.purposeElementId |> Maybe.withDefault 0)
                     (detail.placeElementId |> Maybe.withDefault 0)
                     date
