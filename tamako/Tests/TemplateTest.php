@@ -344,15 +344,18 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * 明細 type=2 amount は正の値でなければならないテスト
+     * 明細 type=2 amount は0以上でなければならないテスト
      */
-    public function testTemplateDetailType2AmountMustBePositive(): void
+    public function testTemplateDetailType2AmountMustBeNonNegative(): void
     {
-        // amount が0
-        $this->assertPostDetail2Error(['amount' => 0], 400, 'E102', 'type=2でamountが0');
-
         // amount がマイナス
         $this->assertPostDetail2Error(['amount' => -1], 400, 'E102', 'type=2でamountがマイナス');
+
+        // amount が0 (正常系)
+        $template = $this->validTemplate();
+        $template['details'] = [array_merge($this->validDetail2(), ['amount' => 0])];
+        $response = $this->request->post('/templates', $template);
+        Assert::assertStatusCode200($response->statusCode());
     }
 
     /**
@@ -404,15 +407,18 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * 明細 type=3 amount は正の値でなければならないテスト
+     * 明細 type=3 amount は0以上でなければならないテスト
      */
-    public function testTemplateDetailType3AmountMustBePositive(): void
+    public function testTemplateDetailType3AmountMustBeNonNegative(): void
     {
-        // amount が0
-        $this->assertPostDetail3Error(['amount' => 0], 400, 'E102', 'type=3でamountが0');
-
         // amount がマイナス
         $this->assertPostDetail3Error(['amount' => -1], 400, 'E102', 'type=3でamountがマイナス');
+
+        // amount が0 (正常系)
+        $template = $this->validTemplate();
+        $template['details'] = [array_merge($this->validDetail3(), ['amount' => 0])];
+        $response = $this->request->post('/templates', $template);
+        Assert::assertStatusCode200($response->statusCode());
     }
 
     /**
