@@ -590,7 +590,7 @@ goTo maybeRoute model =
         Just Route.TemplateCreate ->
             let
                 ( newModel, newCmd ) =
-                    Page.TemplateId.init model.xsrfToken model.key Nothing
+                    Page.TemplateId.init model.key Nothing
             in
             ( { model | page = TemplateId newModel }
             , Cmd.map TemplateIdMsg newCmd
@@ -599,7 +599,7 @@ goTo maybeRoute model =
         Just (Route.TemplateId id) ->
             let
                 ( newModel, newCmd ) =
-                    Page.TemplateId.init model.xsrfToken model.key (Just id)
+                    Page.TemplateId.init model.key (Just id)
             in
             ( { model | page = TemplateId newModel }
             , Cmd.map TemplateIdMsg newCmd

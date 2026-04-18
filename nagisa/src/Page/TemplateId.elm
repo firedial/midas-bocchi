@@ -35,7 +35,6 @@ type alias Model =
     , purposeElements : AttributeElementEntity.AttributeElements
     , placeElements : AttributeElementEntity.AttributeElements
     , id : Maybe Int
-    , xsrfToken : String
     , key : Navigation.Key
     , isDisabledEditButton : Bool
     , errorMessage : Maybe String
@@ -68,9 +67,9 @@ type Msg
     | ModifiedResult (Result Request.Error ())
 
 
-init : String -> Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
-init xsrfToken key id =
-    ( Model "" [ emptyDetail ] [] [] [] id xsrfToken key False Nothing
+init : Navigation.Key -> Maybe Int -> ( Model, Cmd Msg )
+init key id =
+    ( Model "" [ emptyDetail ] [] [] [] id key False Nothing
     , Cmd.batch
         ([ Request.getAttributeElements AttributeValueObject.Kind (GetAttributeElements AttributeValueObject.Kind)
          , Request.getAttributeElements AttributeValueObject.Purpose (GetAttributeElements AttributeValueObject.Purpose)
@@ -191,10 +190,10 @@ update msg model =
                 cmd =
                     case model.id of
                         Nothing ->
-                            Request.postTemplate model.xsrfToken newTemplate ModifiedResult
+                            Request.postTemplate newTemplate ModifiedResult
 
                         Just id ->
-                            Request.putTemplate model.xsrfToken id newTemplate ModifiedResult
+                            Request.putTemplate id newTemplate ModifiedResult
             in
             ( { model | isDisabledEditButton = True, errorMessage = Nothing }, cmd )
 

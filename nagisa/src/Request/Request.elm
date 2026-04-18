@@ -321,8 +321,8 @@ getTemplate id toMsg =
     BaseRequest.get ("/api/templates/" ++ String.fromInt id) decodeResponse (toMsg << Result.mapError mapError)
 
 
-postTemplate : String -> TemplateEntity.NewTemplate -> (Result Error () -> msg) -> Cmd msg
-postTemplate xsrfToken newTemplate toMsg =
+postTemplate : TemplateEntity.NewTemplate -> (Result Error () -> msg) -> Cmd msg
+postTemplate newTemplate toMsg =
     let
         encodeDetail d =
             E.object
@@ -345,11 +345,11 @@ postTemplate xsrfToken newTemplate toMsg =
                 , ( "details", E.list encodeDetail newTemplate.details )
                 ]
     in
-    BaseRequest.post xsrfToken "/api/templates" encoded (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.post "/api/templates" encoded (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-putTemplate : String -> Int -> TemplateEntity.NewTemplate -> (Result Error () -> msg) -> Cmd msg
-putTemplate xsrfToken id newTemplate toMsg =
+putTemplate : Int -> TemplateEntity.NewTemplate -> (Result Error () -> msg) -> Cmd msg
+putTemplate id newTemplate toMsg =
     let
         encodeDetail d =
             E.object
@@ -371,12 +371,12 @@ putTemplate xsrfToken id newTemplate toMsg =
                 , ( "details", E.list encodeDetail newTemplate.details )
                 ]
     in
-    BaseRequest.put xsrfToken ("/api/templates/" ++ String.fromInt id) encoded (D.succeed ()) (toMsg << Result.mapError mapError)
+    BaseRequest.put ("/api/templates/" ++ String.fromInt id) encoded (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
-deleteTemplate : String -> Int -> (Result Error () -> msg) -> Cmd msg
-deleteTemplate xsrfToken templateId toMsg =
-    BaseRequest.delete xsrfToken ("/api/templates/" ++ String.fromInt templateId) (D.succeed ()) (toMsg << Result.mapError mapError)
+deleteTemplate : Int -> (Result Error () -> msg) -> Cmd msg
+deleteTemplate templateId toMsg =
+    BaseRequest.delete ("/api/templates/" ++ String.fromInt templateId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getAttributeElement : AttributeValueObject.Attribute -> Int -> (Result Error AttributeElementEntity.AttributeElement -> msg) -> Cmd msg
