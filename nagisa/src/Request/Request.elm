@@ -3,6 +3,7 @@ module Request.Request exposing
     , deleteBalance
     , deleteFixedBalance
     , deleteMove
+    , deleteTemplate
     , getAttributeCategories
     , getAttributeElement
     , getAttributeElements
@@ -12,17 +13,23 @@ module Request.Request exposing
     , getFixedBalances
     , getMove
     , getMoves
+    , getTemplate
+    , getTemplates
     , postAttributeElement
     , postBalance
+    , postBalanceGetGroupId
     , postBonus
     , postCheckPlaceSum
     , postFixedBalance
     , postMove
+    , postMoveGetGroupId
     , postSalary
+    , postTemplate
     , putAttributeElement
     , putBalance
     , putFixedBalance
     , putMove
+    , putTemplate
     )
 
 import Json.Decode as D
@@ -32,6 +39,7 @@ import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.BalanceEntity as BalanceEntity
 import Model.Enitity.FixedBalanceEntity as FixedBalanceEntity
 import Model.Enitity.MoveEntity as MoveEntity
+import Model.Enitity.TemplateEntity as TemplateEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Request.BaseRequest as BaseRequest
@@ -119,6 +127,23 @@ putBalance id balance toMsg =
                 ]
     in
     BaseRequest.put ("/api/balances/" ++ String.fromInt id) encodedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+postBalanceGetGroupId : BalanceEntity.NewBalance -> (Result Error Int -> msg) -> Cmd msg
+postBalanceGetGroupId newBalance toMsg =
+    let
+        encodedNewBalance =
+            E.object
+                [ ( "amount", E.int newBalance.amount )
+                , ( "item", E.string newBalance.item )
+                , ( "kind_element_id", E.int newBalance.kindElementId )
+                , ( "purpose_element_id", E.int newBalance.purposeElementId )
+                , ( "place_element_id", E.int newBalance.placeElementId )
+                , ( "date", E.string newBalance.date )
+                , ( "group_id", newBalance.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
+                ]
+    in
+    BaseRequest.post "/api/balances" encodedNewBalance (D.field "group_id" D.int) (toMsg << Result.mapError mapError)
 
 
 deleteBalance : Int -> (Result Error () -> msg) -> Cmd msg
@@ -270,9 +295,123 @@ putMove moveAttributeName id move toMsg =
     BaseRequest.put ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt id) encodedMove (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
+postMoveGetGroupId : MoveAttributeValueObject.Attribute -> MoveEntity.NewMove -> (Result Error Int -> msg) -> Cmd msg
+postMoveGetGroupId moveAttributeName newMove toMsg =
+    let
+        encodedNewMove =
+            E.object
+                [ ( "amount", E.int newMove.amount )
+                , ( "item", E.string newMove.item )
+                , ( "before_id", E.int newMove.beforeId )
+                , ( "after_id", E.int newMove.afterId )
+                , ( "date", E.string newMove.date )
+                , ( "group_id", newMove.groupId |> Maybe.map E.int |> Maybe.withDefault E.null )
+                ]
+    in
+    BaseRequest.post ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s") encodedNewMove (D.field "group_id" D.int) (toMsg << Result.mapError mapError)
+
+
 deleteMove : MoveAttributeValueObject.Attribute -> Int -> (Result Error () -> msg) -> Cmd msg
 deleteMove moveAttributeName moveId toMsg =
     BaseRequest.delete ("/api/moves/" ++ mapMoveAttributeName moveAttributeName ++ "s/" ++ String.fromInt moveId) (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+getTemplates : (Result Error TemplateEntity.Templates -> msg) -> Cmd msg
+getTemplates toMsg =
+    let
+        decodeTemplate =
+            D.succeed TemplateEntity.Template
+                |> required "id" D.int
+                |> required "name" D.string
+    in
+    BaseRequest.get "/api/templates" (D.list decodeTemplate) (toMsg << Result.mapError mapError)
+
+
+getTemplate : Int -> (Result Error ( TemplateEntity.Template, List TemplateEntity.TemplateDetail ) -> msg) -> Cmd msg
+getTemplate id toMsg =
+    let
+        decodeDetail =
+            D.succeed TemplateEntity.TemplateDetail
+                |> required "seq" D.int
+                |> required "type" D.int
+                |> required "amount" D.int
+                |> required "item" D.string
+                |> required "kind_element_id" D.int
+                |> required "purpose_element_id" (D.nullable D.int)
+                |> required "place_element_id" (D.nullable D.int)
+                |> required "move_before_purpose_id" (D.nullable D.int)
+                |> required "move_after_purpose_id" (D.nullable D.int)
+                |> required "move_before_place_id" (D.nullable D.int)
+                |> required "move_after_place_id" (D.nullable D.int)
+
+        decodeResponse =
+            D.map2
+                (\template details -> ( template, details ))
+                (D.succeed TemplateEntity.Template
+                    |> required "id" D.int
+                    |> required "name" D.string
+                )
+                (D.field "details" (D.list decodeDetail))
+    in
+    BaseRequest.get ("/api/templates/" ++ String.fromInt id) decodeResponse (toMsg << Result.mapError mapError)
+
+
+postTemplate : TemplateEntity.NewTemplate -> (Result Error () -> msg) -> Cmd msg
+postTemplate newTemplate toMsg =
+    let
+        encodeDetail d =
+            E.object
+                ([ ( "type", E.int d.type_ )
+                 , ( "amount", E.int d.amount )
+                 , ( "item", E.string d.item )
+                 , ( "kind_element_id", E.int d.kindElementId )
+                 , ( "purpose_element_id", encodeMaybeInt d.purposeElementId )
+                 , ( "place_element_id", encodeMaybeInt d.placeElementId )
+                 , ( "move_before_purpose_id", encodeMaybeInt d.moveBeforePurposeId )
+                 , ( "move_after_purpose_id", encodeMaybeInt d.moveAfterPurposeId )
+                 , ( "move_before_place_id", encodeMaybeInt d.moveBeforePlaceId )
+                 , ( "move_after_place_id", encodeMaybeInt d.moveAfterPlaceId )
+                 ]
+                )
+
+        encoded =
+            E.object
+                [ ( "name", E.string newTemplate.name )
+                , ( "details", E.list encodeDetail newTemplate.details )
+                ]
+    in
+    BaseRequest.post "/api/templates" encoded (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+putTemplate : Int -> TemplateEntity.NewTemplate -> (Result Error () -> msg) -> Cmd msg
+putTemplate id newTemplate toMsg =
+    let
+        encodeDetail d =
+            E.object
+                [ ( "type", E.int d.type_ )
+                , ( "amount", E.int d.amount )
+                , ( "item", E.string d.item )
+                , ( "kind_element_id", E.int d.kindElementId )
+                , ( "purpose_element_id", encodeMaybeInt d.purposeElementId )
+                , ( "place_element_id", encodeMaybeInt d.placeElementId )
+                , ( "move_before_purpose_id", encodeMaybeInt d.moveBeforePurposeId )
+                , ( "move_after_purpose_id", encodeMaybeInt d.moveAfterPurposeId )
+                , ( "move_before_place_id", encodeMaybeInt d.moveBeforePlaceId )
+                , ( "move_after_place_id", encodeMaybeInt d.moveAfterPlaceId )
+                ]
+
+        encoded =
+            E.object
+                [ ( "name", E.string newTemplate.name )
+                , ( "details", E.list encodeDetail newTemplate.details )
+                ]
+    in
+    BaseRequest.put ("/api/templates/" ++ String.fromInt id) encoded (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+deleteTemplate : Int -> (Result Error () -> msg) -> Cmd msg
+deleteTemplate templateId toMsg =
+    BaseRequest.delete ("/api/templates/" ++ String.fromInt templateId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getAttributeElement : AttributeValueObject.Attribute -> Int -> (Result Error AttributeElementEntity.AttributeElement -> msg) -> Cmd msg
@@ -392,6 +531,16 @@ postCheckPlaceSum sum placeElementId date toMsg =
                 ]
     in
     BaseRequest.post "/api/check_place_sum" encodedCheckPlaceSum (D.succeed ()) (toMsg << Result.mapError mapError)
+
+
+encodeMaybeInt : Maybe Int -> E.Value
+encodeMaybeInt maybeInt =
+    case maybeInt of
+        Nothing ->
+            E.null
+
+        Just i ->
+            E.int i
 
 
 mapAttributeName : AttributeValueObject.Attribute -> String

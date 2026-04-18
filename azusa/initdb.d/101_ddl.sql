@@ -102,3 +102,52 @@ CREATE TABLE `r_check_place_sum` (
   KEY `m_balance_place_element_id_foreign` (`place_element_id`),
   CONSTRAINT `r_check_place_sum_place_element_id_foreign` FOREIGN KEY (`place_element_id`) REFERENCES `m_place_element` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE m_template (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(20) NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE m_template_detail (
+    template_id INT NOT NULL,
+    seq INT NOT NULL,
+    type TINYINT NOT NULL,
+    amount INT NOT NULL,
+    item VARCHAR(50) NOT NULL,
+    kind_element_id BIGINT UNSIGNED NOT NULL,
+    purpose_element_id BIGINT UNSIGNED NULL,
+    place_element_id BIGINT UNSIGNED NULL,
+    move_before_purpose_id BIGINT UNSIGNED NULL,
+    move_after_purpose_id BIGINT UNSIGNED NULL,
+    move_before_place_id BIGINT UNSIGNED NULL,
+    move_after_place_id BIGINT UNSIGNED NULL,
+    PRIMARY KEY (template_id, seq),
+    CONSTRAINT fk_detail_template
+        FOREIGN KEY (template_id) REFERENCES m_template (id)
+        ON DELETE CASCADE
+        ON UPDATE RESTRICT,
+    CONSTRAINT fk_detail_kind_element
+        FOREIGN KEY (kind_element_id) REFERENCES m_kind_element (id)
+        ON UPDATE RESTRICT,
+    CONSTRAINT fk_detail_purpose_element
+        FOREIGN KEY (purpose_element_id) REFERENCES m_purpose_element (id)
+        ON UPDATE RESTRICT,
+    CONSTRAINT fk_detail_place_element
+        FOREIGN KEY (place_element_id) REFERENCES m_place_element (id)
+        ON UPDATE RESTRICT,
+    CONSTRAINT fk_detail_move_before_purpose
+        FOREIGN KEY (move_before_purpose_id) REFERENCES m_purpose_element (id)
+        ON UPDATE RESTRICT,
+    CONSTRAINT fk_detail_move_after_purpose
+        FOREIGN KEY (move_after_purpose_id) REFERENCES m_purpose_element (id)
+        ON UPDATE RESTRICT,
+    CONSTRAINT fk_detail_move_before_place
+        FOREIGN KEY (move_before_place_id) REFERENCES m_place_element (id)
+        ON UPDATE RESTRICT,
+    CONSTRAINT fk_detail_move_after_place
+        FOREIGN KEY (move_after_place_id) REFERENCES m_place_element (id)
+        ON UPDATE RESTRICT,
+    CONSTRAINT chk_type
+        CHECK (type IN (1, 2, 3))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
