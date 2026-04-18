@@ -7,7 +7,7 @@ use stdClass;
 
 class TemplateDataModel
 {
-    private const TABLE_NAME = 'template';
+    private const TABLE_NAME = 'm_template';
 
     private const C_ID   = 'id';
     private const C_NAME = 'name';

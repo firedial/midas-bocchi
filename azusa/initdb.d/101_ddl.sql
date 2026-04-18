@@ -103,13 +103,13 @@ CREATE TABLE `r_check_place_sum` (
   CONSTRAINT `r_check_place_sum_place_element_id_foreign` FOREIGN KEY (`place_element_id`) REFERENCES `m_place_element` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
-CREATE TABLE template (
+CREATE TABLE m_template (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(20) NOT NULL,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE template_detail (
+CREATE TABLE m_template_detail (
     template_id INT NOT NULL,
     seq INT NOT NULL,
     type TINYINT NOT NULL,
@@ -124,7 +124,7 @@ CREATE TABLE template_detail (
     move_after_place_id BIGINT UNSIGNED NULL,
     PRIMARY KEY (template_id, seq),
     CONSTRAINT fk_detail_template
-        FOREIGN KEY (template_id) REFERENCES template (id)
+        FOREIGN KEY (template_id) REFERENCES m_template (id)
         ON DELETE CASCADE
         ON UPDATE RESTRICT,
     CONSTRAINT fk_detail_kind_element

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 class TemplateDetailDataModel
 {
-    private const TABLE_NAME = 'template_detail';
+    private const TABLE_NAME = 'm_template_detail';
 
     private const C_TEMPLATE_ID = 'template_id';
     private const C_SEQ = 'seq';
