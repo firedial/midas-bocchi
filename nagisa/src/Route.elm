@@ -9,9 +9,6 @@ type Route
     | BalanceTable
     | BalanceCreate
     | BalanceId Int
-    | FixedBalance
-    | FixedBalanceCreate
-    | FixedBalanceId Int
     | PurposeMoveTable
     | PlaceMoveTable
     | PurposeMoveCreate
@@ -30,9 +27,6 @@ type Route
     | TemplateTable
     | TemplateCreate
     | TemplateId Int
-    | Salary
-    | Bonus
-    | CheckPlaceSum
 
 
 parse : Url -> Maybe Route
@@ -47,9 +41,6 @@ routes =
         , Parser.map BalanceTable (Parser.s "balances")
         , Parser.map BalanceCreate (Parser.s "balances" </> Parser.s "create")
         , Parser.map BalanceId (Parser.s "balances" </> Parser.int)
-        , Parser.map FixedBalance (Parser.s "fixed_balances")
-        , Parser.map FixedBalanceCreate (Parser.s "fixed_balances" </> Parser.s "create")
-        , Parser.map FixedBalanceId (Parser.s "fixed_balances" </> Parser.int)
         , Parser.map PurposeMoveTable (Parser.s "purpose" </> Parser.s "moves")
         , Parser.map PlaceMoveTable (Parser.s "place" </> Parser.s "moves")
         , Parser.map PurposeMoveCreate (Parser.s "purpose" </> Parser.s "moves" </> Parser.s "create")
@@ -68,9 +59,6 @@ routes =
         , Parser.map TemplateTable (Parser.s "templates")
         , Parser.map TemplateCreate (Parser.s "templates" </> Parser.s "create")
         , Parser.map TemplateId (Parser.s "templates" </> Parser.int)
-        , Parser.map Salary (Parser.s "salary")
-        , Parser.map Bonus (Parser.s "bonus")
-        , Parser.map CheckPlaceSum (Parser.s "check_place_sum")
         ]
 
 
@@ -88,15 +76,6 @@ toPath route =
 
         BalanceId id ->
             "/balances/" ++ String.fromInt id
-
-        FixedBalance ->
-            "/fixed_balances"
-
-        FixedBalanceCreate ->
-            "/fixed_balances/create"
-
-        FixedBalanceId id ->
-            "/fixed_balances/" ++ String.fromInt id
 
         PurposeMoveTable ->
             "/purpose/moves"
@@ -151,12 +130,3 @@ toPath route =
 
         TemplateId id ->
             "/templates/" ++ String.fromInt id
-
-        Salary ->
-            "/salary"
-
-        Bonus ->
-            "/bonus"
-
-        CheckPlaceSum ->
-            "/check_place_sum"

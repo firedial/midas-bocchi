@@ -8,15 +8,10 @@ import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Page.BalanceId
 import Page.BalanceTable
-import Page.Bonus
-import Page.CheckPlaceSum
 import Page.ElementId
 import Page.ElementTable
-import Page.FixedBalance
-import Page.FixedBalanceId
 import Page.MoveId
 import Page.MoveTable
-import Page.Salary
 import Page.TemplateId
 import Page.TemplateTable
 import Page.Top
@@ -41,15 +36,10 @@ type Page
     | Top Page.Top.Model
     | BalanceTable Page.BalanceTable.Model
     | BalanceId Page.BalanceId.Model
-    | FixedBalance Page.FixedBalance.Model
-    | FixedBalanceId Page.FixedBalanceId.Model
     | MoveTable Page.MoveTable.Model
     | MoveId Page.MoveId.Model
     | ElementTable Page.ElementTable.Model
     | ElementId Page.ElementId.Model
-    | Salary Page.Salary.Model
-    | Bonus Page.Bonus.Model
-    | CheckPlaceSum Page.CheckPlaceSum.Model
     | TemplateTable Page.TemplateTable.Model
     | TemplateId Page.TemplateId.Model
 
@@ -71,15 +61,10 @@ type Msg
     | TopMsg Page.Top.Msg
     | BalanceTableMsg Page.BalanceTable.Msg
     | BalanceIdMsg Page.BalanceId.Msg
-    | FixedBalanceMsg Page.FixedBalance.Msg
-    | FixedBalanceIdMsg Page.FixedBalanceId.Msg
     | MoveTableMsg Page.MoveTable.Msg
     | MoveIdMsg Page.MoveId.Msg
     | ElementTableMsg Page.ElementTable.Msg
     | ElementIdMsg Page.ElementId.Msg
-    | SalaryMsg Page.Salary.Msg
-    | BonusMsg Page.Bonus.Msg
-    | CheckPlaceSumMsg Page.CheckPlaceSum.Msg
     | TemplateTableMsg Page.TemplateTable.Msg
     | TemplateIdMsg Page.TemplateId.Msg
 
@@ -140,34 +125,6 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        FixedBalanceMsg pageMsg ->
-            case model.page of
-                FixedBalance pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.FixedBalance.update pageMsg pageModel
-                    in
-                    ( { model | page = FixedBalance newModel }
-                    , Cmd.map FixedBalanceMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
-        FixedBalanceIdMsg pageMsg ->
-            case model.page of
-                FixedBalanceId pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.FixedBalanceId.update pageMsg pageModel
-                    in
-                    ( { model | page = FixedBalanceId newModel }
-                    , Cmd.map FixedBalanceIdMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
         ElementTableMsg pageMsg ->
             case model.page of
                 ElementTable pageModel ->
@@ -219,48 +176,6 @@ update msg model =
                     in
                     ( { model | page = ElementId newModel }
                     , Cmd.map ElementIdMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
-        SalaryMsg pageMsg ->
-            case model.page of
-                Salary pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.Salary.update pageMsg pageModel
-                    in
-                    ( { model | page = Salary newModel }
-                    , Cmd.map SalaryMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
-        BonusMsg pageMsg ->
-            case model.page of
-                Bonus pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.Bonus.update pageMsg pageModel
-                    in
-                    ( { model | page = Bonus newModel }
-                    , Cmd.map BonusMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
-        CheckPlaceSumMsg pageMsg ->
-            case model.page of
-                CheckPlaceSum pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.CheckPlaceSum.update pageMsg pageModel
-                    in
-                    ( { model | page = CheckPlaceSum newModel }
-                    , Cmd.map CheckPlaceSumMsg newCmd
                     )
 
                 _ ->
@@ -327,14 +242,6 @@ view model =
                 Page.BalanceId.view pageModel
                     |> Html.map BalanceIdMsg
 
-            FixedBalance pageModel ->
-                Page.FixedBalance.view pageModel
-                    |> Html.map FixedBalanceMsg
-
-            FixedBalanceId pageModel ->
-                Page.FixedBalanceId.view pageModel
-                    |> Html.map FixedBalanceIdMsg
-
             MoveTable pageModel ->
                 Page.MoveTable.view pageModel
                     |> Html.map MoveTableMsg
@@ -350,18 +257,6 @@ view model =
             ElementId pageModel ->
                 Page.ElementId.view pageModel
                     |> Html.map ElementIdMsg
-
-            Salary pageModel ->
-                Page.Salary.view pageModel
-                    |> Html.map SalaryMsg
-
-            Bonus pageModel ->
-                Page.Bonus.view pageModel
-                    |> Html.map BonusMsg
-
-            CheckPlaceSum pageModel ->
-                Page.CheckPlaceSum.view pageModel
-                    |> Html.map CheckPlaceSumMsg
 
             TemplateTable pageModel ->
                 Page.TemplateTable.view pageModel
@@ -414,33 +309,6 @@ goTo maybeRoute model =
             in
             ( { model | page = BalanceId newModel }
             , Cmd.map BalanceIdMsg newCmd
-            )
-
-        Just Route.FixedBalance ->
-            let
-                ( newModel, newCmd ) =
-                    Page.FixedBalance.init
-            in
-            ( { model | page = FixedBalance newModel }
-            , Cmd.map FixedBalanceMsg newCmd
-            )
-
-        Just Route.FixedBalanceCreate ->
-            let
-                ( newModel, newCmd ) =
-                    Page.FixedBalanceId.init model.key Nothing
-            in
-            ( { model | page = FixedBalanceId newModel }
-            , Cmd.map FixedBalanceIdMsg newCmd
-            )
-
-        Just (Route.FixedBalanceId id) ->
-            let
-                ( newModel, newCmd ) =
-                    Page.FixedBalanceId.init model.key (Just id)
-            in
-            ( { model | page = FixedBalanceId newModel }
-            , Cmd.map FixedBalanceIdMsg newCmd
             )
 
         Just Route.PurposeMoveTable ->
@@ -603,31 +471,4 @@ goTo maybeRoute model =
             in
             ( { model | page = TemplateId newModel }
             , Cmd.map TemplateIdMsg newCmd
-            )
-
-        Just Route.Salary ->
-            let
-                ( newModel, newCmd ) =
-                    Page.Salary.init model.key
-            in
-            ( { model | page = Salary newModel }
-            , Cmd.map SalaryMsg newCmd
-            )
-
-        Just Route.Bonus ->
-            let
-                ( newModel, newCmd ) =
-                    Page.Bonus.init model.key
-            in
-            ( { model | page = Bonus newModel }
-            , Cmd.map BonusMsg newCmd
-            )
-
-        Just Route.CheckPlaceSum ->
-            let
-                ( newModel, newCmd ) =
-                    Page.CheckPlaceSum.init model.key
-            in
-            ( { model | page = CheckPlaceSum newModel }
-            , Cmd.map CheckPlaceSumMsg newCmd
             )

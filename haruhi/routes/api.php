@@ -23,7 +23,6 @@ use App\Exceptions\ErrorCode;
 
 Route::middleware('check_api_key')->group(function () {
     Route::apiResource('/balances', BalanceController::class);
-    Route::apiResource('/fixed_balances', FixedBalanceController::class);
     Route::apiResource('/templates', TemplateController::class);
 
     Route::prefix('/moves/{attribute_name}')
@@ -56,11 +55,6 @@ Route::middleware('check_api_key')->group(function () {
             Route::get('/{category_id}', 'show');
             Route::put('/{category_id}', 'update');
         });
-
-    Route::post('/salary', 'App\Http\Controllers\SalaryController@store');
-    Route::post('/bonus', 'App\Http\Controllers\BonusController@store');
-
-    Route::post('/check_place_sum', 'App\Http\Controllers\CheckPlaceSumController@post');
 });
 
 Route::fallback(function () {

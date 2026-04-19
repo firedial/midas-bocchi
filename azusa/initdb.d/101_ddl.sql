@@ -77,32 +77,6 @@ CREATE TABLE `m_balance` (
   CONSTRAINT `m_balance_purpose_element_id_foreign` FOREIGN KEY (`purpose_element_id`) REFERENCES `m_purpose_element` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
-CREATE TABLE `m_fixed_balance` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `amount` int(11) NOT NULL,
-  `item` varchar(50) NOT NULL,
-  `kind_element_id` bigint(20) unsigned NOT NULL,
-  `purpose_element_id` bigint(20) unsigned NOT NULL,
-  `place_element_id` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_kind_element_id` (`kind_element_id`),
-  KEY `idx_purpose_element_id` (`purpose_element_id`),
-  KEY `idx_place_element_id` (`place_element_id`),
-  CONSTRAINT `fk_m_fixed_balance_kind_element` FOREIGN KEY (`kind_element_id`) REFERENCES `m_kind_element` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_m_fixed_balance_place_element` FOREIGN KEY (`place_element_id`) REFERENCES `m_place_element` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_m_fixed_balance_urpose_element` FOREIGN KEY (`purpose_element_id`) REFERENCES `m_purpose_element` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
-CREATE TABLE `r_check_place_sum` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `sum` int(11) NOT NULL,
-  `place_element_id` bigint(20) unsigned NOT NULL,
-  `date` date NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `m_balance_place_element_id_foreign` (`place_element_id`),
-  CONSTRAINT `r_check_place_sum_place_element_id_foreign` FOREIGN KEY (`place_element_id`) REFERENCES `m_place_element` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
 CREATE TABLE m_template (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(20) NOT NULL,
