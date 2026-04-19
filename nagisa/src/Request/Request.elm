@@ -18,12 +18,10 @@ module Request.Request exposing
     , postAttributeElement
     , postBalance
     , postBalanceGetGroupId
-    , postBonus
     , postCheckPlaceSum
     , postFixedBalance
     , postMove
     , postMoveGetGroupId
-    , postSalary
     , postTemplate
     , putAttributeElement
     , putBalance
@@ -361,18 +359,17 @@ postTemplate newTemplate toMsg =
     let
         encodeDetail d =
             E.object
-                ([ ( "type", E.int d.type_ )
-                 , ( "amount", E.int d.amount )
-                 , ( "item", E.string d.item )
-                 , ( "kind_element_id", encodeMaybeInt d.kindElementId )
-                 , ( "purpose_element_id", encodeMaybeInt d.purposeElementId )
-                 , ( "place_element_id", encodeMaybeInt d.placeElementId )
-                 , ( "move_before_purpose_id", encodeMaybeInt d.moveBeforePurposeId )
-                 , ( "move_after_purpose_id", encodeMaybeInt d.moveAfterPurposeId )
-                 , ( "move_before_place_id", encodeMaybeInt d.moveBeforePlaceId )
-                 , ( "move_after_place_id", encodeMaybeInt d.moveAfterPlaceId )
-                 ]
-                )
+                [ ( "type", E.int d.type_ )
+                , ( "amount", E.int d.amount )
+                , ( "item", E.string d.item )
+                , ( "kind_element_id", encodeMaybeInt d.kindElementId )
+                , ( "purpose_element_id", encodeMaybeInt d.purposeElementId )
+                , ( "place_element_id", encodeMaybeInt d.placeElementId )
+                , ( "move_before_purpose_id", encodeMaybeInt d.moveBeforePurposeId )
+                , ( "move_after_purpose_id", encodeMaybeInt d.moveAfterPurposeId )
+                , ( "move_before_place_id", encodeMaybeInt d.moveBeforePlaceId )
+                , ( "move_after_place_id", encodeMaybeInt d.moveAfterPlaceId )
+                ]
 
         encoded =
             E.object
@@ -481,43 +478,6 @@ getAttributeCategories attributeValueObject toMsg =
                 |> required "description" D.string
     in
     BaseRequest.get ("/api/attribute_categories/" ++ mapAttributeName attributeValueObject ++ "_category") (D.list decodeAttributeCategory) (toMsg << Result.mapError mapError)
-
-
-postSalary : Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
-postSalary baseSalary adjustmentSalary transportation holdingIncentives healthInsurance welfarePension residentTax employmentInsurance incomeTax holding date toMsg =
-    let
-        encodedSalary =
-            E.object
-                [ ( "baseSalary", E.int baseSalary )
-                , ( "adjustmentSalary", E.int adjustmentSalary )
-                , ( "transportation", E.int transportation )
-                , ( "holdingIncentives", E.int holdingIncentives )
-                , ( "healthInsurance", E.int healthInsurance )
-                , ( "welfarePension", E.int welfarePension )
-                , ( "residentTax", E.int residentTax )
-                , ( "employmentInsurance", E.int employmentInsurance )
-                , ( "incomeTax", E.int incomeTax )
-                , ( "holding", E.int holding )
-                , ( "date", E.string date )
-                ]
-    in
-    BaseRequest.post "/api/salary" encodedSalary (D.succeed ()) (toMsg << Result.mapError mapError)
-
-
-postBonus : Int -> Int -> Int -> Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
-postBonus bonus healthInsurance welfarePension employmentInsurance incomeTax date toMsg =
-    let
-        encodedBonus =
-            E.object
-                [ ( "bonus", E.int bonus )
-                , ( "healthInsurance", E.int healthInsurance )
-                , ( "welfarePension", E.int welfarePension )
-                , ( "employmentInsurance", E.int employmentInsurance )
-                , ( "incomeTax", E.int incomeTax )
-                , ( "date", E.string date )
-                ]
-    in
-    BaseRequest.post "/api/bonus" encodedBonus (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 postCheckPlaceSum : Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg

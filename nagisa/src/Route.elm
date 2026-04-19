@@ -30,8 +30,6 @@ type Route
     | TemplateTable
     | TemplateCreate
     | TemplateId Int
-    | Salary
-    | Bonus
     | CheckPlaceSum
 
 
@@ -68,8 +66,6 @@ routes =
         , Parser.map TemplateTable (Parser.s "templates")
         , Parser.map TemplateCreate (Parser.s "templates" </> Parser.s "create")
         , Parser.map TemplateId (Parser.s "templates" </> Parser.int)
-        , Parser.map Salary (Parser.s "salary")
-        , Parser.map Bonus (Parser.s "bonus")
         , Parser.map CheckPlaceSum (Parser.s "check_place_sum")
         ]
 
@@ -151,12 +147,6 @@ toPath route =
 
         TemplateId id ->
             "/templates/" ++ String.fromInt id
-
-        Salary ->
-            "/salary"
-
-        Bonus ->
-            "/bonus"
 
         CheckPlaceSum ->
             "/check_place_sum"

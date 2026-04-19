@@ -57,9 +57,6 @@ Route::middleware('check_api_key')->group(function () {
             Route::put('/{category_id}', 'update');
         });
 
-    Route::post('/salary', 'App\Http\Controllers\SalaryController@store');
-    Route::post('/bonus', 'App\Http\Controllers\BonusController@store');
-
     Route::post('/check_place_sum', 'App\Http\Controllers\CheckPlaceSumController@post');
 });
 
