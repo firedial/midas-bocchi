@@ -23,7 +23,6 @@ use App\Exceptions\ErrorCode;
 
 Route::middleware('check_api_key')->group(function () {
     Route::apiResource('/balances', BalanceController::class);
-    Route::apiResource('/fixed_balances', FixedBalanceController::class);
     Route::apiResource('/templates', TemplateController::class);
 
     Route::prefix('/moves/{attribute_name}')

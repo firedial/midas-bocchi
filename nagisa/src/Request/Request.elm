@@ -1,7 +1,6 @@
 module Request.Request exposing
     ( Error(..)
     , deleteBalance
-    , deleteFixedBalance
     , deleteMove
     , deleteTemplate
     , getAttributeCategories
@@ -9,8 +8,6 @@ module Request.Request exposing
     , getAttributeElements
     , getBalance
     , getBalances
-    , getFixedBalance
-    , getFixedBalances
     , getMove
     , getMoves
     , getTemplate
@@ -18,13 +15,11 @@ module Request.Request exposing
     , postAttributeElement
     , postBalance
     , postBalanceGetGroupId
-    , postFixedBalance
     , postMove
     , postMoveGetGroupId
     , postTemplate
     , putAttributeElement
     , putBalance
-    , putFixedBalance
     , putMove
     , putTemplate
     )
@@ -34,7 +29,6 @@ import Json.Encode as E
 import Model.Enitity.AttributeCategoryEntity as AttributeCategoryEntity
 import Model.Enitity.AttributeElementEntity as AttributeElementEntity
 import Model.Enitity.BalanceEntity as BalanceEntity
-import Model.Enitity.FixedBalanceEntity as FixedBalanceEntity
 import Model.Enitity.MoveEntity as MoveEntity
 import Model.Enitity.TemplateEntity as TemplateEntity
 import Model.ValueObject.AttributeValueObject as AttributeValueObject
@@ -146,81 +140,6 @@ postBalanceGetGroupId newBalance toMsg =
 deleteBalance : Int -> (Result Error () -> msg) -> Cmd msg
 deleteBalance balanceId toMsg =
     BaseRequest.delete ("/api/balances/" ++ String.fromInt balanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
-
-
-getFixedBalance : Int -> (Result Error FixedBalanceEntity.FixedBalance -> msg) -> Cmd msg
-getFixedBalance id toMsg =
-    let
-        decodeFixedBalance =
-            D.succeed FixedBalanceEntity.FixedBalance
-                |> required "id" D.int
-                |> required "amount" D.int
-                |> required "item" D.string
-                |> required "kind_element_id" D.int
-                |> required "purpose_element_id" D.int
-                |> required "place_element_id" D.int
-                |> required "kind_element_description" D.string
-                |> required "purpose_element_description" D.string
-                |> required "place_element_description" D.string
-    in
-    BaseRequest.get ("/api/fixed_balances/" ++ String.fromInt id) decodeFixedBalance (toMsg << Result.mapError mapError)
-
-
-getFixedBalances : (Result Error FixedBalanceEntity.FixedBalances -> msg) -> Cmd msg
-getFixedBalances toMsg =
-    let
-        decodeFixedBalance =
-            D.succeed FixedBalanceEntity.FixedBalance
-                |> required "id" D.int
-                |> required "amount" D.int
-                |> required "item" D.string
-                |> required "kind_element_id" D.int
-                |> required "purpose_element_id" D.int
-                |> required "place_element_id" D.int
-                |> required "kind_element_description" D.string
-                |> required "purpose_element_description" D.string
-                |> required "place_element_description" D.string
-
-        decodeFixedBalances =
-            D.list decodeFixedBalance
-    in
-    BaseRequest.get "/api/fixed_balances" decodeFixedBalances (toMsg << Result.mapError mapError)
-
-
-postFixedBalance : FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
-postFixedBalance newFixedBalance toMsg =
-    let
-        encodedNewFixedBalance =
-            E.object
-                [ ( "amount", E.int newFixedBalance.amount )
-                , ( "item", E.string newFixedBalance.item )
-                , ( "kind_element_id", E.int newFixedBalance.kindElementId )
-                , ( "purpose_element_id", E.int newFixedBalance.purposeElementId )
-                , ( "place_element_id", E.int newFixedBalance.placeElementId )
-                ]
-    in
-    BaseRequest.post "/api/fixed_balances" encodedNewFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
-
-
-putFixedBalance : Int -> FixedBalanceEntity.NewFixedBalance -> (Result Error () -> msg) -> Cmd msg
-putFixedBalance id fixedBalance toMsg =
-    let
-        encodedFixedBalance =
-            E.object
-                [ ( "id", E.int id )
-                , ( "amount", E.int fixedBalance.amount )
-                , ( "item", E.string fixedBalance.item )
-                , ( "kind_element_id", E.int fixedBalance.kindElementId )
-                , ( "purpose_element_id", E.int fixedBalance.purposeElementId )
-                , ( "place_element_id", E.int fixedBalance.placeElementId )
-                ]
-    in
-    BaseRequest.put ("/api/fixed_balances/" ++ String.fromInt id) encodedFixedBalance (D.succeed ()) (toMsg << Result.mapError mapError)
-
-
-deleteFixedBalance : Int -> (Result Error () -> msg) -> Cmd msg
-deleteFixedBalance fixedBalanceId toMsg =
-    BaseRequest.delete ("/api/fixed_balances/" ++ String.fromInt fixedBalanceId) (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 getMove : MoveAttributeValueObject.Attribute -> Int -> (Result Error MoveEntity.Move -> msg) -> Cmd msg
