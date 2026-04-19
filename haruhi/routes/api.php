@@ -56,8 +56,6 @@ Route::middleware('check_api_key')->group(function () {
             Route::get('/{category_id}', 'show');
             Route::put('/{category_id}', 'update');
         });
-
-    Route::post('/check_place_sum', 'App\Http\Controllers\CheckPlaceSumController@post');
 });
 
 Route::fallback(function () {

@@ -13,6 +13,4 @@ interface BalanceRepositoryInterface
     public function insertBalance(BalanceEntity $balance): BalanceEntity;
     public function updateBalance(BalanceEntity $balance): BalanceEntity;
     public function deleteBalance(BalanceId $balanceId): BalanceEntity;
-
-    public function sum(PlaceElementId $placeElementId): int;
 }

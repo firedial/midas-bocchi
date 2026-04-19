@@ -135,9 +135,4 @@ class BalanceRepositoryImpl implements BalanceRepositoryInterface
             GroupId::filledId($result->group_id),
         );
     }
-
-    public function sum(PlaceElementId $placeElementId): int
-    {
-        return BalanceDataModel::sum($placeElementId->value());
-    }
 }

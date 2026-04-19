@@ -18,7 +18,6 @@ module Request.Request exposing
     , postAttributeElement
     , postBalance
     , postBalanceGetGroupId
-    , postCheckPlaceSum
     , postFixedBalance
     , postMove
     , postMoveGetGroupId
@@ -478,19 +477,6 @@ getAttributeCategories attributeValueObject toMsg =
                 |> required "description" D.string
     in
     BaseRequest.get ("/api/attribute_categories/" ++ mapAttributeName attributeValueObject ++ "_category") (D.list decodeAttributeCategory) (toMsg << Result.mapError mapError)
-
-
-postCheckPlaceSum : Int -> Int -> String -> (Result Error () -> msg) -> Cmd msg
-postCheckPlaceSum sum placeElementId date toMsg =
-    let
-        encodedCheckPlaceSum =
-            E.object
-                [ ( "sum", E.string <| String.fromInt sum )
-                , ( "placeElementId", E.string <| String.fromInt placeElementId )
-                , ( "date", E.string date )
-                ]
-    in
-    BaseRequest.post "/api/check_place_sum" encodedCheckPlaceSum (D.succeed ()) (toMsg << Result.mapError mapError)
 
 
 encodeMaybeInt : Maybe Int -> E.Value

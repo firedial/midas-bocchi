@@ -8,7 +8,6 @@ import Model.ValueObject.AttributeValueObject as AttributeValueObject
 import Model.ValueObject.MoveAttributeValueObject as MoveAttributeValueObject
 import Page.BalanceId
 import Page.BalanceTable
-import Page.CheckPlaceSum
 import Page.ElementId
 import Page.ElementTable
 import Page.FixedBalance
@@ -45,7 +44,6 @@ type Page
     | MoveId Page.MoveId.Model
     | ElementTable Page.ElementTable.Model
     | ElementId Page.ElementId.Model
-    | CheckPlaceSum Page.CheckPlaceSum.Model
     | TemplateTable Page.TemplateTable.Model
     | TemplateId Page.TemplateId.Model
 
@@ -73,7 +71,6 @@ type Msg
     | MoveIdMsg Page.MoveId.Msg
     | ElementTableMsg Page.ElementTable.Msg
     | ElementIdMsg Page.ElementId.Msg
-    | CheckPlaceSumMsg Page.CheckPlaceSum.Msg
     | TemplateTableMsg Page.TemplateTable.Msg
     | TemplateIdMsg Page.TemplateId.Msg
 
@@ -218,20 +215,6 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        CheckPlaceSumMsg pageMsg ->
-            case model.page of
-                CheckPlaceSum pageModel ->
-                    let
-                        ( newModel, newCmd ) =
-                            Page.CheckPlaceSum.update pageMsg pageModel
-                    in
-                    ( { model | page = CheckPlaceSum newModel }
-                    , Cmd.map CheckPlaceSumMsg newCmd
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
-
         TemplateTableMsg pageMsg ->
             case model.page of
                 TemplateTable pageModel ->
@@ -316,10 +299,6 @@ view model =
             ElementId pageModel ->
                 Page.ElementId.view pageModel
                     |> Html.map ElementIdMsg
-
-            CheckPlaceSum pageModel ->
-                Page.CheckPlaceSum.view pageModel
-                    |> Html.map CheckPlaceSumMsg
 
             TemplateTable pageModel ->
                 Page.TemplateTable.view pageModel
@@ -561,13 +540,4 @@ goTo maybeRoute model =
             in
             ( { model | page = TemplateId newModel }
             , Cmd.map TemplateIdMsg newCmd
-            )
-
-        Just Route.CheckPlaceSum ->
-            let
-                ( newModel, newCmd ) =
-                    Page.CheckPlaceSum.init model.key
-            in
-            ( { model | page = CheckPlaceSum newModel }
-            , Cmd.map CheckPlaceSumMsg newCmd
             )

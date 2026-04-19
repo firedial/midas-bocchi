@@ -30,7 +30,6 @@ type Route
     | TemplateTable
     | TemplateCreate
     | TemplateId Int
-    | CheckPlaceSum
 
 
 parse : Url -> Maybe Route
@@ -66,7 +65,6 @@ routes =
         , Parser.map TemplateTable (Parser.s "templates")
         , Parser.map TemplateCreate (Parser.s "templates" </> Parser.s "create")
         , Parser.map TemplateId (Parser.s "templates" </> Parser.int)
-        , Parser.map CheckPlaceSum (Parser.s "check_place_sum")
         ]
 
 
@@ -147,6 +145,3 @@ toPath route =
 
         TemplateId id ->
             "/templates/" ++ String.fromInt id
-
-        CheckPlaceSum ->
-            "/check_place_sum"

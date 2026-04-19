@@ -36,7 +36,6 @@ view _ =
             , getItem Route.PurposeElementTable "予算" "image/layout-sidebar.svg"
             , getItem Route.PlaceElementTable "場所" "image/layout-sidebar.svg"
             , getItem Route.FixedBalance "固定入力" "image/calendar3.svg"
-            , getItem Route.CheckPlaceSum "金額チェック" "image/check-circle.svg"
             , getItem Route.TemplateTable "テンプレート" "image/stack.svg"
             ]
         ]
