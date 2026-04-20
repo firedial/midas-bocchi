@@ -38,10 +38,20 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          fetch-tags: true
       - name: Check changed paths
         id: check
         run: |
-          CHANGED=$(git diff --name-only HEAD~1)
+          SERVICE_NAME="${{ inputs.name }}"
+          LATEST_TAG=$(git tag --list "${SERVICE_NAME}-v*" --sort=-version:refname | head -n 1)
+
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No tag found for ${SERVICE_NAME}, treating all files as changed"
+            echo "is_changed=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          CHANGED=$(git diff --name-only "${LATEST_TAG}"..HEAD)
           echo "is_changed=$(echo "$CHANGED" | grep -q -E '^${{ inputs.change }}/' && echo true || echo false)" >> $GITHUB_OUTPUT
       - name: Get version
         id: version
@@ -72,7 +82,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Pull staging image
-        run: docker pull --platform linux/arm64 ${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-${{ inputs.name }}:stag-v${{ needs.detect.outputs.next_version }}
+        run: docker pull --platform linux/arm64 ${{ secrets.DOCKERHUB_USERNAME
+          }}/midas-bocchi-${{ inputs.name }}:stag-v${{
+          needs.detect.outputs.next_version }}
       - name: Tag as prod
         run: |
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/midas-bocchi-${{ inputs.name }}
