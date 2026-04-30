@@ -385,6 +385,27 @@ class MoveTest extends TestCase
     }
 
     /**
+     * 移動取得テスト（連続する move の after ID）
+     */
+    public function testMoveShowAfterIdWhenConsecutiveMoveExists(): void
+    {
+        foreach ($this->moveTypes() as $moveType) {
+            $response = $this->request->post('/moves/' . $moveType, $this->validMove());
+            Assert::assertStatusCode200($response->statusCode());
+            $firstId = $response->jsonBody()['id'];
+
+            // 連続して 2件目の move を登録すると firstId+2, firstId+3 が使われる
+            $response = $this->request->post('/moves/' . $moveType, $this->validMove());
+            Assert::assertStatusCode200($response->statusCode());
+
+            // 1件目の after ID（firstId+1）は move ではない
+            $response = $this->request->get('/moves/' . $moveType . '/' . ($firstId + 1));
+            Assert::assertStatusCode404($response->statusCode());
+            Assert::assertSame('E301', $response->jsonBody()['code'], "{$moveType} 連続moveのafterID");
+        }
+    }
+
+    /**
      * 移動更新バリデーションエラーテスト（金額が負）
      */
     public function testMovePutAmountNegative(): void
