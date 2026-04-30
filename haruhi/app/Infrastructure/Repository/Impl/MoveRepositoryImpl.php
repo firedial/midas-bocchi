@@ -20,6 +20,7 @@ use App\Infrastructure\Repository\MoveRepositoryInterface;
 use App\Models\DataModels\BalanceDataModel;
 use App\Exceptions\AppException;
 use App\Exceptions\ErrorCode;
+use Illuminate\Support\Facades\App;
 
 class MoveRepositoryImpl implements MoveRepositoryInterface
 {
@@ -52,6 +53,14 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
         foreach (array_chunk($balances, 2) as $balanceMove) {
             $after = $balanceMove[0];
             $before = $balanceMove[1];
+
+            if ($before->amount >= 0) {
+                continue;
+            }
+
+            if ($before->amount !== (-1) * $after->amount) {
+                throw new AppException(ErrorCode::UNEXPECTED_AMOUNT, 'Move amount sum is not zero.');
+            }
 
             $beforeElementId = match (true) {
                 $attribute->isPurpose() => AttributeElementId::filledId($before->purpose_element_id),
@@ -124,6 +133,14 @@ class MoveRepositoryImpl implements MoveRepositoryInterface
 
         $before = $befores[0];
         $after = $afters[0];
+
+        if ($before->amount >= 0) {
+            throw new AppException(ErrorCode::RECORD_NOT_FOUND, 'Before amount is not positive.');
+        }
+
+        if ($before->amount !== (-1) * $after->amount) {
+            throw new AppException(ErrorCode::UNEXPECTED_AMOUNT, 'Move amount sum is not zero.');
+        }
 
         $beforeElementId = match (true) {
             $attribute->isPurpose() => AttributeElementId::filledId($before->purpose_element_id),

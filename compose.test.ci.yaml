@@ -1,5 +1,14 @@
 services:
     haruhi:
         image: firedial/midas-bocchi-haruhi:stag-latest
+        depends_on:
+            azusa:
+                condition: service_healthy
     azusa:
         image: firedial/midas-bocchi-yui:stag-latest
+        healthcheck:
+            test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+            interval: 5s
+            timeout: 5s
+            retries: 30
+            start_period: 30s

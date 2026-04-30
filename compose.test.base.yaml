@@ -10,9 +10,6 @@ services:
         volumes:
             - ./tamako:/app
         tty: true
-        depends_on:
-            azusa:
-                condition: service_healthy
     haruhi:
         restart: always
         hostname: haruhi
@@ -40,9 +37,3 @@ services:
         hostname: azusa
         volumes:
             - ./azusa/initdb.d:/docker-entrypoint-initdb.d
-        healthcheck:
-            test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-            interval: 5s
-            timeout: 5s
-            retries: 30
-            start_period: 30s

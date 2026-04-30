@@ -2,6 +2,14 @@
 
 家計簿管理システム
 
+## テスト実行
+
+```
+docker compose -f compose.test.dev.yaml -f compose.test.base.yaml up -d
+docker exec midas-bocchi-haruhi-1 php artisan optimize
+docker exec midas-bocchi-tamako-1 php /app/main.php
+```
+
 ## 初期設定
 
 ### git clone
