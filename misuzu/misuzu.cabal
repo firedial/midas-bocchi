@@ -1,0 +1,105 @@
+cabal-version:      3.0
+name:               misuzu
+version:            0.1.0.0
+synopsis:           midas-bocchi API backend (Haskell port of haruhi)
+license:            BSD-3-Clause
+build-type:         Simple
+
+-- 依存の向きはここで強制される。
+-- domain は servant も mysql-haskell も aeson も「見えない」ので import できない。
+-- 依存の向き: app -> adapter -> usecase -> domain
+
+common shared
+    default-language: GHC2021
+    default-extensions:
+        OverloadedStrings
+        LambdaCase
+        RecordWildCards
+        DataKinds
+        TypeOperators
+    ghc-options: -Wall -Wno-unused-imports -Wno-name-shadowing
+
+library domain
+    import:           shared
+    hs-source-dirs:   domain
+    exposed-modules:  Domain.Error
+                      Domain.ValueObjects
+                      Domain.Entities
+                      Domain.Attribute
+                      Domain.Repository.Balance
+                      Domain.Repository.Move
+                      Domain.Repository.AttributeElement
+                      Domain.Repository.AttributeCategory
+                      Domain.Repository.Template
+    build-depends:    base >=4.7 && <5
+                    , text
+                    , time
+
+library usecase
+    import:           shared
+    hs-source-dirs:   usecase
+    exposed-modules:  UseCase.Balance
+                      UseCase.Move
+                      UseCase.AttributeElement
+                      UseCase.AttributeCategory
+                      UseCase.Template
+    build-depends:    base >=4.7 && <5
+                    , text
+                    , mtl
+                    , transformers
+                    , misuzu:domain
+
+library adapter
+    import:           shared
+    hs-source-dirs:   adapter
+    exposed-modules:  Adapter.Http.Api
+                      Adapter.Http.Server
+                      Adapter.Http.Error
+                      Adapter.Http.Validate
+                      Adapter.Http.Balance
+                      Adapter.Http.Move
+                      Adapter.Http.AttributeElement
+                      Adapter.Http.AttributeCategory
+                      Adapter.Http.Template
+                      Adapter.Persistence.Db
+                      Adapter.Persistence.BalanceRepository
+                      Adapter.Persistence.MoveRepository
+                      Adapter.Persistence.AttributeElementRepository
+                      Adapter.Persistence.AttributeCategoryRepository
+                      Adapter.Persistence.TemplateRepository
+    build-depends:    base >=4.7 && <5
+                    , text
+                    , bytestring
+                    , aeson
+                    , containers
+                    , scientific
+                    , unordered-containers
+                    , vector
+                    , tagged
+                    , mtl
+                    , transformers
+                    , time
+                    , servant
+                    , servant-server
+                    , wai
+                    , wai-extra
+                    , warp
+                    , http-types
+                    , http-api-data
+                    , mysql-haskell
+                    , io-streams
+                    , resource-pool
+                    , network
+                    , misuzu:domain
+                    , misuzu:usecase
+
+executable misuzu
+    import:           shared
+    hs-source-dirs:   app
+    main-is:          Main.hs
+    other-modules:    Config
+    ghc-options:      -threaded -rtsopts -with-rtsopts=-N
+    build-depends:    base >=4.7 && <5
+                    , bytestring
+                    , warp
+                    , misuzu:adapter

@@ -1,0 +1,10 @@
+# Stack / Cabal build artifacts
+.stack-work/
+dist/
+dist-newstyle/
+*.hi
+*.o
+*.hie
+*.prof
+*.eventlog
+.ghc.environment.*

@@ -1,0 +1,16 @@
+# haruhi(Laravel) の代わりに misuzu(Haskell) を API バックエンドとして起動する
+# テスト用オーバーライド。
+#
+# 使い方:
+#   COMPOSE_FILE=compose.test.base.yaml:compose.test.dev.yaml:compose.test.misuzu.yaml \
+#     docker compose up -d --build
+#   docker compose exec tamako php /app/main.php
+#
+# tamako は APP_URL=http://haruhi/api を叩くため、サービス名は haruhi のまま
+# ビルドコンテキストだけ ./misuzu に差し替える (misuzu は同じ DB_*/API_KEY env を読む)。
+services:
+    haruhi:
+        build:
+            context: ./misuzu
+            dockerfile: Dockerfile
+        volumes: []
